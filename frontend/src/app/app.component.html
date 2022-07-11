@@ -1,0 +1,31 @@
+<tui-root>
+  <h1>Angular Router App</h1>
+  <!-- This nav gives you links to click, which tells the router which route to use (defined in the routes constant in  AppRoutingModule) -->
+  <nav>
+    <ul>
+      <li><a routerLink="/auth" routerLinkActive="active" ariaCurrentWhenActive="page">Auth</a></li>
+      <li><a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page">Menu</a></li>
+    </ul>
+  </nav>
+  <!-- content of your app -->
+  <router-outlet></router-outlet>
+
+  <!--
+     If you need, you can add something between Taiga portal layers:
+    -->
+  <ng-container ngProjectAs="tuiOverContent">
+    <!-- Content over app content -->
+  </ng-container>
+  <ng-container ngProjectAs="tuiOverDialogs">
+    <!-- Content over dialogs -->
+  </ng-container>
+  <ng-container ngProjectAs="tuiOverAlerts">
+    <!-- Content over notifications -->
+  </ng-container>
+  <ng-container ngProjectAs="tuiOverPortals">
+    <!-- Content over dropdowns -->
+  </ng-container>
+  <ng-container ngProjectAs="tuiOverHints">
+    <!-- Content over hints -->
+  </ng-container>
+</tui-root>
