@@ -1,0 +1,21 @@
+<ng-container *ngIf="mapElement != null">
+    <div class="player_layer">
+        <div *ngFor="let player of mapElement.playersList" [ngStyle]="player.meepleStyle"></div>
+    </div>
+    <div class="actions_layer">
+        <button type="button"
+            class="btn btn-primary"
+            *ngIf="link"
+            (click)="onMove()">
+            <div class="cost_container">
+                <div class="cost_item" *ngFor="let item of link.cost | keyvalue">
+                    <img class="cost_img"
+                        [src]="ClankElementTypeMap[item.key].url"
+                        [alt]="ClankElementTypeMap[item.key].name"
+                        [title]="ClankElementTypeMap[item.key].name">
+                    <span class="cost_value">{{item.value}}</span>
+                </div>
+            </div>
+        </button>
+    </div>
+</ng-container>

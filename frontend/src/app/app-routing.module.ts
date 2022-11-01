@@ -1,37 +1,27 @@
 import { NgModule } from '@angular/core';
 import {
-  RouterModule,
-  Routes,
+    RouterModule,
+    Routes,
 } from '@angular/router';
 
-import { AuthComponent } from './auth/auth.component';
-import { MenuComponent } from './menu/menu.component';
-import {
-  PageNotFoundComponent,
-} from './page-not-found/page-not-found.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { LoginComponent } from './session/login/login.component';
+import { LoginGuard } from './session/login/login.guard';
 
 const routes: Routes = [
-  {
-    path: '',  
-    redirectTo: '/menu',
-    pathMatch: 'full',
-  },
-  {
-    path: 'auth',
-    component: AuthComponent,
-  },
-  {
-    path: 'menu',
-    component: MenuComponent,
-  },
-  {
-    path: '**',
-    component: PageNotFoundComponent,
-  },
+    {
+        path: 'login',
+        canActivate: [LoginGuard],
+        component: LoginComponent,
+    },
+    {
+        path: '**',
+        component: PageNotFoundComponent,
+    },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AuthComponent } from './auth.component';
+import { ClankMapComponent } from './clank-map.component';
 
-describe('AuthComponent', () => {
-  let component: AuthComponent;
-  let fixture: ComponentFixture<AuthComponent>;
+describe('ClankMapComponent', () => {
+  let component: ClankMapComponent;
+  let fixture: ComponentFixture<ClankMapComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AuthComponent ]
+      declarations: [ ClankMapComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AuthComponent);
+    fixture = TestBed.createComponent(ClankMapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

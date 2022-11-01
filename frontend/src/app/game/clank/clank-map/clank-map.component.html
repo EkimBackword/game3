@@ -1,0 +1,16 @@
+<div class="clank_map_container"
+    *ngIf="mapInfo != null"
+    #clankMapContainer
+>
+    <div class="clank_map_layer"
+        [style.width.px]="mapInfo.width"
+        [style.height.px]="mapInfo.height"
+        [style.background-image]="backgroundImage"
+    ></div>
+    <div class="clank_map_elements">
+        <app-clank-map-element
+            *ngFor="let mapElement of mapElements"
+            [mapElement]="mapElement"
+        ></app-clank-map-element>
+    </div>
+</div>

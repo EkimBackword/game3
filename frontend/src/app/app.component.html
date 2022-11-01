@@ -1,31 +1,31 @@
-<tui-root>
-  <h1>Angular Router App</h1>
-  <!-- This nav gives you links to click, which tells the router which route to use (defined in the routes constant in  AppRoutingModule) -->
-  <nav>
-    <ul>
-      <li><a routerLink="/auth" routerLinkActive="active" ariaCurrentWhenActive="page">Auth</a></li>
-      <li><a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page">Menu</a></li>
-    </ul>
-  </nav>
-  <!-- content of your app -->
-  <router-outlet></router-outlet>
+<router-outlet></router-outlet>
 
-  <!--
-     If you need, you can add something between Taiga portal layers:
-    -->
-  <ng-container ngProjectAs="tuiOverContent">
-    <!-- Content over app content -->
-  </ng-container>
-  <ng-container ngProjectAs="tuiOverDialogs">
-    <!-- Content over dialogs -->
-  </ng-container>
-  <ng-container ngProjectAs="tuiOverAlerts">
-    <!-- Content over notifications -->
-  </ng-container>
-  <ng-container ngProjectAs="tuiOverPortals">
-    <!-- Content over dropdowns -->
-  </ng-container>
-  <ng-container ngProjectAs="tuiOverHints">
-    <!-- Content over hints -->
-  </ng-container>
-</tui-root>
+<p-toast position="top-center"></p-toast>
+
+<p-toast position="bottom-center" key="c" (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="d-flex flex-column">
+            <div class="p-text-center">
+                <div class="d-flex">
+                    <i class="pi pi-exclamation-triangle m-1" style="font-size: 3rem"></i>
+                    <h5>{{message.summary}}</h5>
+                </div>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="d-flex">
+                <div class="m-1">
+                    <button type="button"
+                        class="btn btn-primary"
+                        (click)="onConfirm()"
+                    >Да, хочу</button>
+                </div>
+                <div class="m-1">
+                    <button type="button"
+                        class="btn btn-danger"
+                        (click)="onReject()"
+                    >Нет, в другой раз</button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>

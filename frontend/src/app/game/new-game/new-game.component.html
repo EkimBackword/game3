@@ -1,0 +1,93 @@
+<form class="container h-100 d-flex flex-column justify-content-center align-items-center"
+    [formGroup]="form"
+>
+    <div class="card w-50">
+        <div class="card-header">
+            <h1>Новая игра</h1>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label" for="name">
+                    Название игры
+                </label>
+                <input class="form-control"
+                    aria-describedby="name"
+                    type="text"
+                    id="name"
+                    formControlName="name">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="mapId">Выберите поле:</label>
+                <select class="form-select"
+                    aria-label="Choose map id"
+                    id="mapId"
+                    formControlName="mapId">
+                    <option *ngFor="let map of maps" [value]="map.id">{{map.name}}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="mapId">Выберите колоду карт для подземного ряда:</label>
+                <div class="form-text dropdown">
+                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuClickableInside" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                        Выбранно {{formFields.shareDeckIds.value.length}}
+                    </button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuClickableInside">
+                        <li class="m-1" *ngFor="let deck of shareDecks">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input"
+                                    type="checkbox"
+                                    id="shareDecks_{{deck.id}}"
+                                    [(ngModel)]="deck.value"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (ngModelChange)="updateSelectedCards(shareDecks, formFields.shareDeckIds)">
+                                <label class="form-check-label w-100" for="shareDecks_{{deck.id}}">{{deck.name}}</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="mapId">Выберите колоду карт для резерва:</label>
+                <div class="form-text dropdown">
+                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuClickableInside" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                        Выбранно {{formFields.reserveDeckIds.value.length}}
+                    </button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuClickableInside">
+                        <li class="m-1" *ngFor="let deck of reserveDecks">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input"
+                                    type="checkbox"
+                                    id="reserveDecks_{{deck.id}}"
+                                    [(ngModel)]="deck.value"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (ngModelChange)="updateSelectedCards(reserveDecks, formFields.reserveDeckIds)">
+                                <label class="form-check-label w-100" for="reserveDecks_{{deck.id}}">{{deck.name}}</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="startDeckId">Выберите стартовую колоду:</label>
+                <select class="form-select"
+                    aria-label="Choose map id"
+                    id="startDeckId"
+                    formControlName="startDeckId">
+                    <option *ngFor="let deck of startDecks" [value]="deck.id">{{deck.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="card-footer d-flex flex-row justify-content-end align-items-center">
+            <button class="w-50 m-1 btn btn-primary"
+                type="submit"
+                (click)="submit()">
+                Создать
+            </button>
+            <button class="w-50 m-1 btn btn-danger"
+                type="button"
+                (click)="cancel()">
+                Отмена
+            </button>
+        </div>
+    </div>
+</form>

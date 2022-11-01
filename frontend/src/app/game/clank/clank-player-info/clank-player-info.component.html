@@ -1,0 +1,17 @@
+<div class="header p-1" *ngIf="helpInfo.length > 0">
+    <p-messages [(value)]="helpInfo" class="w-100"></p-messages>
+</div>
+<div class="body p-1">
+    <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+    <div *ngIf="activePlayer != null">
+        <div class="w-100 d-flex flex-nowrap">
+            <div class="shadow"
+                *ngFor="let card of activePlayer.deck"
+                [ngStyle]="card.style"
+            ></div>
+        </div>
+    </div>
+</div>
+<div class="footer p-1">
+    <button class="mb-1 btn btn-danger">Закончить ход</button>
+</div>
