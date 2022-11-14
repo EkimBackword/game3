@@ -1,80 +1,85 @@
 import { Injectable } from '@angular/core';
 
-import { ClankCard } from '../models/cards/card.class';
-import { ClankSelectDeckValue } from '../models/cards/cards.types';
+import {
+    ClankCardConfig,
+    ClankCardState,
+    ClankSelectDeckValue,
+} from '@shared/clank/clank-card.types';
+import {
+    ClankDlcEnum,
+    ClankDlcList,
+} from '@shared/clank/clank-info.types';
+
 import {
     getClankDeckCards,
     getClankReserveCards,
     getClankStartCards,
 } from '../models/cards/cards_clank.data';
-import {
-    ClankDlcEnum,
-    ClankDlcName,
-} from '../models/clank.types';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CardsService {
 
-    reserveDecks: Partial<Record<ClankDlcEnum, (userCount: number) => ClankCard[]>> = {
-        [ClankDlcEnum.clank]: (userCount) => getClankReserveCards(userCount),
+    readonly store: ClankCardConfig[] = [
+        ...getClankReserveCards(1, false),
+        ...getClankStartCards('', false),
+        ...getClankDeckCards(false),
+    ];
+
+    reserveDecks: Partial<Record<ClankDlcEnum, (userCount: number) => ClankCardConfig[]>> = {
+        [ClankDlcEnum.clank]: (userCount) => getClankReserveCards(userCount, true),
     };
 
-    startDecks: Partial<Record<ClankDlcEnum, () => ClankCard[]>> = {
-        [ClankDlcEnum.clank]: () => getClankStartCards(),
+    startDecks: Partial<Record<ClankDlcEnum, (playerId: string) => ClankCardConfig[]>> = {
+        [ClankDlcEnum.clank]: (playerId) => getClankStartCards(playerId, true),
     };
 
-    shareDecks: Partial<Record<ClankDlcEnum, () => ClankCard[]>> = {
-        [ClankDlcEnum.clank]: () => getClankDeckCards(),
+    shareDecks: Partial<Record<ClankDlcEnum, () => ClankCardConfig[]>> = {
+        [ClankDlcEnum.clank]: () => getClankDeckCards(true),
     };
 
     constructor() { }
 
-    getSelectReserveDecks(): ClankSelectDeckValue[] {
-        return Object.keys(this.reserveDecks).map((key) => {
-            const id = key as ClankDlcEnum;
-            return {
-                id,
-                name: ClankDlcName[key as ClankDlcEnum],
-                value: false,
-            };
-        });
-    }
-
-    getReserveDecksCards(ids: ClankDlcEnum[], userCount: number) {
-        return ids.flatMap((id) => this.reserveDecks[id]?.(userCount) ?? []);
+    getReserveDecksCards(mapDlcId: ClankDlcEnum, userCount: number) {
+        const ids: ClankDlcEnum[] = [ClankDlcEnum.clank, mapDlcId];
+        return ids.flatMap((id) => this.mappingToCardStates(this.reserveDecks[id]?.(userCount) ?? []));
     }
 
     getSelectStartDecks(): ClankSelectDeckValue[] {
-        return Object.keys(this.startDecks).map((key) => {
-            const id = key as ClankDlcEnum;
-            return {
-                id,
-                name: ClankDlcName[key as ClankDlcEnum],
-                value: false,
-            };
-        });
+        return ClankDlcList.map(dlc => ({
+            ...dlc,
+            value: dlc.id === ClankDlcEnum.clank,
+            disabled: dlc.id === ClankDlcEnum.clank || this.startDecks[dlc.id] == null,
+        }));
     }
 
-    getStartDeckCards(id: ClankDlcEnum) {
-        console.log(id, this.startDecks, this.startDecks[id]?.());
-        return this.startDecks[id]?.() ?? [];
+    getStartDeckCards(id: ClankDlcEnum, playerId: string) {
+        return this.mappingToCardStates(this.startDecks[id]?.(playerId) ?? []);
     }
 
     getSelectShareDecks(): ClankSelectDeckValue[] {
-        return Object.keys(this.shareDecks).map((key) => {
-            const id = key as ClankDlcEnum;
-            return {
-                id,
-                name: ClankDlcName[key as ClankDlcEnum],
-                value: false,
-            };
-        });
+        return ClankDlcList.map(dlc => ({
+            ...dlc,
+            value: dlc.id === ClankDlcEnum.clank,
+            disabled: dlc.id === ClankDlcEnum.clank || this.startDecks[dlc.id] == null,
+        }));
     }
 
     getShareDecksCards(ids: ClankDlcEnum[]) {
-        return ids.flatMap((id) => this.shareDecks[id]?.() ?? []);
+        return ids.flatMap((id) => this.mappingToCardStates(this.shareDecks[id]?.() ?? []));
+    }
+
+    private mappingToCardStates(configs: ClankCardConfig[]) {
+        return configs.map(config => {
+            const state: ClankCardState = {
+                id: config.id,
+                index: config.index,
+                position: config.position,
+                player_id: config.player_id,
+            };
+            return state;
+        });
     }
 
 }

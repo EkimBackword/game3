@@ -1,0 +1,7 @@
+<div class="cost_item" *ngFor="let cost of data | keyvalue">
+    <img class="cost_img"
+        [src]="ClankElementTypeMap[cost.key].url"
+        [alt]="ClankElementTypeMap[cost.key].name"
+        [title]="ClankElementTypeMap[cost.key].name">
+    <span class="cost_value">{{cost.value}}</span>
+</div>

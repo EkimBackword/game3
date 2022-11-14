@@ -2,24 +2,22 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    OnDestroy,
     OnInit,
 } from '@angular/core';
 
-import {
-    MenuItem,
-    Message,
-} from 'primeng-lts/api';
-import {
-    combineLatest,
-    Subject,
-} from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { ClankPlayer } from 'src/app/shared/models/players/player.class';
-import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
+import { BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { CardsService } from 'src/app/shared/services/cards.service';
 
-import { GameInfoQuery } from '../../services/game-info/game-info.query';
-import { GameInfoService } from '../../services/game-info/game-info.service';
+import {
+    ClankCardPositionEnum,
+    ClankCardState,
+} from '@shared/clank/clank-card.types';
+import { ClankElementType } from '@shared/clank/clank-info.types';
+import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
+
+import { GameInfoQuery } from '../services/game-info.query';
+import { GameInfoService } from '../services/game-info.service';
 
 @Component({
     selector: 'app-clank-player-info',
@@ -27,66 +25,120 @@ import { GameInfoService } from '../../services/game-info/game-info.service';
     styleUrls: ['./clank-player-info.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClankPlayerInfoComponent implements OnInit, OnDestroy {
+export class ClankPlayerInfoComponent implements OnInit {
 
-    helpInfo: Message[] = [
-        {
-            severity: ToastSeverityEnum.info,
-            detail: 'Используйте CTRL + колёсико мышки для масштабирования карты',
-        },
-    ];
+    selectedCard: ClankCardState | null = null;
 
-    activePlayer: ClankPlayer | undefined;
-    items: MenuItem[] = [];
-    private _activeItem!: MenuItem;
-    get activeItem(): MenuItem {
-        return this._activeItem;
-    }
-    set activeItem(item: MenuItem) {
-        this._activeItem = item;
-        this.activePlayer = item.id != null
-            ? this.gameInfoService.players.get(item.id)
-            : void 0;
+    selectedPlayerSubject = new BehaviorSubject<ClankPlayerConfig | undefined>(void 0);
+
+    get selectedPlayer() {
+        return this.selectedPlayerSubject.getValue();
     }
 
-    private ngUnsubscribe = new Subject();
+    set selectedPlayer(player: ClankPlayerConfig | undefined) {
+        this.selectedPlayerSubject.next(player);
+    }
+
+    get handRow() {
+        if (this.selectedPlayer == null) {
+            return [];
+        }
+        const rowCount = 4;
+        return this.selectedPlayer.hand.map((card, index) => {
+            return {
+                card,
+                left: (index % rowCount) * 120,
+                top: Math.floor(index / rowCount) * 280,
+            };
+        });
+    }
+
+    playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(
+        tap((players) => {
+            this.selectedPlayer = this.selectedPlayer != null
+                ? players.find(p => p.id === this.selectedPlayer?.id)
+                : this.gameInfoQuery.currentPlayer;
+        }),
+    );
+
+    activePlayerSubject = this.gameInfoQuery.onActivePlayerChangeSubject;
+
+    get currentPlayer() {
+        return this.gameInfoQuery.currentPlayer;
+    }
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private gameInfoQuery: GameInfoQuery,
         private gameInfoService: GameInfoService,
+        private cardsService: CardsService,
     ) { }
 
     ngOnInit(): void {
-        combineLatest([
-            this.gameInfoQuery.onPlayersChangeSubject,
-            this.gameInfoQuery.onActivePlayerChangeSubject,
-        ]).pipe(
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe(() => {
-            this.items = this.gameInfoService.playersList.map(p => {
-                const player: MenuItem = {
-                    id: p.config.id,
-                    label: p.config.name,
-                    icon: 'pi pi-user',
-                };
-                return player;
-            });
-            const currentPlayerId = this.gameInfoService.currentPlayer?.config.id;
-            this.activeItem = this.items.find(p => p.id === currentPlayerId) ?? this.items[0];
-            this.changeDetectorRef.detectChanges();
-        });
-
-        this.gameInfoQuery.onAnyChangeSubject.pipe(
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe(() => {
-            this.changeDetectorRef.detectChanges();
-        });
     }
 
-    ngOnDestroy(): void {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
+    onSelectPlayer(player: ClankPlayerConfig) {
+        if (this.selectedPlayer?.id === player.id) {
+            return;
+        }
+        this.selectedPlayer = player;
+    }
+
+    onSelectCard(event: MouseEvent, card: ClankCardState) {
+        if (this.selectedCard != null && this.selectedCard.id === card.id) {
+            this.unselectCard();
+            return;
+        }
+
+        this.selectedCard = card;
+        this.changeDetectorRef.detectChanges();
+    }
+
+    useSelecetCard(event: MouseEvent, player: ClankPlayerConfig) {
+        if (this.selectedCard == null) {
+            return;
+        }
+        const cardInfo = this.getSelectedCardInfo();
+        this.gameInfoService.updatePlayer(player.id, {
+            benefitInfo: (Object.keys(player.benefitInfo) as ClankElementType[]).reduce((acc, key) => {
+                const prevValue = acc[key] ?? 0;
+                const nextValue = cardInfo?.benefit?.[key] ?? 0;
+                acc[key] = prevValue + nextValue;
+                return acc;
+            }, player.benefitInfo),
+            hand: player.hand.filter(p => p.id !== this.selectedCard?.id),
+            board: [
+                ...player.board,
+                {
+                    id: this.selectedCard.id,
+                    index: this.selectedCard.index,
+                    position: ClankCardPositionEnum.playerBoard,
+                    player_id: player.id,
+                },
+            ],
+        });
+        this.unselectCard();
+    }
+
+    finishTurn() {
+        this.gameInfoService.finishTurn();
+    }
+
+    trackById(index: number, player: ClankPlayerConfig) {
+        return player.id;
+    }
+
+    private unselectCard() {
+        this.selectedCard = null;
+        this.changeDetectorRef.detectChanges();
+    }
+
+    private getSelectedCardInfo() {
+        if (this.selectedCard == null) {
+            return;
+        }
+        const [find_string] = this.selectedCard.id.split('__');
+        return this.cardsService.store.find(p => p.find_string === find_string);
     }
 
 }

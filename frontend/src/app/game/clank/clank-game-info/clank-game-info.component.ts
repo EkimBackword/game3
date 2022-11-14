@@ -2,25 +2,21 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    OnDestroy,
     OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { tap } from 'rxjs/operators';
+
+import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import {
-    combineLatest,
-    Subject,
-} from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { ClankPlayer } from 'src/app/shared/models/players/player.class';
-import {
+    ClankPlayerConfig,
     GamePlayerColorList,
     GamePlayerStatusIdEnum,
-} from 'src/app/shared/models/players/player.types';
+} from '@shared/clank/clank-player.types';
 
-import { GameInfoQuery } from '../../services/game-info/game-info.query';
-import { GameInfoService } from '../../services/game-info/game-info.service';
-import { GameInfoStatusIdEnum } from '../../services/game-info/game-info.types';
+import { GameInfoQuery } from '../services/game-info.query';
+import { GameInfoService } from '../services/game-info.service';
 
 @Component({
     selector: 'app-clank-game-info',
@@ -28,19 +24,31 @@ import { GameInfoStatusIdEnum } from '../../services/game-info/game-info.types';
     styleUrls: ['./clank-game-info.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClankGameInfoComponent implements OnInit, OnDestroy {
+export class ClankGameInfoComponent implements OnInit {
 
     isStarted = false;
     isFinished = false;
-    gameName = 'Not found';
 
-    players: ClankPlayer[] = [];
-    currentPlayer: ClankPlayer | undefined;
+    statusSubject = this.gameInfoQuery.onStatusChangeSubject.pipe(
+        tap((statusId) => {
+            this.isStarted = statusId === GameInfoStatusIdEnum.Started;
+            this.isFinished = statusId === GameInfoStatusIdEnum.Finished;
+            this.changeDetectorRef.detectChanges();
+        }),
+    );
 
-    GamePlayerColorList = GamePlayerColorList;
+    nameSubject = this.gameInfoQuery.onNameChangeSubject;
+
+    playersSubject = this.gameInfoQuery.onPlayersChangeSubject;
+
+    activePlayerSubject = this.gameInfoQuery.onActivePlayerChangeSubject;
+
     GamePlayerStatusIdEnum = GamePlayerStatusIdEnum;
+    GamePlayerColorList = GamePlayerColorList;
 
-    private ngUnsubscribe = new Subject();
+    get currentPlayer() {
+        return this.gameInfoQuery.currentPlayer;
+    }
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -50,38 +58,7 @@ export class ClankGameInfoComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        this.gameInfoQuery.onNameChangeSubject.pipe(
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe((name) => {
-            this.gameName = name ?? 'Not found';
-            this.changeDetectorRef.detectChanges();
-        });
 
-        combineLatest([
-            this.gameInfoQuery.onPlayersChangeSubject,
-            this.gameInfoQuery.onActivePlayerChangeSubject,
-        ]).pipe(
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe(() => {
-            this.players = [
-                ...this.gameInfoService.players.values(),
-            ];
-            this.currentPlayer = this.gameInfoService.currentPlayer;
-            this.changeDetectorRef.detectChanges();
-        });
-
-        this.gameInfoQuery.onStatusChangeSubject.pipe(
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe((statusId) => {
-            this.isStarted = statusId === GameInfoStatusIdEnum.Started;
-            this.isFinished = statusId === GameInfoStatusIdEnum.Finished;
-            this.changeDetectorRef.detectChanges();
-        });
-    }
-
-    ngOnDestroy(): void {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
     }
 
     startGame() {
@@ -93,12 +70,20 @@ export class ClankGameInfoComponent implements OnInit, OnDestroy {
     }
 
     exitGame() {
-        this.gameInfoService.disconnect();
         this.router.navigate(['/']);
     }
 
-    trackById(index: number, player: ClankPlayer) {
-        return player.config.id;
+    trackById(index: number, player: ClankPlayerConfig) {
+        return player.id;
+    }
+
+    changeColor(player: ClankPlayerConfig) {
+        this.gameInfoService.updatePlayer(
+            player.id,
+            {
+                colorId: player.colorId,
+            },
+        );
     }
 
 }

@@ -1,78 +1,85 @@
 
-<div class="header p-1">
-    <h6>Название игры:</h6>
-    <h5 class="text-ellipsis" [title]="gameName">{{gameName}}</h5>
-</div>
-<div class="body p-1">
-    <div class="players_list">
-        <h6>Список игроков:</h6>
-        <div class="card w-100 mb-2" *ngFor="let player of players; trackBy:trackById; let i = index">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="m-0">{{player.config.name}}</h6>
-                    <i class="pi pi-circle-on online_state_icon"
-                        [style.color]="'green'"
-                        *ngIf="player.isOnline;else offlineTemplate"
-                    ></i>
-                    <ng-template #offlineTemplate>
-                        <i class="pi pi-circle-off" [style.color]="'tomato'"></i>
-                    </ng-template>
+<ng-container *ngIf="(statusSubject | async) as gameName">
+    <div class="header p-1" *ngIf="(nameSubject | async) as gameName">
+        <h6>Название игры:</h6>
+        <h5 class="text-ellipsis" [title]="gameName">{{gameName}}</h5>
+    </div>
+    <div class="body p-1">
+        <div class="players_list">
+            <h6>Список игроков:</h6>
+            <div class="card w-100 mb-2" *ngFor="let player of (playersSubject | async); trackBy: trackById; let i = index">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="m-0">{{player.name}}</h6>
+                        <i class="pi pi-circle-on online_state_icon"
+                            [style.color]="'green'"
+                            *ngIf="player.isOnline;else offlineTemplate"
+                        ></i>
+                        <ng-template #offlineTemplate>
+                            <i class="pi pi-circle-off online_state_icon" [style.color]="'tomato'"></i>
+                        </ng-template>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
+                <div class="card-body">
 
-            </div>
-            <div class="card-footer">
-                <ng-container *ngIf="isStarted">
-                    <div class="d-flex justify-content-between align-items-center"
-                        *ngIf="player.isActive">
-                        <h6 class="m-0">Ход игрока</h6>
-                        <i class="pi pi-spin pi-spinner m-2"></i>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center"
-                        *ngIf="!player.isActive">
-                        <h6 class="m-0">Ожидание хода</h6>
-                        <i class="pi pi-clock"></i>
-                    </div>
-                </ng-container>
-                <ng-container *ngIf="!isStarted && !isFinished && currentPlayer != null">
-                    <div class="d-flex justify-content-between align-items-center"
-                        *ngIf="currentPlayer.config.id != player.config.id && currentPlayer.isAdmin">
-                        <button class="btn btn-secondary"
-                            (click)="exitGame()">
-                            Выкинуть игрока
-                        </button>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center"
-                        *ngIf="currentPlayer.config.id == player.config.id">
-                        <!-- <i class="pi pi-circle-on" [style.color]="currentPlayer.colorInfo?.color"></i> -->
-                        <div class="player_meeple" [ngStyle]="player.meepleStyle"></div>
-                        <select class="form-select form-select-sm w-75" [(ngModel)]="currentPlayer.colorId">
-                            <option
-                                *ngFor="let item of GamePlayerColorList | keyvalue"
-                                [value]="item.key"
-                            >{{item.value.name}}</option>
-                        </select>
-                    </div>
-                </ng-container>
+                </div>
+                <div class="card-footer">
+                    <ng-container *ngIf="(activePlayerSubject | async) as activePlayer">
+                        <ng-container *ngIf="isStarted">
+                            <div class="d-flex justify-content-between align-items-center"
+                                *ngIf="player.id === activePlayer.id">
+                                <i class="pi pi-spin pi-clock m-2"></i>
+                                <h6 class="m-0">Ход игрока</h6>
+                                <app-clank-meeple [player]="player" [size]="20"></app-clank-meeple>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center"
+                                *ngIf="player.id !== activePlayer.id">
+                                <h6 class="m-0">Ожидание хода</h6>
+                                <app-clank-meeple [player]="player" [size]="20"></app-clank-meeple>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="!isStarted && !isFinished && currentPlayer != null">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <app-clank-meeple [player]="player" [size]="20"></app-clank-meeple>
+                            <select class="form-select form-select-sm w-75"
+                                [(ngModel)]="player.colorId"
+                                (ngModelChange)="changeColor(player)"
+                                [disabled]="currentPlayer.id != player.id"
+                            >
+                                <option
+                                    *ngFor="let item of GamePlayerColorList | keyvalue"
+                                    [value]="item.key"
+                                >{{item.value.name}}</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center"
+                            *ngIf="currentPlayer.id != player.id && currentPlayer.isAdmin">
+                            <button class="btn btn-sm btn-secondary"
+                                (click)="exitGame()">
+                                Выкинуть игрока
+                            </button>
+                        </div>
+                    </ng-container>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="footer p-1">
-    <button class="btn btn-primary mb-1"
-        (click)="startGame()"
-        *ngIf="currentPlayer?.isAdmin && !isStarted && !isFinished">
-        Начать игру
-    </button>
-    <button class="btn btn-primary mb-1"
-        (click)="finishGame()"
-        *ngIf="currentPlayer?.isAdmin && isStarted">
-        Закончить игру
-    </button>
-    <button class="btn btn-secondary"
-        (click)="exitGame()">
-        Выйти из игры
-    </button>
-</div>
-
+    <div class="footer p-1">
+        <button class="btn btn-primary mb-1"
+            (click)="startGame()"
+            *ngIf="currentPlayer?.isAdmin && !isStarted && !isFinished">
+            Начать игру
+        </button>
+        <button class="btn btn-primary mb-1"
+            (click)="finishGame()"
+            *ngIf="currentPlayer?.isAdmin && isStarted">
+            Закончить игру
+        </button>
+        <button class="btn btn-secondary"
+            (click)="exitGame()">
+            Выйти из игры
+        </button>
+    </div>
+</ng-container>

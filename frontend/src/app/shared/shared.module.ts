@@ -15,6 +15,9 @@ import { ToastModule } from 'primeng-lts/toast';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
+import { ClankCardComponent } from './components/clank-card/clank-card.component';
+import { ClankCostInfoComponent } from './components/clank-cost-info/clank-cost-info.component';
+import { ClankMeepleComponent } from './components/clank-meeple/clank-meeple.component';
 import { SharedComponent } from './shared.component';
 
 const exports = [
@@ -30,15 +33,23 @@ const exports = [
     TabMenuModule,
 ];
 
+const exportsComponents = [
+    ClankCardComponent,
+    ClankCostInfoComponent,
+    ClankMeepleComponent,
+];
+
 @NgModule({
     imports: [
         ...exports,
     ],
     exports: [
         ...exports,
+        ...exportsComponents,
     ],
     declarations: [
         SharedComponent,
+        ...exportsComponents,
     ],
     providers: [
         MessageService,

@@ -7,20 +7,24 @@ import {
     OnInit,
 } from '@angular/core';
 
-import { Subject } from 'rxjs';
 import {
-    filter,
-    takeUntil,
+    combineLatest,
+    Subject,
+} from 'rxjs';
+import {
+    map,
+    tap,
 } from 'rxjs/operators';
-import {
-    ClankElementTypeInfo,
-    ClankElementTypeMap,
-} from 'src/app/shared/models/clank.types';
-import { ClankMapElement } from 'src/app/shared/models/maps/clank-map-element.class';
-import { ClankMapElementLink } from 'src/app/shared/models/maps/clank-maps.types';
+import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
 
-import { GameInfoQuery } from '../../services/game-info/game-info.query';
-import { GameInfoService } from '../../services/game-info/game-info.service';
+import {
+    ClankMapElementConfig,
+    ClankMapElementLink,
+} from '@shared/clank/clank-map.types';
+import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
+
+import { GameInfoQuery } from '../services/game-info.query';
+import { GameInfoService } from '../services/game-info.service';
 
 @Component({
     selector: 'app-clank-map-element',
@@ -29,11 +33,34 @@ import { GameInfoService } from '../../services/game-info/game-info.service';
 })
 export class ClankMapElementComponent implements OnInit, OnDestroy {
 
-    @Input() mapElement: ClankMapElement | undefined;
+    @Input() mapElement: ClankMapElementConfig | undefined;
     @HostBinding('style') style: Partial<CSSStyleDeclaration> = {};
     link: ClankMapElementLink | undefined;
+    activePlayer: ClankPlayerConfig | undefined;
 
-    ClankElementTypeMap = ClankElementTypeMap as Record<any, ClankElementTypeInfo>;
+    dataSubject = combineLatest([
+        this.gameInfoQuery.onMapChangeSubject,
+        this.gameInfoQuery.onActivePlayerChangeSubject,
+    ]).pipe(
+        tap(([mapInfo, activePlayer]) => {
+            this.activePlayer = activePlayer;
+            const activePlayerPosition = mapInfo.elements.find(p => p.id === activePlayer?.elementId);
+            this.link = this.activePlayer?.id === this.gameInfoQuery.currentPlayer?.id
+                ? activePlayerPosition?.links.find(p => p.element_id === this.mapElement?.id)
+                : void 0;
+            this.changeDetectorRef.detectChanges();
+        }),
+    );
+
+    playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(
+        map(players => players.filter(p => p.elementId === this.mapElement?.id)),
+    );
+
+    ClankElementTypeMap = ClankElementTypeMap;
+
+    get currentPlayer() {
+        return this.gameInfoQuery.currentPlayer;
+    }
 
     private ngUnsubscribe = new Subject();
 
@@ -44,15 +71,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        this.style = this.mapElement?.style ?? {};
-        this.gameInfoQuery.onAnyChangeSubject.pipe(
-            filter(() => this.mapElement != null),
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe((state) => {
-            const links = this.gameInfoService.getLinks();
-            this.link = links.find(p => p.element_id === this.mapElement?.config.id);
-            this.changeDetectorRef.detectChanges();
-        });
+        this.style = this.getStyle();
     }
 
     ngOnDestroy(): void {
@@ -61,10 +80,29 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     }
 
     onMove() {
-        if (this.mapElement == null || this.gameInfoService.activePlayer == null) {
+        if (this.mapElement == null || this.activePlayer == null) {
             return;
         }
-        this.mapElement.enter(this.gameInfoService.activePlayer);
+        this.gameInfoService.updatePlayer(this.activePlayer.id, {
+            elementId: this.mapElement.id,
+        });
+    }
+
+    trackById(index: number, player: ClankPlayerConfig) {
+        return player.id;
+    }
+
+    private getStyle() {
+        if (this.mapElement == null) {
+            return {};
+        }
+        const style: Partial<CSSStyleDeclaration> = {
+            top: `${this.mapElement.position.y}px`,
+            left: `${this.mapElement.position.x}px`,
+            width: `${this.mapElement.position.width}px`,
+            height: `${this.mapElement.position.height}px`,
+        };
+        return style;
     }
 
 }

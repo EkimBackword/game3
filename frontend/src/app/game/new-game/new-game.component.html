@@ -29,39 +29,18 @@
                 <label class="form-label" for="mapId">Выберите колоду карт для подземного ряда:</label>
                 <div class="form-text dropdown">
                     <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuClickableInside" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                        Выбранно {{formFields.shareDeckIds.value.length}}
+                        Выбранно {{formFields.dungeonDeckIds.value.length}}
                     </button>
                     <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuClickableInside">
-                        <li class="m-1" *ngFor="let deck of shareDecks">
+                        <li class="m-1" *ngFor="let deck of dungeonDecks">
                             <div class="form-check form-switch">
                                 <input class="form-check-input"
                                     type="checkbox"
-                                    id="shareDecks_{{deck.id}}"
+                                    id="dungeonDecks_{{deck.id}}"
                                     [(ngModel)]="deck.value"
                                     [ngModelOptions]="{standalone: true}"
-                                    (ngModelChange)="updateSelectedCards(shareDecks, formFields.shareDeckIds)">
-                                <label class="form-check-label w-100" for="shareDecks_{{deck.id}}">{{deck.name}}</label>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="mapId">Выберите колоду карт для резерва:</label>
-                <div class="form-text dropdown">
-                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuClickableInside" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                        Выбранно {{formFields.reserveDeckIds.value.length}}
-                    </button>
-                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuClickableInside">
-                        <li class="m-1" *ngFor="let deck of reserveDecks">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input"
-                                    type="checkbox"
-                                    id="reserveDecks_{{deck.id}}"
-                                    [(ngModel)]="deck.value"
-                                    [ngModelOptions]="{standalone: true}"
-                                    (ngModelChange)="updateSelectedCards(reserveDecks, formFields.reserveDeckIds)">
-                                <label class="form-check-label w-100" for="reserveDecks_{{deck.id}}">{{deck.name}}</label>
+                                    (ngModelChange)="updateSelectedCards(dungeonDecks, formFields.dungeonDeckIds)">
+                                <label class="form-check-label w-100" for="dungeonDecks_{{deck.id}}">{{deck.name}}</label>
                             </div>
                         </li>
                     </ul>

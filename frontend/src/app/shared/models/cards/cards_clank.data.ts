@@ -1,42 +1,27 @@
-import { ClankCard } from 'src/app/shared/models/cards/card.class';
-
+import {
+    ClankCardBaseConfig,
+    ClankCardName,
+    ClankCardPositionEnum,
+    ClankCardType,
+    ClankDeckConfig,
+    ClankDeckSpriteInfo,
+} from '@shared/clank/clank-card.types';
 import {
     ClankDlcEnum,
     ClankEffect,
     ClankTarget,
-} from '../clank.types';
-import {
-    ClankCardConfig,
-    ClankCardName,
-    ClankCardType,
-} from './cards.types';
+} from '@shared/clank/clank-info.types';
 
-export const mappingCards = ({
-    cards,
-    dlc_name,
-    url,
-}: {
-    cards: ClankCardConfig[];
-    dlc_name: ClankDlcEnum;
-    url: string;
-    player_id?: string;
-}) => {
-    return cards.flatMap((card, index) => {
-        const copyCount = Math.abs(card.count);
-        return Array(copyCount).fill(1).map((_, copy_index) => {
-            return new ClankCard(
-                card,
-                index,
-                copy_index,
-                dlc_name,
-                url,
-            );
-        });
-    });
+import { mappingDeckCards } from './cards.types';
+
+const spriteInfo: ClankDeckSpriteInfo = {
+    dlc_name: ClankDlcEnum.clank,
+    url: '/assets/images/cards/clank.jpg',
+    backgroundSize: '1000% 700%',
 };
 
-export const getClankReserveCards = (userCount: number) => {
-    const cards: ClankCardConfig[] = [
+export const getClankReserveCards = (userCount: number, withCopy: boolean) => {
+    const cards: ClankCardBaseConfig[] = [
         {
             row: 0,
             column: 0,
@@ -128,15 +113,16 @@ export const getClankReserveCards = (userCount: number) => {
             count: (userCount * 4) - 1,
         },
     ];
-    return mappingCards({
+    const shareReserveConfig: ClankDeckConfig = {
+        ...spriteInfo,
         cards,
-        dlc_name: ClankDlcEnum.clank,
-        url: '/assets/images/cards/clank.jpg',
-    });
+        position: ClankCardPositionEnum.reserveRow,
+    };
+    return mappingDeckCards(shareReserveConfig, withCopy);
 };
 
-export const getClankStartCards = () => {
-    const cards: ClankCardConfig[] = [
+export const getClankStartCards = (playerId: string, withCopy: boolean) => {
+    const cards: ClankCardBaseConfig[] = [
         {
             row: 0,
             column: 4,
@@ -179,15 +165,17 @@ export const getClankStartCards = () => {
             count: 2,
         },
     ];
-    return mappingCards({
+    const playerDeckConfig: ClankDeckConfig = {
+        ...spriteInfo,
         cards,
-        dlc_name: ClankDlcEnum.clank,
-        url: '/assets/images/cards/clank.jpg',
-    });
+        position: ClankCardPositionEnum.playerDeck,
+        player_id: playerId,
+    };
+    return mappingDeckCards(playerDeckConfig, withCopy);
 };
 
-export const getClankDeckCards = () => {
-    const cards: ClankCardConfig[] = [
+export const getClankDeckCards = (withCopy: boolean) => {
+    const cards: ClankCardBaseConfig[] = [
         {
             row: 0,
             column: 8,
@@ -890,9 +878,10 @@ export const getClankDeckCards = () => {
             count: 1,
         },
     ];
-    return mappingCards({
+    const shareDeckConfig: ClankDeckConfig = {
+        ...spriteInfo,
         cards,
-        dlc_name: ClankDlcEnum.clank,
-        url: '/assets/images/cards/clank.jpg',
-    });
+        position: ClankCardPositionEnum.dungeonDeck,
+    };
+    return mappingDeckCards(shareDeckConfig, withCopy);
 };

@@ -3,6 +3,8 @@ import {
     OnInit,
 } from '@angular/core';
 
+import { GamesService } from '../shared/services/games.service';
+
 @Component({
     selector: 'app-game',
     templateUrl: './game.component.html',
@@ -11,9 +13,11 @@ import {
 export class GameComponent implements OnInit {
 
     constructor(
+        private gamesService: GamesService,
     ) { }
 
     ngOnInit(): void {
+        this.gamesService.init();
     }
 
 }

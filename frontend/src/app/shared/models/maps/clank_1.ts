@@ -1,11 +1,13 @@
+import { ClankDlcEnum } from '@shared/clank/clank-info.types';
 import {
     ClankMapConfig,
     ClankMapConfigIds,
-} from './clank-maps.types';
+} from '@shared/clank/clank-map.types';
 
 export const getClankMapFirst = () => {
     const map: ClankMapConfig = {
         id: ClankMapConfigIds.clank_1,
+        dlc_id: ClankDlcEnum.clank,
         name: 'Кланк! Подземное приключение',
         url: '/assets/images/maps/clank_1.jpg',
         width: 3000,

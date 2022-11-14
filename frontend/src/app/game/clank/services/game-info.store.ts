@@ -4,11 +4,9 @@ import {
     Store,
     StoreConfig,
 } from '@datorama/akita';
+import { GameInfoState } from '@shared/clank/clank-game.types';
 
-import {
-    createInitialGameInfoState,
-    GameInfoState,
-} from './game-info.types';
+import { createInitialGameInfoState } from './game-info.types';
 
 @Injectable()
 @StoreConfig({ name: 'game-info' })

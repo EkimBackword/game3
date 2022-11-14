@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import {
     ClankMapConfig,
     ClankMapConfigIds,
-} from '../models/maps/clank-maps.types';
+} from '@shared/clank/clank-map.types';
+
 import { getClankMapFirst } from '../models/maps/clank_1';
 
 @Injectable({

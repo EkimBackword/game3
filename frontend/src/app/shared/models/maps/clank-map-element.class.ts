@@ -1,10 +1,11 @@
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { GameInfoQuery } from 'src/app/game/services/game-info/game-info.query';
-import { GameInfoStore } from 'src/app/game/services/game-info/game-info.store';
+import { GameInfoQuery } from 'src/app/game/clank/services/game-info.query';
+import { GameInfoStore } from 'src/app/game/clank/services/game-info.store';
+
+import { ClankMapElementConfig } from '@shared/clank/clank-map.types';
 
 import { ClankPlayer } from '../players/player.class';
-import { ClankMapElementConfig } from './clank-maps.types';
 
 export class ClankMapElement {
 

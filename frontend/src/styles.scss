@@ -1,12 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
+@import './scss/theme.scss';
 
 :root {
-    --bs-white: #f4f3ee;
-    --bs-gray: #8a817c;
-    --bs-black: #463f3a;
-    --bs-body-color: #463f3a;
-    --bs-body-bg: #f4f3ee;
-    --bs-gradient: linear-gradient(0deg, #bcb8b1 0%, #f4f3ee 50%, #8a817c 100%);
+    --gray-0:  #fff;
+    --gray-50:  #FAFAFA;
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-400: #ced4da;
+    --gray-500: #adb5bd;
+    --gray-600: #6c757d;
+    --gray-700: #495057;
+    --gray-800: #343a40;
+    --gray-900: #212529;
+
+    --surface-0: var(--gray-0);
+    --surface-50: var(--gray-50);
+    --surface-100: var(--gray-100);
+    --surface-200: var(--gray-200);
+    --surface-300: var(--gray-300);
+    --surface-400: var(--gray-400);
+    --surface-500: var(--gray-500);
+    --surface-600: var(--gray-600);
+    --surface-700: var(--gray-700);
+    --surface-800: var(--gray-800);
+    --surface-900: var(--gray-900);
+
+    --text-color: var(--bs-dark);
+    --text-color-secondary: var(--bs-gray);
+    --primary-color-text: var(--bs-light);
+    --font-family: var(--bs-font-sans-serif);
+
+    --bs-gradient: radial-gradient(
+        circle,
+        var(--gray-0) 0%,
+        var(--gray-100) 10%,
+        var(--gray-200) 25%,
+        var(--gray-300) 50%,
+        var(--gray-400) 75%,
+        var(--gray-500) 100%
+    );
 }
 
 html,
@@ -19,6 +52,7 @@ body {
 body {
     width: 100vw;
     height: 100vh;
+    background: var(--bs-gradient);
 }
 
 .container--page {
@@ -33,6 +67,24 @@ body {
     width: 373px;
     border-radius: 0.8rem;
     transform-style: preserve-3d;
+
+    &.flip_card__open .flip_card_face__front {
+        transform: rotateY(0deg);
+    }
+
+    &.flip_card__open .flip_card_face__back {
+        transform: rotateY(180deg);
+    }
+
+    &.flip_card_by_hover {
+        &:hover .flip_card_face__front {
+            transform: rotateY(0deg);
+        }
+
+        &:hover .flip_card_face__back {
+            transform: rotateY(180deg);
+        }
+    }
 }
 
 .flip_card_face {
@@ -51,6 +103,7 @@ body {
 
 .flip_card_face__front {
     background: #2c3e50;
+    transform: rotateY(-180deg);
 
     .clank_face {
         transform: scale(0.5) translate(-50%, -50%);
@@ -60,7 +113,6 @@ body {
 
 .flip_card_face__back {
     background: #2c3e50;
-    transform: rotateY(180deg);
 
     .clank_back {
         height: 100%;
@@ -69,16 +121,12 @@ body {
     }
 }
 
-.flip_card:hover .flip_card_face__front {
-    transform: rotateY(-180deg);
-}
-
-.flip_card:hover .flip_card_face__back {
-    transform: rotateY(0deg);
-}
-
 .text-ellipsis {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+*[disabled] {
+    cursor: not-allowed;
 }

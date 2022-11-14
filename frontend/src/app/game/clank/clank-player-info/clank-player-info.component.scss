@@ -16,7 +16,11 @@
 }
 
 .header {
-    border-bottom: 1px solid var(--bs-black);
+    padding: 0.25rem 0.25rem 0;
+}
+
+.nav-item {
+    cursor: pointer;
 }
 
 .body {
@@ -26,8 +30,108 @@
     align-items: stretch;
     flex: 1 1 auto;
     overflow: auto;
+    background-color: var(--bs-white);
+    position: relative;
 }
 
 .footer {
     border-top: 1px solid var(--bs-black);
+}
+
+.not_active_player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    background-color: rgba(var(--bs-secondary-rgb), 0.6);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+
+    .message {
+        background-color: var(--bs-light);
+        color: var(--bs-dark);
+        border-radius: 0.25rem;
+
+        .player_name {
+            color: tomato;
+        }
+    }
+}
+
+.clank_card {
+    transform-origin: top left;
+    transform: scale(0.5, 0.5);
+    border-radius: 35px;
+    padding: 10px;
+    z-index: 5;
+    filter: drop-shadow(2px 4px 6px var(--bs-black));
+    transition: all ease-in-out .2s;
+
+    &.clank_card__select {
+        transform: scale(0.55, 0.55);
+        z-index: 10;
+        filter: drop-shadow(2px 4px 10px var(--bs-primary));
+    }
+
+    &.clank_card__hover:hover {
+        transform: scale(0.55, 0.55);
+        z-index: 15;
+    }
+}
+
+.cards_wrap {
+    width: 33%;
+    height: 320px;
+    position: relative;
+    border: 2px solid var(--bs-black);
+    border-radius: 8px;
+    transition: border-color .2s;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+    overflow: hidden;
+
+    &.cards_wrap__highlight {
+        border-color: var(--primary-color);
+        box-shadow: inset 0 0 2px var(--primary-color);
+    }
+
+    .cards_wrap__header,
+    .cards_wrap__footer {
+        height: 40px;
+        width: 100%;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+    }
+
+    .cards_wrap__header {
+        background-color: var(--bs-black);
+    }
+
+    .cards_wrap__body {
+        width: 160px;
+        height: 220px;
+        position: relative;
+
+        .clank_card {
+            transform: scale(0.4, 0.4);
+        }
+    }
+
+    .cards_wrap__footer {
+        background-color: var(--bs-black);
+    }
+
 }

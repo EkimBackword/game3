@@ -25,6 +25,7 @@ $clank_info_width: 200px;
 .clank_game_info {
     flex-shrink: 0;
     z-index: 100;
+    background-color: var(--bs-light);
 }
 
 .clank_player_info {

@@ -3,7 +3,7 @@ import {
     OnInit,
 } from '@angular/core';
 
-import { ClankCard } from 'src/app/shared/models/cards/card.class';
+import { ClankCardConfig } from '@shared/clank/clank-card.types';
 
 @Component({
     templateUrl: './help.component.html',
@@ -11,13 +11,13 @@ import { ClankCard } from 'src/app/shared/models/cards/card.class';
 })
 export class HelpComponent implements OnInit {
 
-    cards: ClankCard[] = [];
+    cards: ClankCardConfig[] = [];
 
     constructor() { }
 
     ngOnInit(): void {
         import('../../shared/models/cards/cards_clank.data').then((response) => {
-            this.cards = response.getClankDeckCards();
+            this.cards = response.getClankDeckCards(false);
         });
     }
 

@@ -1,0 +1,65 @@
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnChanges,
+    SimpleChanges,
+} from '@angular/core';
+
+import {
+    ClankPlayerConfig,
+    GamePlayerColorInfo,
+    GamePlayerColorList,
+} from '@shared/clank/clank-player.types';
+
+@Component({
+    selector: 'app-clank-meeple',
+    templateUrl: './clank-meeple.component.html',
+    styleUrls: ['./clank-meeple.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ClankMeepleComponent implements OnChanges {
+
+    @Input() player: ClankPlayerConfig | undefined;
+    @Input() size = 100;
+
+    /** Информация о цвете игрока */
+    colorInfo: GamePlayerColorInfo | null = null;
+
+    /** Стиль отображение мипла */
+    meepleStyle: Partial<CSSStyleDeclaration> = {};
+
+    constructor(
+        private changeDetectorRef: ChangeDetectorRef,
+    ) { }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        this.colorInfo = this.getColorInfo();
+        this.meepleStyle = this.getMeepleStyle();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    private getColorInfo() {
+        if (this.player == null) {
+            return null;
+        }
+        return GamePlayerColorList[this.player.colorId];
+
+    }
+
+    private getMeepleStyle() {
+        if (this.colorInfo == null) {
+            return {};
+        }
+        const style: Partial<CSSStyleDeclaration> = {
+            width: `${this.size}px`,
+            height: `${this.size}px`,
+            backgroundImage: `url(/assets/images/meeples.png)`,
+            backgroundPosition: `-${this.colorInfo.positionX}px 0px`,
+            backgroundSize: '400% 100%',
+        };
+        return style;
+    }
+
+}

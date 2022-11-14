@@ -1,68 +1,56 @@
 import { Injectable } from '@angular/core';
 
-import {
-    BehaviorSubject,
-    of,
-    throwError,
-} from 'rxjs';
-import { uuidv4 } from 'src/app/session/session.model';
+import { BehaviorSubject } from 'rxjs';
 
+import { guid } from '@datorama/akita';
 import {
     GameInfoConfig,
     GameInfoState,
     GameInfoStatusIdEnum,
-} from '../../game/services/game-info/game-info.types';
-import { ClankDlcEnum } from '../models/clank.types';
-import { ClankMapConfigIds } from '../models/maps/clank-maps.types';
+} from '@shared/clank/clank-game.types';
+
+import { SocketService } from './socket.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class GamesService {
 
-    gamesList: GameInfoState[] = [
-        {
-            id: 'test',
-            name: 'TEST',
-            mapId: ClankMapConfigIds.clank_1,
-            startDeckId: ClankDlcEnum.clank,
-            reserveDeckIds: [ClankDlcEnum.clank],
-            shareDeckIds: [ClankDlcEnum.clank],
-            cards: [],
-            players: [],
-            statusId: GameInfoStatusIdEnum.Created,
-            activePlayerId: '',
-            actionLogs: [],
-        },
-    ];
+    inited = false;
+    gamesList: GameInfoState[] = [];
     gamesListChange = new BehaviorSubject<void>(void 0);
 
-    constructor() { }
+    constructor(
+        private socketService: SocketService,
+    ) {
+    }
 
-    loadGames() {
-        // TODO: Добавить загрузку списка игр с сервера
-        this.gamesListChange.next();
+    init() {
+        if (this.inited) {
+            return;
+        }
+        this.inited = true;
+        this.socketService.socket.on('gameListChanged', (gamesList) => {
+            this.gamesList = gamesList;
+        });
     }
 
     addNew(config: GameInfoConfig) {
         const gameState: GameInfoState =  {
             ...config,
-            id: uuidv4(),
+            id: guid(),
             statusId: GameInfoStatusIdEnum.New,
             players: [],
-            cards: [],
+            dungeonDeck: [],
+            dungeonRow: [],
+            reserveRow: [],
+            activePlayerIndex: 0,
             activePlayerId: '',
             actionLogs: [],
         };
         this.gamesList.push(gameState);
+        this.socketService.socket.emit('addGame', gameState);
         return gameState.id;
-    }
-
-    getGameById(id: string) {
-        const gameInfo = this.gamesList.find(p => p.id === id);
-        return gameInfo != null
-            ? of(gameInfo)
-            : throwError(`Game #${id} not found`);
     }
 
 }

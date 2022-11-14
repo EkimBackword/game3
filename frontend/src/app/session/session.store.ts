@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import {
+    guid,
     Store,
     StoreConfig,
 } from '@datorama/akita';
@@ -11,7 +12,6 @@ import {
     LoginFormValue,
     SESSION_KEY,
     SessionState,
-    uuidv4,
 } from './session.model';
 
 @Injectable({ providedIn: 'root' })
@@ -23,10 +23,11 @@ export class SessionStore extends Store<SessionState> {
     }
 
     login(data: LoginFormValue) {
+        const id = guid();
         const session: SessionState = {
-            id: uuidv4(),
+            id,
             name: data.login,
-            token: uuidv4(),
+            token: id,
         };
         localStorage.setItem(SESSION_KEY, JSON.stringify(session));
         this.update(session);

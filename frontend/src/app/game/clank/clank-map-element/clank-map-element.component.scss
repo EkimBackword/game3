@@ -29,28 +29,7 @@
     align-items: stretch;
 
     .btn {
+        height: 100px;
         font-size: 36px !important;
     }
-}
-
-.cost_container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: stretch;
-    width: 100%;
-}
-
-.cost_item {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    background-color: #000;
-    border-radius: 4px;
-}
-
-.cost_img {
-    height: 50px;
-    width: 50px;
 }

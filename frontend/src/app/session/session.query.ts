@@ -13,6 +13,10 @@ export class SessionQuery extends Query<SessionState> {
 
     isLoggedIn$ = this.select((state) => !!state.token);
 
+    get id() {
+        return this.getValue()?.id;
+    }
+
     get isLoggedIn() {
         return !!this.getValue().token;
     }
