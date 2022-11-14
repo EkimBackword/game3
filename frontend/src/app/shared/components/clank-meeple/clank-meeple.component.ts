@@ -35,8 +35,12 @@ export class ClankMeepleComponent implements OnChanges {
     ) { }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.colorInfo = this.getColorInfo();
-        this.meepleStyle = this.getMeepleStyle();
+        if (changes.player) {
+            this.colorInfo = this.getColorInfo();
+        }
+        if (changes.player || changes.size) {
+            this.meepleStyle = this.getMeepleStyle();
+        }
         this.changeDetectorRef.detectChanges();
     }
 

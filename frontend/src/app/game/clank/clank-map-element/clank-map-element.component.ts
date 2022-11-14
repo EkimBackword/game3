@@ -48,7 +48,6 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             this.link = this.activePlayer?.id === this.gameInfoQuery.currentPlayer?.id
                 ? activePlayerPosition?.links.find(p => p.element_id === this.mapElement?.id)
                 : void 0;
-            this.changeDetectorRef.detectChanges();
         }),
     );
 
