@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import {
     filter,
     map,
+    shareReplay,
+    tap,
 } from 'rxjs/operators';
 import { SessionQuery } from 'src/app/session/session.query';
 import { notEmpty } from 'src/app/shared/models/shared.types';
@@ -25,6 +27,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
     onMapChangeSubject = this.select('mapId').pipe(
         map((mapId) => this.mapsService.getMapById(mapId)),
         filter(notEmpty),
+        shareReplay(1),
     );
 
     onPlayersChangeSubject = this.select('players');
@@ -36,7 +39,9 @@ export class GameInfoQuery extends Query<GameInfoState> {
     onReserveRowChangeSubject = this.select('reserveRow');
 
     onActivePlayerChangeSubject = this.select(['activePlayerId', 'players']).pipe(
+        tap((state) => console.log('onActivePlayerChangeSubject', state)),
         map(state => state.players.find(p => p.id === state.activePlayerId)),
+        shareReplay(1),
     );
 
     onActionLogsChangeSubject = this.select('actionLogs');
