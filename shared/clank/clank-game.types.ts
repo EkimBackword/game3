@@ -1,0 +1,50 @@
+import { ClankCardState } from './clank-card.types';
+import { ClankDlcEnum } from './clank-info.types';
+import { ClankMapConfigIds } from './clank-map.types';
+import { ClankPlayerConfig } from './clank-player.types';
+
+export enum GameInfoStatusIdEnum {
+    Empty,
+    New,
+    Created,
+    Started,
+    Finished,
+}
+
+export interface GameInfoConfig {
+    /** Имя вводится при создании */
+    name: string;
+    /** Карта игры */
+    mapId: ClankMapConfigIds;
+    /** DLC к которому привязана карта */
+    mapDlcId: ClankDlcEnum;
+    /** Список DLC участвующийх в игре */
+    dungeonDeckIds: ClankDlcEnum[];
+    /** DLC для определения стартовой руки игрока */
+    startDeckId: ClankDlcEnum;
+}
+
+export interface GameInfoState extends GameInfoConfig {
+    /** ID присваивается после создания */
+    id: string;
+    /** Статус игры */
+    statusId: GameInfoStatusIdEnum;
+    /**
+     * Список игроков
+     * @description Состояния игроков могут меняться,
+     * что должно отображатся на карте
+     */
+    players: ClankPlayerConfig[];
+    /** Колода подземелья */
+    dungeonDeck: ClankCardState[],
+    /** Подземный ряд */
+    dungeonRow: ClankCardState[],
+    /** Общий резерв */
+    reserveRow: ClankCardState[],
+    /** Индекс активного игрока */
+    activePlayerIndex: number;
+    /** Идентификатор активного игрока */
+    activePlayerId: string;
+    /** Идентификатор активного игрока */
+    actionLogs: string[];
+}
