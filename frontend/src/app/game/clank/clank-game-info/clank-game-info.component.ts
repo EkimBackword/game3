@@ -7,10 +7,13 @@ import {
 import { Router } from '@angular/router';
 
 import { tap } from 'rxjs/operators';
+import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import {
     ClankPlayerConfig,
+    GamePlayerColorIdEnum,
+    GamePlayerColorIds,
     GamePlayerColorList,
     GamePlayerStatusIdEnum,
 } from '@shared/clank/clank-player.types';
@@ -33,18 +36,27 @@ export class ClankGameInfoComponent implements OnInit {
         tap((statusId) => {
             this.isStarted = statusId === GameInfoStatusIdEnum.Started;
             this.isFinished = statusId === GameInfoStatusIdEnum.Finished;
-            this.changeDetectorRef.detectChanges();
         }),
     );
 
     nameSubject = this.gameInfoQuery.onNameChangeSubject;
 
-    playersSubject = this.gameInfoQuery.onPlayersChangeSubject;
+    GamePlayerColorList = GamePlayerColorList;
+    validColorList = false;
+    invalidColorText = 'Цвета игроков должны отличатся';
+    playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(
+        tap((players) => {
+            this.validColorList = !GamePlayerColorIds.some((id) => {
+                const playerCount = players.filter(p => p.colorId === id).length;
+                return playerCount > 1;
+            });
+            this.changeDetectorRef.detectChanges();
+        }),
+    );
 
     activePlayerSubject = this.gameInfoQuery.onActivePlayerChangeSubject;
 
     GamePlayerStatusIdEnum = GamePlayerStatusIdEnum;
-    GamePlayerColorList = GamePlayerColorList;
 
     get currentPlayer() {
         return this.gameInfoQuery.currentPlayer;
@@ -54,6 +66,7 @@ export class ClankGameInfoComponent implements OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private gameInfoQuery: GameInfoQuery,
         private gameInfoService: GameInfoService,
+        private toastService: ToastService,
         private router: Router,
     ) { }
 
@@ -62,6 +75,10 @@ export class ClankGameInfoComponent implements OnInit {
     }
 
     startGame() {
+        if (!this.validColorList) {
+            this.toastService.showWarn(this.invalidColorText);
+            return;
+        }
         this.gameInfoService.startGame();
     }
 
@@ -77,11 +94,11 @@ export class ClankGameInfoComponent implements OnInit {
         return player.id;
     }
 
-    changeColor(player: ClankPlayerConfig) {
+    changeColor(player: ClankPlayerConfig, colorId: GamePlayerColorIdEnum) {
         this.gameInfoService.updatePlayer(
             player.id,
             {
-                colorId: player.colorId,
+                colorId,
             },
         );
     }
