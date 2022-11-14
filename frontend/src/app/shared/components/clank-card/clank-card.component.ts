@@ -4,6 +4,7 @@ import {
     Component,
     Input,
     OnChanges,
+    OnInit,
     SimpleChanges,
 } from '@angular/core';
 
@@ -22,7 +23,7 @@ import { CardsService } from '../../services/cards.service';
     styleUrls: ['./clank-card.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClankCardComponent implements OnChanges {
+export class ClankCardComponent implements OnInit, OnChanges {
 
     @Input() isOpen = false;
     @Input() width = ClankCardWidth;
@@ -36,6 +37,12 @@ export class ClankCardComponent implements OnChanges {
         private changeDetectorRef: ChangeDetectorRef,
         private cardsService: CardsService,
     ) { }
+
+    ngOnInit(): void {
+        this.card = this.getCardInfo();
+        this.style = this.getStyle();
+        this.changeDetectorRef.detectChanges();
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.card) {

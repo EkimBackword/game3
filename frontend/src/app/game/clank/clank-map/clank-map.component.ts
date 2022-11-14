@@ -20,6 +20,7 @@ import {
 } from 'rxjs/operators';
 
 import { ClankMapConfig } from '@shared/clank/clank-map.types';
+import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
@@ -44,6 +45,8 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
             this.onResize();
         }),
     );
+
+    playersPosition = this.gameInfoQuery.onPlayersPositionChangeSubject;
 
     @ViewChild('clankMapContainer', { read: ElementRef }) clankMapContainer: ElementRef<HTMLElement> | undefined;
 
@@ -115,6 +118,10 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+    }
+
+    trackById(index: number, item: { player: ClankPlayerConfig; }) {
+        return item.player.id;
     }
 
     private onResize() {

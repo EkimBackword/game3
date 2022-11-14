@@ -8,6 +8,15 @@
             [style.height.px]="mapInfo.height"
             [style.background-image]="backgroundImage"
         ></div>
+        <div class="clank_map_players">
+            <app-clank-meeple
+                class="clank_map_player"
+                *ngFor="let item of (playersPosition | async); trackBy: trackById;"
+                [player]="item.player"
+                [ngStyle]="item.style"
+                [size]="item.size"
+            ></app-clank-meeple>
+        </div>
         <div class="clank_map_elements">
             <app-clank-map-element
                 *ngFor="let mapElement of mapInfo.elements"

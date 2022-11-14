@@ -11,10 +11,7 @@ import {
     combineLatest,
     Subject,
 } from 'rxjs';
-import {
-    map,
-    tap,
-} from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
 
 import {
@@ -49,10 +46,6 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                 ? activePlayerPosition?.links.find(p => p.element_id === this.mapElement?.id)
                 : void 0;
         }),
-    );
-
-    playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(
-        map(players => players.filter(p => p.elementId === this.mapElement?.id)),
     );
 
     ClankElementTypeMap = ClankElementTypeMap;

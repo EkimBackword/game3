@@ -4,7 +4,6 @@ import {
     filter,
     map,
     shareReplay,
-    tap,
 } from 'rxjs/operators';
 import { SessionQuery } from 'src/app/session/session.query';
 import { notEmpty } from 'src/app/shared/models/shared.types';
@@ -30,6 +29,33 @@ export class GameInfoQuery extends Query<GameInfoState> {
         shareReplay(1),
     );
 
+    onPlayersPositionChangeSubject = this.select(['mapId', 'players']).pipe(
+        map(({mapId, players}) => {
+            const mapInfo = this.mapsService.getMapById(mapId);
+            if (mapInfo == null) {
+                return [];
+            }
+            const size = 100;
+            const countByElementId = new Map<number, number>();
+            return players.map(player => {
+                const count = countByElementId.get(player.elementId) ?? 0;
+                countByElementId.set(player.elementId, count + 1);
+                const mapElement = mapInfo.elements.find(p => p.id === player.elementId);
+                const style: Partial<CSSStyleDeclaration> = {
+                    top: `${mapElement?.position.y ?? 0}px`,
+                    left: `${(mapElement?.position.x ?? 0) + count * size}px`,
+                };
+                const data = {
+                    player,
+                    style,
+                    size,
+                };
+                return data;
+            });
+        }),
+        shareReplay(1),
+    );
+
     onPlayersChangeSubject = this.select('players');
 
     onDungeonDeckChangeSubject = this.select('dungeonDeck');
@@ -39,7 +65,6 @@ export class GameInfoQuery extends Query<GameInfoState> {
     onReserveRowChangeSubject = this.select('reserveRow');
 
     onActivePlayerChangeSubject = this.select(['activePlayerId', 'players']).pipe(
-        tap((state) => console.log('onActivePlayerChangeSubject', state)),
         map(state => state.players.find(p => p.id === state.activePlayerId)),
         shareReplay(1),
     );

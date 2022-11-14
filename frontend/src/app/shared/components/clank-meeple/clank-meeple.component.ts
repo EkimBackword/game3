@@ -4,6 +4,7 @@ import {
     Component,
     Input,
     OnChanges,
+    OnInit,
     SimpleChanges,
 } from '@angular/core';
 
@@ -19,7 +20,7 @@ import {
     styleUrls: ['./clank-meeple.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClankMeepleComponent implements OnChanges {
+export class ClankMeepleComponent implements OnInit, OnChanges {
 
     @Input() player: ClankPlayerConfig | undefined;
     @Input() size = 100;
@@ -33,6 +34,12 @@ export class ClankMeepleComponent implements OnChanges {
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
     ) { }
+
+    ngOnInit(): void {
+        this.colorInfo = this.getColorInfo();
+        this.meepleStyle = this.getMeepleStyle();
+        this.changeDetectorRef.detectChanges();
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.player) {

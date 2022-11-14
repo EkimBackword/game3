@@ -17,6 +17,7 @@
 }
 
 .clank_map_layer,
+.clank_map_players,
 .clank_map_elements {
     position: absolute;
     top: 0;
@@ -24,27 +25,9 @@
     display: flex;
 }
 
-.clank_map_help {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    top: 0;
-    left: 0;
-    background-color: var(--bs-white);
-    cursor: help;
-    z-index: 1000;
-
-    i {
-        color: var(--primary-color);
-    }
-
-    .clank_map_help__text {
-        margin-left: 4px;
-    }
-
-    &:hover {
-        color: #000;
-    }
+.clank_map_player {
+    position: absolute;
+    transition: all ease-in-out 300ms;
 }
 
 :host ::ng-deep .p-message-custom {

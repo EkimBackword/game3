@@ -1,20 +1,15 @@
 <ng-container *ngIf="dataSubject | async">
     <ng-container *ngIf="mapElement != null">
-        <div class="player_layer">
-            <app-clank-meeple
-                *ngFor="let player of (playersSubject | async); trackBy: trackById;"
-                [player]="player"
-            ></app-clank-meeple>
-        </div>
-        <div class="actions_layer">
-            <button type="button"
-                class="btn btn-primary"
+        <div class="actions_layer"
+            [class.crystal_cave]="mapElement.isCrystalCave">
+            <div class="action_move"
                 *ngIf="link"
                 (click)="onMove()">
                 <app-clank-cost-info
+                    class="action_move__cost"
                     [data]="link.cost"
                 ></app-clank-cost-info>
-            </button>
+            </div>
         </div>
     </ng-container>
 </ng-container>
