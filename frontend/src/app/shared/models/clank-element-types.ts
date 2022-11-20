@@ -32,7 +32,7 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     },
     [ClankElementType.curse]: {
         name: 'Проклятие',
-        url: '/assets/images/tokens/clank_proklyatie_mumii/token.jpg',
+        url: '/assets/images/tokens/map_tokens/clank_proklyatie_mumii/token.jpg',
     },
     [ClankElementType.coin]: {
         name: 'Монета',
@@ -48,23 +48,23 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     },
     [ClankElementType.monkey_idol]: {
         name: 'Обезьяний идол',
-        url: '/assets/images/tokens/idol_5_1.jpg',
+        url: '/assets/images/tokens/map_tokens/idol_5_1.jpg',
     },
     [ClankElementType.mastery_token]: {
         name: 'Жетон мастерства',
-        url: '/assets/images/tokens/master.png',
+        url: '/assets/images/tokens/bonus/master.png',
     },
     [ClankElementType.dragon_egg]: {
         name: 'Драконье яйцо',
-        url: '/assets/images/secrets/small_egg.jpg',
+        url: '/assets/images/tokens/secrets/small_egg.jpg',
     },
     [ClankElementType.cup]: {
         name: 'Кубок',
-        url: '/assets/images/secrets/big_cup.jpg',
+        url: '/assets/images/tokens/secrets/big_cup.jpg',
     },
     [ClankElementType.teleport]: {
         name: 'Телепорт',
-        url: '/assets/images/teleport.png',
+        url: '/assets/images//teleport.png',
     },
     [ClankElementType.artefact]: {
         name: 'Артефакт',
@@ -72,15 +72,15 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     },
     [ClankElementType.key]: {
         name: 'Отмычки',
-        url: '/assets/images/market/key_token.jpg',
+        url: '/assets/images/tokens/market/key_token.jpg',
     },
     [ClankElementType.minor_secret]: {
         name: 'Маленький секрет',
-        url: '/assets/images/secrets/small_back.jpg',
+        url: '/assets/images/tokens/secrets/small_back.jpg',
     },
     [ClankElementType.major_secret]: {
         name: 'Большой секрет',
-        url: '/assets/images/secrets/big_back.jpg',
+        url: '/assets/images/tokens/secrets/big_back.jpg',
     },
 };
 
