@@ -18,6 +18,8 @@ export function createInitialGameInfoState(): GameInfoState {
         dungeonDeck: [],
         dungeonRow: [],
         reserveRow: [],
+        tokens: [],
+        artifacts: [],
         activePlayerIndex: 0,
         activePlayerId: '',
         actionLogs: [],

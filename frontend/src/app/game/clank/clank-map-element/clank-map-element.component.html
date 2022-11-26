@@ -2,9 +2,23 @@
     <ng-container *ngIf="mapElement != null">
         <div class="actions_layer"
             [class.crystal_cave]="mapElement.isCrystalCave">
+            <ng-container *ngFor="let artifact of (onArtifactsChangeSubject | async); trackBy: trackById">
+                <div class="clank-artifact" (click)="takeArtifact(artifact)" *ngIf="mapElement.items?.artefact?.value === artifact.value">
+                    <app-clank-artifact
+                        [data]="artifact"
+                    ></app-clank-artifact>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="(onTokensChangeSubject | async) as tokens">
+                <div class="clank-artifact" *ngIf="tokens.length > 0 && token != null">
+                    <app-clank-token
+                        [state]="token"
+                    ></app-clank-token>
+                </div>
+            </ng-container>
             <div class="action_move"
                 *ngIf="link"
-                (click)="onMove()">
+                (click)="onMove(link)">
                 <app-clank-cost-info
                     class="action_move__cost"
                     [data]="link.cost"

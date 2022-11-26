@@ -44,6 +44,8 @@ export class GamesService {
             dungeonDeck: [],
             dungeonRow: [],
             reserveRow: [],
+            tokens: [],
+            artifacts: [],
             activePlayerIndex: 0,
             activePlayerId: '',
             actionLogs: [],

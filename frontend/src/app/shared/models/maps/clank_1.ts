@@ -557,6 +557,12 @@ export const getClankMapFirst = () => {
                         },
                     },
                     {
+                        element_id: 24,
+                        cost: {
+                            boot: 1,
+                        },
+                    },
+                    {
                         element_id: 23,
                         cost: {
                             boot: 1,

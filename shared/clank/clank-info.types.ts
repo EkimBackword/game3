@@ -16,6 +16,7 @@ export enum ClankElementType {
     teleport = 'teleport', // Возможность телепортироваться в соседнее помещение
     artefact = 'artefact', // Наличие артефакта
     key = 'key', // Наличие отмычек
+    backpack = 'backpack', // Наличие рюкзока
     minor_secret = 'minor_secret', // Наличие отмычек
     major_secret = 'major_secret', // Наличие отмычек
 }

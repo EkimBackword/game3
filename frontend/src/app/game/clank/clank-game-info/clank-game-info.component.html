@@ -21,7 +21,23 @@
                     </div>
                 </div>
                 <div class="card-body">
-
+                    <div class="clank-artifacts">
+                        <div class="clank-artifact" *ngFor="let artifact of player.artifacts; trackBy: trackById">
+                            <app-clank-artifact
+                                [data]="artifact"
+                                [height]="50"
+                            ></app-clank-artifact>
+                        </div>
+                    </div>
+                    <div class="clank-artifacts">
+                        <div class="clank-artifact" *ngFor="let token of player.tokens; trackBy: trackById">
+                            <app-clank-token
+                                [isOpen]="true"
+                                [state]="token"
+                                [size]="50"
+                            ></app-clank-token>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <ng-container *ngIf="(activePlayerSubject | async) as activePlayer">

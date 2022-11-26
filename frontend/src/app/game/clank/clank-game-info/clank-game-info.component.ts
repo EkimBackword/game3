@@ -90,8 +90,8 @@ export class ClankGameInfoComponent implements OnInit {
         this.router.navigate(['/']);
     }
 
-    trackById(index: number, player: ClankPlayerConfig) {
-        return player.id;
+    trackById(index: number, item: { id: any }) {
+        return item.id;
     }
 
     changeColor(player: ClankPlayerConfig, colorId: GamePlayerColorIdEnum) {

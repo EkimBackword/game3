@@ -69,6 +69,10 @@ export class GameInfoQuery extends Query<GameInfoState> {
         shareReplay(1),
     );
 
+    onTokensChangeSubject = this.select('tokens');
+
+    onArtifactsChangeSubject = this.select('artifacts');
+
     onActionLogsChangeSubject = this.select('actionLogs');
 
     get currentPlayer() {

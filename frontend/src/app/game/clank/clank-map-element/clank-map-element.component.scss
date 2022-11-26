@@ -42,6 +42,7 @@
         box-shadow: inset 0 0 10px 5px var(--bs-dark);
         transition: all ease-in-out 300ms;
         cursor: pointer;
+        z-index: 10;
 
         .action_move__cost {
             height: 100px;
@@ -64,4 +65,10 @@
     &.crystal_cave .action_move {
         border-radius: 50%;
     }
+}
+
+.clank-artifact {
+    position: absolute;
+    width: 100%;
+    z-index: 5;
 }

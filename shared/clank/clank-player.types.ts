@@ -1,5 +1,7 @@
+import { ClankArtifactConfig } from './clank-artifact.types';
 import { ClankCardState } from './clank-card.types';
 import { ClankCostInfo } from './clank-info.types';
+import { ClankTokenState } from './clank-token.types';
 
 export interface ClankPlayerConfig {
     /** Id пользователя */
@@ -16,16 +18,24 @@ export interface ClankPlayerConfig {
     elementId: number;
     /** Информация о наличии очков для действий в раунде */
     benefitInfo: ClankCostInfo;
-    /** Карта игры */
+    /** Колода */
     deck: ClankCardState[];
-    /** Карта игры */
+    /** Карты в руке */
     hand: ClankCardState[];
-    /** Карта игры */
+    /** Разыгранные карты */
     board: ClankCardState[];
-    /** Карта игры */
+    /** сброшенные карты */
     discard: ClankCardState[];
-    /** Карта игры */
+    /** Карты от которых избавились */
     trash: ClankCardState[];
+    /** Жетоны */
+    tokens: ClankTokenState[];
+    /** Артефакты */
+    artifacts: ClankArtifactConfig[];
+    /** Очки здоровья (изначально 10) */
+    health: number;
+    /** Очки здоровья (изначально 10) */
+    isFinish: boolean;
 }
 
 export enum GamePlayerStatusIdEnum {

@@ -7,13 +7,13 @@ import {
 
 import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 
 import {
     ClankCardPositionEnum,
     ClankCardState,
 } from '@shared/clank/clank-card.types';
-import { ClankElementType } from '@shared/clank/clank-info.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 
 import { GameInfoQuery } from '../services/game-info.query';
@@ -100,12 +100,13 @@ export class ClankPlayerInfoComponent implements OnInit {
         }
         const cardInfo = this.getSelectedCardInfo();
         this.gameInfoService.updatePlayer(player.id, {
-            benefitInfo: (Object.keys(player.benefitInfo) as ClankElementType[]).reduce((acc, key) => {
-                const prevValue = acc[key] ?? 0;
-                const nextValue = cardInfo?.benefit?.[key] ?? 0;
-                acc[key] = prevValue + nextValue;
-                return acc;
-            }, player.benefitInfo),
+            benefitInfo: cardInfo?.benefit != null
+                ? updateBenefitInfo({
+                    benefit: player.benefitInfo,
+                    cost: cardInfo.benefit,
+                    isBenefit: true,
+                })
+                : player.benefitInfo,
             hand: player.hand.filter(p => p.id !== this.selectedCard?.id),
             board: [
                 ...player.board,

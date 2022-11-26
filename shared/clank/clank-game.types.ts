@@ -1,7 +1,9 @@
+import { ClankArtifactConfig } from './clank-artifact.types';
 import { ClankCardState } from './clank-card.types';
 import { ClankDlcEnum } from './clank-info.types';
 import { ClankMapConfigIds } from './clank-map.types';
 import { ClankPlayerConfig } from './clank-player.types';
+import { ClankTokenState } from './clank-token.types';
 
 export enum GameInfoStatusIdEnum {
     Empty,
@@ -36,11 +38,15 @@ export interface GameInfoState extends GameInfoConfig {
      */
     players: ClankPlayerConfig[];
     /** Колода подземелья */
-    dungeonDeck: ClankCardState[],
+    dungeonDeck: ClankCardState[];
     /** Подземный ряд */
-    dungeonRow: ClankCardState[],
+    dungeonRow: ClankCardState[];
     /** Общий резерв */
-    reserveRow: ClankCardState[],
+    reserveRow: ClankCardState[];
+    /** Жетоны */
+    tokens: ClankTokenState[];
+    /** Артефакты */
+    artifacts: ClankArtifactConfig[];
     /** Индекс активного игрока */
     activePlayerIndex: number;
     /** Идентификатор активного игрока */

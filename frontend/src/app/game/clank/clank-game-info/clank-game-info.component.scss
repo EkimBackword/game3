@@ -40,3 +40,16 @@
     height: 20px !important;
     background-size: 400% 100%;
 }
+
+.clank-artifacts {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+
+    .clank-artifact {
+
+    }
+}

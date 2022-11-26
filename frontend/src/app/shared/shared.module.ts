@@ -15,9 +15,11 @@ import { ToastModule } from 'primeng-lts/toast';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
+import { ClankArtifactComponent } from './components/clank-artifact/clank-artifact.component';
 import { ClankCardComponent } from './components/clank-card/clank-card.component';
 import { ClankCostInfoComponent } from './components/clank-cost-info/clank-cost-info.component';
 import { ClankMeepleComponent } from './components/clank-meeple/clank-meeple.component';
+import { ClankTokenComponent } from './components/clank-token/clank-token.component';
 import { SharedComponent } from './shared.component';
 
 const exports = [
@@ -34,9 +36,11 @@ const exports = [
 ];
 
 const exportsComponents = [
+    ClankArtifactComponent,
     ClankCardComponent,
     ClankCostInfoComponent,
     ClankMeepleComponent,
+    ClankTokenComponent,
 ];
 
 @NgModule({

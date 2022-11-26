@@ -59,6 +59,9 @@ const testGame: GameInfoState = {
     dungeonDeck: [],
     dungeonRow: [],
     reserveRow: [],
+    tokens: [],
+
+    artifacts: [],
     players: [],
     actionLogs: [],
     activePlayerIndex: 0,
@@ -142,7 +145,10 @@ io.of(gameRegExp).on('connection', (socket) => {
                 board: [],
                 discard: [],
                 trash: [],
-
+                tokens: [],
+                artifacts: [],
+                health: 10,
+                isFinish: false,
             };
             gameInfo.players.push(playerConfig);
             clankNamespace.emit('gameUpdated', gameInfo);
