@@ -2,6 +2,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    HostBinding,
     Input,
     OnChanges,
     OnInit,
@@ -33,6 +34,9 @@ export class ClankCardComponent implements OnInit, OnChanges {
 
     style: Partial<CSSStyleDeclaration> = {};
 
+    @HostBinding('style.--card_width') card_width = `${this.width}px`;
+    @HostBinding('style.--card_height') card_height = `${this.height}px`;
+
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private cardsService: CardsService,
@@ -40,7 +44,7 @@ export class ClankCardComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         this.card = this.getCardInfo();
-        this.style = this.getStyle();
+        this.updateStyle();
         this.changeDetectorRef.detectChanges();
     }
 
@@ -49,9 +53,15 @@ export class ClankCardComponent implements OnInit, OnChanges {
             this.card = this.getCardInfo();
         }
         if (changes.card || changes.width || changes.height) {
-            this.style = this.getStyle();
+            this.updateStyle();
         }
         this.changeDetectorRef.detectChanges();
+    }
+
+    updateStyle() {
+        this.card_width = `${this.width}px`;
+        this.card_height = `${this.height}px`;
+        this.style = this.getStyle();
     }
 
     private getCardInfo() {
@@ -66,11 +76,11 @@ export class ClankCardComponent implements OnInit, OnChanges {
         if (this.card == null) {
             return {};
         }
-        const positionX = this.card.column * ClankCardWidth;
-        const positionY = this.card.row * ClankCardHeight;
+        const positionX = this.card.column * this.width;
+        const positionY = this.card.row * this.height;
         return {
-            width: `${ClankCardWidth}px`,
-            height: `${ClankCardHeight}px`,
+            width: `${this.width}px`,
+            height: `${this.height}px`,
             backgroundImage: `url(${this.card.url})`,
             backgroundPosition: `-${positionX}px -${positionY}px`,
             backgroundSize: this.card.backgroundSize,

@@ -30,7 +30,11 @@
                     <div class="cards_wrap__body">
                         <div class="clank_card position-absolute"
                             *ngFor="let card of player.deck">
-                            <app-clank-card [state]="card"></app-clank-card>
+                            <app-clank-card
+                                [width]="card_width"
+                                [height]="card_height"
+                                [state]="card"
+                            ></app-clank-card>
                         </div>
                     </div>
                     <div class="cards_wrap__footer">
@@ -49,6 +53,8 @@
                         >
                             <app-clank-card
                                 [isOpen]="true"
+                                [width]="card_width"
+                                [height]="card_height"
                                 [state]="card"
                             ></app-clank-card>
                         </div>
@@ -69,6 +75,8 @@
                             *ngFor="let card of player.discard"
                         >
                             <app-clank-card
+                                [width]="card_width"
+                                [height]="card_height"
                                 [state]="card"
                             ></app-clank-card>
                         </div>
@@ -87,6 +95,8 @@
                 >
                     <app-clank-card
                         [isOpen]="true"
+                        [width]="card_width"
+                        [height]="card_height"
                         [state]="cardInfo.card"
                     ></app-clank-card>
                 </div>

@@ -2,6 +2,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    HostBinding,
     OnInit,
 } from '@angular/core';
 
@@ -31,6 +32,11 @@ export class ClankPlayerInfoComponent implements OnInit {
 
     selectedPlayerSubject = new BehaviorSubject<ClankPlayerConfig | undefined>(void 0);
 
+    card_width = 160;
+    card_height = 220;
+    @HostBinding('style.--player_card_width') player_card_width = `${this.card_width}px`;
+    @HostBinding('style.--player_card_height') player_card_height = `${this.card_height}px`;
+
     get selectedPlayer() {
         return this.selectedPlayerSubject.getValue();
     }
@@ -47,8 +53,8 @@ export class ClankPlayerInfoComponent implements OnInit {
         return this.selectedPlayer.hand.map((card, index) => {
             return {
                 card,
-                left: (index % rowCount) * 120,
-                top: Math.floor(index / rowCount) * 280,
+                left: (index % rowCount) * this.card_width * 0.8,
+                top: Math.floor(index / rowCount) * this.card_height * 0.8,
             };
         });
     }
