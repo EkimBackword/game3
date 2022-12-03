@@ -13,6 +13,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { ClankArtifactComponent } from './components/clank-artifact/clank-artifact.component';
 import { ClankCardComponent } from './components/clank-card/clank-card.component';
@@ -35,6 +36,7 @@ const exports = [
     MatDialogModule,
     MatSnackBarModule,
     MatBadgeModule,
+    NgbModule,
 ];
 
 const exportsComponents = [
