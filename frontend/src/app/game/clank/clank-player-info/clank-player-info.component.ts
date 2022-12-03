@@ -10,6 +10,12 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import {
+    cardHeight,
+    cardsWrapPadding,
+    cardWidth,
+    ISelectedPlayerCardInfo,
+} from 'src/app/shared/components/clank-card/clank-card.types';
 import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
 import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
@@ -23,25 +29,6 @@ import { ClankDungeonRowComponent } from '../clank-dungeon-row/clank-dungeon-row
 import { GameCardService } from '../services/game-card.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
-
-interface ISelectedPlayerCardInfo {
-    id: string;
-    card: ClankCardState;
-    style: Partial<CSSStyleDeclaration>;
-    isOpen: boolean;
-    classes: string[];
-    actions: ISelectedPlayerCardAction[];
-}
-
-interface ISelectedPlayerCardAction {
-    name: string;
-    canUse: (activePlayer: ClankPlayerConfig) => boolean;
-    callback: () => void;
-}
-
-const cardWidth = 160;
-const cardHeight = 220;
-const cardsWrapPadding = 20;
 
 @Component({
     selector: 'app-clank-player-info',
@@ -192,35 +179,29 @@ export class ClankPlayerInfoComponent implements OnInit {
         const deck = (player?.deck ?? []).map((card, index) => {
             const data: ISelectedPlayerCardInfo = {
                 id: card.id,
-                card,
+                state: card,
                 style: {
                     left: `${this.cardsWrapInfo.deckLeft}px`,
                     top: `${this.cardsWrapInfo.deckTop}px`,
                     zIndex: `${index}`,
                 },
                 isOpen: false,
-                classes: [`cards_wrap__deck`],
-                actions: [
-                    {
-                        name: 'Купить карту',
-                        canUse: (activePlayer) => player.id === activePlayer.id,
-                        callback: () => this.openDungeonRow(player),
-                    },
-                ],
+                classes: [],
+                actions: [],
             };
             return data;
         });
         const board = (player?.board ?? []).map((card, index) => {
             const data: ISelectedPlayerCardInfo = {
                 id: card.id,
-                card,
+                state: card,
                 style: {
                     left: `${this.cardsWrapInfo.boardLeft}px`,
                     top: `${this.cardsWrapInfo.deckTop}px`,
                     zIndex: `${index}`,
                 },
                 isOpen: true,
-                classes: [`cards_wrap__board`],
+                classes: [],
                 actions: [],
             };
             return data;
@@ -228,14 +209,14 @@ export class ClankPlayerInfoComponent implements OnInit {
         const discard = (player?.discard ?? []).map((card, index) => {
             const data: ISelectedPlayerCardInfo = {
                 id: card.id,
-                card,
+                state: card,
                 style: {
                     left: `${this.cardsWrapInfo.discardLeft}px`,
                     top: `${this.cardsWrapInfo.deckTop}px`,
                     zIndex: `${index}`,
                 },
                 isOpen: true,
-                classes: [`cards_wrap__discard`],
+                classes: [],
                 actions: [],
             };
             return data;
@@ -247,13 +228,14 @@ export class ClankPlayerInfoComponent implements OnInit {
             const top = topIndex * this.cardsWrapInfo.cardHeight * 0.8 + this.cardsWrapInfo.boardTop;
             const data: ISelectedPlayerCardInfo = {
                 id: card.id,
-                card,
+                state: card,
                 style: {
                     left: `${left}px`,
                     top: `${top}px`,
+                    zIndex: `${index}`,
                 },
                 isOpen: true,
-                classes: [`cards_wrap__hand`],
+                classes: [`card_container__hand`],
                 actions: [{
                     name: 'Использовать карту',
                     canUse: (activePlayer) => player.id === activePlayer.id,
@@ -267,7 +249,7 @@ export class ClankPlayerInfoComponent implements OnInit {
             ...board,
             ...discard,
             ...hand,
-        ].sort((a, b) => a.card.initIndex - b.card.initIndex);
+        ].sort((a, b) => a.state.initIndex - b.state.initIndex);
         this.selectedPlayerCardsSubject.next(cards);
     }
 

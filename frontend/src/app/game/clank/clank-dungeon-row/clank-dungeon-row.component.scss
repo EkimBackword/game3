@@ -1,26 +1,13 @@
 :host {
     width: calc(var(--dungeon_width) * 7.6);
-    height: calc(var(--dungeon_height) * 2.1);
+    height: calc(var(--dungeon_height) * 2.4);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: stretch;
 }
 
-.cards_row {
-    width: 100%;
-    height: var(--dungeon_height);
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.cards_wrap {
-    width: var(--dungeon_width);
-    height: var(--dungeon_height);
-}
-
-.cards_wrap + .cards_wrap {
-    margin-left: calc(var(--dungeon_width) * 0.1);
+.clank-cost-info {
+    height: 50px;
+    margin-bottom: 10px;
 }

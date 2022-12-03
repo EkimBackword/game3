@@ -70,32 +70,3 @@
     justify-content: flex-start;
     align-items: center;
 }
-
-.clank_card {
-    border-radius: 35px;
-    z-index: 5;
-    filter: drop-shadow(2px 4px 6px var(--bs-black));
-    transition: all ease-in-out 300ms;
-}
-
-.cards_wrap {
-    width: var(--dungeon_width);
-    height: var(--dungeon_height);
-    overflow: hidden;
-    transition: all ease-in-out 300ms;
-
-    &.cards_wrap__hand {
-        transform-origin: top left;
-        width: var(--player_card_width, 160px);
-        height: var(--player_card_height, 220px);
-        flex-shrink: 0;
-        border: 0;
-        z-index: 1;
-
-        &:hover {
-            transform: scale(1.1, 1.1);
-            z-index: 10;
-        }
-    }
-
-}

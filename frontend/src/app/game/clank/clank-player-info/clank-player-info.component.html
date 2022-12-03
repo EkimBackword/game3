@@ -16,46 +16,38 @@
             </li>
         </ul>
     </div>
-    <div class="body p-1" *ngIf="(selectedPlayerSubject | async) as player">
-        <div class="not_active_player" *ngIf="player.id !== activePlayer.id">
-            <h4 class="message p-2 shadow-lg">
-                Ход игрока
-                <span class="player_name">{{activePlayer.name}}</span>
-            </h4>
-        </div>
-        <div class="d-flex flex-column flex-grow-1">
-            <div class="position-relative">
-                <div class="cards_wrap position-absolute"
+    <ng-container *ngIf="(selectedPlayerSubject | async) as player">
+        <div class="body p-1" >
+            <div class="not_active_player" *ngIf="player.id !== activePlayer.id">
+                <h4 class="message p-2 shadow-lg">
+                    Ход игрока
+                    <span class="player_name">{{activePlayer.name}}</span>
+                </h4>
+            </div>
+            <div class="d-flex flex-column flex-grow-1 position-relative">
+                <app-clank-card class="position-absolute"
                     *ngFor="let cardInfo of (selectedPlayerCardsSubject | async); trackBy: trackById;"
-                    [ngClass]="cardInfo.classes"
-                    [ngStyle]="cardInfo.style">
-                    <div class="cards_wrap__body">
-                        <div class="clank_card clank_card__hover clank_card__open">
-                            <app-clank-card
-                                [width]="cardsWrapInfo.cardWidth"
-                                [height]="cardsWrapInfo.cardHeight"
-                                [state]="cardInfo.card"
-                                [isOpen]="cardInfo.isOpen"
-                            ></app-clank-card>
-                        </div>
-                    </div>
-                    <div class="actions" *ngIf="cardInfo.actions.length > 0">
-                        <ng-container *ngFor="let action of cardInfo.actions">
-                            <button class="btn btn-primary"
-                                *ngIf="action.canUse"
-                                (click)="action.callback()">
-                                {{action.name}}
-                            </button>
-                        </ng-container>
-                    </div>
-                </div>
+                    [width]="cardsWrapInfo.cardWidth"
+                    [height]="cardsWrapInfo.cardHeight"
+                    [data]="cardInfo"
+                    [ngStyle]="cardInfo.style"
+                ></app-clank-card>
             </div>
         </div>
-    </div>
-    <div class="footer p-1">
-        <button class="mb-1 btn btn-danger"
-            (click)="finishTurn()"
-            [disabled]="currentPlayer != null && currentPlayer.id !== activePlayer.id"
-        >Закончить ход</button>
-    </div>
+        <div class="footer p-1" *ngIf="currentPlayer != null">
+            <div class="d-flex justify-content-center">
+                <app-clank-cost-info
+                    [data]="player.benefitInfo"
+                ></app-clank-cost-info>
+            </div>
+            <button class="mb-1 btn btn-primary"
+                (click)="openDungeonRow(currentPlayer)"
+                [disabled]="currentPlayer.id !== activePlayer.id && currentPlayer.id !== player.id"
+            >Купить карту</button>
+            <button class="btn btn-danger"
+                (click)="finishTurn()"
+                [disabled]="currentPlayer.id !== activePlayer.id && currentPlayer.id !== player.id"
+            >Закончить ход</button>
+        </div>
+    </ng-container>
 </ng-container>

@@ -12,11 +12,11 @@ import {
 import {
     ClankCardConfig,
     ClankCardHeight,
-    ClankCardState,
     ClankCardWidth,
 } from '@shared/clank/clank-card.types';
 
 import { CardsService } from '../../services/cards.service';
+import { ISelectedPlayerCardInfo } from './clank-card.types';
 
 @Component({
     selector: 'app-clank-card',
@@ -26,10 +26,10 @@ import { CardsService } from '../../services/cards.service';
 })
 export class ClankCardComponent implements OnInit, OnChanges {
 
-    @Input() isOpen = false;
+    @Input() data: ISelectedPlayerCardInfo | undefined;
+    @Input() openByHover = false;
     @Input() width = ClankCardWidth;
     @Input() height = ClankCardHeight;
-    @Input() state: ClankCardState | undefined;
     card: ClankCardConfig | undefined;
 
     style: Partial<CSSStyleDeclaration> = {};
@@ -65,10 +65,10 @@ export class ClankCardComponent implements OnInit, OnChanges {
     }
 
     private getCardInfo() {
-        if (this.state == null) {
+        if (this.data?.state == null) {
             return void 0;
         }
-        const [find_string] = this.state.id.split('__');
+        const [find_string] = this.data.state.id.split('__');
         return this.cardsService.store.find(p => p.find_string === find_string);
     }
 

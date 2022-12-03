@@ -8,7 +8,14 @@ import {
 } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 
+import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {
+    cardHeight,
+    cardsWrapPadding,
+    cardWidth,
+    ISelectedPlayerCardInfo,
+} from 'src/app/shared/components/clank-card/clank-card.types';
 import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 
@@ -28,29 +35,88 @@ import { GameInfoService } from '../services/game-info.service';
 })
 export class ClankDungeonRowComponent implements OnInit {
 
-    dungeonDeckSubject = this.data.gameInfoQuery.onDungeonDeckChangeSubject;
+    cardsWrapInfo = {
+        rowCount: 7,
+        cardWidth,
+        cardHeight,
+        dungeonRowTop: 0,
+        reserveRowTop: cardHeight + cardsWrapPadding,
+    };
 
-    dungeonRowSubject = this.data.gameInfoQuery.onDungeonRowChangeSubject;
+    @HostBinding('style.--dungeon_width') dungeon_width = `${this.cardsWrapInfo.cardWidth}px`;
+    @HostBinding('style.--dungeon_height') dungeon_height = `${this.cardsWrapInfo.cardHeight}px`;
 
-    reserveRowSubject = this.data.gameInfoQuery.onReserveRowChangeSubject.pipe(
-        map((cards) => {
-            const groups = cards.reduce((acc, card) => {
-                const [find_string] = card.id.split('__');
-                const group = acc.get(find_string) ?? [];
-                acc.set(find_string, [
-                    ...group,
-                    card,
-                ]);
-                return acc;
-            }, new Map<string, ClankCardState[]>());
-            return [...groups.values()];
+    cardsSubject = combineLatest([
+        this.data.gameInfoQuery.onDungeonDeckChangeSubject,
+        this.data.gameInfoQuery.onDungeonRowChangeSubject,
+        this.data.gameInfoQuery.onReserveRowChangeSubject,
+    ]).pipe(
+        map(([
+            dungeonDeckCards,
+            dungeonRowCards,
+            reserveRowCards,
+        ]) => {
+            const dungeonDeck: ISelectedPlayerCardInfo[] = dungeonDeckCards.map((state) => {
+                const data: ISelectedPlayerCardInfo = {
+                    id: state.id,
+                    state,
+                    style: {
+                        left: `0px`,
+                        top: `${this.cardsWrapInfo.dungeonRowTop}px`,
+                    },
+                    isOpen: false,
+                    classes: [],
+                    actions: [],
+                };
+                return data;
+            });
+            const dungeonRow: ISelectedPlayerCardInfo[] = dungeonRowCards.map((state, index) => {
+                const data: ISelectedPlayerCardInfo = {
+                    id: state.id,
+                    state,
+                    style: {
+                        left: `${(cardWidth + cardsWrapPadding) * (index + 1)}px`,
+                        top: `${this.cardsWrapInfo.dungeonRowTop}px`,
+                    },
+                    isOpen: true,
+                    classes: [],
+                    actions: [{
+                        name: 'Купить',
+                        canUse: () => true,
+                        callback: () => this.buyCard(state),
+                    }],
+                };
+                return data;
+            });
+            const reserveRowGroups = new Map<string, number>();
+            const reserveRow: ISelectedPlayerCardInfo[] = reserveRowCards.map((state) => {
+                const [find_string] = state.id.split('__');
+                const index = reserveRowGroups.get(find_string) ?? reserveRowGroups.size;
+                reserveRowGroups.set(find_string, index);
+                const data: ISelectedPlayerCardInfo = {
+                    id: state.id,
+                    state,
+                    style: {
+                        left: `${(cardWidth + cardsWrapPadding) * index}px`,
+                        top: `${this.cardsWrapInfo.reserveRowTop}px`,
+                    },
+                    isOpen: true,
+                    classes: [],
+                    actions: [{
+                        name: 'Купить',
+                        canUse: () => true,
+                        callback: () => this.buyCard(state),
+                    }],
+                };
+                return data;
+            });
+            return [
+                ...dungeonDeck,
+                ...dungeonRow,
+                ...reserveRow,
+            ].sort((a, b) => a.state.initIndex - b.state.initIndex);
         }),
     );
-
-    card_width = 160;
-    card_height = 220;
-    @HostBinding('style.--dungeon_width') dungeon_width = `${this.card_width}px`;
-    @HostBinding('style.--dungeon_height') dungeon_height = `${this.card_height}px`;
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,

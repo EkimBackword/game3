@@ -1,9 +1,9 @@
 <div class="container container--page shadow d-flex flex-row flex-wrap justify-content-start align-items-start">
     <div class="col-6 mb-3 d-flex flex-row justify-content-start align-items-start" *ngFor="let card of cards">
-        <app-clank-card
+        <!-- <app-clank-card
             [isOpen]="true"
             [state]="card"
-        ></app-clank-card>
+        ></app-clank-card> -->
         <div class="card_info p-1 d-flex flex-column justify-content-start align-items-stretch">
             <p><strong>Имя:</strong> {{card.name}}</p>
             <ng-container *ngIf="card.acquire">

@@ -1,5 +1,6 @@
 import {
     Component,
+    HostBinding,
     Input,
     OnInit,
 } from '@angular/core';
@@ -16,6 +17,11 @@ import { ClankCostInfo } from '@shared/clank/clank-info.types';
 export class ClankCostInfoComponent implements OnInit {
 
     @Input() data!: ClankCostInfo;
+    @Input() set elementHeight(value: number) {
+        this.height = `${value ?? 50}px`;
+    }
+
+    @HostBinding('style.--cost-element-height') height = '50px';
 
     ClankElementTypeMap = ClankElementTypeMap;
 
