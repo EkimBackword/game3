@@ -15,6 +15,11 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <div class="clank-cost-info">
+                        <app-clank-cost-info
+                            [data]="player.benefitInfo"
+                        ></app-clank-cost-info>
+                    </div>
                     <div class="clank-artifacts">
                         <div class="clank-artifact" *ngFor="let artifact of player.artifacts; trackBy: trackById">
                             <app-clank-artifact
