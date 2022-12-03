@@ -24,6 +24,25 @@ import { GameCardService } from '../services/game-card.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
 
+interface ISelectedPlayerCardInfo {
+    id: string;
+    card: ClankCardState;
+    style: Partial<CSSStyleDeclaration>;
+    isOpen: boolean;
+    classes: string[];
+    actions: ISelectedPlayerCardAction[];
+}
+
+interface ISelectedPlayerCardAction {
+    name: string;
+    canUse: (activePlayer: ClankPlayerConfig) => boolean;
+    callback: () => void;
+}
+
+const cardWidth = 160;
+const cardHeight = 220;
+const cardsWrapPadding = 20;
+
 @Component({
     selector: 'app-clank-player-info',
     templateUrl: './clank-player-info.component.html',
@@ -32,12 +51,26 @@ import { GameInfoService } from '../services/game-info.service';
 })
 export class ClankPlayerInfoComponent implements OnInit {
 
-    selectedPlayerSubject = new BehaviorSubject<ClankPlayerConfig | undefined>(void 0);
+    cardsWrapInfo = {
+        rowCount: 4,
+        cardWidth,
+        cardHeight,
+        deckTop: cardsWrapPadding * 2,
+        deckLeft: (cardWidth + cardsWrapPadding) * 0 + cardsWrapPadding,
+        boardLeft: (cardWidth + cardsWrapPadding) * 1 + cardsWrapPadding,
+        discardLeft: (cardWidth + cardsWrapPadding) * 2 + cardsWrapPadding,
+        boardTop: 300 + cardsWrapPadding * 2,
+    };
 
-    card_width = 160;
-    card_height = 220;
-    @HostBinding('style.--player_card_width') player_card_width = `${this.card_width}px`;
-    @HostBinding('style.--player_card_height') player_card_height = `${this.card_height}px`;
+    @HostBinding('style.--player_card_height') player_card_height = `${this.cardsWrapInfo.cardHeight}px`;
+    @HostBinding('style.--player_card_width') player_card_width = `${this.cardsWrapInfo.cardWidth}px`;
+
+    selectedPlayerSubject = new BehaviorSubject<ClankPlayerConfig | undefined>(void 0);
+    selectedPlayerCardsSubject = new BehaviorSubject<ISelectedPlayerCardInfo[]>([]);
+
+    get currentPlayer() {
+        return this.gameInfoQuery.currentPlayer;
+    }
 
     get selectedPlayer() {
         return this.selectedPlayerSubject.getValue();
@@ -47,33 +80,16 @@ export class ClankPlayerInfoComponent implements OnInit {
         this.selectedPlayerSubject.next(player);
     }
 
-    get handRow() {
-        if (this.selectedPlayer == null) {
-            return [];
-        }
-        const rowCount = 4;
-        return this.selectedPlayer.hand.map((card, index) => {
-            return {
-                card,
-                left: (index % rowCount) * this.card_width * 0.8,
-                top: Math.floor(index / rowCount) * this.card_height * 0.8,
-            };
-        });
-    }
-
     playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(
         tap((players) => {
             this.selectedPlayer = this.selectedPlayer != null
                 ? players.find(p => p.id === this.selectedPlayer?.id)
                 : this.gameInfoQuery.currentPlayer;
+            this.updatePlayerCards(this.selectedPlayer);
         }),
     );
 
     activePlayerSubject = this.gameInfoQuery.onActivePlayerChangeSubject;
-
-    get currentPlayer() {
-        return this.gameInfoQuery.currentPlayer;
-    }
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -160,11 +176,99 @@ export class ClankPlayerInfoComponent implements OnInit {
     }
 
     finishTurn() {
+        // TODO: Добавить проверку на неиспользованные ресурсы
         this.gameInfoService.finishTurn();
     }
 
-    trackById(index: number, player: ClankPlayerConfig) {
+    trackById(index: number, player: { id: any }) {
         return player.id;
+    }
+
+    private updatePlayerCards(player: ClankPlayerConfig | undefined) {
+        if (player == null) {
+            this.selectedPlayerCardsSubject.next([]);
+            return;
+        }
+        const deck = (player?.deck ?? []).map((card, index) => {
+            const data: ISelectedPlayerCardInfo = {
+                id: card.id,
+                card,
+                style: {
+                    left: `${this.cardsWrapInfo.deckLeft}px`,
+                    top: `${this.cardsWrapInfo.deckTop}px`,
+                    zIndex: `${index}`,
+                },
+                isOpen: false,
+                classes: [`cards_wrap__deck`],
+                actions: [
+                    {
+                        name: 'Купить карту',
+                        canUse: (activePlayer) => player.id === activePlayer.id,
+                        callback: () => this.openDungeonRow(player),
+                    },
+                ],
+            };
+            return data;
+        });
+        const board = (player?.board ?? []).map((card, index) => {
+            const data: ISelectedPlayerCardInfo = {
+                id: card.id,
+                card,
+                style: {
+                    left: `${this.cardsWrapInfo.boardLeft}px`,
+                    top: `${this.cardsWrapInfo.deckTop}px`,
+                    zIndex: `${index}`,
+                },
+                isOpen: true,
+                classes: [`cards_wrap__board`],
+                actions: [],
+            };
+            return data;
+        });
+        const discard = (player?.discard ?? []).map((card, index) => {
+            const data: ISelectedPlayerCardInfo = {
+                id: card.id,
+                card,
+                style: {
+                    left: `${this.cardsWrapInfo.discardLeft}px`,
+                    top: `${this.cardsWrapInfo.deckTop}px`,
+                    zIndex: `${index}`,
+                },
+                isOpen: true,
+                classes: [`cards_wrap__discard`],
+                actions: [],
+            };
+            return data;
+        });
+        const hand = (player?.hand ?? []).map((card, index) => {
+            const leftIndex = (index % this.cardsWrapInfo.rowCount);
+            const topIndex = Math.floor(index / this.cardsWrapInfo.rowCount);
+            const left = leftIndex * this.cardsWrapInfo.cardWidth * 0.8;
+            const top = topIndex * this.cardsWrapInfo.cardHeight * 0.8 + this.cardsWrapInfo.boardTop;
+            const data: ISelectedPlayerCardInfo = {
+                id: card.id,
+                card,
+                style: {
+                    left: `${left}px`,
+                    top: `${top}px`,
+                },
+                isOpen: true,
+                classes: [`cards_wrap__hand`],
+                actions: [{
+                    name: 'Использовать карту',
+                    canUse: (activePlayer) => player.id === activePlayer.id,
+                    callback: () => this.useCard(card, player),
+                }],
+            };
+            return data;
+        });
+        const cards = [
+            ...deck,
+            ...board,
+            ...discard,
+            ...hand,
+        ].sort((a, b) => a.card.initIndex - b.card.initIndex);
+        this.selectedPlayerCardsSubject.next(cards);
     }
 
 }

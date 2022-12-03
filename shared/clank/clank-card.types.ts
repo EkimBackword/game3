@@ -91,6 +91,8 @@ export interface ClankCardState {
     id: string;
     /** При перемешивании колоды выставляется новая позиция */
     index: number;
+    /** Не изменный индекс при иницыализации */
+    initIndex: number;
     position: ClankCardPositionEnum;
     player_id?: string;
 }

@@ -36,7 +36,7 @@
     background-size: cover;
     background-position: center center;
     backface-visibility: hidden;
-    transition: transform 0.5s ease-in-out;
+    transition: transform ease-in-out 300ms;
 }
 
 .flip_card_face__front {

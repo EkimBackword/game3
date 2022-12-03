@@ -23,90 +23,30 @@
                 <span class="player_name">{{activePlayer.name}}</span>
             </h4>
         </div>
-        <div class="d-flex flex-column flex-grow-1" >
-            <div class="w-100 h-50 d-flex justify-content-around align-items-center position-relative">
-                <div class="clank_player_deck cards_wrap">
-                    <div class="cards_wrap__header">
-                        <span class="badge bg-primary">{{player.deck.length}}</span>
-                    </div>
-                    <div class="cards_wrap__body">
-                        <div class="clank_card position-absolute"
-                            *ngFor="let card of player.deck">
-                            <app-clank-card
-                                [width]="card_width"
-                                [height]="card_height"
-                                [state]="card"
-                            ></app-clank-card>
-                        </div>
-                    </div>
-                    <div class="cards_wrap__footer">
-                        <button class="btn btn-primary btn-sm"
-                            (click)="openDungeonRow(player)"
-                            [disabled]="player.id !== activePlayer.id || currentPlayer?.id != player.id">
-                            Покупка карт
-                        </button>
-                    </div>
-                </div>
-                <div class="clank_player_board cards_wrap">
-                    <div class="cards_wrap__header">
-                        <span class="badge bg-primary">{{player.board.length}}</span>
-                    </div>
-                    <div class="cards_wrap__body">
-                        <div class="clank_card clank_card__open position-absolute"
-                            *ngFor="let card of player.board"
-                        >
-                            <app-clank-card
-                                [isOpen]="true"
-                                [width]="card_width"
-                                [height]="card_height"
-                                [state]="card"
-                            ></app-clank-card>
-                        </div>
-                    </div>
-                    <div class="cards_wrap__footer">
-                    </div>
-                </div>
-                <div class="clank_player_discard cards_wrap">
-                    <div class="cards_wrap__header">
-                        <span class="badge bg-primary">{{player.discard.length}}</span>
-                    </div>
-                    <div class="cards_wrap__body">
-                        <div class="clank_card clank_card__open position-absolute"
-                            *ngFor="let card of player.discard"
-                        >
-                            <app-clank-card
-                                [isOpen]="true"
-                                [width]="card_width"
-                                [height]="card_height"
-                                [state]="card"
-                            ></app-clank-card>
-                        </div>
-                    </div>
-                    <div class="cards_wrap__footer">
-                    </div>
-                </div>
-            </div>
-            <div class="w-100 h-50 d-flex position-relative overflow-auto">
-                <div class="cards_wrap cards_wrap__hand position-absolute"
-                    *ngFor="let cardInfo of handRow; let i = index"
-                    [style.top.px]="cardInfo.top"
-                    [style.left.px]="cardInfo.left">
+        <div class="d-flex flex-column flex-grow-1">
+            <div class="position-relative">
+                <div class="cards_wrap position-absolute"
+                    *ngFor="let cardInfo of (selectedPlayerCardsSubject | async); trackBy: trackById;"
+                    [ngClass]="cardInfo.classes"
+                    [ngStyle]="cardInfo.style">
                     <div class="cards_wrap__body">
                         <div class="clank_card clank_card__hover clank_card__open">
                             <app-clank-card
-                                [isOpen]="true"
-                                [width]="card_width"
-                                [height]="card_height"
+                                [width]="cardsWrapInfo.cardWidth"
+                                [height]="cardsWrapInfo.cardHeight"
                                 [state]="cardInfo.card"
+                                [isOpen]="cardInfo.isOpen"
                             ></app-clank-card>
                         </div>
                     </div>
-                    <div class="actions">
-                        <button class="btn btn-primary"
-                            *ngIf="player.id == activePlayer.id"
-                            (click)="useCard(cardInfo.card, player)">
-                            Использовать карту
-                        </button>
+                    <div class="actions" *ngIf="cardInfo.actions.length > 0">
+                        <ng-container *ngFor="let action of cardInfo.actions">
+                            <button class="btn btn-primary"
+                                *ngIf="action.canUse"
+                                (click)="action.callback()">
+                                {{action.name}}
+                            </button>
+                        </ng-container>
                     </div>
                 </div>
             </div>

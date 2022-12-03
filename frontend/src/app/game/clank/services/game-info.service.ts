@@ -315,6 +315,7 @@ export class GameInfoService implements OnDestroy {
                 ...dungeonInfo.state,
                 activePlayerIndex,
                 activePlayerId,
+                players: arrayUpdate(state.players, currentPlayer.id, currentPlayer),
                 statusId: isFinish
                     ? GameInfoStatusIdEnum.Finished
                     : state.statusId,
@@ -335,16 +336,17 @@ export class GameInfoService implements OnDestroy {
         this.socket?.emit('updateGame', this.gameInfoQuery.getValue());
     }
 
-    private simpleShuffle(list: any[]) {
+    private simpleShuffle<T = any>(list: T[]) {
         return list.sort(() => Math.random() - 0.5);
     }
 
     private shuffle(deck: ClankCardState[]) {
         return this.simpleShuffle(deck).map((card, index) => {
-            return {
+            const newState: ClankCardState = {
                 ...card,
                 index,
             };
+            return newState;
         });
     }
 

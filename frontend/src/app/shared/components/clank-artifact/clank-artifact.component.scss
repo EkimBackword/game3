@@ -19,10 +19,8 @@
 
 .hexagon,
 .hexagon:before {
-    -webkit-clip-path: polygon(75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%, 25% 0);
     clip-path: polygon(75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%, 25% 0);
-    -webkit-transition: .3s;
-    transition: .3s;
+    transition: 300ms;
     opacity: 0.9;
     cursor: pointer;
 }

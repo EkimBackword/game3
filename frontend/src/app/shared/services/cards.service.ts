@@ -85,6 +85,7 @@ export class CardsService {
             const state: ClankCardState = {
                 id: config.id,
                 index: config.index,
+                initIndex: config.initIndex,
                 position: config.position,
                 player_id: config.player_id,
             };
