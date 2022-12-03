@@ -42,7 +42,9 @@ export class CardsService {
     constructor() { }
 
     getReserveDecksCards(mapDlcId: ClankDlcEnum, userCount: number) {
-        const ids: ClankDlcEnum[] = [ClankDlcEnum.clank, mapDlcId];
+        const ids: ClankDlcEnum[] = mapDlcId === ClankDlcEnum.clank
+            ? [ClankDlcEnum.clank]
+            : [ClankDlcEnum.clank, mapDlcId];
         return ids.flatMap((id) => this.mappingToCardStates(this.reserveDecks[id]?.(userCount) ?? []));
     }
 
@@ -68,6 +70,14 @@ export class CardsService {
 
     getShareDecksCards(ids: ClankDlcEnum[]) {
         return ids.flatMap((id) => this.mappingToCardStates(this.shareDecks[id]?.() ?? []));
+    }
+
+    getCardInfo(state?: ClankCardState) {
+        if (state == null) {
+            return;
+        }
+        const [find_string] = state.id.split('__');
+        return this.store.find(p => p.find_string === find_string);
     }
 
     private mappingToCardStates(configs: ClankCardConfig[]) {

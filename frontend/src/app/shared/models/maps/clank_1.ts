@@ -14,6 +14,7 @@ export const getClankMapFirst = () => {
         height: 3000,
         dragonTrack: [
             {
+                rage: 0,
                 position: {
                     x: 1940,
                     y: 2700,
@@ -496,6 +497,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 16,
+                isDungeon: true,
                 position: {
                     x: 1790,
                     y: 980,
@@ -530,6 +532,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 17,
+                isDungeon: true,
                 position: {
                     x: 169,
                     y: 1345,
@@ -579,6 +582,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 18,
+                isDungeon: true,
                 position: {
                     x: 590,
                     y: 1330,
@@ -628,6 +632,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 19,
+                isDungeon: true,
                 position: {
                     x: 1032,
                     y: 1426,
@@ -658,6 +663,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 20,
+                isDungeon: true,
                 position: {
                     x: 1487,
                     y: 1429,
@@ -694,6 +700,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 21,
+                isDungeon: true,
                 position: {
                     x: 1800,
                     y: 1305,
@@ -736,6 +743,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 22,
+                isDungeon: true,
                 position: {
                     x: 2130,
                     y: 1338,
@@ -767,6 +775,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 23,
+                isDungeon: true,
                 position: {
                     x: 100,
                     y: 1810,
@@ -796,6 +805,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 24,
+                isDungeon: true,
                 position: {
                     x: 350,
                     y: 1557,
@@ -820,6 +830,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 25,
+                isDungeon: true,
                 position: {
                     x: 578,
                     y: 1850,
@@ -850,6 +861,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 26,
+                isDungeon: true,
                 position: {
                     x: 1030,
                     y: 1745,
@@ -900,6 +912,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 27,
+                isDungeon: true,
                 position: {
                     x: 1485,
                     y: 1750,
@@ -937,6 +950,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 28,
+                isDungeon: true,
                 position: {
                     x: 1786,
                     y: 1620,
@@ -961,6 +975,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 29,
+                isDungeon: true,
                 position: {
                     x: 2325,
                     y: 1735,
@@ -991,6 +1006,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 30,
+                isDungeon: true,
                 position: {
                     x: 542,
                     y: 2095,
@@ -1038,6 +1054,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 31,
+                isDungeon: true,
                 position: {
                     x: 950,
                     y: 2135,
@@ -1089,6 +1106,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 32,
+                isDungeon: true,
                 position: {
                     x: 1307,
                     y: 2122,
@@ -1122,6 +1140,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 33,
+                isDungeon: true,
                 position: {
                     x: 1736,
                     y: 2230,
@@ -1166,6 +1185,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 34,
+                isDungeon: true,
                 position: {
                     x: 2056,
                     y: 1964,
@@ -1196,6 +1216,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 35,
+                isDungeon: true,
                 position: {
                     x: 2335,
                     y: 2060,
@@ -1220,6 +1241,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 36,
+                isDungeon: true,
                 position: {
                     x: 214,
                     y: 2400,
@@ -1244,6 +1266,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 37,
+                isDungeon: true,
                 position: {
                     x: 698,
                     y: 2398,
@@ -1274,6 +1297,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 38,
+                isDungeon: true,
                 position: {
                     x: 1208,
                     y: 2424,
@@ -1311,6 +1335,7 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 39,
+                isDungeon: true,
                 position: {
                     x: 2108,
                     y: 2273,

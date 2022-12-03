@@ -3,15 +3,16 @@
         <ul class="nav nav-tabs">
             <li class="nav-item" *ngFor="let player of (playersSubject | async); trackBy: trackById;"
                 (click)="onSelectPlayer(player)">
-                <span class="nav-link"
+                <div class="nav-link player_name"
                     [class.active]="player.id === selectedPlayer?.id">
-                    <i class="pi"
-                        [class.pi-clock]="player.id === activePlayer.id"
-                        [class.pi-spin]="player.id === activePlayer.id"
-                        [class.pi-user]="player.id !== activePlayer.id"
-                    ></i>
+                    <mat-icon
+                        [class.spin-lg]="player.id === activePlayer.id"
+                        aria-label="User icon">
+                        {{player.id === activePlayer.id ? 'update' : 'person'}}
+                    </mat-icon>
                     {{player.name}}
-                </span>
+                </div>
+                <mat-progress-bar *ngIf="player.id === activePlayer.id" mode="buffer"></mat-progress-bar>
             </li>
         </ul>
     </div>
@@ -26,6 +27,7 @@
             <div class="w-100 h-50 d-flex justify-content-around align-items-center position-relative">
                 <div class="clank_player_deck cards_wrap">
                     <div class="cards_wrap__header">
+                        <span class="badge bg-primary">{{player.deck.length}}</span>
                     </div>
                     <div class="cards_wrap__body">
                         <div class="clank_card position-absolute"
@@ -38,14 +40,19 @@
                         </div>
                     </div>
                     <div class="cards_wrap__footer">
+                        <button class="btn btn-primary btn-sm"
+                            (click)="openDungeonRow(player)"
+                            [disabled]="player.id !== activePlayer.id || currentPlayer?.id != player.id">
+                            Покупка карт
+                        </button>
                     </div>
                 </div>
-                <div class="clank_player_board cards_wrap"
-                    [class.cards_wrap__highlight]="selectedCard != null">
+                <div class="clank_player_board cards_wrap">
                     <div class="cards_wrap__header">
                         <app-clank-cost-info
                             [data]="player.benefitInfo"
                         ></app-clank-cost-info>
+                        <span class="badge bg-primary">{{player.board.length}}</span>
                     </div>
                     <div class="cards_wrap__body">
                         <div class="clank_card clank_card__open position-absolute"
@@ -60,21 +67,18 @@
                         </div>
                     </div>
                     <div class="cards_wrap__footer">
-                        <button class="btn btn-primary btn-sm"
-                            (click)="useSelecetCard($event, player)"
-                            [disabled]="selectedCard == null || player.id !== activePlayer.id || currentPlayer?.id != player.id">
-                            Использовать карту
-                        </button>
                     </div>
                 </div>
                 <div class="clank_player_discard cards_wrap">
                     <div class="cards_wrap__header">
+                        <span class="badge bg-primary">{{player.discard.length}}</span>
                     </div>
                     <div class="cards_wrap__body">
                         <div class="clank_card clank_card__open position-absolute"
                             *ngFor="let card of player.discard"
                         >
                             <app-clank-card
+                                [isOpen]="true"
                                 [width]="card_width"
                                 [height]="card_height"
                                 [state]="card"
@@ -86,19 +90,27 @@
                 </div>
             </div>
             <div class="w-100 h-50 d-flex position-relative overflow-auto">
-                <div class="clank_card clank_card__hover clank_card__open position-absolute"
+                <div class="cards_wrap cards_wrap__hand position-absolute"
                     *ngFor="let cardInfo of handRow; let i = index"
                     [style.top.px]="cardInfo.top"
-                    [style.left.px]="cardInfo.left"
-                    [class.clank_card__select]="selectedCard?.id == cardInfo.card.id"
-                    (click)="player.id == activePlayer.id ? onSelectCard($event, cardInfo.card) : null"
-                >
-                    <app-clank-card
-                        [isOpen]="true"
-                        [width]="card_width"
-                        [height]="card_height"
-                        [state]="cardInfo.card"
-                    ></app-clank-card>
+                    [style.left.px]="cardInfo.left">
+                    <div class="cards_wrap__body">
+                        <div class="clank_card clank_card__hover clank_card__open">
+                            <app-clank-card
+                                [isOpen]="true"
+                                [width]="card_width"
+                                [height]="card_height"
+                                [state]="cardInfo.card"
+                            ></app-clank-card>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-primary"
+                            *ngIf="player.id == activePlayer.id"
+                            (click)="useCard(cardInfo.card, player)">
+                            Использовать карту
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

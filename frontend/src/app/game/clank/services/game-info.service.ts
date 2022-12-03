@@ -3,6 +3,7 @@ import {
     OnDestroy,
 } from '@angular/core';
 
+import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { ArtifactsService } from 'src/app/shared/services/artifacts.service';
 import { CardsService } from 'src/app/shared/services/cards.service';
 import {
@@ -14,11 +15,19 @@ import { TokensService } from 'src/app/shared/services/tokens.service';
 
 import { arrayUpdate } from '@datorama/akita';
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
-import { ClankCardState } from '@shared/clank/clank-card.types';
+import {
+    ClankCardState,
+    ClankCardType,
+} from '@shared/clank/clank-card.types';
+import {
+    ClankDragonInfo,
+    initDragonInfo,
+} from '@shared/clank/clank-dragon.types';
 import {
     GameInfoState,
     GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
+import { ClankCostInfo } from '@shared/clank/clank-info.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import { ClankTokenState } from '@shared/clank/clank-token.types';
 import { SocketErrorTypeEnum } from '@shared/socket.types';
@@ -95,11 +104,64 @@ export class GameInfoService implements OnDestroy {
         this.onGameUpdated();
     }
 
-    takeArtifact(player: ClankPlayerConfig, artifact: ClankArtifactConfig) {
-        this.gameInfoStore.update(({artifacts, players}) => {
+    useCard({
+        playerId,
+        cardState,
+        benefitInfo,
+        type,
+    }: {
+        playerId: string;
+        cardState: ClankCardState;
+        benefitInfo: ClankCostInfo;
+        type: 'moveToBoard' | 'buy';
+    }) {
+        this.gameInfoStore.update((state) => {
+            const dragonInfo = state.dragonInfo;
+            const player = state.players.find(p => p.id === playerId);
+            if (player == null) {
+                return state;
+            }
+            this.setBenefits(player, dragonInfo, benefitInfo);
+            const newState: Partial<GameInfoState> = {
+                dragonInfo,
+            };
+            switch (type) {
+                case 'moveToBoard': {
+                    player.hand = player.hand.filter(p => p.id !== cardState.id),
+                    player.board.push(cardState);
+                    break;
+                }
+                case 'buy': {
+                    newState.dungeonRow = state.dungeonRow.filter(p => p.id !== cardState.id);
+                    newState.reserveRow = state.reserveRow.filter(p => p.id !== cardState.id);
+                    const card = this.cardsService.getCardInfo(cardState);
+                    if (card != null && ![
+                        ClankCardType.device,
+                        ClankCardType.monster,
+                    ].includes(card.type)) {
+                        player.discard.push(cardState);
+                    }
+                }
+            }
+            newState.players = arrayUpdate(
+                state.players,
+                player.id,
+                player,
+            );
+            return newState;
+        });
+        this.onGameUpdated();
+    }
+
+    takeArtifact(playerId: string, artifact: ClankArtifactConfig) {
+        this.gameInfoStore.update((state) => {
+            const player = state.players.find(p => p.id === playerId);
+            if (player == null) {
+                return state;
+            }
             const result: Partial<GameInfoState> = {
-                artifacts: artifacts.filter(p => p.id !== artifact.id),
-                players: arrayUpdate(players, player.id, {
+                artifacts: state.artifacts.filter(p => p.id !== artifact.id),
+                players: arrayUpdate(state.players, player.id, {
                     artifacts: [
                         ...player.artifacts,
                         artifact,
@@ -111,18 +173,63 @@ export class GameInfoService implements OnDestroy {
         this.onGameUpdated();
     }
 
-    takeToken(player: ClankPlayerConfig, token: ClankTokenState) {
-        this.gameInfoStore.update(({tokens, players}) => {
-            const result: Partial<GameInfoState> = {
-                tokens: tokens.filter(p => p.id !== token.id),
-                players: arrayUpdate(players, player.id, {
+    takeToken(playerId: string, tokenState: ClankTokenState) {
+        const tokenInfo = this.tokensService.getTokenInfo(tokenState);
+        if (tokenInfo == null) {
+            return;
+        }
+        if (tokenInfo.isImmediatelyBenefit) {
+            this.useToken(playerId, tokenState);
+            return;
+        }
+        this.gameInfoStore.update((state) => {
+            const player = state.players.find(p => p.id === playerId);
+            if (player == null) {
+                return state;
+            }
+            const newState: Partial<GameInfoState> = {
+                tokens: state.tokens.filter(p => p.id !== tokenState.id),
+                players: arrayUpdate(state.players, player.id, {
                     tokens: [
                         ...player.tokens,
-                        token,
+                        tokenState,
                     ],
                 }),
             };
-            return result;
+            return newState;
+        });
+        this.onGameUpdated();
+    }
+
+    useToken(playerId: string, tokenState: ClankTokenState) {
+        const tokenInfo = this.tokensService.getTokenInfo(tokenState);
+        if (tokenInfo == null) {
+            return;
+        }
+        this.gameInfoStore.update((state) => {
+            const dragonInfo = state.dragonInfo;
+            const player = state.players.find(p => p.id === playerId);
+            if (player == null) {
+                return state;
+            }
+
+            player.tokens = player.tokens.filter(p => p.id !== tokenState.id);
+            if (tokenInfo.benefit != null) {
+                const benefitInfo = updateBenefitInfo({
+                    benefit: player.benefitInfo,
+                    cost: tokenInfo.benefit,
+                    isBenefit: true,
+                });
+                this.setBenefits(player, dragonInfo, benefitInfo);
+            }
+
+            const newState: Partial<GameInfoState> = {
+                tokens: state.tokens.filter(p => p.id !== tokenState.id),
+                players: arrayUpdate(state.players, player.id, player),
+                dragonInfo,
+            };
+            this.toastService.showInfo(`Игрок ${player.name} использует ${tokenInfo.name}`);
+            return newState;
         });
         this.onGameUpdated();
     }
@@ -144,12 +251,21 @@ export class GameInfoService implements OnDestroy {
                     const config: ClankPlayerConfig = {
                         ...player,
                         deck: this.shuffle(deck),
-                        benefitInfo: this.getEmptyBenefitInfo(),
+                        benefitInfo: {
+                            sword: 0,
+                            boot: 0,
+                            skill: 0,
+                            clank: 0,
+                            heal: 10,
+                            coin: 0,
+                        },
                     };
                     this.drawCards(config, 5);
                     return config;
                 }),
+                dragonInfo: initDragonInfo(),
                 dungeonDeck: this.shuffle(dungeonDeck),
+                dungeonRow: [],
                 reserveRow: this.cardsService.getReserveDecksCards(
                     state.mapDlcId,
                     state.players.length,
@@ -157,7 +273,10 @@ export class GameInfoService implements OnDestroy {
                 tokens: this.simpleShuffle(this.tokensService.getTokens()),
                 artifacts: this.simpleShuffle(this.artifactsService.getArtifacts()),
             };
-            return newState;
+            const result = this.drawDungeonRow(newState, {
+                initDungeonRow: true,
+            });
+            return result.state;
         });
         this.onGameUpdated();
     }
@@ -165,7 +284,13 @@ export class GameInfoService implements OnDestroy {
     finishTurn() {
         this.gameInfoStore.update((state) => {
             const currentPlayer = state.players[state.activePlayerIndex];
-            currentPlayer.benefitInfo = this.getEmptyBenefitInfo();
+            Object.assign(currentPlayer.benefitInfo, this.getEmptyBenefitInfo());
+            if (currentPlayer.benefitInfo.trashCard) {
+                if (currentPlayer.benefitInfo.trashCard > 0) {
+                    // TODO: Избавиться от карты
+                }
+                delete currentPlayer.benefitInfo.trashCard;
+            }
             currentPlayer.discard = [
                 ...currentPlayer.discard,
                 ...currentPlayer.board,
@@ -174,13 +299,20 @@ export class GameInfoService implements OnDestroy {
             currentPlayer.board = [];
             currentPlayer.hand = [];
             this.drawCards(currentPlayer, 5);
-            // TODO: Если в подземном ряду меньше 6 карт, то надо выложить новые
+            const dungeonInfo = this.drawDungeonRow({
+                dungeonDeck: state.dungeonDeck,
+                dungeonRow: state.dungeonRow,
+            }, {});
+            if (dungeonInfo.isDragonAttack) {
+                // TODO: атака дракона
+            }
             const activePlayerIndex = state.activePlayerIndex < state.players.length - 1
                 ? state.activePlayerIndex + 1
                 : 0;
             const activePlayerId = state.players[activePlayerIndex].id;
             const isFinish = state.players.every(p => p.isFinish);
             const newState: Partial<GameInfoState> = {
+                ...dungeonInfo.state,
                 activePlayerIndex,
                 activePlayerId,
                 statusId: isFinish
@@ -216,6 +348,55 @@ export class GameInfoService implements OnDestroy {
         });
     }
 
+    private drawDungeonRow(
+        state: Partial<GameInfoState>,
+        options?: {
+            ignoreDragonAttack?: boolean,
+            initDungeonRow?: boolean,
+        },
+    ): {
+        state: Partial<GameInfoState>,
+        isDragonAttack: boolean;
+    } {
+        if (state.dungeonRow == null || state.dungeonDeck == null) {
+            return {
+                state,
+                isDragonAttack: false,
+            };
+        }
+        let isDragonAttack = false;
+        const skippedCards: ClankCardState[] = [];
+        while (state.dungeonRow.length < 6 && state.dungeonDeck.length > 0) {
+            const cardState = state.dungeonDeck.pop();
+            if (!cardState) {
+                console.log('break | cardState', cardState);
+                break;
+            }
+            const card = this.cardsService.getCardInfo(cardState);
+            if (!card) {
+                console.log('break | card', cardState);
+                break;
+            }
+            if (card.arrive?.isDragonAttack && options?.initDungeonRow) {
+                skippedCards.push(cardState);
+            } else {
+                if (card.arrive?.isDragonAttack && !options?.ignoreDragonAttack) {
+                    isDragonAttack = true;
+                }
+                // TODO: применить свойства из поля arrive
+                state.dungeonRow.push(cardState);
+            }
+        }
+        state.dungeonDeck = this.shuffle([
+            ...state.dungeonDeck,
+            ...skippedCards,
+        ]);
+        return {
+            state,
+            isDragonAttack,
+        };
+    }
+
     private drawCards(player: ClankPlayerConfig, count: number) {
         while (count > 0) {
             if (player.deck.length === 0) {
@@ -238,6 +419,50 @@ export class GameInfoService implements OnDestroy {
             clank: 0,
         };
         return benefitInfo;
+    }
+
+    private setBenefits(
+        player: ClankPlayerConfig,
+        dragonInfo: ClankDragonInfo,
+        benefitInfo: ClankCostInfo,
+    ) {
+        if (benefitInfo.heal) {
+            if (benefitInfo.heal > 10) {
+                benefitInfo.heal = 10;
+            }
+            if (benefitInfo.heal === 0) {
+                const mapElement = this.gameInfoQuery.mapInfo?.elements.find(p => p.id === player.elementId);
+                player.isRescued = !mapElement?.isDungeon;
+                player.isEscaped = false;
+                player.isFinish = true;
+            }
+        }
+
+        if (benefitInfo.card) {
+            if (benefitInfo.card > 0) {
+                this.drawCards(player, benefitInfo.card);
+            } else {
+                // TODO: Сбросить карту
+            }
+            delete benefitInfo.card;
+        }
+
+        if (benefitInfo.pyramid_dice) {
+            // TODO: бросить кубик
+            delete benefitInfo.pyramid_dice;
+        }
+
+        if (benefitInfo.teleport) {
+            // TODO: телепортация в соседнее помещениие
+            delete benefitInfo.teleport;
+        }
+
+        if (benefitInfo.dragon_rage) {
+            dragonInfo.rage++;
+        }
+
+        // TODO: реакция на другие
+        player.benefitInfo = benefitInfo;
     }
 
 }

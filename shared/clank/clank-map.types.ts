@@ -31,6 +31,7 @@ export interface ClankMapConfig {
 }
 
 export interface ClankMapDragonTrackItem {
+    rage: number;
     position: ClankMapPositionInfo;
     startUserCount: number;
     clank: number;
@@ -63,6 +64,8 @@ export interface ClankMapElementConfig {
     fragment?: ClankMapFragment;
     /** */
     isStart?: boolean;
+    /** */
+    isDungeon?: boolean;
     /** */
     isCrystalCave?: boolean;
     /** */

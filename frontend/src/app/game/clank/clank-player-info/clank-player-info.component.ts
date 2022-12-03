@@ -5,18 +5,22 @@ import {
     HostBinding,
     OnInit,
 } from '@angular/core';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatDialog } from '@angular/material/dialog';
 
 import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
+import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 
-import {
-    ClankCardPositionEnum,
-    ClankCardState,
-} from '@shared/clank/clank-card.types';
+import { ClankCardState } from '@shared/clank/clank-card.types';
+import { ClankCostInfo } from '@shared/clank/clank-info.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 
+import { ClankDungeonRowComponent } from '../clank-dungeon-row/clank-dungeon-row.component';
+import { GameCardService } from '../services/game-card.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
 
@@ -27,8 +31,6 @@ import { GameInfoService } from '../services/game-info.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClankPlayerInfoComponent implements OnInit {
-
-    selectedCard: ClankCardState | null = null;
 
     selectedPlayerSubject = new BehaviorSubject<ClankPlayerConfig | undefined>(void 0);
 
@@ -78,6 +80,9 @@ export class ClankPlayerInfoComponent implements OnInit {
         private gameInfoQuery: GameInfoQuery,
         private gameInfoService: GameInfoService,
         private cardsService: CardsService,
+        private gameCardService: GameCardService,
+        private matBottomSheet: MatBottomSheet,
+        private matDialog: MatDialog,
     ) { }
 
     ngOnInit(): void {
@@ -90,41 +95,68 @@ export class ClankPlayerInfoComponent implements OnInit {
         this.selectedPlayer = player;
     }
 
-    onSelectCard(event: MouseEvent, card: ClankCardState) {
-        if (this.selectedCard != null && this.selectedCard.id === card.id) {
-            this.unselectCard();
+    async useCard(cardState: ClankCardState, player: ClankPlayerConfig) {
+        const card = this.cardsService.getCardInfo(cardState);
+        if (card == null) {
             return;
         }
-
-        this.selectedCard = card;
-        this.changeDetectorRef.detectChanges();
-    }
-
-    useSelecetCard(event: MouseEvent, player: ClankPlayerConfig) {
-        if (this.selectedCard == null) {
-            return;
+        const actions = this.gameCardService.getActions({
+            card,
+            player,
+            type: 'actions',
+        });
+        if (card.actions != null && !actions.length) {
+            const matDialogRef =  this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
+                ConfirmModalComponent,
+                {
+                    data: {
+                        text: 'Вы уверены что хотите разыграть эту карту?',
+                    },
+                },
+            );
+            const result = await matDialogRef.afterClosed().toPromise();
+            if (!result) {
+                return;
+            }
         }
-        const cardInfo = this.getSelectedCardInfo();
-        this.gameInfoService.updatePlayer(player.id, {
-            benefitInfo: cardInfo?.benefit != null
+        const benefitInfo: ClankCostInfo = actions.length
+            ? updateBenefitInfoByAction({
+                player,
+                list: actions,
+            })
+            : player.benefitInfo;
+        this.gameInfoService.useCard({
+            playerId: player.id,
+            cardState,
+            benefitInfo: card?.benefit != null
                 ? updateBenefitInfo({
-                    benefit: player.benefitInfo,
-                    cost: cardInfo.benefit,
+                    benefit: benefitInfo,
+                    cost: card.benefit,
                     isBenefit: true,
                 })
                 : player.benefitInfo,
-            hand: player.hand.filter(p => p.id !== this.selectedCard?.id),
-            board: [
-                ...player.board,
-                {
-                    id: this.selectedCard.id,
-                    index: this.selectedCard.index,
-                    position: ClankCardPositionEnum.playerBoard,
-                    player_id: player.id,
-                },
-            ],
+            type: 'moveToBoard',
         });
-        this.unselectCard();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    openDungeonRow(player: ClankPlayerConfig) {
+        const bottomSheetRef = this.matBottomSheet.open<
+            ClankDungeonRowComponent,
+            ClankDungeonRowComponent['data']
+        >(
+            ClankDungeonRowComponent,
+            {
+                data: {
+                    gameInfoQuery: this.gameInfoQuery,
+                    gameInfoService: this.gameInfoService,
+                    player,
+                },
+            },
+        );
+        bottomSheetRef.afterDismissed().subscribe(() => {
+            console.log('afterDismissed');
+        });
     }
 
     finishTurn() {
@@ -133,19 +165,6 @@ export class ClankPlayerInfoComponent implements OnInit {
 
     trackById(index: number, player: ClankPlayerConfig) {
         return player.id;
-    }
-
-    private unselectCard() {
-        this.selectedCard = null;
-        this.changeDetectorRef.detectChanges();
-    }
-
-    private getSelectedCardInfo() {
-        if (this.selectedCard == null) {
-            return;
-        }
-        const [find_string] = this.selectedCard.id.split('__');
-        return this.cardsService.store.find(p => p.find_string === find_string);
     }
 
 }

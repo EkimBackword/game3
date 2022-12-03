@@ -14,8 +14,12 @@ import {
     map,
     tap,
 } from 'rxjs/operators';
-import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
+import {
+    checkCost,
+    ClankElementTypeMap,
+} from 'src/app/shared/models/clank-element-types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
+import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
@@ -108,7 +112,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             isFinish: this.mapElement.id === 1,
         });
         if (this.token != null) {
-            this.gameInfoService.takeToken(this.activePlayer, this.token);
+            this.gameInfoService.takeToken(this.activePlayer.id, this.token);
         }
     }
 
@@ -121,7 +125,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (this.activePlayer.artifacts.length >= count) {
             return;
         }
-        this.gameInfoService.takeArtifact(this.activePlayer, artifact);
+        this.gameInfoService.takeArtifact(this.activePlayer.id, artifact);
     }
 
     trackById(index: number, item: { id: any }) {
@@ -139,33 +143,20 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     }
 
     private canActivePlayerMove(link: ClankMapElementLink, player: ClankPlayerConfig) {
-        let canMove = false;
-        for (const key in link.cost) {
-            if (Object.prototype.hasOwnProperty.call(link.cost, key)) {
-                const type = key as ClankElementType;
-                const costInfo = ClankElementTypeMap[type];
-                const costPoints = link.cost[type] ?? 0;
-                const userPoints = player.benefitInfo[type] ?? 0;
-                if (type === ClankElementType.key) {
-                    if ((player.tokens ?? []).some((p) => p.element_type === type)) {
-                        canMove = true;
-                        continue;
-                    }
-                    this.toastService.showWarn(`Требуется ${costInfo.name}`);
-                    return false;
-                }
-                if (key === ClankElementType.sword && (userPoints + player.health) < costPoints) {
-                    this.toastService.showWarn(`Требуется ${costInfo.name}: ${costPoints} (У вас есть ${costInfo.name}: ${userPoints} | Здоровя: ${player.health})`);
-                    return false;
-                }
-                if (userPoints < costPoints) {
-                    this.toastService.showWarn(`Требуется ${costInfo.name}: ${costPoints} (У вас есть ${costInfo.name}: ${userPoints})`);
-                    return false;
-                }
-                canMove = true;
-            }
+        const result = checkCost({
+            cost: link.cost,
+            player,
+            canReplaceSwordByHealth: true,
+        });
+        if (result.message) {
+            this.toastService.show(
+                result.success
+                    ? ToastSeverityEnum.success
+                    : ToastSeverityEnum.warning,
+                result.message,
+            );
         }
-        return canMove;
+        return result.success;
     }
 
     private getStyle() {

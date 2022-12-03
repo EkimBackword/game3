@@ -56,7 +56,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             url: '/big_heal.jpg',
             isImmediatelyBenefit: false,
             benefit: {
-                heal: 5,
+                heal: 2,
             },
             secret_type: ClankTokenSecretTypeEnum.major,
             element_type: ClankElementType.major_secret,
@@ -107,6 +107,9 @@ export const getSecretTokens = (withCopy: boolean) => {
             url: '/small_egg.jpg',
             isImmediatelyBenefit: true,
             cost: {
+                dragon_rage: 1,
+            },
+            benefit: {
                 dragon_egg: 1,
             },
             points: {
@@ -154,11 +157,11 @@ export const getSecretTokens = (withCopy: boolean) => {
         {
             index: 12,
             count: 2,
-            name: 'Избавьтесь от карты ',
+            name: 'Избавьтесь от карты',
             url: '/small_trash_card.jpg',
             isImmediatelyBenefit: true,
             benefit: {
-                coin: 2,
+                trashCard: 1,
             },
             secret_type: ClankTokenSecretTypeEnum.minor,
             element_type: ClankElementType.minor_secret,

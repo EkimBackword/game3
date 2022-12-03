@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
+import { createInitialGameInfoState } from 'src/app/game/clank/services/game-info.types';
 
-import { guid } from '@datorama/akita';
 import {
     GameInfoConfig,
     GameInfoState,
-    GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
 
 import { SocketService } from './socket.service';
@@ -36,20 +35,7 @@ export class GamesService {
     }
 
     addNew(config: GameInfoConfig) {
-        const gameState: GameInfoState =  {
-            ...config,
-            id: guid(),
-            statusId: GameInfoStatusIdEnum.New,
-            players: [],
-            dungeonDeck: [],
-            dungeonRow: [],
-            reserveRow: [],
-            tokens: [],
-            artifacts: [],
-            activePlayerIndex: 0,
-            activePlayerId: '',
-            actionLogs: [],
-        };
+        const gameState = createInitialGameInfoState(config);
         this.gamesList.push(gameState);
         this.socketService.socket.emit('addGame', gameState);
         return gameState.id;

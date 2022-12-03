@@ -11,13 +11,7 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="m-0">{{player.name}}</h6>
-                        <i class="pi pi-circle-on online_state_icon"
-                            [style.color]="'green'"
-                            *ngIf="player.isOnline;else offlineTemplate"
-                        ></i>
-                        <ng-template #offlineTemplate>
-                            <i class="pi pi-circle-off online_state_icon" [style.color]="'tomato'"></i>
-                        </ng-template>
+                        <mat-icon [color]="player.isOnline ? 'primary' : 'warn'">{{player.isOnline ? 'wifi' : 'wifi_off'}}</mat-icon>
                     </div>
                 </div>
                 <div class="card-body">
@@ -44,10 +38,10 @@
                         <ng-container *ngIf="isStarted">
                             <div class="d-flex justify-content-between align-items-center"
                                 *ngIf="player.id === activePlayer.id">
-                                <i class="pi pi-spin pi-clock m-2"></i>
                                 <h6 class="m-0">Ход игрока</h6>
                                 <app-clank-meeple [player]="player" [size]="20"></app-clank-meeple>
                             </div>
+                            <mat-progress-bar *ngIf="player.id === activePlayer.id" mode="buffer"></mat-progress-bar>
                             <div class="d-flex justify-content-between align-items-center"
                                 *ngIf="player.id !== activePlayer.id">
                                 <h6 class="m-0">Ожидание хода</h6>
@@ -87,9 +81,9 @@
             [class.not-allowed]="!validColorList"
             (click)="startGame()"
             *ngIf="currentPlayer?.isAdmin && !isStarted && !isFinished"
-            [pTooltip]="invalidColorText"
-            [tooltipPosition]="'top'"
-            [tooltipDisabled]="validColorList">
+            [matTooltip]="invalidColorText"
+            matTooltipPosition="left"
+            [matTooltipDisabled]="validColorList">
             Начать игру
         </button>
         <button class="btn btn-primary mb-1"

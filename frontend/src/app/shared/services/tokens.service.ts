@@ -23,6 +23,14 @@ export class TokensService {
         return this.mappingToTokenStates(tokens);
     }
 
+    getTokenInfo(state?: ClankTokenState) {
+        if (state == null) {
+            return;
+        }
+        const [find_string] = state.id.split('__');
+        return this.store.find(p => p.find_string === find_string);
+    }
+
     private mappingToTokenStates(configs: ClankTokenConfig[]) {
         return configs.map(config => {
             const state: ClankTokenState = {

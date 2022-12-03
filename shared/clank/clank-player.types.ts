@@ -16,7 +16,7 @@ export interface ClankPlayerConfig {
     isAdmin: boolean;
     /** Позиция мипла на карте */
     elementId: number;
-    /** Информация о наличии очков для действий в раунде */
+    /** Информация о наличии очков для действий */
     benefitInfo: ClankCostInfo;
     /** Колода */
     deck: ClankCardState[];
@@ -32,9 +32,11 @@ export interface ClankPlayerConfig {
     tokens: ClankTokenState[];
     /** Артефакты */
     artifacts: ClankArtifactConfig[];
-    /** Очки здоровья (изначально 10) */
-    health: number;
-    /** Очки здоровья (изначально 10) */
+    /** Игрок потерял сознание, но был спасён */
+    isRescued: boolean;
+    /** Игрок выбрался */
+    isEscaped: boolean;
+    /** Завершил ли игру игрок */
     isFinish: boolean;
 }
 

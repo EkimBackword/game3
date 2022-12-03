@@ -7,12 +7,11 @@ import {
 import { Subject } from 'rxjs';
 
 import { SessionQuery } from './session/session.query';
-import { ToastService } from './shared/services/toast.service';
 
 @Component({
-        selector: 'app-root',
-        templateUrl: './app.component.html',
-        styleUrls: ['./app.component.scss'],
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
 
@@ -23,7 +22,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     constructor(
         private sessionQuery: SessionQuery,
-        private toastService: ToastService,
     ) {
     }
 
@@ -33,14 +31,6 @@ export class AppComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
-    }
-
-    onConfirm() {
-        this.toastService.setConfirmResult(true);
-    }
-
-    onReject() {
-        this.toastService.setConfirmResult(false);
     }
 
 }

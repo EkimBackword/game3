@@ -1,71 +1,74 @@
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MessageService } from 'primeng-lts/api';
-import { Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
-
-import { ToastSeverityEnum } from '../models/toast.types';
+import { BsToastComponent } from '../modals/confirm-modal/bs-toast/bs-toast.component';
+import {
+    ToastOptions,
+    ToastSeverityEnum,
+} from '../models/toast.types';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ToastService {
 
-    private onConfirmResultSubject = new Subject<boolean>();
-
     constructor(
-        private messageService: MessageService,
+        private matSnackBar: MatSnackBar,
     ) { }
 
-    showSuccess(message: string, title = 'Success') {
-        this.messageService.add({
+    show(severity: ToastSeverityEnum, message: string, options?: ToastOptions) {
+        switch (severity) {
+            case ToastSeverityEnum.success:
+                return this.showSuccess(message, options);
+            case ToastSeverityEnum.info:
+                return this.showInfo(message, options);
+            case ToastSeverityEnum.warning:
+                return this.showWarn(message, options);
+            case ToastSeverityEnum.danger:
+                return this.showError(message, options);
+        }
+    }
+
+    showSuccess(message: string, options?: ToastOptions) {
+        this.open({
+            icon: 'done',
             severity: ToastSeverityEnum.success,
-            summary: title,
-            detail: message,
-        });
+            message,
+        }, options);
     }
 
-    showInfo(message: string, title = 'Info') {
-        this.messageService.add({
+    showInfo(message: string, options?: ToastOptions) {
+        this.open({
+            icon: 'info',
             severity: ToastSeverityEnum.info,
-            summary: title,
-            detail: message,
-        });
+            message,
+        }, options);
     }
 
-    showWarn(message: string, title = 'Warn') {
-        this.messageService.add({
-            severity: ToastSeverityEnum.warn,
-            summary: title,
-            detail: message,
-        });
+    showWarn(message: string, options?: ToastOptions) {
+        this.open({
+            icon: 'warning',
+            severity: ToastSeverityEnum.warning,
+            message,
+        }, options);
     }
 
-    showError(message: string, title = 'Error') {
-        this.messageService.add({
-            severity: ToastSeverityEnum.error,
-            summary: title,
-            detail: message,
-        });
+    showError(message: string, options?: ToastOptions) {
+        this.open({
+            icon: 'error',
+            severity: ToastSeverityEnum.danger,
+            message,
+        }, options);
     }
 
-    showConfirm(title = 'Вы уверены?', message = 'Сделайте выбор') {
-        this.messageService.clear();
-        this.messageService.add({
-            key: 'c',
-            sticky: true,
-            severity: 'warn',
-            summary: title,
-            detail: message,
+    private open(data: BsToastComponent['data'], options?: ToastOptions) {
+        const {duration, ...dataFromOptions} = options ?? {};
+        this.matSnackBar.openFromComponent(BsToastComponent, {
+            data: Object.assign({}, data, dataFromOptions),
+            duration: options?.duration ?? 2500,
+            horizontalPosition: 'start',
+            verticalPosition: 'top',
         });
-        return this.onConfirmResultSubject.pipe(
-            take(1),
-        );
-    }
-
-    setConfirmResult(value: boolean) {
-        this.messageService.clear('c');
-        this.onConfirmResultSubject.next(value);
     }
 
 }

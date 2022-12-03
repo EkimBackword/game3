@@ -5,6 +5,7 @@ import express, {
 import * as http from 'http';
 import { Server } from 'socket.io';
 
+import { initDragonInfo } from '../../shared/clank/clank-dragon.types';
 import {
     GameInfoState,
     GameInfoStatusIdEnum,
@@ -60,9 +61,9 @@ const testGame: GameInfoState = {
     dungeonRow: [],
     reserveRow: [],
     tokens: [],
-
     artifacts: [],
     players: [],
+    dragonInfo: initDragonInfo(),
     actionLogs: [],
     activePlayerIndex: 0,
     activePlayerId: '',
@@ -139,6 +140,8 @@ io.of(gameRegExp).on('connection', (socket) => {
                     boot: 0,
                     skill: 0,
                     clank: 0,
+                    heal: 10,
+                    coin: 0,
                 },
                 deck: [],
                 hand: [],
@@ -147,7 +150,8 @@ io.of(gameRegExp).on('connection', (socket) => {
                 trash: [],
                 tokens: [],
                 artifacts: [],
-                health: 10,
+                isRescued: false,
+                isEscaped: false,
                 isFinish: false,
             };
             gameInfo.players.push(playerConfig);

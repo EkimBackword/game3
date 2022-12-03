@@ -7,6 +7,7 @@ import { ClankMapElementComponent } from './clank-map-element/clank-map-element.
 import { ClankMapComponent } from './clank-map/clank-map.component';
 import { ClankPlayerInfoComponent } from './clank-player-info/clank-player-info.component';
 import { ClankComponent } from './clank.component';
+import { ClankDungeonRowComponent } from './clank-dungeon-row/clank-dungeon-row.component';
 
 @NgModule({
     declarations: [
@@ -15,6 +16,7 @@ import { ClankComponent } from './clank.component';
         ClankMapElementComponent,
         ClankGameInfoComponent,
         ClankPlayerInfoComponent,
+        ClankDungeonRowComponent,
     ],
     imports: [
         SharedModule,

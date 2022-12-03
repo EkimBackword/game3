@@ -47,28 +47,6 @@ export const getClankReserveCards = (userCount: number, withCopy: boolean) => {
         },
         {
             row: 0,
-            column: 1,
-            name: 'Гоблин',
-            isReserve: true,
-            type: ClankCardType.monster,
-            acquire: {
-                type: 'every',
-                list: [
-                    {
-                        target: ClankTarget.current,
-                        cost: {
-                            sword: 2,
-                        },
-                        benefit: {
-                            coin: 1,
-                        },
-                    },
-                ],
-            },
-            count: -1,
-        },
-        {
-            row: 0,
             column: 2,
             name: 'Наёмник',
             isReserve: true,
@@ -111,6 +89,28 @@ export const getClankReserveCards = (userCount: number, withCopy: boolean) => {
                 value: 7,
             },
             count: (userCount * 4) - 1,
+        },
+        {
+            row: 0,
+            column: 1,
+            name: 'Гоблин',
+            isReserve: true,
+            type: ClankCardType.monster,
+            acquire: {
+                type: 'every',
+                list: [
+                    {
+                        target: ClankTarget.current,
+                        cost: {
+                            sword: 2,
+                        },
+                        benefit: {
+                            coin: 1,
+                        },
+                    },
+                ],
+            },
+            count: -1,
         },
     ];
     const shareReserveConfig: ClankDeckConfig = {
@@ -279,7 +279,10 @@ export const getClankDeckCards = (withCopy: boolean) => {
                     {
                         target: ClankTarget.current,
                         has: {
-                            monkey_idol: 1,
+                            count: 1,
+                            cost: {
+                                monkey_idol: 1,
+                            },
                         },
                         benefit: {
                             skill: 2,
@@ -335,16 +338,8 @@ export const getClankDeckCards = (withCopy: boolean) => {
                     },
                 ],
             },
-            actions: {
-                type: 'every',
-                list: [
-                    {
-                        target: ClankTarget.current,
-                        benefit: {
-                            card: 2,
-                        },
-                    },
-                ],
+            benefit: {
+                card: 2,
             },
             points: {
                 value: 2,
@@ -367,16 +362,8 @@ export const getClankDeckCards = (withCopy: boolean) => {
                     },
                 ],
             },
-            actions: {
-                type: 'every',
-                list: [
-                    {
-                        target: ClankTarget.current,
-                        benefit: {
-                            card: 3,
-                        },
-                    },
-                ],
+            benefit: {
+                card: 3,
             },
             count: 1,
         },
@@ -455,6 +442,8 @@ export const getClankDeckCards = (withCopy: boolean) => {
                         target: ClankTarget.current,
                         cost: {
                             skill: 8,
+                        },
+                        benefit: {
                             clank: 2,
                         },
                     },
@@ -484,6 +473,8 @@ export const getClankDeckCards = (withCopy: boolean) => {
                         target: ClankTarget.current,
                         cost: {
                             skill: 5,
+                        },
+                        benefit: {
                             clank: 2,
                         },
                     },
@@ -628,6 +619,8 @@ export const getClankDeckCards = (withCopy: boolean) => {
                         target: ClankTarget.current,
                         cost: {
                             skill: 5,
+                        },
+                        benefit: {
                             clank: 2,
                         },
                     },
@@ -766,7 +759,10 @@ export const getClankDeckCards = (withCopy: boolean) => {
                     {
                         target: ClankTarget.current,
                         has: {
-                            artefact: 1,
+                            count: 1,
+                            cost: {
+                                artefact: 1,
+                            },
                         },
                         benefit: {
                             skill: 2,

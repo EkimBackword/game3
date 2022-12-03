@@ -8,7 +8,7 @@ export const updateBenefitInfo = (data: {
     cost: ClankCostInfo,
     isBenefit: boolean,
 }) => {
-    return (Object.keys(data.benefit) as ClankElementType[]).reduce((acc, key) => {
+    return (Object.keys(data.cost) as ClankElementType[]).reduce((acc, key) => {
         const prevValue = acc[key] ?? 0;
         const nextValue = data.cost?.[key] ?? 0;
         acc[key] = data.isBenefit

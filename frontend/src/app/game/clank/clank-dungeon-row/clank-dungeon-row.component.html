@@ -1,0 +1,41 @@
+<div class="cards_row">
+    <div class="cards_wrap">
+        <div class="clank_card position-absolute"
+            *ngFor="let cardState of (dungeonDeckSubject | async); trackBy: trackById">
+            <app-clank-card
+                [width]="card_width"
+                [height]="card_height"
+                [state]="cardState"
+            ></app-clank-card>
+        </div>
+    </div>
+    <div class="cards_wrap" *ngFor="let cardState of (dungeonRowSubject | async); trackBy: trackById">
+        <app-clank-card
+            [isOpen]="true"
+            [width]="card_width"
+            [height]="card_height"
+            [state]="cardState"
+        ></app-clank-card>
+        <div class="actions">
+            <button class="btn btn-primary" (click)="buyCard(cardState)">Купить</button>
+        </div>
+    </div>
+</div>
+<div class="cards_row">
+    <div class="cards_wrap" *ngFor="let reserveRowGroup of (reserveRowSubject | async)"
+        [matBadge]="reserveRowGroup.length" matBadgeOverlap="false">
+        <ng-container *ngFor="let cardState of reserveRowGroup; trackBy: trackById">
+            <div class="clank_card position-absolute">
+                <app-clank-card
+                    [isOpen]="true"
+                    [width]="card_width"
+                    [height]="card_height"
+                    [state]="cardState"
+                ></app-clank-card>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" (click)="buyCard(cardState)">Купить</button>
+            </div>
+        </ng-container>
+    </div>
+</div>

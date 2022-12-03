@@ -1,20 +1,18 @@
+import { guid } from '@datorama/akita';
+import { initDragonInfo } from '@shared/clank/clank-dragon.types';
 import {
+    GameInfoConfig,
     GameInfoState,
     GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
-import { ClankDlcEnum } from '@shared/clank/clank-info.types';
-import { ClankMapConfigIds } from '@shared/clank/clank-map.types';
 
-export function createInitialGameInfoState(): GameInfoState {
+export function createInitialGameInfoState(config: GameInfoConfig): GameInfoState {
     return {
-        id: '',
-        name: 'Not found',
+        ...config,
+        id: guid(),
         statusId: GameInfoStatusIdEnum.New,
-        mapId: ClankMapConfigIds.clank_1,
-        mapDlcId: ClankDlcEnum.clank,
-        startDeckId: ClankDlcEnum.clank,
         players: [],
-        dungeonDeckIds: [ClankDlcEnum.clank],
+        dragonInfo: initDragonInfo(),
         dungeonDeck: [],
         dungeonRow: [],
         reserveRow: [],

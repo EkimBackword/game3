@@ -141,7 +141,10 @@ export interface ClankCardAction {
     /** Стоимость */
     cost?: ClankCostInfo;
     /** Проверка наличия */
-    has?: ClankCostInfo;
+    has?: {
+        cost: ClankCostInfo;
+        count: number;
+    };
     /** Выгода */
     benefit?: ClankCostInfo;
     /** Эффект в течении хода */

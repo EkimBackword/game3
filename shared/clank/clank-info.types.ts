@@ -7,18 +7,20 @@ export enum ClankElementType {
     pyramid_dice = 'pyramid_dice', // Бросок кубика
     curse = 'curse', // Проклятье
     coin = 'coin', // Монетка
-    card = 'card', // Карта. Например, надо сбросить карту
+    card = 'card', // Карта. Например, надо сбросить или добрать карту
+    trashCard = 'trashCard', // Избавиться от карты
     companion = 'companion', // Если у вас есть союзник
     monkey_idol = 'monkey_idol', // Если у вас есть союзник
     mastery_token = 'mastery_token', // Если у вас есть жетон мастерства
     dragon_egg = 'dragon_egg', // Если у вас есть драконье яйцо
+    dragon_rage = 'dragon_rage', // Если у вас есть драконье яйцо
     cup = 'cup', // Если у вас есть кубок
     teleport = 'teleport', // Возможность телепортироваться в соседнее помещение
     artefact = 'artefact', // Наличие артефакта
     key = 'key', // Наличие отмычек
     backpack = 'backpack', // Наличие рюкзока
-    minor_secret = 'minor_secret', // Наличие отмычек
-    major_secret = 'major_secret', // Наличие отмычек
+    minor_secret = 'minor_secret', // Наличие малого секрета
+    major_secret = 'major_secret', // Наличие большого секрета
 }
 
 export type ClankCostInfo = Partial<Record<ClankElementType, number>>;

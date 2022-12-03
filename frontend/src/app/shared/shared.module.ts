@@ -4,14 +4,13 @@ import {
     FormsModule,
     ReactiveFormsModule,
 } from '@angular/forms';
-
-import { MessageService } from 'primeng-lts/api';
-import { DialogModule } from 'primeng-lts/dialog';
-import { DragDropModule } from 'primeng-lts/dragdrop';
-import { MessageModule } from 'primeng-lts/message';
-import { MessagesModule } from 'primeng-lts/messages';
-import { TabMenuModule } from 'primeng-lts/tabmenu';
-import { ToastModule } from 'primeng-lts/toast';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
@@ -20,6 +19,8 @@ import { ClankCardComponent } from './components/clank-card/clank-card.component
 import { ClankCostInfoComponent } from './components/clank-cost-info/clank-cost-info.component';
 import { ClankMeepleComponent } from './components/clank-meeple/clank-meeple.component';
 import { ClankTokenComponent } from './components/clank-token/clank-token.component';
+import { BsToastComponent } from './modals/confirm-modal/bs-toast/bs-toast.component';
+import { ConfirmModalComponent } from './modals/confirm-modal/confirm-modal.component';
 import { SharedComponent } from './shared.component';
 
 const exports = [
@@ -27,12 +28,13 @@ const exports = [
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,
-    DialogModule,
-    ToastModule,
-    MessagesModule,
-    MessageModule,
-    DragDropModule,
-    TabMenuModule,
+    MatBottomSheetModule,
+    MatProgressBarModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatBadgeModule,
 ];
 
 const exportsComponents = [
@@ -41,6 +43,8 @@ const exportsComponents = [
     ClankCostInfoComponent,
     ClankMeepleComponent,
     ClankTokenComponent,
+    ConfirmModalComponent,
+    BsToastComponent,
 ];
 
 @NgModule({
@@ -56,7 +60,6 @@ const exportsComponents = [
         ...exportsComponents,
     ],
     providers: [
-        MessageService,
     ],
 })
 export class SharedModule { }

@@ -2,10 +2,11 @@ import {
     Component,
     OnInit,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 import { SessionStore } from 'src/app/session/session.store';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
 
 import {
     faDice,
@@ -57,7 +58,7 @@ export class MenuComponent implements OnInit {
 
     constructor(
         private sessionStore: SessionStore,
-        private toastService: ToastService,
+        private matDialog: MatDialog,
         private router: Router,
     ) {}
 
@@ -65,7 +66,15 @@ export class MenuComponent implements OnInit {
     }
 
     async logout() {
-        const result = await this.toastService.showConfirm('Вы уверены что хотите выйти?').toPromise();
+        const matDialogRef =  this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
+            ConfirmModalComponent,
+            {
+                data: {
+                    text: 'Вы уверены что хотите выйти?',
+                },
+            },
+        );
+        const result = await matDialogRef.afterClosed().toPromise();
         if (!result) {
             return;
         }

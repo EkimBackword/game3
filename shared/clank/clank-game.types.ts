@@ -1,5 +1,6 @@
 import { ClankArtifactConfig } from './clank-artifact.types';
 import { ClankCardState } from './clank-card.types';
+import { ClankDragonInfo } from './clank-dragon.types';
 import { ClankDlcEnum } from './clank-info.types';
 import { ClankMapConfigIds } from './clank-map.types';
 import { ClankPlayerConfig } from './clank-player.types';
@@ -37,6 +38,8 @@ export interface GameInfoState extends GameInfoConfig {
      * что должно отображатся на карте
      */
     players: ClankPlayerConfig[];
+    /** Информация о драконе */
+    dragonInfo: ClankDragonInfo;
     /** Колода подземелья */
     dungeonDeck: ClankCardState[];
     /** Подземный ряд */

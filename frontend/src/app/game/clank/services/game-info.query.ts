@@ -81,6 +81,11 @@ export class GameInfoQuery extends Query<GameInfoState> {
         return gameState.players.find(p => p.id === userState.id);
     }
 
+    get mapInfo() {
+        const gameState = this.getValue();
+        return this.mapsService.getMapById(gameState.mapId);
+    }
+
     constructor(
         protected store: GameInfoStore,
         private sessionQuery: SessionQuery,

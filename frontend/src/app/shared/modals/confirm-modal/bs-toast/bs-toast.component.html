@@ -1,0 +1,10 @@
+<div class="toast show bg-{{data.severity}}">
+    <div class="toast-header">
+        <mat-icon *ngIf="data.icon">{{data.icon}}</mat-icon>
+        <strong class="me-auto">{{data.message}}</strong>
+        <small class="text-muted" *ngIf="data.submessage">{{data.submessage}}</small>
+        <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+    </div>
+    <div class="toast-body">
+    </div>
+</div>
