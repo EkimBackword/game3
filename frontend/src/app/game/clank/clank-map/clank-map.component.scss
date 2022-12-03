@@ -27,7 +27,15 @@
 
 .clank_map_player {
     position: absolute;
+    transform-origin: center center;
+    transform: scale(0.9, 0.9);
+    filter: brightness(70%) grayscale(30%);
     transition: all ease-in-out 300ms;
+}
+
+.clank_map_player__active {
+    transform: scale(1.2, 1.2);
+    filter: brightness(100%);
 }
 
 :host ::ng-deep .p-message-custom {

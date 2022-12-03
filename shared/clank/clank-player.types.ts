@@ -55,29 +55,29 @@ export enum GamePlayerColorIdEnum {
 export const GamePlayerColorIds = Object.keys(GamePlayerColorIdEnum) as GamePlayerColorIdEnum[];
 
 export interface GamePlayerColorInfo {
-    positionX: number,
+    column: number,
     name: string;
     color: string;
 }
 
 export const GamePlayerColorList: Record<GamePlayerColorIdEnum, GamePlayerColorInfo> = {
     [GamePlayerColorIdEnum.Red]: {
-        positionX: 0,
+        column: 0,
         name: 'Красный',
         color: '#EF4E5A',
     },
     [GamePlayerColorIdEnum.Yellow]: {
-        positionX: 100,
+        column: 1,
         name: 'Жёлтый',
         color: '#FFDB46',
     },
     [GamePlayerColorIdEnum.Green]: {
-        positionX: 200,
+        column: 2,
         name: 'Зелёный',
         color: '#339643',
     },
     [GamePlayerColorIdEnum.Blue]: {
-        positionX: 300,
+        column: 3,
         name: 'Синий',
         color: '#376EB6',
     },

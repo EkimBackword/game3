@@ -63,11 +63,12 @@ export class ClankMeepleComponent implements OnInit, OnChanges {
         if (this.colorInfo == null) {
             return {};
         }
+        const positionX = this.colorInfo.column * this.size;
         const style: Partial<CSSStyleDeclaration> = {
             width: `${this.size}px`,
             height: `${this.size}px`,
             backgroundImage: `url(/assets/images/meeples.png)`,
-            backgroundPosition: `-${this.colorInfo.positionX}px 0px`,
+            backgroundPosition: `-${positionX}px 0px`,
             backgroundSize: '400% 100%',
         };
         return style;

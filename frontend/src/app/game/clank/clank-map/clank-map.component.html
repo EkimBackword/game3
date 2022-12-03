@@ -11,6 +11,7 @@
         <div class="clank_map_players">
             <app-clank-meeple
                 class="clank_map_player"
+                [class.clank_map_player__active]="item.isActive"
                 *ngFor="let item of (playersPosition | async); trackBy: trackById;"
                 [player]="item.player"
                 [ngStyle]="item.style"

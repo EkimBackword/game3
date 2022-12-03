@@ -29,26 +29,31 @@ export class GameInfoQuery extends Query<GameInfoState> {
         shareReplay(1),
     );
 
-    onPlayersPositionChangeSubject = this.select(['mapId', 'players']).pipe(
-        map(({mapId, players}) => {
+    onPlayersPositionChangeSubject = this.select(['mapId', 'players', 'activePlayerId']).pipe(
+        map(({mapId, players, activePlayerId}) => {
             const mapInfo = this.mapsService.getMapById(mapId);
             if (mapInfo == null) {
                 return [];
             }
+            const rowCount = 2;
             const size = 100;
             const countByElementId = new Map<number, number>();
             return players.map(player => {
+                const isActive = player.id === activePlayerId;
                 const count = countByElementId.get(player.elementId) ?? 0;
                 countByElementId.set(player.elementId, count + 1);
                 const mapElement = mapInfo.elements.find(p => p.id === player.elementId);
+                const rowIndex = Math.floor(count / rowCount);
+                const columnIndex = (count % rowCount);
                 const style: Partial<CSSStyleDeclaration> = {
-                    top: `${mapElement?.position.y ?? 0}px`,
-                    left: `${(mapElement?.position.x ?? 0) + count * size}px`,
+                    top: `${(mapElement?.position.y ?? 0) + rowIndex * size}px`,
+                    left: `${(mapElement?.position.x ?? 0) + columnIndex * size}px`,
                 };
                 const data = {
                     player,
                     style,
                     size,
+                    isActive,
                 };
                 return data;
             });
