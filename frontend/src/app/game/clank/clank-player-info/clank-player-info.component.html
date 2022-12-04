@@ -35,15 +35,16 @@
             </div>
         </div>
         <div class="footer p-1" *ngIf="currentPlayer != null">
-            <div class="d-flex justify-content-center">
-                <app-clank-cost-info
-                    [data]="player.benefitInfo"
-                ></app-clank-cost-info>
-            </div>
             <button class="mb-1 btn btn-primary"
                 (click)="openDungeonRow(currentPlayer)"
                 [disabled]="currentPlayer.id !== activePlayer.id && currentPlayer.id !== player.id"
-            >Купить карту</button>
+            >Показать рынок</button>
+            <div class="d-flex justify-content-center">
+                <app-clank-cost-info
+                    [data]="player.benefitInfo"
+                    [type]="ClankCostInfoType.turnInfo"
+                ></app-clank-cost-info>
+            </div>
             <button class="btn btn-danger"
                 (click)="finishTurn()"
                 [disabled]="currentPlayer.id !== activePlayer.id && currentPlayer.id !== player.id"

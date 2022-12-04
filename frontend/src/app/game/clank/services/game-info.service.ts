@@ -15,10 +15,7 @@ import { TokensService } from 'src/app/shared/services/tokens.service';
 
 import { arrayUpdate } from '@datorama/akita';
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
-import {
-    ClankCardState,
-    ClankCardType,
-} from '@shared/clank/clank-card.types';
+import { ClankCardState } from '@shared/clank/clank-card.types';
 import {
     ClankDragonInfo,
     initDragonInfo,
@@ -27,7 +24,10 @@ import {
     GameInfoState,
     GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
-import { ClankCostInfo } from '@shared/clank/clank-info.types';
+import {
+    ClankCardType,
+    ClankCostInfo,
+} from '@shared/clank/clank-info.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import { ClankTokenState } from '@shared/clank/clank-token.types';
 import { SocketErrorTypeEnum } from '@shared/socket.types';

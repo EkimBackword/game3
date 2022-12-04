@@ -1,6 +1,7 @@
 import {
     ClankDlcEnum,
-    ClankElementType,
+    ClankElementByGame,
+    ClankElementByMarket,
 } from '@shared/clank/clank-info.types';
 import {
     ClankTokenGroup,
@@ -24,7 +25,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 coin: 5,
             },
             secret_type: ClankTokenSecretTypeEnum.major,
-            element_type: ClankElementType.major_secret,
+            element_type: ClankElementByGame.major_secret,
         },
         {
             index: 2,
@@ -35,7 +36,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 value: 7,
             },
             secret_type: ClankTokenSecretTypeEnum.major,
-            element_type: ClankElementType.major_secret,
+            element_type: ClankElementByGame.major_secret,
         },
         {
             index: 3,
@@ -47,7 +48,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 card: 3,
             },
             secret_type: ClankTokenSecretTypeEnum.major,
-            element_type: ClankElementType.major_secret,
+            element_type: ClankElementByGame.major_secret,
         },
         {
             index: 4,
@@ -59,7 +60,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 heal: 2,
             },
             secret_type: ClankTokenSecretTypeEnum.major,
-            element_type: ClankElementType.major_secret,
+            element_type: ClankElementByGame.major_secret,
         },
         {
             index: 5,
@@ -71,7 +72,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 skill: 5,
             },
             secret_type: ClankTokenSecretTypeEnum.major,
-            element_type: ClankElementType.major_secret,
+            element_type: ClankElementByGame.major_secret,
         },
         //#endregion major secret
 
@@ -86,7 +87,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 coin: 2,
             },
             secret_type: ClankTokenSecretTypeEnum.minor,
-            element_type: ClankElementType.minor_secret,
+            element_type: ClankElementByGame.minor_secret,
         },
         {
             index: 7,
@@ -98,7 +99,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 sword: 2,
             },
             secret_type: ClankTokenSecretTypeEnum.minor,
-            element_type: ClankElementType.minor_secret,
+            element_type: ClankElementByGame.minor_secret,
         },
         {
             index: 8,
@@ -116,7 +117,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 value: 3,
             },
             secret_type: ClankTokenSecretTypeEnum.minor,
-            element_type: ClankElementType.minor_secret,
+            element_type: ClankElementByGame.minor_secret,
         },
         {
             index: 9,
@@ -128,7 +129,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 heal: 1,
             },
             secret_type: ClankTokenSecretTypeEnum.minor,
-            element_type: ClankElementType.minor_secret,
+            element_type: ClankElementByGame.minor_secret,
         },
         {
             index: 10,
@@ -140,7 +141,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 boot: 1,
             },
             secret_type: ClankTokenSecretTypeEnum.minor,
-            element_type: ClankElementType.minor_secret,
+            element_type: ClankElementByGame.minor_secret,
         },
         {
             index: 11,
@@ -152,7 +153,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 skill: 2,
             },
             secret_type: ClankTokenSecretTypeEnum.minor,
-            element_type: ClankElementType.minor_secret,
+            element_type: ClankElementByGame.minor_secret,
         },
         {
             index: 12,
@@ -164,7 +165,7 @@ export const getSecretTokens = (withCopy: boolean) => {
                 trashCard: 1,
             },
             secret_type: ClankTokenSecretTypeEnum.minor,
-            element_type: ClankElementType.minor_secret,
+            element_type: ClankElementByGame.minor_secret,
         },
         //#endregion minor secret
     ];
@@ -187,7 +188,7 @@ export const getMarketTokens = (withCopy: boolean) => {
             points: {
                 value: 5,
             },
-            element_type: ClankElementType.backpack,
+            element_type: ClankElementByMarket.backpack,
         },
     ];
     const group: ClankTokenGroup = {

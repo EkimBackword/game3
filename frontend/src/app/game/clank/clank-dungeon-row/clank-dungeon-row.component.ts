@@ -17,6 +17,7 @@ import {
     ISelectedPlayerCardInfo,
 } from 'src/app/shared/components/clank-card/clank-card.types';
 import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
+import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 
 import { ClankCardState } from '@shared/clank/clank-card.types';
@@ -35,6 +36,7 @@ import { GameInfoService } from '../services/game-info.service';
 })
 export class ClankDungeonRowComponent implements OnInit {
 
+    ClankCostInfoType = ClankCostInfoType;
     cardsWrapInfo = {
         rowCount: 7,
         cardWidth,

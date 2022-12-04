@@ -8,7 +8,7 @@ import {
     SimpleChanges,
 } from '@angular/core';
 
-import { ClankElementType } from '@shared/clank/clank-info.types';
+import { ClankElementByGame } from '@shared/clank/clank-info.types';
 import {
     ClankTokenConfig,
     ClankTokenSecretTypeEnum,
@@ -91,7 +91,7 @@ export class ClankTokenComponent implements OnInit, OnChanges {
             return 0;
         }
         switch (this.token.element_type) {
-            case ClankElementType.minor_secret: {
+            case ClankElementByGame.minor_secret: {
                 return this.size * 0.8;
             }
             default: {

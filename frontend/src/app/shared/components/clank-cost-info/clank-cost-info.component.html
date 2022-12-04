@@ -1,7 +1,9 @@
-<div class="cost_item" *ngFor="let cost of data | keyvalue">
-    <img class="cost_img"
-        [src]="ClankElementTypeMap[cost.key].url"
-        [alt]="ClankElementTypeMap[cost.key].name"
-        [title]="ClankElementTypeMap[cost.key].name">
-    <span class="cost_value">{{cost.value}}</span>
-</div>
+<ng-container *ngFor="let key of keys">
+    <div class="cost_item" *ngIf="data[key] != null">
+        <img class="cost_img"
+            [src]="ClankElementTypeMap[key].url"
+            [alt]="ClankElementTypeMap[key].name"
+            [title]="ClankElementTypeMap[key].name">
+        <span class="cost_value">{{data[key]}}</span>
+    </div>
+</ng-container>

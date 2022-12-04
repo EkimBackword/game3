@@ -7,6 +7,7 @@ import {
 import { Router } from '@angular/router';
 
 import { tap } from 'rxjs/operators';
+import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
@@ -29,6 +30,7 @@ import { GameInfoService } from '../services/game-info.service';
 })
 export class ClankGameInfoComponent implements OnInit {
 
+    ClankCostInfoType = ClankCostInfoType;
     isStarted = false;
     isFinished = false;
 

@@ -18,6 +18,7 @@ import {
 } from 'src/app/shared/components/clank-card/clank-card.types';
 import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
 import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
+import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 
@@ -38,6 +39,7 @@ import { GameInfoService } from '../services/game-info.service';
 })
 export class ClankPlayerInfoComponent implements OnInit {
 
+    ClankCostInfoType = ClankCostInfoType;
     cardsWrapInfo = {
         rowCount: 4,
         cardWidth,

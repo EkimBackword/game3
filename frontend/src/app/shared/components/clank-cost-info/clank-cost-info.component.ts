@@ -5,9 +5,16 @@ import {
     OnInit,
 } from '@angular/core';
 
-import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
+import {
+    ClankCostInfoKeysByType,
+    ClankCostInfoType,
+    ClankElementTypeMap,
+} from 'src/app/shared/models/clank-element-types';
 
-import { ClankCostInfo } from '@shared/clank/clank-info.types';
+import {
+    ClankCostInfo,
+    ClankElementType,
+} from '@shared/clank/clank-info.types';
 
 @Component({
     selector: 'app-clank-cost-info',
@@ -17,9 +24,12 @@ import { ClankCostInfo } from '@shared/clank/clank-info.types';
 export class ClankCostInfoComponent implements OnInit {
 
     @Input() data!: ClankCostInfo;
+    @Input() type: ClankCostInfoType = ClankCostInfoType.all;
     @Input() set elementHeight(value: number) {
         this.height = `${value ?? 50}px`;
     }
+
+    keys: ClankElementType[] = [];
 
     @HostBinding('style.--cost-element-height') height = '50px';
 
@@ -28,6 +38,7 @@ export class ClankCostInfoComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
+        this.keys = ClankCostInfoKeysByType[this.type];
     }
 
 }

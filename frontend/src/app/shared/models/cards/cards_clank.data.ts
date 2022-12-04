@@ -2,11 +2,11 @@ import {
     ClankCardBaseConfig,
     ClankCardName,
     ClankCardPositionEnum,
-    ClankCardType,
     ClankDeckConfig,
     ClankDeckSpriteInfo,
 } from '@shared/clank/clank-card.types';
 import {
+    ClankCardType,
     ClankDlcEnum,
     ClankEffect,
     ClankTarget,

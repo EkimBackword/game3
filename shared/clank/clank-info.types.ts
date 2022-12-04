@@ -1,27 +1,78 @@
-export enum ClankElementType {
+export enum ClankCardType {
+    start = 'start',
+    basiс = 'basiс',
+    device = 'device',
+    monster = 'monster',
+    companion = 'companion',
+    gem = 'gem',
+}
+
+export const ClankCardTypeList = Object.values(ClankCardType);
+
+export enum ClankElementByTurn {
     skill = 'skill', // Навык
     sword = 'sword', // Меч
     boot = 'boot', // Ботинок
     clank = 'clank', // Кланк / шум
+}
+
+export const ClankElementByTurnList = Object.values(ClankElementByTurn);
+
+export enum ClankElementByGame {
     heal = 'heal', // Здоровье
-    pyramid_dice = 'pyramid_dice', // Бросок кубика
-    curse = 'curse', // Проклятье
     coin = 'coin', // Монетка
+    curse = 'curse', // Проклятье
+    mastery_token = 'mastery_token', // Количество жетонов мастерства
+    minor_secret = 'minor_secret', // Количество малого секрета
+    major_secret = 'major_secret', // Количество большого секрета
+    artefact = 'artefact', // Количество артефактов
+}
+
+export const ClankElementByGameList = Object.values(ClankElementByGame);
+
+export enum ClankElementByToken {
+    monkey_idol = 'monkey_idol', // Количество идолов
+    dragon_egg = 'dragon_egg', // Количество драконьих яиц
+    cup = 'cup', // Количество кубоков
+}
+
+export const ClankElementByTokenList = Object.values(ClankElementByToken);
+
+export enum ClankElementByMarket {
+    key = 'key', // Количество отмычек
+    backpack = 'backpack', // Количество рюкзоков
+    crown = 'crown', // Количество корон
+}
+
+export const ClankElementByMarketList = Object.values(ClankElementByMarket);
+
+export enum ClankElementByActions {
+    dragon_rage = 'dragon_rage', // Если у вас есть драконье яйцо
     card = 'card', // Карта. Например, надо сбросить или добрать карту
     trashCard = 'trashCard', // Избавиться от карты
-    companion = 'companion', // Если у вас есть союзник
-    monkey_idol = 'monkey_idol', // Если у вас есть союзник
-    mastery_token = 'mastery_token', // Если у вас есть жетон мастерства
-    dragon_egg = 'dragon_egg', // Если у вас есть драконье яйцо
-    dragon_rage = 'dragon_rage', // Если у вас есть драконье яйцо
-    cup = 'cup', // Если у вас есть кубок
+    pyramid_dice = 'pyramid_dice', // Бросок кубика
     teleport = 'teleport', // Возможность телепортироваться в соседнее помещение
-    artefact = 'artefact', // Наличие артефакта
-    key = 'key', // Наличие отмычек
-    backpack = 'backpack', // Наличие рюкзока
-    minor_secret = 'minor_secret', // Наличие малого секрета
-    major_secret = 'major_secret', // Наличие большого секрета
 }
+
+export const ClankElementByActionsList = Object.values(ClankElementByActions);
+
+export const ClankElementTypeEnum = {
+    ...ClankCardType,
+    ...ClankElementByTurn,
+    ...ClankElementByGame,
+    ...ClankElementByToken,
+    ...ClankElementByMarket,
+    ...ClankElementByActions,
+}
+
+export const ClankElementTypeList = Object.values(ClankElementTypeEnum);
+
+export type ClankElementType = ClankCardType
+    | ClankElementByTurn
+    | ClankElementByGame
+    | ClankElementByToken
+    | ClankElementByMarket
+    | ClankElementByActions;
 
 export type ClankCostInfo = Partial<Record<ClankElementType, number>>;
 

@@ -1,4 +1,5 @@
 import {
+  ClankCardType,
   ClankCostInfo,
   ClankDlcEnum,
   ClankEffect,
@@ -113,15 +114,6 @@ export interface ClankCardPointInfo {
         cost: ClankCostInfo;
         count: number;
     };
-}
-
-export enum ClankCardType {
-    start = 'start',
-    basiс = 'basiс',
-    device = 'device',
-    monster = 'monster',
-    companion = 'companion',
-    gem = 'gem',
 }
 
 export interface ClankCardActionList {

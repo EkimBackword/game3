@@ -23,7 +23,6 @@ import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
-import { ClankElementType } from '@shared/clank/clank-info.types';
 import {
     ClankMapElementConfig,
     ClankMapElementLink,
@@ -120,9 +119,10 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (!this.canDoByPlayerPosition(this.activePlayer)) {
             return;
         }
-        const hasBackpack = this.activePlayer.tokens.some(p => p.element_type === ClankElementType.backpack);
-        const count = hasBackpack ? 2 : 1;
-        if (this.activePlayer.artifacts.length >= count) {
+        const artefactCount = this.activePlayer.benefitInfo.artefact ?? 0;
+        const backpackCount = this.activePlayer.benefitInfo.backpack ?? 0;
+        const count = 1 + backpackCount;
+        if (artefactCount >= count) {
             return;
         }
         this.gameInfoService.takeArtifact(this.activePlayer.id, artifact);
