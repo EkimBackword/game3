@@ -16,7 +16,10 @@ import {
 } from '@shared/clank/clank-card.types';
 
 import { CardsService } from '../../services/cards.service';
-import { ISelectedPlayerCardInfo } from './clank-card.types';
+import {
+    ISelectedPlayerCardAction,
+    ISelectedPlayerCardInfo,
+} from './clank-card.types';
 
 @Component({
     selector: 'app-clank-card',
@@ -32,6 +35,7 @@ export class ClankCardComponent implements OnInit, OnChanges {
     @Input() height = ClankCardHeight;
     card: ClankCardConfig | undefined;
     style: Partial<CSSStyleDeclaration> = {};
+    actions: ISelectedPlayerCardAction[] = [];
 
     @HostBinding('style.--card_width') card_width = `${this.width}px`;
     @HostBinding('style.--card_height') card_height = `${this.height}px`;
@@ -42,16 +46,16 @@ export class ClankCardComponent implements OnInit, OnChanges {
     ) { }
 
     ngOnInit(): void {
-        this.card = this.getCardInfo();
+        this.updateCardInfo();
         this.updateStyle();
         this.changeDetectorRef.detectChanges();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.card) {
-            this.card = this.getCardInfo();
+        if (changes.data) {
+            this.updateCardInfo();
         }
-        if (changes.card || changes.width || changes.height) {
+        if (changes.data || changes.width || changes.height) {
             this.updateStyle();
         }
         this.changeDetectorRef.detectChanges();
@@ -61,6 +65,11 @@ export class ClankCardComponent implements OnInit, OnChanges {
         this.card_width = `${this.width}px`;
         this.card_height = `${this.height}px`;
         this.style = this.getStyle();
+    }
+
+    private updateCardInfo() {
+        this.card = this.getCardInfo();
+        this.actions = this.data?.actions.filter(p => p.canUse()) ?? [];
     }
 
     private getCardInfo() {

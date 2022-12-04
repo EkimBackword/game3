@@ -62,6 +62,10 @@ export class ClankPlayerInfoComponent implements OnInit {
         return this.gameInfoQuery.currentPlayer;
     }
 
+    get activePlayer() {
+        return this.gameInfoQuery.activePlayer;
+    }
+
     get selectedPlayer() {
         return this.selectedPlayerSubject.getValue();
     }
@@ -238,7 +242,10 @@ export class ClankPlayerInfoComponent implements OnInit {
                 classes: [`card_container__hand`],
                 actions: [{
                     name: 'Использовать карту',
-                    canUse: (activePlayer) => player.id === activePlayer.id,
+                    canUse: () => {
+                        console.log(player, this.activePlayer, this.currentPlayer);
+                        return player.id === this.activePlayer.id && this.activePlayer.id === this.currentPlayer?.id;
+                    },
                     callback: () => this.useCard(card, player),
                 }],
             };

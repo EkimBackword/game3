@@ -18,7 +18,8 @@
     </div>
     <ng-container *ngIf="(selectedPlayerSubject | async) as player">
         <div class="body p-1" >
-            <div class="not_active_player" *ngIf="player.id !== activePlayer.id">
+            <div class="not_active_player" *ngIf="player.id !== activePlayer.id"
+                [style.height.px]="cardsWrapInfo.boardTop">
                 <h4 class="message p-2 shadow-lg">
                     Ход игрока
                     <span class="player_name">{{activePlayer.name}}</span>

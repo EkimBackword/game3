@@ -1,5 +1,4 @@
 import { ClankCardState } from '@shared/clank/clank-card.types';
-import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 
 export interface ISelectedPlayerCardInfo {
     id: string;
@@ -13,7 +12,7 @@ export interface ISelectedPlayerCardInfo {
 
 export interface ISelectedPlayerCardAction {
     name: string;
-    canUse: (activePlayer: ClankPlayerConfig) => boolean;
+    canUse: () => boolean;
     callback: () => void;
 }
 
