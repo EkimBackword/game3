@@ -2,7 +2,9 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    ElementRef,
     OnInit,
+    ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -30,6 +32,8 @@ import { GameInfoService } from '../services/game-info.service';
 })
 export class ClankGameInfoComponent implements OnInit {
 
+    @ViewChild('GameActionLogs', { static: false }) GameActionLogs!: ElementRef<HTMLElement>;
+
     ClankCostInfoType = ClankCostInfoType;
     isStarted = false;
     isFinished = false;
@@ -40,6 +44,8 @@ export class ClankGameInfoComponent implements OnInit {
             this.isFinished = statusId === GameInfoStatusIdEnum.Finished;
         }),
     );
+
+    onActionLogs = this.gameInfoQuery.onActionLogsChangeSubject;
 
     nameSubject = this.gameInfoQuery.onNameChangeSubject;
 

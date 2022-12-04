@@ -3,7 +3,10 @@ import { ClankCardState } from './clank-card.types';
 import { ClankDragonInfo } from './clank-dragon.types';
 import { ClankDlcEnum } from './clank-info.types';
 import { ClankMapConfigIds } from './clank-map.types';
-import { ClankPlayerConfig } from './clank-player.types';
+import {
+  ClankPlayerConfig,
+  GamePlayerColorIdEnum,
+} from './clank-player.types';
 import { ClankTokenState } from './clank-token.types';
 
 export enum GameInfoStatusIdEnum {
@@ -25,6 +28,11 @@ export interface GameInfoConfig {
     dungeonDeckIds: ClankDlcEnum[];
     /** DLC для определения стартовой руки игрока */
     startDeckId: ClankDlcEnum;
+}
+
+export interface GameInfoActionLog {
+    text: string;
+    colorId?: GamePlayerColorIdEnum;
 }
 
 export interface GameInfoState extends GameInfoConfig {
@@ -55,5 +63,5 @@ export interface GameInfoState extends GameInfoConfig {
     /** Идентификатор активного игрока */
     activePlayerId: string;
     /** Идентификатор активного игрока */
-    actionLogs: string[];
+    actionLogs: GameInfoActionLog[];
 }

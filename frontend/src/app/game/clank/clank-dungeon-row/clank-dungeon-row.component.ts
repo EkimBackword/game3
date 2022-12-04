@@ -17,6 +17,7 @@ import {
     ISelectedPlayerCardInfo,
 } from 'src/app/shared/components/clank-card/clank-card.types';
 import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
+import { UseCardType } from 'src/app/shared/models/cards/cards.types';
 import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 
@@ -159,7 +160,7 @@ export class ClankDungeonRowComponent implements OnInit {
             playerId: this.data.player.id,
             cardState,
             benefitInfo,
-            type: 'buy',
+            type: UseCardType.buy,
         });
         this.changeDetectorRef.detectChanges();
     }

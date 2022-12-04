@@ -18,6 +18,7 @@ import {
 } from 'src/app/shared/components/clank-card/clank-card.types';
 import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
 import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
+import { UseCardType } from 'src/app/shared/models/cards/cards.types';
 import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
@@ -140,7 +141,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                     isBenefit: true,
                 })
                 : player.benefitInfo,
-            type: 'moveToBoard',
+            type: UseCardType.use,
         });
         this.changeDetectorRef.detectChanges();
     }

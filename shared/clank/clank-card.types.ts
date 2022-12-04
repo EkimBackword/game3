@@ -92,6 +92,8 @@ export interface ClankCardState {
      * @description ${config.dlc_name}_${start_index}__${copy_index}_${config.playerId}
      */
     id: string;
+    /** Название */
+    name: string;
     /** При перемешивании колоды выставляется новая позиция */
     index: number;
     /** Не изменный индекс при иницыализации */

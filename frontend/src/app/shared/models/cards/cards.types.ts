@@ -3,6 +3,22 @@ import {
     ClankDeckConfig,
 } from '@shared/clank/clank-card.types';
 
+export enum UseCardType {
+    use = 'use',
+    buy = 'buy',
+}
+
+export const UseCardInfoByType: Record<UseCardType, {
+    text: string,
+}> = {
+    [UseCardType.use]: {
+        text: 'использовал карту',
+    },
+    [UseCardType.buy]: {
+        text: 'купил курту',
+    },
+};
+
 let lastIndex = 0;
 
 export const mappingDeckCards = (data: ClankDeckConfig, withCopy: boolean) => {

@@ -12,6 +12,7 @@ export const getClankMapFirst = () => {
         url: '/assets/images/maps/clank_1.jpg',
         width: 3000,
         height: 3000,
+        maxDragonRage: 6,
         dragonTrack: [
             {
                 rage: 0,

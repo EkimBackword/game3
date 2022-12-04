@@ -84,6 +84,7 @@ export class CardsService {
         return configs.map(config => {
             const state: ClankCardState = {
                 id: config.id,
+                name: config.name,
                 index: config.index,
                 initIndex: config.initIndex,
                 position: config.position,

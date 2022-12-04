@@ -83,6 +83,15 @@
         </div>
     </div>
     <div class="footer p-1">
+        <div #GameActionLogs class="game_action_logs">
+            <ngb-alert
+                *ngFor="let log of (onActionLogs | async)"
+                [dismissible]="false"
+                type="custom"
+                class="alert-custom--{{log.colorId}}">
+                {{log.text}}
+            </ngb-alert>
+        </div>
         <button class="btn btn-primary mb-1"
             [class.not-allowed]="!validColorList"
             (click)="startGame()"
@@ -92,12 +101,12 @@
             [matTooltipDisabled]="validColorList">
             Начать игру
         </button>
-        <button class="btn btn-primary mb-1"
+        <button class="btn btn-sm btn-primary mb-1"
             (click)="finishGame()"
             *ngIf="currentPlayer?.isAdmin && isStarted">
             Закончить игру
         </button>
-        <button class="btn btn-secondary"
+        <button class="btn btn-sm btn-secondary"
             (click)="exitGame()">
             Выйти из игры
         </button>
