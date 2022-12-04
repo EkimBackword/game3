@@ -31,7 +31,6 @@ export class ClankCardComponent implements OnInit, OnChanges {
     @Input() width = ClankCardWidth;
     @Input() height = ClankCardHeight;
     card: ClankCardConfig | undefined;
-
     style: Partial<CSSStyleDeclaration> = {};
 
     @HostBinding('style.--card_width') card_width = `${this.width}px`;

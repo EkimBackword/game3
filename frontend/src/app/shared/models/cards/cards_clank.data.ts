@@ -26,6 +26,7 @@ export const getClankReserveCards = (userCount: number, withCopy: boolean) => {
             row: 0,
             column: 0,
             name: 'Исследование',
+            description: 'Исследование',
             isReserve: true,
             type: ClankCardType.basiс,
             acquire: {
@@ -49,6 +50,7 @@ export const getClankReserveCards = (userCount: number, withCopy: boolean) => {
             row: 0,
             column: 2,
             name: 'Наёмник',
+            description: 'Наёмник',
             isReserve: true,
             type: ClankCardType.basiс,
             acquire: {
@@ -72,6 +74,7 @@ export const getClankReserveCards = (userCount: number, withCopy: boolean) => {
             row: 0,
             column: 3,
             name: 'Книга тайн',
+            description: 'Книга тайн',
             isReserve: true,
             type: ClankCardType.basiс,
             acquire: {
@@ -94,6 +97,7 @@ export const getClankReserveCards = (userCount: number, withCopy: boolean) => {
             row: 0,
             column: 1,
             name: 'Гоблин',
+            description: 'Гоблин',
             isReserve: true,
             type: ClankCardType.monster,
             acquire: {
@@ -127,6 +131,7 @@ export const getClankStartCards = (playerId: string, withCopy: boolean) => {
             row: 0,
             column: 4,
             name: ClankCardName.Burgle,
+            description: ClankCardName.Burgle,
             type: ClankCardType.start,
             benefit: {
                 skill: 1,
@@ -137,6 +142,7 @@ export const getClankStartCards = (playerId: string, withCopy: boolean) => {
             row: 0,
             column: 5,
             name: ClankCardName.Scramble,
+            description: ClankCardName.Scramble,
             type: ClankCardType.start,
             benefit: {
                 skill: 1,
@@ -148,6 +154,7 @@ export const getClankStartCards = (playerId: string, withCopy: boolean) => {
             row: 0,
             column: 6,
             name: ClankCardName.Sidestep,
+            description: ClankCardName.Sidestep,
             type: ClankCardType.start,
             benefit: {
                 boot: 1,
@@ -158,6 +165,7 @@ export const getClankStartCards = (playerId: string, withCopy: boolean) => {
             row: 0,
             column: 7,
             name: ClankCardName.Stumble,
+            description: ClankCardName.Stumble,
             type: ClankCardType.start,
             benefit: {
                 clank: 1,
@@ -180,6 +188,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 0,
             column: 8,
             name: 'Амулет силы',
+            description: 'Амулет силы',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -207,6 +216,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 0,
             column: 9,
             name: 'Аптекарь',
+            description: 'Аптекарь',
             type: ClankCardType.companion,
             acquire: {
                 type: 'every',
@@ -255,6 +265,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 1,
             column: 0,
             name: 'Археолог',
+            description: 'Археолог',
             type: ClankCardType.companion,
             acquire: {
                 type: 'every',
@@ -299,6 +310,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 1,
             column: 1,
             name: 'Ботинки скорости',
+            description: 'Ботинки скорости',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -326,6 +338,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 1,
             column: 2,
             name: 'Наручи проворности',
+            description: 'Наручи проворности',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -350,6 +363,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 1,
             column: 3,
             name: 'Гениальность',
+            description: 'Гениальность',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -371,6 +385,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 1,
             column: 4,
             name: 'Жрица Солнца',
+            description: 'Жрица Солнца',
             type: ClankCardType.companion,
             acquire: {
                 type: 'every',
@@ -399,6 +414,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 1,
             column: 5,
             name: 'Бежать сломя голову',
+            description: 'Бежать сломя голову',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -434,6 +450,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 1,
             column: 6,
             name: 'Бриллиант',
+            description: 'Бриллиант',
             type: ClankCardType.gem,
             acquire: {
                 type: 'every',
@@ -464,6 +481,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 1,
             column: 7,
             name: 'Драконье око',
+            description: 'Драконье око',
             type: ClankCardType.gem,
             onlyDepthsArea: true,
             acquire: {
@@ -501,6 +519,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 1,
             column: 8,
             name: 'Дварф-лоточник',
+            description: 'Дварф-лоточник',
             type: ClankCardType.companion,
             acquire: {
                 type: 'every',
@@ -533,6 +552,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 1,
             column: 9,
             name: 'Эльфийские сапоги',
+            description: 'Эльфийские сапоги',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -559,6 +579,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 2,
             column: 0,
             name: 'Эльфийский плащ',
+            description: 'Эльфийский плащ',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -585,6 +606,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 2,
             column: 1,
             name: 'Эльфийский кинжал',
+            description: 'Эльфийский кинжал',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -611,6 +633,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 2,
             column: 2,
             name: 'Изумруд',
+            description: 'Изумруд',
             type: ClankCardType.gem,
             acquire: {
                 type: 'every',
@@ -641,6 +664,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 2,
             column: 3,
             name: 'Ковёр-самолёт',
+            description: 'Ковёр-самолёт',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -677,6 +701,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 2,
             column: 4,
             name: 'Сборщик драгоценностей',
+            description: 'Сборщик драгоценностей',
             type: ClankCardType.companion,
             acquire: {
                 type: 'every',
@@ -713,6 +738,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 2,
             column: 5,
             name: 'Взывающий к Древним',
+            description: 'Взывающий к Древним',
             type: ClankCardType.companion,
             acquire: {
                 type: 'every',
@@ -738,6 +764,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 2,
             column: 6,
             name: 'Кобольд-торгаш',
+            description: 'Кобольд-торгаш',
             type: ClankCardType.companion,
             acquire: {
                 type: 'every',
@@ -779,6 +806,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 2,
             column: 7,
             name: 'Счастливая монетка',
+            description: 'Счастливая монетка',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -805,6 +833,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 2,
             column: 8,
             name: 'Профессиональный ворюга',
+            description: 'Профессиональный ворюга',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',
@@ -838,6 +867,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             row: 2,
             column: 9,
             name: 'Господин Усач',
+            description: 'Господин Усач',
             type: ClankCardType.basiс,
             acquire: {
                 type: 'every',

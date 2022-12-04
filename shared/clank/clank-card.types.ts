@@ -62,6 +62,8 @@ export interface ClankCardBaseConfig {
     column: number;
     /** Имя */
     name: string;
+    /** Имя */
+    description: string;
     /** Доступно всегда или нет */
     isReserve?: boolean;
     /** Только в недрах */
