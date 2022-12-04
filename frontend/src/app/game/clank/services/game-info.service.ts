@@ -58,7 +58,6 @@ export class GameInfoService implements OnDestroy {
     ) { }
 
     ngOnDestroy() {
-        console.log(`Destroy socket service (gameId: ${this.gameId ?? '-'})`);
         this.socket?.disconnect();
     }
 
@@ -154,7 +153,6 @@ export class GameInfoService implements OnDestroy {
                 player.id,
                 player,
             );
-            console.log(state.actionLogs);
             return state;
         });
         this.onGameUpdated();
@@ -370,12 +368,10 @@ export class GameInfoService implements OnDestroy {
         while (state.dungeonRow.length < 6 && state.dungeonDeck.length > 0) {
             const cardState = state.dungeonDeck.pop();
             if (!cardState) {
-                console.log('break | cardState', cardState);
                 break;
             }
             const card = this.cardsService.getCardInfo(cardState);
             if (!card) {
-                console.log('break | card', cardState);
                 break;
             }
             if (card.arrive?.isDragonAttack && options?.initDungeonRow) {
@@ -495,7 +491,6 @@ export class GameInfoService implements OnDestroy {
             createdAt: momentTime.format(MomentDateFormat),
             data,
         });
-        console.log('addActionLogs', state.actionLogs);
     }
 
 }

@@ -72,10 +72,8 @@ const testGame: GameInfoState = {
 gamesList.set(testGame.id, testGame);
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
 
     socket.on('disconnect', () => {
-        console.log('user disconnected');
     });
 
     socket.on('addGame', (game) => {

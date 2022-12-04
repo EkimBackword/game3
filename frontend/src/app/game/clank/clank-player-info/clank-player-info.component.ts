@@ -147,7 +147,7 @@ export class ClankPlayerInfoComponent implements OnInit {
     }
 
     openDungeonRow(player: ClankPlayerConfig) {
-        const bottomSheetRef = this.matBottomSheet.open<
+        this.matBottomSheet.open<
             ClankDungeonRowComponent,
             ClankDungeonRowComponent['data']
         >(
@@ -160,9 +160,6 @@ export class ClankPlayerInfoComponent implements OnInit {
                 },
             },
         );
-        bottomSheetRef.afterDismissed().subscribe(() => {
-            console.log('afterDismissed');
-        });
     }
 
     finishTurn() {
