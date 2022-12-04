@@ -91,7 +91,7 @@
                         *ngFor="let log of group.list"
                         [dismissible]="false"
                         type="custom"
-                        class="alert-custom--{{log.data.text}}">
+                        class="alert-custom--{{log.data.colorId}}">
                         {{log.data.text}}
                     </ngb-alert>
                 </div>

@@ -487,6 +487,7 @@ export class GameInfoService implements OnDestroy {
     private addActionLogs(state: GameInfoState, data: GameInfoActionLogData) {
         const momentTime = moment();
         state.actionLogs.push({
+            index: state.actionLogs.length,
             turnIndex: state.turnIndex,
             createdAt: momentTime.format(MomentDateFormat),
             data,

@@ -102,7 +102,13 @@ export class GameInfoQuery extends Query<GameInfoState> {
                 const result: GameInfoActionLogGroup = {
                     name,
                     dateForOrder: moment(name, MomentDateGroupFormat),
-                    list: list.sort((a, b) => b.createdAtMoment.diff(a.createdAtMoment)),
+                    list: list.sort((a, b) => {
+                        const momentDiff = b.createdAtMoment.diff(a.createdAtMoment);
+                        if (momentDiff === 0) {
+                            return b.index - a.index;
+                        }
+                        return momentDiff;
+                    }),
                 };
                 return result;
             }).sort((a, b) => b.dateForOrder.diff(a.dateForOrder));

@@ -31,6 +31,7 @@ export interface GameInfoConfig {
 }
 
 export interface GameInfoActionLog {
+    index: number;
     turnIndex: number;
     createdAt: string;
     data: GameInfoActionLogData;
