@@ -31,6 +31,12 @@ export interface GameInfoConfig {
 }
 
 export interface GameInfoActionLog {
+    turnIndex: number;
+    createdAt: string;
+    data: GameInfoActionLogData;
+}
+
+export interface GameInfoActionLogData {
     text: string;
     colorId?: GamePlayerColorIdEnum;
 }
@@ -62,6 +68,8 @@ export interface GameInfoState extends GameInfoConfig {
     activePlayerIndex: number;
     /** Идентификатор активного игрока */
     activePlayerId: string;
+    /** Идентификатор активного игрока */
+    turnIndex: number;
     /** Идентификатор активного игрока */
     actionLogs: GameInfoActionLog[];
 }

@@ -4,8 +4,18 @@ import {
     FormsModule,
     ReactiveFormsModule,
 } from '@angular/forms';
+import {
+    MAT_MOMENT_DATE_FORMATS,
+    MomentDateAdapter,
+} from '@angular/material-moment-adapter';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import {
+    DateAdapter,
+    MAT_DATE_FORMATS,
+    MAT_DATE_LOCALE,
+} from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -36,6 +46,7 @@ const exports = [
     MatDialogModule,
     MatSnackBarModule,
     MatBadgeModule,
+    MatDatepickerModule,
     NgbModule,
 ];
 
@@ -62,6 +73,8 @@ const exportsComponents = [
         ...exportsComponents,
     ],
     providers: [
+        {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+        {provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS},
     ],
 })
 export class SharedModule { }

@@ -61,7 +61,7 @@
                             <select class="form-select form-select-sm w-75"
                                 [ngModel]="player.colorId"
                                 (ngModelChange)="changeColor(player, $event)"
-                                [disabled]="currentPlayer.id != player.id"
+                                [disabled]="currentPlayer?.id != player.id"
                             >
                                 <option
                                     *ngFor="let item of GamePlayerColorList | keyvalue"
@@ -83,14 +83,20 @@
         </div>
     </div>
     <div class="footer p-1">
-        <div #GameActionLogs class="game_action_logs">
-            <ngb-alert
-                *ngFor="let log of (onActionLogs | async)"
-                [dismissible]="false"
-                type="custom"
-                class="alert-custom--{{log.colorId}}">
-                {{log.text}}
-            </ngb-alert>
+        <div class="game_action_logs">
+            <ng-container *ngFor="let group of (onActionLogs | async)">
+                <div class="game_action_logs__group">
+                    <div class="game_action_logs__group_name">{{group.name}}</div>
+                    <ngb-alert
+                        *ngFor="let log of group.list"
+                        [dismissible]="false"
+                        type="custom"
+                        class="alert-custom--{{log.data.text}}">
+                        {{log.data.text}}
+                    </ngb-alert>
+                </div>
+            </ng-container>
+
         </div>
         <button class="btn btn-primary mb-1"
             [class.not-allowed]="!validColorList"

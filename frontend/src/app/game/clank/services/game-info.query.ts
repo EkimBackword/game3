@@ -1,11 +1,18 @@
 import { Injectable } from '@angular/core';
 
+import * as moment from 'moment';
 import {
     filter,
     map,
     shareReplay,
 } from 'rxjs/operators';
 import { SessionQuery } from 'src/app/session/session.query';
+import {
+    GameInfoActionLogFrontend,
+    GameInfoActionLogGroup,
+    MomentDateFormat,
+    MomentDateGroupFormat,
+} from 'src/app/shared/models/game.types';
 import { notEmpty } from 'src/app/shared/models/shared.types';
 import { MapsService } from 'src/app/shared/services/maps.service';
 
@@ -78,7 +85,30 @@ export class GameInfoQuery extends Query<GameInfoState> {
 
     onArtifactsChangeSubject = this.select('artifacts');
 
-    onActionLogsChangeSubject = this.select('actionLogs');
+    onActionLogsChangeSubject = this.select('actionLogs').pipe(
+        map((logs) => {
+            const logMap = new Map<string, GameInfoActionLogFrontend[]>();
+            for (const log of logs) {
+                const data: GameInfoActionLogFrontend =  {
+                    ...log,
+                    createdAtMoment: moment(log.createdAt, MomentDateFormat),
+                };
+                const name = data.createdAtMoment.format(MomentDateGroupFormat);
+                const list = logMap.get(name) ?? [];
+                list.push(data);
+                logMap.set(name, list);
+            }
+            return [...logMap.entries()].map(([name, list]) => {
+                const result: GameInfoActionLogGroup = {
+                    name,
+                    dateForOrder: moment(name, MomentDateGroupFormat),
+                    list: list.sort((a, b) => b.createdAtMoment.diff(a.createdAtMoment)),
+                };
+                return result;
+            }).sort((a, b) => b.dateForOrder.diff(a.dateForOrder));
+        }),
+        shareReplay(1),
+    );
 
     get currentPlayer() {
         const userState = this.sessionQuery.getValue();

@@ -65,6 +65,7 @@ const testGame: GameInfoState = {
     players: [],
     dragonInfo: initDragonInfo(),
     actionLogs: [],
+    turnIndex: 0,
     activePlayerIndex: 0,
     activePlayerId: '',
 };

@@ -3,10 +3,13 @@ import {
     OnDestroy,
 } from '@angular/core';
 
+import * as lodash from 'lodash';
+import * as moment from 'moment';
 import {
     UseCardInfoByType,
     UseCardType,
 } from 'src/app/shared/models/cards/cards.types';
+import { MomentDateFormat } from 'src/app/shared/models/game.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { ArtifactsService } from 'src/app/shared/services/artifacts.service';
 import { CardsService } from 'src/app/shared/services/cards.service';
@@ -22,6 +25,7 @@ import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
 import { ClankCardState } from '@shared/clank/clank-card.types';
 import { initDragonInfo } from '@shared/clank/clank-dragon.types';
 import {
+    GameInfoActionLogData,
     GameInfoState,
     GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
@@ -116,12 +120,13 @@ export class GameInfoService implements OnDestroy {
         benefitInfo: ClankCostInfo;
         type: UseCardType;
     }) {
-        this.gameInfoStore.update((state) => {
+        this.gameInfoStore.update((oldState) => {
+            const state = lodash.cloneDeep(oldState);
             const player = state.players.find(p => p.id === playerId);
             if (player == null) {
                 return state;
             }
-            state.actionLogs.unshift({
+            this.addActionLogs(state, {
                 text: `${player.name} ${UseCardInfoByType[type].text} ${cardState.name}`,
                 colorId: player.colorId,
             });
@@ -149,13 +154,15 @@ export class GameInfoService implements OnDestroy {
                 player.id,
                 player,
             );
+            console.log(state.actionLogs);
             return state;
         });
         this.onGameUpdated();
     }
 
     takeArtifact(playerId: string, artifact: ClankArtifactConfig) {
-        this.gameInfoStore.update((state) => {
+        this.gameInfoStore.update((oldState) => {
+            const state = lodash.cloneDeep(oldState);
             const player = state.players.find(p => p.id === playerId);
             if (player == null) {
                 return state;
@@ -183,21 +190,20 @@ export class GameInfoService implements OnDestroy {
             this.useToken(playerId, tokenState);
             return;
         }
-        this.gameInfoStore.update((state) => {
+        this.gameInfoStore.update((oldState) => {
+            const state = lodash.cloneDeep(oldState);
             const player = state.players.find(p => p.id === playerId);
             if (player == null) {
                 return state;
             }
-            const newState: Partial<GameInfoState> = {
-                tokens: state.tokens.filter(p => p.id !== tokenState.id),
-                players: arrayUpdate(state.players, player.id, {
-                    tokens: [
-                        ...player.tokens,
-                        tokenState,
-                    ],
-                }),
-            };
-            return newState;
+            state.tokens = state.tokens.filter(p => p.id !== tokenState.id),
+            state.players = arrayUpdate(state.players, player.id, {
+                tokens: [
+                    ...player.tokens,
+                    tokenState,
+                ],
+            });
+            return state;
         });
         this.onGameUpdated();
     }
@@ -207,7 +213,8 @@ export class GameInfoService implements OnDestroy {
         if (tokenInfo == null) {
             return;
         }
-        this.gameInfoStore.update((state) => {
+        this.gameInfoStore.update((oldState) => {
+            const state = lodash.cloneDeep(oldState);
             const player = state.players.find(p => p.id === playerId);
             if (player == null) {
                 return state;
@@ -231,7 +238,8 @@ export class GameInfoService implements OnDestroy {
     }
 
     startGame() {
-        this.gameInfoStore.update((state) => {
+        this.gameInfoStore.update((oldState) => {
+            const state = lodash.cloneDeep(oldState);
             state.statusId = GameInfoStatusIdEnum.Started;
             state.activePlayerIndex = Math.floor(Math.random() * state.players.length);
             state.activePlayerId = state.players[state.activePlayerIndex].id;
@@ -265,7 +273,8 @@ export class GameInfoService implements OnDestroy {
             );
             state.tokens = this.simpleShuffle(this.tokensService.getTokens());
             state.artifacts = this.simpleShuffle(this.artifactsService.getArtifacts());
-            state.actionLogs.unshift({
+            state.turnIndex = 0;
+            this.addActionLogs(state, {
                 text: 'Игра началась',
             });
             this.drawDungeonRow(state, {
@@ -277,7 +286,8 @@ export class GameInfoService implements OnDestroy {
     }
 
     finishTurn() {
-        this.gameInfoStore.update((state) => {
+        this.gameInfoStore.update((oldState) => {
+            const state = lodash.cloneDeep(oldState);
             const currentPlayer = state.players[state.activePlayerIndex];
             Object.assign(currentPlayer.benefitInfo, this.getEmptyBenefitInfo());
             if (currentPlayer.benefitInfo.trashCard) {
@@ -295,7 +305,7 @@ export class GameInfoService implements OnDestroy {
             currentPlayer.hand = [];
             this.drawCards(currentPlayer, 5);
             state.players = arrayUpdate(state.players, currentPlayer.id, currentPlayer);
-            state.actionLogs.unshift({
+            this.addActionLogs(state, {
                 text: `${currentPlayer.name} закончил свой ход`,
                 colorId: currentPlayer.colorId,
             });
@@ -306,11 +316,12 @@ export class GameInfoService implements OnDestroy {
                 : 0;
             const newActivPlayer = state.players[state.activePlayerIndex];
             state.activePlayerId = newActivPlayer.id;
-            state.actionLogs.unshift({
+            this.addActionLogs(state, {
                 text: `Ход переходит к игроку ${newActivPlayer.name}`,
                 colorId: newActivPlayer.colorId,
             });
 
+            state.turnIndex++;
             state.statusId = state.players.every(p => p.isFinish)
                 ? GameInfoStatusIdEnum.Finished
                 : state.statusId;
@@ -375,7 +386,7 @@ export class GameInfoService implements OnDestroy {
                 }
                 // TODO: применить свойства из поля arrive
                 state.dungeonRow.push(cardState);
-                state.actionLogs.unshift({
+                this.addActionLogs(state, {
                     text: `Карта ${cardState.name} появилась в подземном ряду`,
                 });
             }
@@ -387,7 +398,7 @@ export class GameInfoService implements OnDestroy {
 
         if (isDragonAttack) {
             // TODO: атака дракона
-            state.actionLogs.unshift({
+            this.addActionLogs(state, {
                 text: `Дракон атакует`,
             });
         }
@@ -438,7 +449,7 @@ export class GameInfoService implements OnDestroy {
         if (benefitInfo.card) {
             if (benefitInfo.card > 0) {
                 this.drawCards(player, benefitInfo.card);
-                state.actionLogs.unshift({
+                this.addActionLogs(state, {
                     text: `${player.name} добрал карты (${benefitInfo.card})`,
                     colorId: player.colorId,
                 });
@@ -451,7 +462,7 @@ export class GameInfoService implements OnDestroy {
         if (benefitInfo.pyramid_dice) {
             // TODO: бросить кубик
             delete benefitInfo.pyramid_dice;
-            state.actionLogs.unshift({
+            this.addActionLogs(state, {
                 text: `${player.name} бросает кубик`,
                 colorId: player.colorId,
             });
@@ -460,7 +471,7 @@ export class GameInfoService implements OnDestroy {
         if (benefitInfo.teleport) {
             // TODO: телепортация в соседнее помещениие
             delete benefitInfo.teleport;
-            state.actionLogs.unshift({
+            this.addActionLogs(state, {
                 text: `${player.name} должен выбрать куда хочет телепортироваться`,
                 colorId: player.colorId,
             });
@@ -468,13 +479,23 @@ export class GameInfoService implements OnDestroy {
 
         if (benefitInfo.dragon_rage && state.dragonInfo.rage < (this.gameInfoQuery.mapInfo?.maxDragonRage ?? 0)) {
             state.dragonInfo.rage++;
-            state.actionLogs.unshift({
+            this.addActionLogs(state, {
                 text: `Повышается ярость дракона`,
             });
         }
 
         // TODO: реакция на другие
         player.benefitInfo = benefitInfo;
+    }
+
+    private addActionLogs(state: GameInfoState, data: GameInfoActionLogData) {
+        const momentTime = moment();
+        state.actionLogs.push({
+            turnIndex: state.turnIndex,
+            createdAt: momentTime.format(MomentDateFormat),
+            data,
+        });
+        console.log('addActionLogs', state.actionLogs);
     }
 
 }

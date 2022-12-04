@@ -20,6 +20,7 @@ export function createInitialGameInfoState(config: GameInfoConfig): GameInfoStat
         artifacts: [],
         activePlayerIndex: 0,
         activePlayerId: '',
+        turnIndex: 0,
         actionLogs: [],
     };
 }
