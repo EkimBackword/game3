@@ -242,10 +242,8 @@ export class ClankPlayerInfoComponent implements OnInit {
                 classes: [`card_container__hand`],
                 actions: [{
                     name: 'Использовать карту',
-                    canUse: () => {
-                        console.log(player, this.activePlayer, this.currentPlayer);
-                        return player.id === this.activePlayer.id && this.activePlayer.id === this.currentPlayer?.id;
-                    },
+                    canUse: () => player.id === this.activePlayer.id
+                        && this.activePlayer.id === this.currentPlayer?.id,
                     callback: () => this.useCard(card, player),
                 }],
             };

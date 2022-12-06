@@ -20,6 +20,10 @@ import { Query } from '@datorama/akita';
 import { GameInfoState } from '@shared/clank/clank-game.types';
 
 import { GameInfoStore } from './game-info.store';
+import {
+    DragonPositionInfo,
+    PlayersPositionInfo,
+} from './game-info.types';
 
 @Injectable()
 export class GameInfoQuery extends Query<GameInfoState> {
@@ -56,7 +60,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
                     top: `${(mapElement?.position.y ?? 0) + rowIndex * size}px`,
                     left: `${(mapElement?.position.x ?? 0) + columnIndex * size}px`,
                 };
-                const data = {
+                const data: PlayersPositionInfo = {
                     player,
                     style,
                     size,
@@ -64,6 +68,34 @@ export class GameInfoQuery extends Query<GameInfoState> {
                 };
                 return data;
             });
+        }),
+        shareReplay(1),
+    );
+
+    onDragonPositionChangeSubject = this.select(['mapId', 'dragonInfo']).pipe(
+        map(({mapId, dragonInfo}): DragonPositionInfo => {
+            const data: DragonPositionInfo = {
+                dragonInfo,
+                style: {},
+                tooltip: `Уровень ярости дакона: ${dragonInfo.rage} `,
+            };
+            const mapInfo = this.mapsService.getMapById(mapId);
+            if (mapInfo == null) {
+                return data;
+            }
+            const dragonPosition = mapInfo.dragonInfo.track.find(p => p.rage === dragonInfo.rage);
+            if (dragonPosition == null) {
+                return data;
+            }
+            data.style = {
+                top: `${(dragonPosition.position.y ?? 0)}px`,
+                left: `${(dragonPosition.position.x ?? 0)}px`,
+                width: `${dragonPosition.position.width}px`,
+                height: `${dragonPosition.position.height}px`,
+                backgroundImage: `url(${mapInfo.dragonInfo.url})`,
+                backgroundSize: '100% 100%',
+            };
+            return data;
         }),
         shareReplay(1),
     );

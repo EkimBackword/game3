@@ -12,86 +12,89 @@ export const getClankMapFirst = () => {
         url: '/assets/images/maps/clank_1.jpg',
         width: 3000,
         height: 3000,
-        maxDragonRage: 6,
-        dragonTrack: [
-            {
-                rage: 0,
-                position: {
-                    x: 1940,
-                    y: 2750,
-                    width: 200,
-                    height: 200,
+        dragonInfo: {
+            url: '/assets/images/dragon.png',
+            maxRage: 6,
+            track: [
+                {
+                    rage: 0,
+                    position: {
+                        x: 1940,
+                        y: 2750,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 2,
+                    startUserCount: 4,
                 },
-                clank: 2,
-                startUserCount: 4,
-            },
-            {
-                rage: 1,
-                position: {
-                    x: 2240,
-                    y: 2720,
-                    width: 200,
-                    height: 200,
+                {
+                    rage: 1,
+                    position: {
+                        x: 2240,
+                        y: 2720,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 2,
+                    startUserCount: 3,
                 },
-                clank: 2,
-                startUserCount: 3,
-            },
-            {
-                rage: 2,
-                position: {
-                    x: 2520,
-                    y: 2560,
-                    width: 200,
-                    height: 200,
+                {
+                    rage: 2,
+                    position: {
+                        x: 2520,
+                        y: 2560,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 3,
+                    startUserCount: 2,
                 },
-                clank: 3,
-                startUserCount: 2,
-            },
-            {
-                rage: 3,
-                position: {
-                    x: 2690,
-                    y: 2300,
-                    width: 200,
-                    height: 200,
+                {
+                    rage: 3,
+                    position: {
+                        x: 2690,
+                        y: 2300,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 3,
+                    startUserCount: 1,
                 },
-                clank: 3,
-                startUserCount: 1,
-            },
-            {
-                rage: 4,
-                position: {
-                    x: 2740,
-                    y: 2020,
-                    width: 200,
-                    height: 200,
+                {
+                    rage: 4,
+                    position: {
+                        x: 2740,
+                        y: 2020,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 4,
+                    startUserCount: 0,
                 },
-                clank: 4,
-                startUserCount: 0,
-            },
-            {
-                rage: 5,
-                position: {
-                    x: 2740,
-                    y: 1730,
-                    width: 200,
-                    height: 200,
+                {
+                    rage: 5,
+                    position: {
+                        x: 2740,
+                        y: 1730,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 4,
+                    startUserCount: 0,
                 },
-                clank: 4,
-                startUserCount: 0,
-            },
-            {
-                rage: 6,
-                position: {
-                    x: 2740,
-                    y: 1430,
-                    width: 200,
-                    height: 200,
+                {
+                    rage: 6,
+                    position: {
+                        x: 2740,
+                        y: 1430,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 5,
+                    startUserCount: 0,
                 },
-                clank: 5,
-                startUserCount: 0,
-            },
-        ],
+            ],
+        },
         elements: [
             {
                 id: 1,

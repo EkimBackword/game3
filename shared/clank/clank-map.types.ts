@@ -26,9 +26,14 @@ export interface ClankMapConfig {
     url: string;
     width: number;
     height: number;
-    maxDragonRage: number;
-    dragonTrack: ClankMapDragonTrackItem[];
+    dragonInfo: ClankMapDragonInfo;
     elements: ClankMapElementConfig[];
+}
+
+export interface ClankMapDragonInfo {
+    url: string;
+    maxRage: number;
+    track: ClankMapDragonTrackItem[];
 }
 
 export interface ClankMapDragonTrackItem {

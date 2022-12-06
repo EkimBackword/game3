@@ -9,6 +9,9 @@ export const getArtifacts = () => {
             name: 'Золотое кольцо',
             url: '/5.jpg',
             value: 5,
+            benefit: {
+                dragon_rage: 1,
+            },
             points: {
                 value: 5,
             },
@@ -17,6 +20,9 @@ export const getArtifacts = () => {
             name: 'Золотой анх',
             url: '/7.jpg',
             value: 7,
+            benefit: {
+                dragon_rage: 1,
+            },
             points: {
                 value: 7,
             },
@@ -25,6 +31,9 @@ export const getArtifacts = () => {
             name: 'Золотой сосуд',
             url: '/10.jpg',
             value: 10,
+            benefit: {
+                dragon_rage: 1,
+            },
             points: {
                 value: 10,
             },
@@ -33,6 +42,9 @@ export const getArtifacts = () => {
             name: 'Золотые бананы',
             url: '/15.jpg',
             value: 15,
+            benefit: {
+                dragon_rage: 1,
+            },
             points: {
                 value: 15,
             },
@@ -41,6 +53,9 @@ export const getArtifacts = () => {
             name: 'Золотой шит',
             url: '/20.jpg',
             value: 20,
+            benefit: {
+                dragon_rage: 1,
+            },
             points: {
                 value: 20,
             },
@@ -49,6 +64,9 @@ export const getArtifacts = () => {
             name: 'Золотой доспех',
             url: '/25.jpg',
             value: 25,
+            benefit: {
+                dragon_rage: 1,
+            },
             points: {
                 value: 25,
             },
@@ -57,6 +75,9 @@ export const getArtifacts = () => {
             name: 'Золотое кадило',
             url: '/30.jpg',
             value: 30,
+            benefit: {
+                dragon_rage: 1,
+            },
             points: {
                 value: 30,
             },

@@ -31,9 +31,9 @@ export interface ClankDragonInfo {
     clankAria: Record<GamePlayerColorIdEnum, number>;
 }
 
-export const initDragonInfo = () => {
+export const initDragonInfo = (rage = 0) => {
     const data: ClankDragonInfo = {
-        rage: 0,
+        rage,
         clankBag: Array(24).fill(DragonColorIdEnum.Empty),
         clankAria: {
             Blue: 0,

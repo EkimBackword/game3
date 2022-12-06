@@ -167,16 +167,22 @@ export class GameInfoService implements OnDestroy {
             if (player == null) {
                 return state;
             }
-            const result: Partial<GameInfoState> = {
-                artifacts: state.artifacts.filter(p => p.id !== artifact.id),
-                players: arrayUpdate(state.players, player.id, {
-                    artifacts: [
-                        ...player.artifacts,
-                        artifact,
-                    ],
-                }),
-            };
-            return result;
+            if (artifact.benefit != null) {
+                const benefitInfo = updateBenefitInfo({
+                    benefit: player.benefitInfo,
+                    cost: artifact.benefit,
+                    isBenefit: true,
+                });
+                this.setBenefits(player, benefitInfo, state);
+            }
+            state.artifacts = state.artifacts.filter(p => p.id !== artifact.id),
+            state.players = arrayUpdate(state.players, player.id, {
+                artifacts: [
+                    ...player.artifacts,
+                    artifact,
+                ],
+            });
+            return state;
         });
         this.onGameUpdated();
     }
@@ -241,7 +247,8 @@ export class GameInfoService implements OnDestroy {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
             state.statusId = GameInfoStatusIdEnum.Started;
-            state.activePlayerIndex = Math.floor(Math.random() * state.players.length);
+            const playerCount = state.players.length;
+            state.activePlayerIndex = Math.floor(Math.random() * playerCount);
             state.activePlayerId = state.players[state.activePlayerIndex].id;
             state.players = state.players.map(player => {
                 const deck = this.cardsService.getStartDeckCards(
@@ -264,13 +271,14 @@ export class GameInfoService implements OnDestroy {
                 this.drawCards(config, 5);
                 return config;
             });
-            state.dragonInfo = initDragonInfo();
+            const dragonTrackInfo = this.gameInfoQuery.mapInfo?.dragonInfo.track.find(p => p.startUserCount === playerCount);
+            state.dragonInfo = initDragonInfo(dragonTrackInfo?.rage);
             const dungeonDeck = this.cardsService.getShareDecksCards(state.dungeonDeckIds);
             state.dungeonDeck = this.shuffle(dungeonDeck);
             state.dungeonRow = [];
             state.reserveRow = this.cardsService.getReserveDecksCards(
                 state.mapDlcId,
-                state.players.length,
+                playerCount,
             );
             state.tokens = this.simpleShuffle(this.tokensService.getTokens());
             state.artifacts = this.simpleShuffle(this.artifactsService.getArtifacts());
@@ -461,7 +469,7 @@ export class GameInfoService implements OnDestroy {
             });
         }
 
-        if (benefitInfo.dragon_rage && state.dragonInfo.rage < (this.gameInfoQuery.mapInfo?.maxDragonRage ?? 0)) {
+        if (benefitInfo.dragon_rage && state.dragonInfo.rage < (this.gameInfoQuery.mapInfo?.dragonInfo.maxRage ?? 0)) {
             state.dragonInfo.rage++;
             this.addActionLogs(state, {
                 text: `Повышается ярость дракона`,

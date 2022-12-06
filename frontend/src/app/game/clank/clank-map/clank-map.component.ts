@@ -48,6 +48,8 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     playersPosition = this.gameInfoQuery.onPlayersPositionChangeSubject;
 
+    dragonPosition = this.gameInfoQuery.onDragonPositionChangeSubject;
+
     @ViewChild('clankMapContainer', { read: ElementRef }) clankMapContainer: ElementRef<HTMLElement> | undefined;
 
     private userScale = 1;
