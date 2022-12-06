@@ -33,6 +33,7 @@ export interface ClankMapConfig {
 export interface ClankMapDragonInfo {
     url: string;
     maxRage: number;
+    clankAria: ClankMapPositionInfo;
     track: ClankMapDragonTrackItem[];
 }
 

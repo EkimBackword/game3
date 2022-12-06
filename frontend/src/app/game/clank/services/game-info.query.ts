@@ -77,6 +77,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
             const data: DragonPositionInfo = {
                 dragonInfo,
                 style: {},
+                clankAriaStyle: {},
                 tooltip: `Уровень ярости дакона: ${dragonInfo.rage} `,
             };
             const mapInfo = this.mapsService.getMapById(mapId);
@@ -94,6 +95,13 @@ export class GameInfoQuery extends Query<GameInfoState> {
                 height: `${dragonPosition.position.height}px`,
                 backgroundImage: `url(${mapInfo.dragonInfo.url})`,
                 backgroundSize: '100% 100%',
+            };
+            const clankAria = mapInfo.dragonInfo.clankAria;
+            data.clankAriaStyle = {
+                top: `${(clankAria.y ?? 0)}px`,
+                left: `${(clankAria.x ?? 0)}px`,
+                width: `${clankAria.width}px`,
+                height: `${clankAria.height}px`,
             };
             return data;
         }),

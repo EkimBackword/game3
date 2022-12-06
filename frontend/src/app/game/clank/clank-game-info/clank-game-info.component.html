@@ -61,12 +61,14 @@
                             <select class="form-select form-select-sm w-75"
                                 [ngModel]="player.colorId"
                                 (ngModelChange)="changeColor(player, $event)"
-                                [disabled]="currentPlayer?.id != player.id"
+                                [disabled]="currentPlayer.id != player.id"
                             >
-                                <option
-                                    *ngFor="let item of GamePlayerColorList | keyvalue"
-                                    [value]="item.key"
-                                >{{item.value.name}}</option>
+                                <ng-container *ngFor="let colorId of GamePlayerColorIds">
+                                    <option
+                                        *ngIf="GamePlayerColorList[colorId].forPlayer"
+                                        [value]="colorId"
+                                    >{{GamePlayerColorList[colorId].name}}</option>
+                                </ng-container>
                             </select>
                         </div>
 

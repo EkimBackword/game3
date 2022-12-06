@@ -34,7 +34,10 @@ import {
     ClankCardType,
     ClankCostInfo,
 } from '@shared/clank/clank-info.types';
-import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
+import {
+    ClankPlayerConfig,
+    GamePlayerColorIds,
+} from '@shared/clank/clank-player.types';
 import { ClankTokenState } from '@shared/clank/clank-token.types';
 import { SocketErrorTypeEnum } from '@shared/socket.types';
 
@@ -323,6 +326,11 @@ export class GameInfoService implements OnDestroy {
                 colorId: currentPlayer.colorId,
             });
 
+            GamePlayerColorIds.forEach(colorId => {
+                if (state.dragonInfo.clankAria[colorId] < 0) {
+                    state.dragonInfo.clankAria[colorId] = 0;
+                }
+            });
             this.drawDungeonRow(state, {});
             state.activePlayerIndex = state.activePlayerIndex < state.players.length - 1
                 ? state.activePlayerIndex + 1
@@ -471,9 +479,21 @@ export class GameInfoService implements OnDestroy {
 
         if (benefitInfo.dragon_rage && state.dragonInfo.rage < (this.gameInfoQuery.mapInfo?.dragonInfo.maxRage ?? 0)) {
             state.dragonInfo.rage++;
+            delete benefitInfo.dragon_rage;
             this.addActionLogs(state, {
                 text: `Повышается ярость дракона`,
             });
+        }
+
+        if (benefitInfo.clank) {
+            state.dragonInfo.clankAria[player.colorId] += benefitInfo.clank;
+            const text = benefitInfo.clank > 0
+                ? 'добавил шума'
+                : 'убрал шум';
+            this.addActionLogs(state, {
+                text: `${player.name} ${text} (${benefitInfo.clank} бдзынь)`,
+            });
+            delete benefitInfo.clank;
         }
 
         // TODO: реакция на другие

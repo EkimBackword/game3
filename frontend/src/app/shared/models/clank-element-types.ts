@@ -72,10 +72,6 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         name: 'Ботинок',
         url: '/assets/images/boot.png',
     },
-    [ClankElementByTurn.clank]: {
-        name: 'Шум',
-        url: '/assets/images/clank.png',
-    },
     [ClankElementByTurn.teleport]: {
         name: 'Телепорт',
         url: '/assets/images//teleport.png',
@@ -128,21 +124,25 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         url: '/assets/images/tokens/market/key_token.jpg',
     },
     // ClankElementByActions
-    [ClankElementByActions.card]: {
+    [ClankElementByActions.dragon_rage]: {
         name: 'Карта',
-        url: '/assets/images/cards/cards_back.jpg',
+        url: '/assets/images/cards/dragon.jpg',
     },
     [ClankElementByActions.card]: {
         name: 'Карта',
         url: '/assets/images/cards/cards_back.jpg',
     },
-    [ClankElementByActions.card]: {
+    [ClankElementByActions.trashCard]: {
         name: 'Карта',
-        url: '/assets/images/cards/cards_back.jpg',
+        url: '/assets/images/cards/trash_card.jpg',
     },
     [ClankElementByActions.pyramid_dice]: {
         name: 'Кубик пирамиды',
         url: '/assets/images/pyramid_dice.png',
+    },
+    [ClankElementByActions.clank]: {
+        name: 'Шум',
+        url: '/assets/images/clank.png',
     },
 };
 

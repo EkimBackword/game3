@@ -50,6 +50,7 @@ export enum GamePlayerColorIdEnum {
     Yellow = 'Yellow',
     Green = 'Green',
     Blue = 'Blue',
+    Black = 'Black',
 }
 
 export const GamePlayerColorIds = Object.keys(GamePlayerColorIdEnum) as GamePlayerColorIdEnum[];
@@ -58,6 +59,8 @@ export interface GamePlayerColorInfo {
     column: number,
     name: string;
     color: string;
+    url: string;
+    forPlayer: boolean;
 }
 
 export const GamePlayerColorList: Record<GamePlayerColorIdEnum, GamePlayerColorInfo> = {
@@ -65,21 +68,36 @@ export const GamePlayerColorList: Record<GamePlayerColorIdEnum, GamePlayerColorI
         column: 0,
         name: 'Красный',
         color: '#EF4E5A',
+        url: '/assets/images/cubes/red.png',
+        forPlayer: true,
     },
     [GamePlayerColorIdEnum.Yellow]: {
         column: 1,
         name: 'Жёлтый',
         color: '#FFDB46',
+        url: '/assets/images/cubes/yellow.png',
+        forPlayer: true,
     },
     [GamePlayerColorIdEnum.Green]: {
         column: 2,
         name: 'Зелёный',
         color: '#339643',
+        url: '/assets/images/cubes/green.png',
+        forPlayer: true,
     },
     [GamePlayerColorIdEnum.Blue]: {
         column: 3,
         name: 'Синий',
         color: '#376EB6',
+        url: '/assets/images/cubes/blue.png',
+        forPlayer: true,
+    },
+    [GamePlayerColorIdEnum.Black]: {
+        column: -1,
+        name: 'Чёрный',
+        color: '#000000',
+        url: '/assets/images/cubes/black.png',
+        forPlayer: false,
     },
 };
 

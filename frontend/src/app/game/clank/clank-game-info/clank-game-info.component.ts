@@ -46,6 +46,7 @@ export class ClankGameInfoComponent implements OnInit {
     nameSubject = this.gameInfoQuery.onNameChangeSubject;
 
     GamePlayerColorList = GamePlayerColorList;
+    GamePlayerColorIds = GamePlayerColorIds;
     validColorList = false;
     invalidColorText = 'Цвета игроков должны отличатся';
     playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(

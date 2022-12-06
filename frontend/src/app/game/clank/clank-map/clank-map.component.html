@@ -17,15 +17,42 @@
                 [ngStyle]="item.style"
                 [size]="item.size"
             ></app-clank-meeple>
-            <div *ngIf="(dragonPosition | async) as dragon"
-                class="clank_map_dragon position-absolute"
-                [ngStyle]="dragon.style"
-                [matTooltip]="dragon.tooltip"
-                matTooltipPosition="left">
-                <h1 class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">
-                    {{dragon.dragonInfo.rage}}
-                </h1>
-            </div>
+            <ng-container *ngIf="(dragonPosition | async) as dragon">
+                <div class="clank_map_clank_aria position-absolute"
+                    [ngStyle]="dragon.clankAriaStyle">
+                    <div class="clank_aria_table w-100">
+                        <div class="clank_aria_header">
+                            <div class="clank_aria_row">
+                                <div class="clank_aria_player">Игрок</div>
+                                <div class="clank_aria_value">Бдзынь</div>
+                            </div>
+                        </div>
+                        <div class="clank_aria_body">
+                            <div class="clank_aria_row"
+                                *ngFor="let player of (players | async)">
+                                <div class="clank_aria_player">
+                                    <img class="clank_aria_player_img" [src]="GamePlayerColorList[player.colorId].url" [alt]="player.colorId">
+                                    <div class="clank_aria_player_name text-ellipsis">
+                                        {{player.name}}
+                                    </div>
+                                </div>
+                                <div class="clank_aria_value">
+                                    {{dragon.dragonInfo.clankAria[player.colorId]}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clank_map_dragon position-absolute"
+                    [ngStyle]="dragon.style"
+                    [matTooltip]="dragon.tooltip"
+                    matTooltipPosition="left">
+                    <h1 class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">
+                        {{dragon.dragonInfo.rage}}
+                    </h1>
+                </div>
+            </ng-container>
+
         </div>
         <div class="clank_map_elements">
             <app-clank-map-element

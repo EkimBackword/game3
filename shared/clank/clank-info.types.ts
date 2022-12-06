@@ -13,7 +13,6 @@ export enum ClankElementByTurn {
     skill = 'skill', // Навык
     sword = 'sword', // Меч
     boot = 'boot', // Ботинок
-    clank = 'clank', // Кланк / шум
     teleport = 'teleport', // Возможность телепортироваться в соседнее помещение
 }
 
@@ -52,6 +51,7 @@ export enum ClankElementByActions {
     card = 'card', // Карта. Например, надо сбросить или добрать карту
     trashCard = 'trashCard', // Избавиться от карты
     pyramid_dice = 'pyramid_dice', // Бросок кубика
+    clank = 'clank', // Кланк / шум
 }
 
 export const ClankElementByActionsList = Object.values(ClankElementByActions);

@@ -39,5 +39,6 @@ export interface PlayersPositionInfo {
 export interface DragonPositionInfo {
     dragonInfo: ClankDragonInfo;
     style: Partial<CSSStyleDeclaration>;
+    clankAriaStyle: Partial<CSSStyleDeclaration>;
     tooltip: string;
 }

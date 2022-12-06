@@ -39,7 +39,72 @@
 }
 
 .clank_map_dragon {
+    transition: all ease-in-out 300ms;
+
     .badge {
         font-size: 50px;
+    }
+}
+
+.clank_map_clank_aria {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 30px;
+    padding: 1em;
+
+    .clank_aria_table {
+        font-size: 30px;
+        width: 100%;
+
+        .clank_aria_row {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: flex-start;
+            align-items: center;
+
+            width: 100%;
+            border-bottom: 2px solid var(--bs-black);
+        }
+
+        .clank_aria_header {
+            color: var(--bs-dark);
+            font-weight: bold;
+
+            .clank_aria_row {
+                border-bottom: 6px solid var(--bs-black);
+            }
+        }
+
+        .clank_aria_body {
+            color: var(--bs-black);
+            font-weight: normal;
+        }
+
+        --clank_aria_value: 120px;
+
+        .clank_aria_player {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: flex-start;
+            align-items: center;
+            width: calc(100% - var(--clank_aria_value));
+            height: 60px;
+
+            --clank_aria_player_img_width: 50px;
+            --clank_aria_player_img_margin: 10px;
+
+            .clank_aria_player_img {
+                width: var(--clank_aria_player_img_width);
+                margin: var(--clank_aria_player_img_margin);
+            }
+
+            .clank_aria_player_name {
+                width: calc(100% - var(--clank_aria_player_img_margin) - var(--clank_aria_player_img_width));
+            }
+        }
+
+        .clank_aria_value {
+            width: var(--clank_aria_value);
+            text-align: right;
+        }
     }
 }

@@ -20,7 +20,10 @@ import {
 } from 'rxjs/operators';
 
 import { ClankMapConfig } from '@shared/clank/clank-map.types';
-import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
+import {
+    ClankPlayerConfig,
+    GamePlayerColorList,
+} from '@shared/clank/clank-player.types';
 
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
@@ -46,9 +49,13 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
     );
 
+    players = this.gameInfoQuery.onPlayersChangeSubject;
+
     playersPosition = this.gameInfoQuery.onPlayersPositionChangeSubject;
 
     dragonPosition = this.gameInfoQuery.onDragonPositionChangeSubject;
+
+    GamePlayerColorList = GamePlayerColorList;
 
     @ViewChild('clankMapContainer', { read: ElementRef }) clankMapContainer: ElementRef<HTMLElement> | undefined;
 

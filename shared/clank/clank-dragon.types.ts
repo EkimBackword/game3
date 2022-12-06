@@ -40,6 +40,7 @@ export const initDragonInfo = (rage = 0) => {
             Green: 0,
             Red: 0,
             Yellow: 0,
+            Black: 0,
         },
     };
     return data;
