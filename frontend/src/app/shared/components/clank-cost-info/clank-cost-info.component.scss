@@ -1,9 +1,14 @@
-:host {
+:host,
+.cost_group {
     display: flex;
     flex-flow: row wrap;
     justify-content: flex-start;
     align-content: flex-start;
     align-items: flex-start;
+}
+
+.cost_group + .cost_group {
+    margin-left: 10px;
 }
 
 .cost_item {

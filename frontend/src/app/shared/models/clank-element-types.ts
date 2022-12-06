@@ -24,31 +24,31 @@ export enum ClankCostInfoType {
     turnInfo = 'turnInfo',
 }
 
-export const ClankCostInfoKeysByType: Record<ClankCostInfoType, ClankElementType[]> = {
-    all: ClankElementTypeList,
-    gameInfo: ClankElementByGameList,
+export const ClankCostInfoKeysByType: Record<ClankCostInfoType, ClankElementType[][]> = {
+    all: [ClankElementTypeList],
+    gameInfo: [ClankElementByGameList],
     turnInfo: [
-        ...ClankElementByTurnList,
-        ...ClankCardTypeList,
+        ClankElementByTurnList,
+        ClankCardTypeList,
     ],
 };
 
 export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     // ClankCardType
     [ClankCardType.start]: {
-        name: 'Компаньон',
+        name: 'Стартовая карта',
         url: '/assets/images/cards/start.png',
     },
     [ClankCardType.basiс]: {
-        name: 'Компаньон',
+        name: 'Базовая карта',
         url: '/assets/images/cards/basiс.png',
     },
     [ClankCardType.device]: {
-        name: 'Компаньон',
+        name: 'Устройство',
         url: '/assets/images/cards/device.png',
     },
     [ClankCardType.monster]: {
-        name: 'Компаньон',
+        name: 'Монстр',
         url: '/assets/images/cards/monster.png',
     },
     [ClankCardType.companion]: {
@@ -56,7 +56,7 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         url: '/assets/images/cards/companion.png',
     },
     [ClankCardType.gem]: {
-        name: 'Компаньон',
+        name: 'Самоцвет',
         url: '/assets/images/cards/gem.png',
     },
     // ClankElementByTurn
@@ -75,6 +75,10 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     [ClankElementByTurn.clank]: {
         name: 'Шум',
         url: '/assets/images/clank.png',
+    },
+    [ClankElementByTurn.teleport]: {
+        name: 'Телепорт',
+        url: '/assets/images//teleport.png',
     },
     // ClankElementByGame
     [ClankElementByGame.heal]: {
@@ -139,10 +143,6 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     [ClankElementByActions.pyramid_dice]: {
         name: 'Кубик пирамиды',
         url: '/assets/images/pyramid_dice.png',
-    },
-    [ClankElementByActions.teleport]: {
-        name: 'Телепорт',
-        url: '/assets/images//teleport.png',
     },
 };
 

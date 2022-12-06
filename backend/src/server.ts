@@ -135,10 +135,6 @@ io.of(gameRegExp).on('connection', (socket) => {
                 isAdmin: gameInfo.players.length === 0,
                 elementId: 1,
                 benefitInfo: {
-                    sword: 0,
-                    boot: 0,
-                    skill: 0,
-                    clank: 0,
                     heal: 10,
                     coin: 0,
                 },

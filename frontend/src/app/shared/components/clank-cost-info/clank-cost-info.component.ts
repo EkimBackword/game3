@@ -29,7 +29,7 @@ export class ClankCostInfoComponent implements OnInit {
         this.height = `${value ?? 50}px`;
     }
 
-    keys: ClankElementType[] = [];
+    keysGroup: ClankElementType[][] = [];
 
     @HostBinding('style.--cost-element-height') height = '50px';
 
@@ -38,7 +38,7 @@ export class ClankCostInfoComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
-        this.keys = ClankCostInfoKeysByType[this.type];
+        this.keysGroup = ClankCostInfoKeysByType[this.type];
     }
 
 }

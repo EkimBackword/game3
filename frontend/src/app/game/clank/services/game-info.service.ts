@@ -9,6 +9,7 @@ import {
     UseCardInfoByType,
     UseCardType,
 } from 'src/app/shared/models/cards/cards.types';
+import { ClankCostInfoKeysByType } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { ArtifactsService } from 'src/app/shared/services/artifacts.service';
@@ -122,7 +123,8 @@ export class GameInfoService implements OnDestroy {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
             const player = state.players.find(p => p.id === playerId);
-            if (player == null) {
+            const card = this.cardsService.getCardInfo(cardState);
+            if (player == null || card == null) {
                 return state;
             }
             this.addActionLogs(state, {
@@ -134,13 +136,13 @@ export class GameInfoService implements OnDestroy {
                 case UseCardType.use: {
                     player.hand = player.hand.filter(p => p.id !== cardState.id),
                     player.board.push(cardState);
+                    player.benefitInfo[card.type] = (player.benefitInfo[card.type] ?? 0) + 1;
                     break;
                 }
                 case UseCardType.buy: {
                     state.dungeonRow = state.dungeonRow.filter(p => p.id !== cardState.id);
                     state.reserveRow = state.reserveRow.filter(p => p.id !== cardState.id);
-                    const card = this.cardsService.getCardInfo(cardState);
-                    if (card != null && ![
+                    if (![
                         ClankCardType.device,
                         ClankCardType.monster,
                     ].includes(card.type)) {
@@ -250,14 +252,15 @@ export class GameInfoService implements OnDestroy {
                     ...player,
                     deck: this.shuffle(deck),
                     benefitInfo: {
-                        sword: 0,
-                        boot: 0,
-                        skill: 0,
-                        clank: 0,
                         heal: 10,
                         coin: 0,
                     },
                 };
+                ClankCostInfoKeysByType.turnInfo.forEach(group => {
+                    group.forEach(key => {
+                        config.benefitInfo[key] = 0;
+                    });
+                });
                 this.drawCards(config, 5);
                 return config;
             });
@@ -287,7 +290,11 @@ export class GameInfoService implements OnDestroy {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
             const currentPlayer = state.players[state.activePlayerIndex];
-            Object.assign(currentPlayer.benefitInfo, this.getEmptyBenefitInfo());
+            ClankCostInfoKeysByType.turnInfo.forEach(group => {
+                group.forEach(key => {
+                    currentPlayer.benefitInfo[key] = 0;
+                });
+            });
             if (currentPlayer.benefitInfo.trashCard) {
                 if (currentPlayer.benefitInfo.trashCard > 0) {
                     // TODO: Избавиться от карты
@@ -415,16 +422,6 @@ export class GameInfoService implements OnDestroy {
         }
     }
 
-    private getEmptyBenefitInfo() {
-        const benefitInfo: ClankPlayerConfig['benefitInfo'] = {
-            sword: 0,
-            boot: 0,
-            skill: 0,
-            clank: 0,
-        };
-        return benefitInfo;
-    }
-
     private setBenefits(
         player: ClankPlayerConfig,
         benefitInfo: ClankCostInfo,
@@ -460,15 +457,6 @@ export class GameInfoService implements OnDestroy {
             delete benefitInfo.pyramid_dice;
             this.addActionLogs(state, {
                 text: `${player.name} бросает кубик`,
-                colorId: player.colorId,
-            });
-        }
-
-        if (benefitInfo.teleport) {
-            // TODO: телепортация в соседнее помещениие
-            delete benefitInfo.teleport;
-            this.addActionLogs(state, {
-                text: `${player.name} должен выбрать куда хочет телепортироваться`,
                 colorId: player.colorId,
             });
         }
