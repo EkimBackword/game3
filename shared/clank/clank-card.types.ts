@@ -2,7 +2,6 @@ import {
   ClankCardType,
   ClankCostInfo,
   ClankDlcEnum,
-  ClankEffect,
   ClankTarget,
 } from './clank-info.types';
 
@@ -145,8 +144,6 @@ export interface ClankCardAction {
     };
     /** Выгода */
     benefit?: ClankCostInfo;
-    /** Эффект в течении хода */
-    effect?: ClankEffect[];
     /** Избавиться от разыкгранных карт */
     trash?: ClankCardName[];
     /** Атака дракона */

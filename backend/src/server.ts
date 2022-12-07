@@ -138,6 +138,10 @@ io.of(gameRegExp).on('connection', (socket) => {
                     heal: 10,
                     coin: 0,
                 },
+                crystalCave: {
+                    isEnter: false,
+                    isIgnore: false,
+                },
                 deck: [],
                 hand: [],
                 board: [],

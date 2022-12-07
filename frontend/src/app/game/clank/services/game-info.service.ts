@@ -9,7 +9,7 @@ import {
     UseCardInfoByType,
     UseCardType,
 } from 'src/app/shared/models/cards/cards.types';
-import { ClankCostInfoKeysByType } from 'src/app/shared/models/clank-element-types';
+import { ClankOneTurnInfo } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { ArtifactsService } from 'src/app/shared/services/artifacts.service';
@@ -140,6 +140,7 @@ export class GameInfoService implements OnDestroy {
                     player.hand = player.hand.filter(p => p.id !== cardState.id),
                     player.board.push(cardState);
                     player.benefitInfo[card.type] = (player.benefitInfo[card.type] ?? 0) + 1;
+                    // TODO: Добавит обновление crystalCave.isIgnore
                     break;
                 }
                 case UseCardType.buy: {
@@ -266,11 +267,7 @@ export class GameInfoService implements OnDestroy {
                         coin: 0,
                     },
                 };
-                ClankCostInfoKeysByType.turnInfo.forEach(group => {
-                    group.forEach(key => {
-                        config.benefitInfo[key] = 0;
-                    });
-                });
+                this.clearTurnInfo(config.benefitInfo);
                 this.drawCards(config, 5);
                 return config;
             });
@@ -301,11 +298,7 @@ export class GameInfoService implements OnDestroy {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
             const currentPlayer = state.players[state.activePlayerIndex];
-            ClankCostInfoKeysByType.turnInfo.forEach(group => {
-                group.forEach(key => {
-                    currentPlayer.benefitInfo[key] = 0;
-                });
-            });
+            this.clearTurnInfo(currentPlayer.benefitInfo);
             if (currentPlayer.benefitInfo.trashCard) {
                 if (currentPlayer.benefitInfo.trashCard > 0) {
                     // TODO: Избавиться от карты
@@ -507,6 +500,12 @@ export class GameInfoService implements OnDestroy {
             turnIndex: state.turnIndex,
             createdAt: momentTime.format(MomentDateFormat),
             data,
+        });
+    }
+
+    private clearTurnInfo(benefitInfo: ClankCostInfo) {
+        ClankOneTurnInfo.forEach(key => {
+            benefitInfo[key] = 0;
         });
     }
 

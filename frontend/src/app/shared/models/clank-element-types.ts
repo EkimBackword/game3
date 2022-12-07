@@ -1,6 +1,8 @@
 import {
     ClankCardType,
     ClankCardTypeList,
+    ClankEffect,
+    ClankEffectList,
     ClankElementByActions,
     ClankElementByGame,
     ClankElementByGameList,
@@ -22,16 +24,23 @@ export enum ClankCostInfoType {
     all = 'all',
     gameInfo = 'gameInfo',
     turnInfo = 'turnInfo',
+    cardsInfo = 'cardsInfo',
+    effectsInfo = 'effectsInfo',
 }
 
 export const ClankCostInfoKeysByType: Record<ClankCostInfoType, ClankElementType[][]> = {
     all: [ClankElementTypeList],
     gameInfo: [ClankElementByGameList],
-    turnInfo: [
-        ClankElementByTurnList,
-        ClankCardTypeList,
-    ],
+    turnInfo: [ClankElementByTurnList],
+    cardsInfo: [ClankCardTypeList],
+    effectsInfo: [ClankEffectList],
 };
+
+export const ClankOneTurnInfo = [
+    ...ClankElementByTurnList,
+    ...ClankCardTypeList,
+    ...ClankEffectList,
+];
 
 export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     // ClankCardType
@@ -144,6 +153,20 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         name: 'Шум',
         url: '/assets/images/clank.png',
     },
+    // ClankEffect
+    [ClankEffect.ignore_crystal_cave]: {
+        name: 'Шум',
+        url: '/assets/images/clank.png',
+    },
+    [ClankEffect.ignore_monster]: {
+        name: 'Шум',
+        url: '/assets/images/clank.png',
+    },
+    [ClankEffect.gem_cost_less]: {
+        name: 'Шум',
+        url: '/assets/images/clank.png',
+    },
+
 };
 
 export interface CheckCostResult {
@@ -154,7 +177,7 @@ export interface CheckCostResult {
 export const checkCost = (data: {
     cost: Partial<Record<ClankElementType, number>>;
     player: ClankPlayerConfig;
-    canReplaceSwordByHealth?: boolean;
+    isMove?: boolean;
 }): CheckCostResult => {
     for (const key in data.cost) {
         if (Object.prototype.hasOwnProperty.call(data.cost, key)) {
@@ -163,7 +186,11 @@ export const checkCost = (data: {
             const costPoints = data.cost[type] ?? 0;
             const userPoints = data.player.benefitInfo[type] ?? 0;
             const healthPoints = data.player.benefitInfo.heal ?? 0;
-            if (data.canReplaceSwordByHealth && key === ClankElementByTurn.sword && (userPoints + healthPoints) < costPoints) {
+            const isIgnoreMonster = (data.player.benefitInfo.ignore_monster ?? 0) > 0;
+            if (data.isMove && key === ClankElementByTurn.sword && (
+                isIgnoreMonster
+                || (userPoints + healthPoints) < costPoints
+            )) {
                 return {
                     success: false,
                     message: `Требуется ${costInfo.name}: ${costPoints} (У вас есть ${costInfo.name}: ${userPoints} | Здоровя: ${healthPoints})`,

@@ -45,10 +45,10 @@ export class ClankPlayerInfoComponent implements OnInit {
         rowCount: 4,
         cardWidth,
         cardHeight,
-        deckTop: cardsWrapPadding * 2,
-        deckLeft: (cardWidth + cardsWrapPadding) * 0 + cardsWrapPadding,
-        boardLeft: (cardWidth + cardsWrapPadding) * 1 + cardsWrapPadding,
-        discardLeft: (cardWidth + cardsWrapPadding) * 2 + cardsWrapPadding,
+        deckTop: cardsWrapPadding,
+        deckLeft: `${cardsWrapPadding}px`,
+        boardLeft: `calc(33% + ${cardsWrapPadding}px)`,
+        discardLeft: `calc(66% + ${cardsWrapPadding}px)`,
         boardTop: 300 + cardsWrapPadding * 2,
     };
 
@@ -185,7 +185,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 id: card.id,
                 state: card,
                 style: {
-                    left: `${this.cardsWrapInfo.deckLeft}px`,
+                    left: this.cardsWrapInfo.deckLeft,
                     top: `${this.cardsWrapInfo.deckTop}px`,
                     zIndex: `${index}`,
                 },
@@ -200,7 +200,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 id: card.id,
                 state: card,
                 style: {
-                    left: `${this.cardsWrapInfo.boardLeft}px`,
+                    left: this.cardsWrapInfo.boardLeft,
                     top: `${this.cardsWrapInfo.deckTop}px`,
                     zIndex: `${index}`,
                 },
@@ -215,7 +215,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 id: card.id,
                 state: card,
                 style: {
-                    left: `${this.cardsWrapInfo.discardLeft}px`,
+                    left: this.cardsWrapInfo.discardLeft,
                     top: `${this.cardsWrapInfo.deckTop}px`,
                     zIndex: `${index}`,
                 },

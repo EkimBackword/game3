@@ -52,7 +52,10 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         tap(([mapInfo, activePlayer]) => {
             this.activePlayer = activePlayer;
             const activePlayerPosition = mapInfo.elements.find(p => p.id === activePlayer?.elementId);
-            this.link = this.activePlayer?.id === this.gameInfoQuery.currentPlayer?.id
+            const isActivePlayer = this.activePlayer?.id === this.gameInfoQuery.currentPlayer?.id;
+            const isEnterCrystalCave = (this.activePlayer?.benefitInfo.enter_crystal_cave ?? 0) > 0;
+            const isIgnoreCrystalCave = (this.activePlayer?.benefitInfo.ignore_crystal_cave ?? 0) > 0;
+            this.link = isActivePlayer && (isIgnoreCrystalCave || !isEnterCrystalCave)
                 ? activePlayerPosition?.links.find(p => p.element_id === this.mapElement?.id)
                 : void 0;
         }),
@@ -101,14 +104,19 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if ((link.cost?.sword ?? 0) > 0) {
             // TODO: Вопрос о том сколько мечей и сколько здоровья хочет потратить игрок
         }
+        const isCrystalCave = this.mapElement.isCrystalCave ?? false;
+        const benefitInfo = updateBenefitInfo({
+            benefit: this.activePlayer.benefitInfo,
+            cost: link.cost,
+            isBenefit: false,
+        });
         this.gameInfoService.updatePlayer(this.activePlayer.id, {
             elementId: this.mapElement.id,
-            benefitInfo: updateBenefitInfo({
-                benefit: this.activePlayer.benefitInfo,
-                cost: link.cost,
-                isBenefit: false,
-            }),
-            isFinish: this.mapElement.id === 1,
+            benefitInfo: {
+                ...benefitInfo,
+                enter_crystal_cave: isCrystalCave ? 1 : 0,
+            },
+            isFinish: this.mapElement.isStart,
         });
         if (this.token != null) {
             this.gameInfoService.takeToken(this.activePlayer.id, this.token);
@@ -146,7 +154,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         const result = checkCost({
             cost: link.cost,
             player,
-            canReplaceSwordByHealth: true,
+            isMove: true,
         });
         if (result.message) {
             this.toastService.show(

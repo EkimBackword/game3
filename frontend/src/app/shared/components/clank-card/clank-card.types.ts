@@ -19,3 +19,4 @@ export interface ISelectedPlayerCardAction {
 export const cardWidth = 160;
 export const cardHeight = 220;
 export const cardsWrapPadding = 16;
+export const cardsWrapHeader = 50;

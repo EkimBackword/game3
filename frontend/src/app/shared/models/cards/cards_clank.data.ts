@@ -8,7 +8,6 @@ import {
 import {
     ClankCardType,
     ClankDlcEnum,
-    ClankEffect,
     ClankTarget,
 } from '@shared/clank/clank-info.types';
 
@@ -438,9 +437,9 @@ export const getClankDeckCards = (withCopy: boolean) => {
                         cost: {
                             clank: 2,
                         },
-                        effect: [
-                            ClankEffect.ignore_crystal_cave,
-                        ],
+                        benefit: {
+                            ignore_crystal_cave: 1,
+                        },
                     },
                 ],
             },
@@ -685,10 +684,10 @@ export const getClankDeckCards = (withCopy: boolean) => {
                 list: [
                     {
                         target: ClankTarget.current,
-                        effect: [
-                            ClankEffect.ignore_crystal_cave,
-                            ClankEffect.ignore_monster,
-                        ],
+                        benefit: {
+                            ignore_crystal_cave: 1,
+                            ignore_monster: 1,
+                        },
                     },
                 ],
             },
@@ -723,9 +722,9 @@ export const getClankDeckCards = (withCopy: boolean) => {
                 list: [
                     {
                         target: ClankTarget.current,
-                        effect: [
-                            ClankEffect.gem_cost_less_2,
-                        ],
+                        benefit: {
+                            gem_cost_less: 2,
+                        },
                     },
                 ],
             },
@@ -854,6 +853,9 @@ export const getClankDeckCards = (withCopy: boolean) => {
                 list: [
                     {
                         target: ClankTarget.current,
+                        cost: {
+                            trashCard: 1,
+                        },
                         trash: [ClankCardName.Burgle],
                     },
                 ],

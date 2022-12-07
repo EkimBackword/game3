@@ -56,6 +56,15 @@ export enum ClankElementByActions {
 
 export const ClankElementByActionsList = Object.values(ClankElementByActions);
 
+export enum ClankEffect {
+    enter_crystal_cave = 'enter_crystal_cave',
+    ignore_crystal_cave = 'ignore_crystal_cave',
+    ignore_monster = 'ignore_monster',
+    gem_cost_less = 'gem_cost_less',
+}
+
+export const ClankEffectList = Object.values(ClankEffect);
+
 export const ClankElementTypeEnum = {
     ...ClankCardType,
     ...ClankElementByTurn,
@@ -63,6 +72,7 @@ export const ClankElementTypeEnum = {
     ...ClankElementByToken,
     ...ClankElementByMarket,
     ...ClankElementByActions,
+    ...ClankEffect,
 }
 
 export const ClankElementTypeList = Object.values(ClankElementTypeEnum);
@@ -72,7 +82,8 @@ export type ClankElementType = ClankCardType
     | ClankElementByGame
     | ClankElementByToken
     | ClankElementByMarket
-    | ClankElementByActions;
+    | ClankElementByActions
+    | ClankEffect;
 
 export type ClankCostInfo = Partial<Record<ClankElementType, number>>;
 
@@ -98,12 +109,6 @@ export const ClankDlcList = (Object.keys(ClankDlcName) as ClankDlcEnum[]).map((k
     id: key,
     name: ClankDlcName[key]
 }));
-
-export enum ClankEffect {
-    ignore_crystal_cave,
-    ignore_monster,
-    gem_cost_less_2,
-}
 
 export enum ClankTarget {
     current = 'current',

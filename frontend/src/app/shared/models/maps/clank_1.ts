@@ -935,8 +935,8 @@ export const getClankMapFirst = () => {
                 id: 25,
                 isDungeon: true,
                 position: {
-                    x: 575,
-                    y: 1873,
+                    x: 564,
+                    y: 1860,
                     width: 250,
                     height: 200,
                 },

@@ -17,7 +17,13 @@
         </ul>
     </div>
     <ng-container *ngIf="(selectedPlayerSubject | async) as player">
-        <div class="body p-1" >
+        <div class="body p-1">
+            <div class="cards_wrap_header">
+                <app-clank-cost-info
+                    [data]="player.benefitInfo"
+                    [type]="ClankCostInfoType.cardsInfo"
+                ></app-clank-cost-info>
+            </div>
             <div class="not_active_player" *ngIf="player.id !== activePlayer.id"
                 [style.height.px]="cardsWrapInfo.boardTop">
                 <h4 class="message p-2 shadow-lg">
