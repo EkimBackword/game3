@@ -46,3 +46,29 @@ $clank_info_width: 200px;
     max-width: 15%;
     border-left: 1px solid var(--bs-black);
 }
+
+.clank_map_finish_info {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 500;
+
+    .clank_map_finish_info_block {
+        background-color: #fff;
+        padding: 0.8rem;
+        border-radius: 0.8rem;
+    }
+
+    .message {
+        .player_name {
+            color: tomato;
+        }
+    }
+}

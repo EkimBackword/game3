@@ -111,7 +111,7 @@
         </button>
         <button class="btn btn-sm btn-primary mb-1"
             (click)="finishGame()"
-            *ngIf="currentPlayer?.isAdmin && isStarted">
+            *ngIf="currentPlayer?.isAdmin && isStarted && !isFinished">
             Закончить игру
         </button>
         <button class="btn btn-sm btn-secondary"

@@ -1,3 +1,19 @@
 <app-clank-player-info class="clank_player_info shadow-lg"></app-clank-player-info>
 <app-clank-map class="clank_map_info"></app-clank-map>
 <app-clank-game-info class="clank_game_info shadow-lg"></app-clank-game-info>
+<ng-container *ngIf="(statusSubject | async) as status">
+    <div class="clank_map_finish_info" *ngIf="status === GameInfoStatusIdEnum.Finished">
+        <div class="clank_map_finish_info_block">
+            <h3 class="message p-2 shadow-lg">
+                Игра закончена
+            </h3>
+            <h4 class="message p-2 shadow-lg">
+                Выиграл игрок <span class="player_name">123</span>
+            </h4>
+            <button class="btn btn-danger"
+                (click)="exitGame()">
+                Выйти из игры
+            </button>
+        </div>
+    </div>
+</ng-container>

@@ -116,7 +116,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                 ...benefitInfo,
                 enter_crystal_cave: isCrystalCave ? 1 : 0,
             },
-            isFinish: this.mapElement.isStart,
+            isFinish: this.mapElement.isStart ?? false,
         });
         if (this.token != null) {
             this.gameInfoService.takeToken(this.activePlayer.id, this.token);
