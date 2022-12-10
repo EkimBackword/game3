@@ -29,7 +29,8 @@
     justify-content: flex-start;
     align-items: stretch;
     flex: 1 1 auto;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: scroll;
     background-color: var(--bs-white);
     position: relative;
 }
@@ -78,5 +79,14 @@
     align-items: flex-end;
     width: 100%;
     background-color: var(--bs-black);
-    border-radius: 0.8rem;
+    border-radius: 0 0 0.8rem 0.8rem;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.player_area {
+    overflow: hidden;
+    flex-shrink: 0;
 }

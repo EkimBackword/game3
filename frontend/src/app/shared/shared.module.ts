@@ -30,6 +30,10 @@ import { ClankCardComponent } from './components/clank-card/clank-card.component
 import { ClankCostInfoComponent } from './components/clank-cost-info/clank-cost-info.component';
 import { ClankMeepleComponent } from './components/clank-meeple/clank-meeple.component';
 import { ClankTokenComponent } from './components/clank-token/clank-token.component';
+import {
+    ScalableContainerDirective,
+    ScalableDirective,
+} from './directives/scalable.directive';
 import { BsToastComponent } from './modals/confirm-modal/bs-toast/bs-toast.component';
 import { ConfirmModalComponent } from './modals/confirm-modal/confirm-modal.component';
 import { SharedComponent } from './shared.component';
@@ -58,6 +62,8 @@ const exportsComponents = [
     ClankTokenComponent,
     ConfirmModalComponent,
     BsToastComponent,
+    ScalableDirective,
+    ScalableContainerDirective,
 ];
 
 @NgModule({

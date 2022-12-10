@@ -42,9 +42,10 @@ export class ClankPlayerInfoComponent implements OnInit {
 
     ClankCostInfoType = ClankCostInfoType;
     cardsWrapInfo = {
-        rowCount: 4,
+        cardsInRow: 4,
         cardWidth,
         cardHeight,
+        cardWidthKoef: 0.8,
         deckTop: cardsWrapPadding,
         deckLeft: `${cardsWrapPadding}px`,
         boardLeft: `calc(33% + ${cardsWrapPadding}px)`,
@@ -56,6 +57,13 @@ export class ClankPlayerInfoComponent implements OnInit {
     @HostBinding('style.--player_card_width') player_card_width = `${this.cardsWrapInfo.cardWidth}px`;
 
     selectedPlayerSubject = new BehaviorSubject<ClankPlayerConfig | undefined>(void 0);
+    selectedPlayerAreaSubject = new BehaviorSubject<{
+        width: number;
+        height: number;
+    }>({
+        width: 0,
+        height: 0,
+    });
     selectedPlayerCardsSubject = new BehaviorSubject<ISelectedPlayerCardInfo[]>([]);
 
     get currentPlayer() {
@@ -226,10 +234,10 @@ export class ClankPlayerInfoComponent implements OnInit {
             return data;
         });
         const hand = (player?.hand ?? []).map((card, index) => {
-            const leftIndex = (index % this.cardsWrapInfo.rowCount);
-            const topIndex = Math.floor(index / this.cardsWrapInfo.rowCount);
-            const left = leftIndex * this.cardsWrapInfo.cardWidth * 0.8;
-            const top = topIndex * this.cardsWrapInfo.cardHeight * 0.8 + this.cardsWrapInfo.boardTop;
+            const leftIndex = (index % this.cardsWrapInfo.cardsInRow);
+            const topIndex = Math.floor(index / this.cardsWrapInfo.cardsInRow);
+            const left = leftIndex * this.cardsWrapInfo.cardWidth * this.cardsWrapInfo.cardWidthKoef;
+            const top = topIndex * this.cardsWrapInfo.cardHeight * this.cardsWrapInfo.cardWidthKoef + this.cardsWrapInfo.boardTop;
             const data: ISelectedPlayerCardInfo = {
                 id: card.id,
                 state: card,
@@ -256,6 +264,18 @@ export class ClankPlayerInfoComponent implements OnInit {
             ...hand,
         ].sort((a, b) => a.state.initIndex - b.state.initIndex);
         this.selectedPlayerCardsSubject.next(cards);
+
+        const rowCount = Math.ceil(hand.length / this.cardsWrapInfo.cardsInRow);
+        this.selectedPlayerAreaSubject.next({
+            width: (this.cardsWrapInfo.cardsInRow - 1) * this.cardsWrapInfo.cardWidth * this.cardsWrapInfo.cardWidthKoef
+                + this.cardsWrapInfo.cardWidth * 1.2,
+            height: this.cardsWrapInfo.boardTop + rowCount * this.cardsWrapInfo.cardHeight + cardsWrapPadding * 2,
+        });
+        console.log({
+            area: this.selectedPlayerAreaSubject.getValue(),
+            rowCount,
+            cardsWrapInfo: this.cardsWrapInfo,
+        });
     }
 
 }

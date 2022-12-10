@@ -17,32 +17,38 @@
         </ul>
     </div>
     <ng-container *ngIf="(selectedPlayerSubject | async) as player">
-        <div class="body p-1">
+        <div class="body" appScalableContainer>
             <div class="cards_wrap_header">
                 <app-clank-cost-info
                     [data]="player.benefitInfo"
                     [type]="ClankCostInfoType.cardsInfo"
                 ></app-clank-cost-info>
             </div>
-            <div class="not_active_player" *ngIf="player.id !== activePlayer.id"
-                [style.height.px]="cardsWrapInfo.boardTop">
-                <h4 class="message p-2 shadow-lg">
-                    Ход игрока
-                    <span class="player_name">{{activePlayer.name}}</span>
-                </h4>
-            </div>
-            <div class="d-flex flex-column flex-grow-1 position-relative">
-                <app-clank-card class="position-absolute"
-                    *ngFor="let cardInfo of (selectedPlayerCardsSubject | async); trackBy: trackById;"
-                    [width]="cardsWrapInfo.cardWidth"
-                    [height]="cardsWrapInfo.cardHeight"
-                    [data]="cardInfo"
-                    [ngStyle]="cardInfo.style"
-                ></app-clank-card>
+            <div class="player_area p-1"
+                *ngIf="(selectedPlayerAreaSubject | async) as playerArea"
+                appScalable
+                [style.width.px]="playerArea.width"
+                [style.height.px]="playerArea.height">
+                <div class="not_active_player" *ngIf="player.id !== activePlayer.id"
+                    [style.height.px]="cardsWrapInfo.boardTop">
+                    <h4 class="message p-2 shadow-lg">
+                        Ход игрока
+                        <span class="player_name">{{activePlayer.name}}</span>
+                    </h4>
+                </div>
+                <div class="d-flex flex-column flex-grow-1 position-relative">
+                    <app-clank-card class="position-absolute"
+                        *ngFor="let cardInfo of (selectedPlayerCardsSubject | async); trackBy: trackById;"
+                        [width]="cardsWrapInfo.cardWidth"
+                        [height]="cardsWrapInfo.cardHeight"
+                        [data]="cardInfo"
+                        [ngStyle]="cardInfo.style"
+                    ></app-clank-card>
+                </div>
             </div>
         </div>
         <div class="footer p-1" *ngIf="currentPlayer != null">
-            <button class="mb-1 btn btn-primary"
+            <button class="mb-1 btn btn-sm btn-primary"
                 (click)="openDungeonRow(currentPlayer)"
                 [disabled]="currentPlayer.id !== activePlayer.id && currentPlayer.id !== player.id"
             >Показать рынок</button>
@@ -52,7 +58,7 @@
                     [type]="ClankCostInfoType.turnInfo"
                 ></app-clank-cost-info>
             </div>
-            <button class="btn btn-danger"
+            <button class="btn btn-sm btn-danger"
                 (click)="finishTurn()"
                 [disabled]="currentPlayer.id !== activePlayer.id && currentPlayer.id !== player.id"
             >Закончить ход</button>
