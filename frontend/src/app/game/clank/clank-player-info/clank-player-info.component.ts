@@ -16,6 +16,7 @@ import {
     cardWidth,
     ISelectedPlayerCardInfo,
 } from 'src/app/shared/components/clank-card/clank-card.types';
+import { ClankCostInfoDirection } from 'src/app/shared/components/clank-cost-info/clank-cost-info.types';
 import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
 import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
 import { UseCardType } from 'src/app/shared/models/cards/cards.types';
@@ -41,6 +42,7 @@ import { GameInfoService } from '../services/game-info.service';
 export class ClankPlayerInfoComponent implements OnInit {
 
     ClankCostInfoType = ClankCostInfoType;
+    ClankCostInfoDirection = ClankCostInfoDirection;
     cardsWrapInfo = {
         cardsInRow: 4,
         cardWidth,
@@ -270,11 +272,6 @@ export class ClankPlayerInfoComponent implements OnInit {
             width: (this.cardsWrapInfo.cardsInRow - 1) * this.cardsWrapInfo.cardWidth * this.cardsWrapInfo.cardWidthKoef
                 + this.cardsWrapInfo.cardWidth * 1.2,
             height: this.cardsWrapInfo.boardTop + rowCount * this.cardsWrapInfo.cardHeight + cardsWrapPadding * 2,
-        });
-        console.log({
-            area: this.selectedPlayerAreaSubject.getValue(),
-            rowCount,
-            cardsWrapInfo: this.cardsWrapInfo,
         });
     }
 

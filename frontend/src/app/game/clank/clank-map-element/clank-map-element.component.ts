@@ -14,6 +14,7 @@ import {
     map,
     tap,
 } from 'rxjs/operators';
+import { ClankCostInfoDirection } from 'src/app/shared/components/clank-cost-info/clank-cost-info.types';
 import {
     checkCost,
     ClankElementTypeMap,
@@ -72,6 +73,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     );
 
     ClankElementTypeMap = ClankElementTypeMap;
+    ClankCostInfoDirection = ClankCostInfoDirection;
 
     get currentPlayer() {
         return this.gameInfoQuery.currentPlayer;
