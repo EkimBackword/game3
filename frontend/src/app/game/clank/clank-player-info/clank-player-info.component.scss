@@ -90,3 +90,31 @@
     overflow: hidden;
     flex-shrink: 0;
 }
+
+.clank-tokens {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    height: calc(var(--player_token_size) + 20);
+    width: 100%;
+
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+.clank-tokens-group {
+    width: var(--dungeon_token_size);
+    height: var(--dungeon_token_size);
+    filter: brightness(70%) grayscale(30%);
+    cursor: pointer;
+
+    &:hover {
+        filter: brightness(100%) grayscale(0%);
+    }
+
+    &+& {
+        margin-left: 0.4rem;
+    }
+}

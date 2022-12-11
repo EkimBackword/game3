@@ -22,11 +22,16 @@ import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
 import { UseCardType } from 'src/app/shared/models/cards/cards.types';
 import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
+import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 
 import { ClankCardState } from '@shared/clank/clank-card.types';
 import { ClankCostInfo } from '@shared/clank/clank-info.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
+import {
+    ClankTokenConfig,
+    ClankTokenTypeEnum,
+} from '@shared/clank/clank-token.types';
 
 import { ClankDungeonRowComponent } from '../clank-dungeon-row/clank-dungeon-row.component';
 import { GameCardService } from '../services/game-card.service';
@@ -43,6 +48,7 @@ export class ClankPlayerInfoComponent implements OnInit {
 
     ClankCostInfoType = ClankCostInfoType;
     ClankCostInfoDirection = ClankCostInfoDirection;
+    ClankTokenTypeEnum = ClankTokenTypeEnum;
     cardsWrapInfo = {
         cardsInRow: 4,
         cardWidth,
@@ -53,10 +59,12 @@ export class ClankPlayerInfoComponent implements OnInit {
         boardLeft: `calc(33% + ${cardsWrapPadding}px)`,
         discardLeft: `calc(66% + ${cardsWrapPadding}px)`,
         boardTop: 300 + cardsWrapPadding * 2,
+        tokenSize: 50,
     };
 
     @HostBinding('style.--player_card_height') player_card_height = `${this.cardsWrapInfo.cardHeight}px`;
     @HostBinding('style.--player_card_width') player_card_width = `${this.cardsWrapInfo.cardWidth}px`;
+    @HostBinding('style.--player_token_size') player_token_size = `${this.cardsWrapInfo.tokenSize}px`;
 
     selectedPlayerSubject = new BehaviorSubject<ClankPlayerConfig | undefined>(void 0);
     selectedPlayerAreaSubject = new BehaviorSubject<{
@@ -81,6 +89,7 @@ export class ClankPlayerInfoComponent implements OnInit {
     }
 
     set selectedPlayer(player: ClankPlayerConfig | undefined) {
+        this.updatePlayerCards(player);
         this.selectedPlayerSubject.next(player);
     }
 
@@ -89,7 +98,6 @@ export class ClankPlayerInfoComponent implements OnInit {
             this.selectedPlayer = this.selectedPlayer != null
                 ? players.find(p => p.id === this.selectedPlayer?.id)
                 : this.gameInfoQuery.currentPlayer;
-            this.updatePlayerCards(this.selectedPlayer);
         }),
     );
 
@@ -113,6 +121,14 @@ export class ClankPlayerInfoComponent implements OnInit {
             return;
         }
         this.selectedPlayer = player;
+    }
+
+    useToken(tokenInfo: ClankTokenConfig, playerId: string) {
+        this.gameInfoService.useToken({
+            playerId,
+            tokenInfo,
+            type: UseTokenType.use,
+        });
     }
 
     async useCard(cardState: ClankCardState, player: ClankPlayerConfig) {

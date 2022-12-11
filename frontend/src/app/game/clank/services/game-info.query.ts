@@ -121,7 +121,9 @@ export class GameInfoQuery extends Query<GameInfoState> {
         shareReplay(1),
     );
 
-    onTokensChangeSubject = this.select('tokens');
+    onMapTokensChangeSubject = this.select('mapTokens');
+
+    onMarketTokensChangeSubject = this.select('marketTokens');
 
     onArtifactsChangeSubject = this.select('artifacts');
 

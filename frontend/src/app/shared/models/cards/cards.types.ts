@@ -15,7 +15,7 @@ export const UseCardInfoByType: Record<UseCardType, {
         text: 'использовал карту',
     },
     [UseCardType.buy]: {
-        text: 'купил курту',
+        text: 'купил карту',
     },
 };
 

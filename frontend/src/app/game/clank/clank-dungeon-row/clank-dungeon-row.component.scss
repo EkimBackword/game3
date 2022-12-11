@@ -1,6 +1,7 @@
+
 :host {
     width: calc(var(--dungeon_width) * 7.6);
-    height: calc(var(--dungeon_height) * 2.4);
+    height: calc(var(--dungeon_height) * 2.5 + var(--clank_cost_info_height, 25px) + var(--dungeon_token_size));
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -8,6 +9,30 @@
 }
 
 .clank-cost-info {
-    height: 50px;
+    height: var(--clank_cost_info_height, 25px);
     margin-bottom: 10px;
+}
+
+.clank-tokens {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    height: var(--dungeon_token_size);
+    margin: 0.4rem;
+}
+
+.clank-tokens-group {
+    width: var(--dungeon_token_size);
+    height: var(--dungeon_token_size);
+    filter: brightness(70%) grayscale(30%);
+    cursor: pointer;
+
+    &:hover {
+        filter: brightness(100%) grayscale(0%);
+    }
+
+    &+& {
+        margin-left: 0.4rem;
+    }
 }

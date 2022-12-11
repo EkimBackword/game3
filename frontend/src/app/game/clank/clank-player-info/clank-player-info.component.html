@@ -49,6 +49,19 @@
             </div>
         </div>
         <div class="footer p-1" *ngIf="currentPlayer != null">
+            <p>Доступные жетоны:</p>
+            <div class="clank-tokens">
+                <ng-container *ngFor="let token of player.tokens; trackBy: trackById">
+                    <div class="clank-tokens-group" *ngIf="token.type !== ClankTokenTypeEnum.market">
+                        <app-clank-token
+                            [isOpen]="true"
+                            [token]="token"
+                            [size]="cardsWrapInfo.tokenSize"
+                            (click)="currentPlayer.id === activePlayer.id && currentPlayer.id === player.id ? useToken(token, player.id) : null"
+                        ></app-clank-token>
+                    </div>
+                </ng-container>
+            </div>
             <button class="mb-1 btn btn-sm btn-primary"
                 (click)="openDungeonRow(currentPlayer)"
                 [disabled]="currentPlayer.id !== activePlayer.id && currentPlayer.id !== player.id"

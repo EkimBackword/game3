@@ -1,7 +1,7 @@
 import { ClankArtifactConfig } from './clank-artifact.types';
 import { ClankCardState } from './clank-card.types';
 import { ClankCostInfo } from './clank-info.types';
-import { ClankTokenState } from './clank-token.types';
+import { ClankTokenConfig } from './clank-token.types';
 
 export interface ClankPlayerConfig {
     /** Id пользователя */
@@ -29,7 +29,7 @@ export interface ClankPlayerConfig {
     /** Карты от которых избавились */
     trash: ClankCardState[];
     /** Жетоны */
-    tokens: ClankTokenState[];
+    tokens: ClankTokenConfig[];
     /** Артефакты */
     artifacts: ClankArtifactConfig[];
     /** Игрок потерял сознание, но был спасён */

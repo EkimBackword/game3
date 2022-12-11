@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import {
-    ClankTokenConfig,
-    ClankTokenState,
-} from '@shared/clank/clank-token.types';
+import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
-import { getSecretTokens } from '../models/tokens/token.data';
+import {
+    getMarketTokens,
+    getSecretTokens,
+} from '../models/tokens/token.data';
 
 @Injectable({
     providedIn: 'root',
@@ -14,33 +14,24 @@ export class TokensService {
 
     readonly store: ClankTokenConfig[] = [
         ...getSecretTokens(false),
+        ...getMarketTokens(false),
     ];
 
     constructor() { }
 
-    getTokens() {
-        const tokens = getSecretTokens(true) ?? [];
-        return this.mappingToTokenStates(tokens);
+    getMapTokens() {
+        const tokens = [
+            ...getSecretTokens(true),
+            ...getMarketTokens(true),
+        ];
+        return tokens;
     }
 
-    getTokenInfo(state?: ClankTokenState) {
-        if (state == null) {
-            return;
-        }
-        const [find_string] = state.id.split('__');
-        return this.store.find(p => p.find_string === find_string);
-    }
-
-    private mappingToTokenStates(configs: ClankTokenConfig[]) {
-        return configs.map(config => {
-            const state: ClankTokenState = {
-                id: config.id,
-                dlc_name: config.dlc_name,
-                type: config.type,
-                element_type: config.element_type,
-            };
-            return state;
-        });
+    getMarketTokens() {
+        const tokens = [
+            ...getMarketTokens(true),
+        ];
+        return tokens;
     }
 
 }

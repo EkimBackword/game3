@@ -7,7 +7,7 @@ import {
   ClankPlayerConfig,
   GamePlayerColorIdEnum,
 } from './clank-player.types';
-import { ClankTokenState } from './clank-token.types';
+import { ClankTokenConfig } from './clank-token.types';
 
 export enum GameInfoStatusIdEnum {
     Empty,
@@ -61,8 +61,10 @@ export interface GameInfoState extends GameInfoConfig {
     dungeonRow: ClankCardState[];
     /** Общий резерв */
     reserveRow: ClankCardState[];
-    /** Жетоны */
-    tokens: ClankTokenState[];
+    /** Жетоны на карте */
+    mapTokens: ClankTokenConfig[];
+    /** Жетоны в магазине */
+    marketTokens: ClankTokenConfig[];
     /** Артефакты */
     artifacts: ClankArtifactConfig[];
     /** Индекс активного игрока */

@@ -60,7 +60,8 @@ const testGame: GameInfoState = {
     dungeonDeck: [],
     dungeonRow: [],
     reserveRow: [],
-    tokens: [],
+    mapTokens: [],
+    marketTokens: [],
     artifacts: [],
     players: [],
     dragonInfo: initDragonInfo(),
@@ -137,10 +138,6 @@ io.of(gameRegExp).on('connection', (socket) => {
                 benefitInfo: {
                     heal: 10,
                     coin: 0,
-                },
-                crystalCave: {
-                    isEnter: false,
-                    isIgnore: false,
                 },
                 deck: [],
                 hand: [],

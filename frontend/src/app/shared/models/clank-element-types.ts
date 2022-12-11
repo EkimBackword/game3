@@ -11,6 +11,7 @@ import {
     ClankElementByTurn,
     ClankElementByTurnList,
     ClankElementType,
+    ClankElementTypeEnum,
     ClankElementTypeList,
 } from '@shared/clank/clank-info.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
@@ -24,6 +25,7 @@ export enum ClankCostInfoType {
     all = 'all',
     gameInfo = 'gameInfo',
     turnInfo = 'turnInfo',
+    marketInfo = 'marketInfo',
     cardsInfo = 'cardsInfo',
     effectsInfo = 'effectsInfo',
 }
@@ -32,6 +34,13 @@ export const ClankCostInfoKeysByType: Record<ClankCostInfoType, ClankElementType
     all: [ClankElementTypeList],
     gameInfo: [ClankElementByGameList],
     turnInfo: [ClankElementByTurnList],
+    marketInfo: [
+        [
+            ClankElementTypeEnum.skill,
+            ClankElementTypeEnum.sword,
+            ClankElementTypeEnum.coin,
+        ],
+    ],
     cardsInfo: [ClankCardTypeList],
     effectsInfo: [ClankEffectList],
 };
@@ -128,9 +137,17 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         url: '/assets/images/tokens/secrets/big_cup.jpg',
     },
     // ClankElementByMarket
+    [ClankElementByMarket.backpack]: {
+        name: 'Рюкзак',
+        url: '/assets/images/tokens/market/backpack_token.jpg',
+    },
     [ClankElementByMarket.key]: {
-        name: 'Отмычки',
+        name: 'Отмычка',
         url: '/assets/images/tokens/market/key_token.jpg',
+    },
+    [ClankElementByMarket.crown]: {
+        name: 'Корона',
+        url: '/assets/images/tokens/market/crown_token.jpg',
     },
     // ClankElementByActions
     [ClankElementByActions.dragon_rage]: {
@@ -155,15 +172,15 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     },
     // ClankEffect
     [ClankEffect.ignore_crystal_cave]: {
-        name: 'Шум',
+        name: 'Игнорирование кристальных пещер',
         url: '/assets/images/clank.png',
     },
     [ClankEffect.ignore_monster]: {
-        name: 'Шум',
+        name: 'Игнорирование монстров',
         url: '/assets/images/clank.png',
     },
     [ClankEffect.gem_cost_less]: {
-        name: 'Шум',
+        name: 'Самоцветы стоят дешевле',
         url: '/assets/images/clank.png',
     },
 

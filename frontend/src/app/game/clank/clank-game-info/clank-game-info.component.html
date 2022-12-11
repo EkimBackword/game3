@@ -30,13 +30,15 @@
                         </div>
                     </div>
                     <div class="clank-artifacts">
-                        <div class="clank-artifact" *ngFor="let token of player.tokens; trackBy: trackById">
-                            <app-clank-token
-                                [isOpen]="true"
-                                [state]="token"
-                                [size]="50"
-                            ></app-clank-token>
-                        </div>
+                        <ng-container *ngFor="let token of player.tokens; trackBy: trackById">
+                            <div class="clank-artifact" *ngIf="token.type === ClankTokenTypeEnum.market">
+                                <app-clank-token
+                                    [isOpen]="true"
+                                    [token]="token"
+                                    [size]="50"
+                                ></app-clank-token>
+                            </div>
+                        </ng-container>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -100,7 +102,7 @@
             </ng-container>
 
         </div>
-        <button class="btn btn-primary mb-1"
+        <button class="btn btn-sm btn-primary mb-1"
             [class.not-allowed]="!validColorList"
             (click)="startGame()"
             *ngIf="currentPlayer?.isAdmin && !isStarted && !isFinished"

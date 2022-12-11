@@ -12,6 +12,10 @@ import {
 import { ClankOneTurnInfo } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
+import {
+    UseTokenInfoByType,
+    UseTokenType,
+} from 'src/app/shared/models/tokens/token.types';
 import { ArtifactsService } from 'src/app/shared/services/artifacts.service';
 import { CardsService } from 'src/app/shared/services/cards.service';
 import {
@@ -38,7 +42,7 @@ import {
     ClankPlayerConfig,
     GamePlayerColorIds,
 } from '@shared/clank/clank-player.types';
-import { ClankTokenState } from '@shared/clank/clank-token.types';
+import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 import { SocketErrorTypeEnum } from '@shared/socket.types';
 
 import { GameInfoQuery } from './game-info.query';
@@ -140,17 +144,18 @@ export class GameInfoService implements OnDestroy {
                     player.hand = player.hand.filter(p => p.id !== cardState.id),
                     player.board.push(cardState);
                     player.benefitInfo[card.type] = (player.benefitInfo[card.type] ?? 0) + 1;
-                    // TODO: Добавит обновление crystalCave.isIgnore
                     break;
                 }
                 case UseCardType.buy: {
-                    state.dungeonRow = state.dungeonRow.filter(p => p.id !== cardState.id);
-                    state.reserveRow = state.reserveRow.filter(p => p.id !== cardState.id);
-                    if (![
-                        ClankCardType.device,
-                        ClankCardType.monster,
-                    ].includes(card.type)) {
-                        player.discard.push(cardState);
+                    if (card.count > 0) {
+                        state.dungeonRow = state.dungeonRow.filter(p => p.id !== cardState.id);
+                        state.reserveRow = state.reserveRow.filter(p => p.id !== cardState.id);
+                        if (![
+                            ClankCardType.device,
+                            ClankCardType.monster,
+                        ].includes(card.type)) {
+                            player.discard.push(cardState);
+                        }
                     }
                 }
             }
@@ -191,38 +196,15 @@ export class GameInfoService implements OnDestroy {
         this.onGameUpdated();
     }
 
-    takeToken(playerId: string, tokenState: ClankTokenState) {
-        const tokenInfo = this.tokensService.getTokenInfo(tokenState);
-        if (tokenInfo == null) {
-            return;
-        }
-        if (tokenInfo.isImmediatelyBenefit) {
-            this.useToken(playerId, tokenState);
-            return;
-        }
-        this.gameInfoStore.update((oldState) => {
-            const state = lodash.cloneDeep(oldState);
-            const player = state.players.find(p => p.id === playerId);
-            if (player == null) {
-                return state;
-            }
-            state.tokens = state.tokens.filter(p => p.id !== tokenState.id),
-            state.players = arrayUpdate(state.players, player.id, {
-                tokens: [
-                    ...player.tokens,
-                    tokenState,
-                ],
-            });
-            return state;
-        });
-        this.onGameUpdated();
-    }
-
-    useToken(playerId: string, tokenState: ClankTokenState) {
-        const tokenInfo = this.tokensService.getTokenInfo(tokenState);
-        if (tokenInfo == null) {
-            return;
-        }
+    useToken({
+        playerId,
+        tokenInfo,
+        type,
+    }: {
+        playerId: string;
+        tokenInfo: ClankTokenConfig;
+        type: UseTokenType;
+    }) {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
             const player = state.players.find(p => p.id === playerId);
@@ -230,8 +212,11 @@ export class GameInfoService implements OnDestroy {
                 return state;
             }
 
-            player.tokens = player.tokens.filter(p => p.id !== tokenState.id);
-            if (tokenInfo.benefit != null) {
+            if (type === UseTokenType.take && tokenInfo.isImmediatelyBenefit) {
+                type = UseTokenType.use;
+            }
+
+            if (tokenInfo.benefit != null && [UseTokenType.buy, UseTokenType.use].includes(type)) {
                 const benefitInfo = updateBenefitInfo({
                     benefit: player.benefitInfo,
                     cost: tokenInfo.benefit,
@@ -239,9 +224,25 @@ export class GameInfoService implements OnDestroy {
                 });
                 this.setBenefits(player, benefitInfo, state);
             }
-            state.tokens = state.tokens.filter(p => p.id !== tokenState.id);
-            state.players = arrayUpdate(state.players, player.id, player),
-            this.toastService.showInfo(`Игрок ${player.name} использует ${tokenInfo.name}`);
+
+            if ([UseTokenType.buy, UseTokenType.take].includes(type)) {
+                player.tokens = [
+                    ...player.tokens,
+                    tokenInfo,
+                ];
+            } else {
+                player.tokens = player.tokens.filter(p => p.id !== tokenInfo.id);
+            }
+
+            state.mapTokens = state.mapTokens.filter(p => p.id !== tokenInfo.id);
+            state.marketTokens = state.marketTokens.filter(p => p.id !== tokenInfo.id);
+            state.players = arrayUpdate(state.players, player.id, player);
+            const text = `${player.name} ${UseTokenInfoByType[type].text} ${tokenInfo.name}`;
+            this.addActionLogs(state, {
+                text,
+                colorId: player.colorId,
+            });
+            this.toastService.showInfo(text);
             return state;
         });
         this.onGameUpdated();
@@ -280,7 +281,8 @@ export class GameInfoService implements OnDestroy {
                 state.mapDlcId,
                 playerCount,
             );
-            state.tokens = this.simpleShuffle(this.tokensService.getTokens());
+            state.mapTokens = this.simpleShuffle(this.tokensService.getMapTokens());
+            state.marketTokens = this.tokensService.getMarketTokens();
             state.artifacts = this.simpleShuffle(this.artifactsService.getArtifacts());
             state.turnIndex = 0;
             this.addActionLogs(state, {

@@ -18,6 +18,7 @@ import {
     GamePlayerColorList,
     GamePlayerStatusIdEnum,
 } from '@shared/clank/clank-player.types';
+import { ClankTokenTypeEnum } from '@shared/clank/clank-token.types';
 
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
@@ -31,6 +32,7 @@ import { GameInfoService } from '../services/game-info.service';
 export class ClankGameInfoComponent implements OnInit {
 
     ClankCostInfoType = ClankCostInfoType;
+    ClankTokenTypeEnum = ClankTokenTypeEnum;
     isStarted = false;
     isFinished = false;
 

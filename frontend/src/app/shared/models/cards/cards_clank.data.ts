@@ -434,10 +434,8 @@ export const getClankDeckCards = (withCopy: boolean) => {
                 list: [
                     {
                         target: ClankTarget.current,
-                        cost: {
-                            clank: 2,
-                        },
                         benefit: {
+                            clank: 2,
                             ignore_crystal_cave: 1,
                         },
                     },

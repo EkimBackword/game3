@@ -20,6 +20,7 @@ export enum ClankTokenSecretTypeEnum {
 export interface ClankTokenGroupShortInfo {
     dlc_name: ClankDlcEnum;
     type: ClankTokenTypeEnum;
+    isSquare?: boolean;
 }
 
 export interface ClankTokenGroup extends ClankTokenGroupShortInfo {
@@ -27,14 +28,8 @@ export interface ClankTokenGroup extends ClankTokenGroupShortInfo {
     url: string;
 }
 
-export interface ClankTokenState extends ClankTokenGroupShortInfo {
-    id: string;
-    element_type: ClankElementType;
-}
-
 export interface ClankTokenShortConfig {
-    /** index */
-    index: number
+
     /** Колличество в игре */
     count: number
     /** Имя */
@@ -54,15 +49,14 @@ export interface ClankTokenShortConfig {
     /** Нужно ли получить выгоду немедленно или можно сохранить */
     secret_type?: ClankTokenSecretTypeEnum;
     /** Нужно ли получить выгоду немедленно или можно сохранить */
-    isSquare?: ClankTokenSecretTypeEnum;
+    isSquare?: boolean;
 }
 
-export interface ClankTokenConfig extends ClankTokenShortConfig, ClankTokenState {
-    /**
-     * Строка для поиска карты в репозитории
-     * @description ${config.dlc_name}_${start_index}
-     */
-    find_string: string;
+export interface ClankTokenConfig extends ClankTokenShortConfig, ClankTokenGroupShortInfo {
+    /** Идентификатор */
+    id: string;
+    /** index */
+    index: number
     /** Индекс копии */
     copy_index: number;
 }

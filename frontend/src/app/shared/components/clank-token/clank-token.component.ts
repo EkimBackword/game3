@@ -12,12 +12,10 @@ import { ClankElementByGame } from '@shared/clank/clank-info.types';
 import {
     ClankTokenConfig,
     ClankTokenSecretTypeEnum,
-    ClankTokenState,
     ClankTokenTypeEnum,
 } from '@shared/clank/clank-token.types';
 
 import { ClankElementTypeMap } from '../../models/clank-element-types';
-import { TokensService } from '../../services/tokens.service';
 
 @Component({
     selector: 'app-clank-token',
@@ -28,10 +26,9 @@ import { TokensService } from '../../services/tokens.service';
 export class ClankTokenComponent implements OnInit, OnChanges {
 
     @Input() isOpen = false;
-    @Input() state!: ClankTokenState;
+    @Input() token!: ClankTokenConfig;
     @Input() size = 150;
 
-    token: ClankTokenConfig | undefined;
     style: Partial<CSSStyleDeclaration> = {};
 
     ClankTokenTypeEnum = ClankTokenTypeEnum;
@@ -39,31 +36,18 @@ export class ClankTokenComponent implements OnInit, OnChanges {
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
-        private tokensService: TokensService,
     ) { }
 
     ngOnInit(): void {
-        this.token = this.getTokenInfo();
         this.style = this.getStyle();
         this.changeDetectorRef.detectChanges();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.card) {
-            this.token = this.getTokenInfo();
-        }
-        if (changes.card || changes.width || changes.height) {
+        if (changes.token || changes.size) {
             this.style = this.getStyle();
         }
         this.changeDetectorRef.detectChanges();
-    }
-
-    private getTokenInfo() {
-        if (this.state == null) {
-            return void 0;
-        }
-        const [find_string] = this.state.id.split('__');
-        return this.tokensService.store.find(p => p.find_string === find_string);
     }
 
     private getStyle() {

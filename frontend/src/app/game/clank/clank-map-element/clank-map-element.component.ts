@@ -21,6 +21,7 @@ import {
 } from 'src/app/shared/models/clank-element-types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
+import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
@@ -29,7 +30,7 @@ import {
     ClankMapElementLink,
 } from '@shared/clank/clank-map.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
-import { ClankTokenState } from '@shared/clank/clank-token.types';
+import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
@@ -64,8 +65,8 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
 
     onArtifactsChangeSubject = this.gameInfoQuery.onArtifactsChangeSubject;
 
-    token: ClankTokenState | undefined;
-    onTokensChangeSubject = this.gameInfoQuery.onTokensChangeSubject.pipe(
+    token: ClankTokenConfig | undefined;
+    onTokensChangeSubject = this.gameInfoQuery.onMapTokensChangeSubject.pipe(
         map((tokens) => tokens.filter(token => token?.element_type != null && this.mapElement?.items?.[token.element_type])),
         tap((tokens) => {
             this.token = tokens[0];
@@ -121,7 +122,11 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             isFinish: this.mapElement.isStart ?? false,
         });
         if (this.token != null) {
-            this.gameInfoService.takeToken(this.activePlayer.id, this.token);
+            this.gameInfoService.useToken({
+                playerId: this.activePlayer.id,
+                tokenInfo: this.token,
+                type: UseTokenType.take,
+            });
         }
     }
 

@@ -19,11 +19,13 @@ import {
 import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
 import { UseCardType } from 'src/app/shared/models/cards/cards.types';
 import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
+import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 
 import { ClankCardState } from '@shared/clank/clank-card.types';
 import { ClankCostInfo } from '@shared/clank/clank-info.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
+import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
 import { GameCardService } from '../services/game-card.service';
 import { GameInfoQuery } from '../services/game-info.query';
@@ -44,10 +46,14 @@ export class ClankDungeonRowComponent implements OnInit {
         cardHeight,
         dungeonRowTop: 0,
         reserveRowTop: cardHeight + cardsWrapPadding,
+        dungeonTokenSize: 80,
+        clankCostInfoHeight: 25,
     };
 
     @HostBinding('style.--dungeon_width') dungeon_width = `${this.cardsWrapInfo.cardWidth}px`;
     @HostBinding('style.--dungeon_height') dungeon_height = `${this.cardsWrapInfo.cardHeight}px`;
+    @HostBinding('style.--dungeon_token_size') dungeon_token_size = `${this.cardsWrapInfo.dungeonTokenSize}px`;
+    @HostBinding('style.--clank_cost_info_height') clank_cost_info_height = `${this.cardsWrapInfo.clankCostInfoHeight}px`;
 
     cardsSubject = combineLatest([
         this.data.gameInfoQuery.onDungeonDeckChangeSubject,
@@ -121,6 +127,19 @@ export class ClankDungeonRowComponent implements OnInit {
         }),
     );
 
+    onMarketTokensChangeSubject = this.data.gameInfoQuery.onMarketTokensChangeSubject.pipe(
+        map((tokens) => {
+            const groups = tokens.reduce((acc, token) => {
+                const group = acc.get(token.name) ?? [];
+                group.push(token);
+                acc.set(token.name, group);
+                return acc;
+            }, new Map<string, ClankTokenConfig[]>());
+            console.log(tokens, groups);
+            return [...groups.values()];
+        }),
+    );
+
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private cardsService: CardsService,
@@ -163,6 +182,14 @@ export class ClankDungeonRowComponent implements OnInit {
             type: UseCardType.buy,
         });
         this.changeDetectorRef.detectChanges();
+    }
+
+    useToken(tokenInfo: ClankTokenConfig) {
+        this.data.gameInfoService.useToken({
+            playerId: this.data.player.id,
+            tokenInfo,
+            type: UseTokenType.buy,
+        });
     }
 
 }

@@ -12,7 +12,7 @@
             <ng-container *ngIf="(onTokensChangeSubject | async) as tokens">
                 <div class="clank-artifact" *ngIf="tokens.length > 0 && token != null">
                     <app-clank-token
-                        [state]="token"
+                        [token]="token"
                     ></app-clank-token>
                 </div>
             </ng-container>
