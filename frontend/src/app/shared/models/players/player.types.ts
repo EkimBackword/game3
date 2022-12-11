@@ -2,6 +2,21 @@ import {
     ClankCostInfo,
     ClankElementType,
 } from '@shared/clank/clank-info.types';
+import {
+    ClankPlayerConfig,
+    GamePlayerColorInfo,
+} from '@shared/clank/clank-player.types';
+
+export interface PlayerPointsResult {
+    name: string;
+    config: ClankPlayerConfig;
+    colorInfo: GamePlayerColorInfo;
+    coins: number;
+    tokens: number;
+    artifacts: number;
+    cards: number;
+    total: number;
+}
 
 export const updateBenefitInfo = (data: {
     benefit: ClankCostInfo,

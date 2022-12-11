@@ -4,12 +4,79 @@
 <ng-container *ngIf="(statusSubject | async) as status">
     <div class="clank_map_finish_info" *ngIf="status === GameInfoStatusIdEnum.Finished">
         <div class="clank_map_finish_info_block">
-            <h3 class="message p-2 shadow-lg">
+            <h3 class="message p-2">
                 Игра закончена
             </h3>
-            <h4 class="message p-2 shadow-lg">
-                Выиграл игрок <span class="player_name">123</span>
-            </h4>
+            <ng-container *ngIf="(playersSubject | async) as result">
+                <table class="w-100 clank_table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div>Игрок</div>
+                            </th>
+                            <th>
+                                <img class="clank_table_head_img"
+                                    src="/assets/images/coins/coins.png"
+                                    alt="Монеты"
+                                    matTooltip="Монеты"
+                                    matTooltipPosition="above">
+                            </th>
+                            <th>
+                                <img class="clank_table_head_img"
+                                    src="/assets/images/tokens/tokens.png"
+                                    alt="Жетоны"
+                                    matTooltip="Жетоны"
+                                    matTooltipPosition="above">
+                            </th>
+                            <th>
+                                <img class="clank_table_head_img"
+                                    src="/assets/images/artefact.png"
+                                    alt="Артефакты"
+                                    matTooltip="Артефакты"
+                                    matTooltipPosition="above">
+                            </th>
+                            <th>
+                                <img class="clank_table_head_img"
+                                    src="/assets/images/cards/card_point.png"
+                                    alt="Карты"
+                                    matTooltip="Карты"
+                                    matTooltipPosition="above">
+                            </th>
+                            <th>
+                                <div>Итог</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let player of result.rows">
+                            <td class="player_name_cell">
+                                <div class="player_name_cell_element">
+                                    <img class="clank_aria_player_img" [src]="player.colorInfo.url" [alt]="player.config.colorId">
+                                    <div class="text-ellipsis">{{player.name}}</div>
+                                </div>
+                            </td>
+                            <td class="to_right">{{player.coins}}</td>
+                            <td class="to_right">{{player.tokens}}</td>
+                            <td class="to_right">{{player.artifacts}}</td>
+                            <td class="to_right">{{player.cards}}</td>
+                            <td class="to_right total">{{player.total}}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="to_right total" colspan="1">
+                                Выиграл:
+                            </td>
+                            <td class="total" colspan="5">
+                                <div class="winner_name"
+                                    [style.color]="result.winner?.colorInfo?.color">
+                                    {{result.winner?.name}}
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </ng-container>
             <button class="btn btn-danger"
                 (click)="exitGame()">
                 Выйти из игры
