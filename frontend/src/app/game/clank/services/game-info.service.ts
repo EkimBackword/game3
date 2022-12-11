@@ -262,11 +262,21 @@ export class GameInfoService implements OnDestroy {
                 );
                 const config: ClankPlayerConfig = {
                     ...player,
-                    deck: this.shuffle(deck),
+                    elementId: 1,
                     benefitInfo: {
                         heal: 10,
                         coin: 0,
                     },
+                    deck: this.shuffle(deck),
+                    hand: [],
+                    board: [],
+                    discard: [],
+                    trash: [],
+                    tokens: [],
+                    artifacts: [],
+                    isRescued: false,
+                    isEscaped: false,
+                    isFinish: false,
                 };
                 this.clearTurnInfo(config.benefitInfo);
                 this.drawCards(config, 5);

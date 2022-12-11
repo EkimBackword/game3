@@ -57,17 +57,30 @@ $clank_info_width: 200px;
     left: 0;
     height: 100%;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(100, 100, 100, 0.75);
+    background: rgba(100,100,100, 0.75);
+    background: radial-gradient(
+        circle,
+        rgba(100,100,100,0.5) 0%,
+        rgba(100,100,100,0.7) 30%,
+        rgba(100,100,100,0.8) 70%,
+        rgba(100,100,100,1) 100%
+    );
     z-index: 500;
 
     .clank_map_finish_info_block {
         background-color: #fff;
         padding: 0.8rem;
         border-radius: 0.8rem;
+
+        .btn + .btn {
+            margin-left: 0.4rem;
+        }
     }
 
     .clank_table {
         font-size: 18px;
+        margin: 0.8rem 0;
     }
 
     .clank_aria_player_img {

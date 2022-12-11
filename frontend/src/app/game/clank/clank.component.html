@@ -3,7 +3,7 @@
 <app-clank-game-info class="clank_game_info shadow-lg"></app-clank-game-info>
 <ng-container *ngIf="(statusSubject | async) as status">
     <div class="clank_map_finish_info" *ngIf="status === GameInfoStatusIdEnum.Finished">
-        <div class="clank_map_finish_info_block">
+        <div class="clank_map_finish_info_block shadow">
             <h3 class="message p-2">
                 Игра закончена
             </h3>
@@ -77,10 +77,16 @@
                     </tfoot>
                 </table>
             </ng-container>
-            <button class="btn btn-danger"
-                (click)="exitGame()">
-                Выйти из игры
-            </button>
+            <div class="w-100 d-flex flex-row justify-content-end align-items-center">
+                <button class="btn btn-primary"
+                    (click)="startGame()">
+                    Начать с начала
+                </button>
+                <button class="btn btn-danger"
+                    (click)="exitGame()">
+                    Выйти из игры
+                </button>
+            </div>
         </div>
     </div>
 </ng-container>

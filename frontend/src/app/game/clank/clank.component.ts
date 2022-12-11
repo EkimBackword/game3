@@ -110,6 +110,10 @@ export class ClankComponent implements OnInit {
         this.ngUnsubscribe.complete();
     }
 
+    startGame() {
+        this.gameInfoService.startGame();
+    }
+
     exitGame() {
         this.router.navigate(['/']);
     }
