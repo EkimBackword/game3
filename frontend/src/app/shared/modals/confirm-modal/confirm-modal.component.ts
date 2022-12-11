@@ -11,7 +11,7 @@ import {
 
 export interface ConfirmModalComponentData {
     title?: string;
-    text: string;
+    textList: string[];
     approveText?: string;
     cancelText?: string;
 }

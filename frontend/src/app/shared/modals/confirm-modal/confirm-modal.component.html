@@ -1,6 +1,6 @@
 <h1 mat-dialog-title *ngIf="data.title">{{data.title}}</h1>
 <div mat-dialog-content>
-    <p>{{data.text}}</p>
+    <p *ngFor="let text of data.textList">{{text}}</p>
 </div>
 <div mat-dialog-actions class="d-flex flex-row justify-content-end">
     <button class="btn btn-primary m-1" [mat-dialog-close]="true">

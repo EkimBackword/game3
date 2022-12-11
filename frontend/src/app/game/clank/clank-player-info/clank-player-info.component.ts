@@ -20,13 +20,19 @@ import { ClankCostInfoDirection } from 'src/app/shared/components/clank-cost-inf
 import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
 import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
 import { UseCardType } from 'src/app/shared/models/cards/cards.types';
-import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
+import {
+    ClankCostInfoType,
+    ClankElementTypeMap,
+} from 'src/app/shared/models/clank-element-types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 
 import { ClankCardState } from '@shared/clank/clank-card.types';
-import { ClankCostInfo } from '@shared/clank/clank-info.types';
+import {
+    ClankCostInfo,
+    ClankElementByTurnList,
+} from '@shared/clank/clank-info.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import {
     ClankTokenConfig,
@@ -142,11 +148,11 @@ export class ClankPlayerInfoComponent implements OnInit {
             type: 'actions',
         });
         if (card.actions != null && !actions.length) {
-            const matDialogRef =  this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
+            const matDialogRef = this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
                 ConfirmModalComponent,
                 {
                     data: {
-                        text: 'Вы уверены что хотите разыграть эту карту?',
+                        textList: ['Вы уверены что хотите разыграть эту карту?'],
                     },
                 },
             );
@@ -192,8 +198,28 @@ export class ClankPlayerInfoComponent implements OnInit {
         );
     }
 
-    finishTurn() {
-        // TODO: Добавить проверку на неиспользованные ресурсы
+    async finishTurn() {
+        const unusedList = ClankElementByTurnList
+            .filter(p => (this.activePlayer.benefitInfo[p] ?? 0) > 0)
+            .map(p => `Остались неиспользованные очки (${ClankElementTypeMap[p].name}: ${this.activePlayer.benefitInfo[p]})`);
+        if (this.activePlayer.hand.length > 0) {
+            unusedList.push(`Остались неиспользованные карты (${this.activePlayer.hand.length} шт.)`);
+        }
+        if (unusedList.length > 0) {
+            const matDialogRef = this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
+                ConfirmModalComponent,
+                {
+                    data: {
+                        title: 'Вы уверены что хотите закончить ход?',
+                        textList: unusedList,
+                    },
+                },
+            );
+            const result = await matDialogRef.afterClosed().toPromise();
+            if (!result) {
+                return;
+            }
+        }
         this.gameInfoService.finishTurn();
     }
 

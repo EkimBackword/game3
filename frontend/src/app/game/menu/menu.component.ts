@@ -70,7 +70,7 @@ export class MenuComponent implements OnInit {
             ConfirmModalComponent,
             {
                 data: {
-                    text: 'Вы уверены что хотите выйти?',
+                    textList: ['Вы уверены что хотите выйти?'],
                 },
             },
         );
