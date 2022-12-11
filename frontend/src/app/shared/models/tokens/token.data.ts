@@ -21,6 +21,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: '5 монет',
             url: '/big_coins_5.jpg',
             isImmediatelyBenefit: true,
+            isUsable: true,
             benefit: {
                 coin: 5,
             },
@@ -42,6 +43,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: 'Внезапное озарение',
             url: '/big_draw_cards.jpg',
             isImmediatelyBenefit: true,
+            isUsable: true,
             benefit: {
                 card: 3,
             },
@@ -53,6 +55,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: 'Зелье великого исцеления',
             url: '/big_heal.jpg',
             isImmediatelyBenefit: false,
+            isUsable: true,
             benefit: {
                 heal: 2,
             },
@@ -64,6 +67,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: '5 навыков',
             url: '/big_skill_5.jpg',
             isImmediatelyBenefit: true,
+            isUsable: true,
             benefit: {
                 skill: 5,
             },
@@ -78,6 +82,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: '2 монеты',
             url: '/small_coins_2.jpg',
             isImmediatelyBenefit: true,
+            isUsable: true,
             benefit: {
                 coin: 2,
             },
@@ -89,6 +94,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: 'Зелье силы',
             url: '/small_attack.jpg',
             isImmediatelyBenefit: false,
+            isUsable: true,
             benefit: {
                 sword: 2,
             },
@@ -117,6 +123,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: 'Зелье исцеления',
             url: '/small_heal.jpg',
             isImmediatelyBenefit: false,
+            isUsable: true,
             benefit: {
                 heal: 1,
             },
@@ -128,6 +135,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: 'Зелье ускорения',
             url: '/small_move.jpg',
             isImmediatelyBenefit: false,
+            isUsable: true,
             benefit: {
                 boot: 1,
             },
@@ -139,6 +147,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: '2 навыка',
             url: '/small_skill_2.jpg',
             isImmediatelyBenefit: true,
+            isUsable: true,
             benefit: {
                 skill: 2,
             },
@@ -150,6 +159,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: 'Избавьтесь от карты',
             url: '/small_trash_card.jpg',
             isImmediatelyBenefit: true,
+            isUsable: true,
             benefit: {
                 trashCard: 1,
             },
@@ -176,6 +186,9 @@ export const getMarketTokens = (withCopy: boolean) => {
             benefit: {
                 [ClankElementByMarket.backpack]: 1,
             },
+            cost: {
+                coin: 7,
+            },
             points: {
                 value: 5,
             },
@@ -187,6 +200,9 @@ export const getMarketTokens = (withCopy: boolean) => {
             url: ClankElementTypeMap[ClankElementByMarket.key].url,
             benefit: {
                 [ClankElementByMarket.key]: 1,
+            },
+            cost: {
+                coin: 7,
             },
             points: {
                 value: 5,
@@ -200,6 +216,9 @@ export const getMarketTokens = (withCopy: boolean) => {
             benefit: {
                 [ClankElementByMarket.crown]: 1,
             },
+            cost: {
+                coin: 7,
+            },
             points: {
                 value: 8,
             },
@@ -212,6 +231,9 @@ export const getMarketTokens = (withCopy: boolean) => {
             benefit: {
                 [ClankElementByMarket.crown]: 1,
             },
+            cost: {
+                coin: 7,
+            },
             points: {
                 value: 9,
             },
@@ -223,6 +245,9 @@ export const getMarketTokens = (withCopy: boolean) => {
             url: '/assets/images/tokens/market/crown_token_10.jpg',
             benefit: {
                 [ClankElementByMarket.crown]: 1,
+            },
+            cost: {
+                coin: 7,
             },
             points: {
                 value: 10,

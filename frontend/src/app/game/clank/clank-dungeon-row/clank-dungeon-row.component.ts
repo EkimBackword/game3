@@ -185,6 +185,9 @@ export class ClankDungeonRowComponent implements OnInit {
     }
 
     useToken(tokenInfo: ClankTokenConfig) {
+        if (!this.gameCardService.canUseToken(tokenInfo, this.data.player)) {
+            return;
+        }
         this.data.gameInfoService.useToken({
             playerId: this.data.player.id,
             tokenInfo,

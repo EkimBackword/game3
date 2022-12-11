@@ -66,7 +66,7 @@ export class ToastService {
         this.matSnackBar.openFromComponent(BsToastComponent, {
             data: Object.assign({}, data, dataFromOptions),
             duration: options?.duration ?? 2500,
-            horizontalPosition: 'start',
+            horizontalPosition: 'center',
             verticalPosition: 'top',
         });
     }

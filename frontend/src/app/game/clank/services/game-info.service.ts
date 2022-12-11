@@ -216,6 +216,15 @@ export class GameInfoService implements OnDestroy {
                 type = UseTokenType.use;
             }
 
+            if (tokenInfo.cost != null && [UseTokenType.buy, UseTokenType.use].includes(type)) {
+                const benefitInfo = updateBenefitInfo({
+                    benefit: player.benefitInfo,
+                    cost: tokenInfo.cost,
+                    isBenefit: false,
+                });
+                this.setBenefits(player, benefitInfo, state);
+            }
+
             if (tokenInfo.benefit != null && [UseTokenType.buy, UseTokenType.use].includes(type)) {
                 const benefitInfo = updateBenefitInfo({
                     benefit: player.benefitInfo,

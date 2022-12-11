@@ -4,6 +4,7 @@ import {
     checkAction,
     CheckActionResult,
 } from 'src/app/shared/models/actions.types';
+import { checkCost } from 'src/app/shared/models/clank-element-types';
 import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
@@ -12,6 +13,7 @@ import {
     ClankCardConfig,
 } from '@shared/clank/clank-card.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
+import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
 @Injectable({
     providedIn: 'root',
@@ -70,5 +72,24 @@ export class GameCardService {
             );
         }
         return result;
+    }
+
+    canUseToken(tokenInfo: ClankTokenConfig, player: ClankPlayerConfig) {
+        if (tokenInfo.cost == null) {
+            return true;
+        }
+        const result = checkCost({
+            cost: tokenInfo.cost,
+            player,
+        });
+        if (result.message) {
+            this.toastService.show(
+                result.success
+                    ? ToastSeverityEnum.success
+                    : ToastSeverityEnum.warning,
+                result.message,
+            );
+        }
+        return result.success;
     }
 }

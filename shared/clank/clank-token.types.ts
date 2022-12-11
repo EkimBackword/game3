@@ -29,7 +29,6 @@ export interface ClankTokenGroup extends ClankTokenGroupShortInfo {
 }
 
 export interface ClankTokenShortConfig {
-
     /** Колличество в игре */
     count: number
     /** Имя */
@@ -42,6 +41,8 @@ export interface ClankTokenShortConfig {
     points?: ClankCardPointInfo;
     /** Нужно ли получить выгоду немедленно или можно сохранить */
     isImmediatelyBenefit?: boolean;
+    /** Можно ли воспользоваться выгодой */
+    isUsable?: boolean;
     /** Выгода */
     benefit?: ClankCostInfo;
     /** Выгода */

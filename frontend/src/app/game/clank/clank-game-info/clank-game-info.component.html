@@ -31,7 +31,7 @@
                     </div>
                     <div class="clank-artifacts">
                         <ng-container *ngFor="let token of player.tokens; trackBy: trackById">
-                            <div class="clank-artifact" *ngIf="token.type === ClankTokenTypeEnum.market">
+                            <div class="clank-artifact" *ngIf="!token.isUsable">
                                 <app-clank-token
                                     [isOpen]="true"
                                     [token]="token"

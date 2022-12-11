@@ -52,7 +52,7 @@
             <p>Доступные жетоны:</p>
             <div class="clank-tokens">
                 <ng-container *ngFor="let token of player.tokens; trackBy: trackById">
-                    <div class="clank-tokens-group" *ngIf="token.type !== ClankTokenTypeEnum.market">
+                    <div class="clank-tokens-group" *ngIf="token.isUsable">
                         <app-clank-token
                             [isOpen]="true"
                             [token]="token"
