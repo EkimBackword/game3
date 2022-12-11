@@ -54,12 +54,17 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         tap(([mapInfo, activePlayer]) => {
             this.activePlayer = activePlayer;
             const activePlayerPosition = mapInfo.elements.find(p => p.id === activePlayer?.elementId);
-            const isActivePlayer = this.activePlayer?.id === this.gameInfoQuery.currentPlayer?.id;
+            const isActivePlayer = !this.activePlayer?.isFinish && this.activePlayer?.id === this.gameInfoQuery.currentPlayer?.id;
             const isEnterCrystalCave = (this.activePlayer?.benefitInfo.enter_crystal_cave ?? 0) > 0;
             const isIgnoreCrystalCave = (this.activePlayer?.benefitInfo.ignore_crystal_cave ?? 0) > 0;
-            this.link = isActivePlayer && (isIgnoreCrystalCave || !isEnterCrystalCave)
+            // TODO: при наличии телепорта спрашивать каким способом игрок хочет переместиться
+            // TODO: при наличии телепорта отображать все возможные перемещения
+            const link = isActivePlayer && (isIgnoreCrystalCave || !isEnterCrystalCave)
                 ? activePlayerPosition?.links.find(p => p.element_id === this.mapElement?.id)
                 : void 0;
+            this.link = (link?.cost.teleport ?? 0) > 0 && (this.activePlayer?.benefitInfo.teleport ?? 0) === 0
+                ? void 0
+                : link;
         }),
     );
 
@@ -117,6 +122,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             elementId: this.mapElement.id,
             benefitInfo: {
                 ...benefitInfo,
+                boot: isCrystalCave ? 0 : benefitInfo.boot,
                 enter_crystal_cave: isCrystalCave ? 1 : 0,
             },
             isFinish: this.mapElement.isStart ?? false,
