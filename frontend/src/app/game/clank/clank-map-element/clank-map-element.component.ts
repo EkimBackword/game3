@@ -57,12 +57,24 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             const isActivePlayer = !this.activePlayer?.isFinish && this.activePlayer?.id === this.gameInfoQuery.currentPlayer?.id;
             const isEnterCrystalCave = (this.activePlayer?.benefitInfo.enter_crystal_cave ?? 0) > 0;
             const isIgnoreCrystalCave = (this.activePlayer?.benefitInfo.ignore_crystal_cave ?? 0) > 0;
-            // TODO: при наличии телепорта спрашивать каким способом игрок хочет переместиться
-            // TODO: при наличии телепорта отображать все возможные перемещения
-            const link = isActivePlayer && (isIgnoreCrystalCave || !isEnterCrystalCave)
+            const hasTeleport = (this.activePlayer?.benefitInfo.teleport ?? 0) > 0;
+            const link = isActivePlayer && (hasTeleport || isIgnoreCrystalCave || !isEnterCrystalCave)
                 ? activePlayerPosition?.links.find(p => p.element_id === this.mapElement?.id)
                 : void 0;
-            this.link = (link?.cost.teleport ?? 0) > 0 && (this.activePlayer?.benefitInfo.teleport ?? 0) === 0
+            if (!link) {
+                this.link = void 0;
+                return;
+            }
+            if (hasTeleport) {
+                this.link = {
+                    ...link,
+                    cost: {
+                        teleport: 1,
+                    },
+                };
+                return;
+            }
+            this.link = (link?.cost.teleport ?? 0) > 0
                 ? void 0
                 : link;
         }),
@@ -123,7 +135,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             benefitInfo: {
                 ...benefitInfo,
                 boot: isCrystalCave ? 0 : benefitInfo.boot,
-                enter_crystal_cave: isCrystalCave ? 1 : 0,
+                enter_crystal_cave: (benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
             },
             isFinish: this.mapElement.isStart ?? false,
         });
