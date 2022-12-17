@@ -6,9 +6,10 @@
         [elementHeight]="cardsWrapInfo.clankCostInfoHeight * 2"
     ></app-clank-cost-info>
 </div>
-<label>Жетоны можно купить за 7 монет:</label>
+<label>Жетоны можно купить за 7 монет (только находясь в магазине):</label>
 <div class="position-relative clank-tokens" *ngIf="(onMarketTokensChangeSubject | async) as groups">
-    <div class="position-relative clank-tokens-group" *ngFor="let tokens of groups">
+    <div class="position-relative clank-tokens-group" *ngFor="let tokens of groups"
+        [class.clank-tokens-group--disable]="!playerPosition?.isMarket">
         <div class="position-absolute clank-token" *ngFor="let token of tokens">
             <app-clank-token
                 [size]="cardsWrapInfo.dungeonTokenSize"
