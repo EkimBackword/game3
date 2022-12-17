@@ -135,7 +135,6 @@ export class ClankDungeonRowComponent implements OnInit {
                 acc.set(token.name, group);
                 return acc;
             }, new Map<string, ClankTokenConfig[]>());
-            console.log(tokens, groups);
             return [...groups.values()];
         }),
     );
