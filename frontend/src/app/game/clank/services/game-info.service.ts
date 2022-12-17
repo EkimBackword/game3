@@ -457,6 +457,10 @@ export class GameInfoService implements OnDestroy {
         benefitInfo: ClankCostInfo,
         state: GameInfoState,
     ) {
+        if ((benefitInfo.boot ?? 0) > 0 && (benefitInfo.enter_crystal_cave ?? 0) > 0 && (benefitInfo.ignore_crystal_cave ?? 0) === 0) {
+            benefitInfo.boot = 0;
+        }
+
         if (benefitInfo.heal) {
             if (benefitInfo.heal > 10) {
                 benefitInfo.heal = 10;
