@@ -10,8 +10,9 @@
                 </div>
             </ng-container>
             <ng-container *ngIf="(onTokensChangeSubject | async) as tokens">
-                <div class="clank-artifact" *ngIf="tokens.length > 0 && token != null">
+                <div class="clank-artifact" *ngIf="tokens.length > 0 && visibleTokens.length > 0">
                     <app-clank-token
+                        *ngFor="let token of visibleTokens"
                         [token]="token"
                     ></app-clank-token>
                 </div>

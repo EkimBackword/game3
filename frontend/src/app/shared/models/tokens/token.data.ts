@@ -2,6 +2,7 @@ import {
     ClankDlcEnum,
     ClankElementByGame,
     ClankElementByMarket,
+    ClankElementByToken,
 } from '@shared/clank/clank-info.types';
 import {
     ClankTokenGroup,
@@ -173,6 +174,52 @@ export const getSecretTokens = (withCopy: boolean) => {
         type: ClankTokenTypeEnum.secret,
         tokens,
         url: '/assets/images/tokens/secrets',
+    };
+    return mappingTokens(group, withCopy);
+};
+
+export const getMapTokens = (withCopy: boolean) => {
+    const tokens: ClankTokenShortConfig[] = [
+        {
+            count: 1,
+            name: 'Идол, который не говорит',
+            url: '/idol_5_1.jpg',
+            isImmediatelyBenefit: false,
+            isUsable: false,
+            points: {
+                value: 5,
+            },
+            element_type: ClankElementByToken.monkey_idol,
+        },
+        {
+            count: 1,
+            name: 'Идол, который не видит',
+            url: '/idol_5_2.jpg',
+            isImmediatelyBenefit: false,
+            isUsable: false,
+            points: {
+                value: 5,
+            },
+            element_type: ClankElementByToken.monkey_idol,
+        },
+        {
+            count: 1,
+            name: 'Идол, который не слышит',
+            url: '/idol_5_3.jpg',
+            isImmediatelyBenefit: false,
+            isUsable: false,
+            points: {
+                value: 5,
+            },
+            element_type: ClankElementByToken.monkey_idol,
+        },
+    ];
+
+    const group: ClankTokenGroup = {
+        dlc_name: ClankDlcEnum.clank,
+        type: ClankTokenTypeEnum.map,
+        tokens,
+        url: '/assets/images/tokens/map_tokens',
     };
     return mappingTokens(group, withCopy);
 };

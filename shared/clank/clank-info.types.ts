@@ -30,6 +30,11 @@ export enum ClankElementByGame {
 
 export const ClankElementByGameList = Object.values(ClankElementByGame);
 
+export const ClankSecretTypes: ClankElementType[] = [
+    ClankElementByGame.minor_secret,
+    ClankElementByGame.major_secret,
+];
+
 export enum ClankElementByToken {
     monkey_idol = 'monkey_idol', // Количество идолов
     dragon_egg = 'dragon_egg', // Количество драконьих яиц

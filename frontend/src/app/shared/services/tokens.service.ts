@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
 import {
+    getMapTokens,
     getMarketTokens,
     getSecretTokens,
 } from '../models/tokens/token.data';
@@ -14,6 +15,7 @@ export class TokensService {
 
     readonly store: ClankTokenConfig[] = [
         ...getSecretTokens(false),
+        ...getMapTokens(false),
         ...getMarketTokens(false),
     ];
 
@@ -22,7 +24,7 @@ export class TokensService {
     getMapTokens() {
         const tokens = [
             ...getSecretTokens(true),
-            ...getMarketTokens(true),
+            ...getMapTokens(true),
         ];
         return tokens;
     }
