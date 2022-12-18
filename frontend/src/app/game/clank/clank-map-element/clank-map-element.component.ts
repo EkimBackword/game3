@@ -5,6 +5,7 @@ import {
     OnDestroy,
     OnInit,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import {
     combineLatest,
@@ -25,6 +26,7 @@ import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
+import { ClankCostInfo } from '@shared/clank/clank-info.types';
 import {
     ClankMapElementConfig,
     ClankMapElementLink,
@@ -32,6 +34,7 @@ import {
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
+import { UseSwordsOrHealthComponent } from '../dialogs/use-swords-or-health/use-swords-or-health.component';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
 
@@ -103,6 +106,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         private toastService: ToastService,
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
+        private matDialog: MatDialog,
     ) { }
 
     ngOnInit(): void {
@@ -114,7 +118,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
     }
 
-    onMove(link: ClankMapElementLink) {
+    async onMove(link: ClankMapElementLink) {
         if (this.mapElement == null || !this.canDoByPlayer(this.activePlayer)) {
             return;
         }
@@ -122,7 +126,14 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             return;
         }
         if ((link.cost?.sword ?? 0) > 0) {
-            // TODO: Вопрос о том сколько мечей и сколько здоровья хочет потратить игрок
+            const cost = await this.openDialogAboutSwords(link, this.activePlayer);
+            if (cost == null) {
+                return;
+            }
+            link = {
+                element_id: link.element_id,
+                cost,
+            };
         }
         const isCrystalCave = this.mapElement.isCrystalCave ?? false;
         const benefitInfo = updateBenefitInfo({
@@ -203,6 +214,25 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             height: `${this.mapElement.position.height}px`,
         };
         return style;
+    }
+
+    private async openDialogAboutSwords(link: ClankMapElementLink, player: ClankPlayerConfig) {
+        const matDialogRef =  this.matDialog.open<
+            UseSwordsOrHealthComponent,
+            UseSwordsOrHealthComponent['data'],
+            ClankCostInfo
+        >(
+            UseSwordsOrHealthComponent,
+            {
+                data: {
+                    player,
+                    cost: link.cost,
+                },
+                disableClose: false,
+                width: '400px',
+            },
+        );
+        return await matDialogRef.afterClosed().toPromise();
     }
 
 }

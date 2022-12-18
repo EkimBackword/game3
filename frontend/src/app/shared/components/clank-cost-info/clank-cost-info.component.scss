@@ -2,7 +2,7 @@
 .cost_group {
     display: flex;
     flex-flow: row wrap;
-    justify-content: flex-start;
+    justify-content: var(--cost-element-justify-content, flex-start);
     align-content: flex-start;
     align-items: flex-start;
 }

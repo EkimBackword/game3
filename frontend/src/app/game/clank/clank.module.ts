@@ -8,6 +8,7 @@ import { ClankMapComponent } from './clank-map/clank-map.component';
 import { ClankPlayerInfoComponent } from './clank-player-info/clank-player-info.component';
 import { ClankComponent } from './clank.component';
 import { ClankDungeonRowComponent } from './clank-dungeon-row/clank-dungeon-row.component';
+import { UseSwordsOrHealthComponent } from './dialogs/use-swords-or-health/use-swords-or-health.component';
 
 @NgModule({
     declarations: [
@@ -17,6 +18,7 @@ import { ClankDungeonRowComponent } from './clank-dungeon-row/clank-dungeon-row.
         ClankGameInfoComponent,
         ClankPlayerInfoComponent,
         ClankDungeonRowComponent,
+        UseSwordsOrHealthComponent,
     ],
     imports: [
         SharedModule,

@@ -28,6 +28,7 @@ export class ClankCostInfoComponent implements OnInit {
     @Input() data!: ClankCostInfo;
     @Input() type = ClankCostInfoType.all;
     @Input() @HostBinding('style.--cost-element-direction') direction = ClankCostInfoDirection.row;
+    @Input() @HostBinding('style.--cost-element-justify-content') justifyContent = 'flex-start';
     @Input() set elementHeight(value: number) {
         this.height = `${value ?? 50}px`;
     }

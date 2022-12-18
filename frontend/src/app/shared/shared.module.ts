@@ -19,6 +19,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -34,7 +35,7 @@ import {
     ScalableContainerDirective,
     ScalableDirective,
 } from './directives/scalable.directive';
-import { BsToastComponent } from './modals/confirm-modal/bs-toast/bs-toast.component';
+import { BsToastComponent } from './modals/bs-toast/bs-toast.component';
 import { ConfirmModalComponent } from './modals/confirm-modal/confirm-modal.component';
 import { SharedComponent } from './shared.component';
 
@@ -51,6 +52,7 @@ const exports = [
     MatSnackBarModule,
     MatBadgeModule,
     MatDatepickerModule,
+    MatSliderModule,
     NgbModule,
 ];
 

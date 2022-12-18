@@ -1,4 +1,4 @@
-import { BsToastComponent } from '../modals/confirm-modal/bs-toast/bs-toast.component';
+import { BsToastComponent } from '../modals/bs-toast/bs-toast.component';
 
 export enum ToastSeverityEnum {
     primary = 'primary',

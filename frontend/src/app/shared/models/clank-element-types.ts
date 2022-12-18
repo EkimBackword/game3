@@ -28,6 +28,7 @@ export enum ClankCostInfoType {
     marketInfo = 'marketInfo',
     cardsInfo = 'cardsInfo',
     effectsInfo = 'effectsInfo',
+    swordOrHealth = 'swordOrHealth',
 }
 
 export const ClankCostInfoKeysByType: Record<ClankCostInfoType, ClankElementType[][]> = {
@@ -43,6 +44,14 @@ export const ClankCostInfoKeysByType: Record<ClankCostInfoType, ClankElementType
     ],
     cardsInfo: [ClankCardTypeList],
     effectsInfo: [ClankEffectList],
+    swordOrHealth: [
+        [
+            ClankElementTypeEnum.heal,
+        ],
+        [
+            ClankElementTypeEnum.sword,
+        ],
+    ],
 };
 
 export const ClankOneTurnInfo = [
@@ -204,14 +213,14 @@ export const checkCost = (data: {
             const userPoints = data.player.benefitInfo[type] ?? 0;
             const healthPoints = data.player.benefitInfo.heal ?? 0;
             const isIgnoreMonster = (data.player.benefitInfo.ignore_monster ?? 0) > 0;
-            if (data.isMove && key === ClankElementByTurn.sword && (
-                isIgnoreMonster
-                || (userPoints + healthPoints) < costPoints
-            )) {
-                return {
-                    success: false,
-                    message: `Требуется ${costInfo.name}: ${costPoints} (У вас есть ${costInfo.name}: ${userPoints} | Здоровя: ${healthPoints})`,
-                };
+            if (data.isMove && key === ClankElementByTurn.sword) {
+                if (!isIgnoreMonster && (userPoints + healthPoints) < costPoints) {
+                    return {
+                        success: false,
+                        message: `Требуется ${costInfo.name}: ${costPoints} (У вас есть ${costInfo.name}: ${userPoints} | Здоровя: ${healthPoints})`,
+                    };
+                }
+                continue;
             }
             if (userPoints < costPoints) {
                 return {

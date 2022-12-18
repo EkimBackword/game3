@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { BsToastComponent } from '../modals/confirm-modal/bs-toast/bs-toast.component';
+import { BsToastComponent } from '../modals/bs-toast/bs-toast.component';
 import {
     ToastOptions,
     ToastSeverityEnum,
