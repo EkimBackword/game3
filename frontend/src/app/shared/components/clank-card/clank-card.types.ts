@@ -12,6 +12,7 @@ export interface ISelectedPlayerCardInfo {
 
 export interface ISelectedPlayerCardAction {
     name: string;
+    btnClass: string;
     canUse: () => boolean;
     callback: () => void;
 }

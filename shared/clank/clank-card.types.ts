@@ -137,6 +137,8 @@ export interface ClankCardAction {
     target: ClankTarget;
     /** Стоимость */
     cost?: ClankCostInfo;
+    /** Описание */
+    costDescription?: string;
     /** Проверка наличия */
     has?: {
         cost: ClankCostInfo;
@@ -144,10 +146,13 @@ export interface ClankCardAction {
     };
     /** Выгода */
     benefit?: ClankCostInfo;
+    /** Описание */
+    benefitDescription?: string;
     /** Избавиться от разыкгранных карт */
     trash?: ClankCardName[];
     /** Атака дракона */
     isDragonAttack?: boolean;
+    
 }
 
 /** Ключевые карты, на которые могут ссылаться другие карты */

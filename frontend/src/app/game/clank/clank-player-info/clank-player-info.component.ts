@@ -142,7 +142,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         if (card == null) {
             return;
         }
-        const actions = this.gameCardService.getActions({
+        const actions = await this.gameCardService.getActions({
             card,
             player,
             type: 'actions',
@@ -161,12 +161,19 @@ export class ClankPlayerInfoComponent implements OnInit {
                 return;
             }
         }
-        const benefitInfo: ClankCostInfo = actions.length
+        let benefitInfo: ClankCostInfo = actions.length
             ? updateBenefitInfoByAction({
                 player,
                 list: actions,
             })
             : player.benefitInfo;
+        if (card.actions?.cost != null) {
+            benefitInfo = updateBenefitInfo({
+                benefit: benefitInfo,
+                cost: card.actions?.cost,
+                isBenefit: false,
+            });
+        }
         this.gameInfoService.useCard({
             playerId: player.id,
             cardState,
@@ -177,6 +184,22 @@ export class ClankPlayerInfoComponent implements OnInit {
                     isBenefit: true,
                 })
                 : player.benefitInfo,
+            type: UseCardType.use,
+        });
+        this.changeDetectorRef.detectChanges();
+    }
+
+    discard(cardState: ClankCardState, player: ClankPlayerConfig) {
+        this.gameInfoService.useCard({
+            playerId: player.id,
+            cardState,
+            benefitInfo: updateBenefitInfo({
+                benefit: player.benefitInfo,
+                cost: {
+                    card: 1,
+                },
+                isBenefit: true,
+            }),
             type: UseCardType.use,
         });
         this.changeDetectorRef.detectChanges();
@@ -292,12 +315,24 @@ export class ClankPlayerInfoComponent implements OnInit {
                 },
                 isOpen: true,
                 classes: [`card_container__hand`],
-                actions: [{
-                    name: 'Использовать карту',
-                    canUse: () => player.id === this.activePlayer.id
-                        && this.activePlayer.id === this.currentPlayer?.id,
-                    callback: () => this.useCard(card, player),
-                }],
+                actions: [
+                    {
+                        name: 'Использовать карту',
+                        btnClass: 'btn-primary',
+                        canUse: () => player.id === this.activePlayer.id
+                            && this.activePlayer.id === this.currentPlayer?.id
+                            && (player.benefitInfo.card ?? 0) >= 0,
+                        callback: () => this.useCard(card, player),
+                    },
+                    {
+                        name: 'Сбросить карту',
+                        btnClass: 'btn-danger',
+                        canUse: () => player.id === this.activePlayer.id
+                            && this.activePlayer.id === this.currentPlayer?.id
+                            && (player.benefitInfo.card ?? 0) < 0,
+                        callback: () => this.discard(card, player),
+                    },
+                ],
             };
             return data;
         });

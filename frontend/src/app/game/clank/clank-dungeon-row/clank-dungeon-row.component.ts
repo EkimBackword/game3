@@ -95,6 +95,7 @@ export class ClankDungeonRowComponent implements OnInit {
                     classes: [],
                     actions: [{
                         name: 'Купить',
+                        btnClass: 'btn-primary',
                         canUse: () => true,
                         callback: () => this.buyCard(state),
                     }],
@@ -117,6 +118,7 @@ export class ClankDungeonRowComponent implements OnInit {
                     classes: [],
                     actions: [{
                         name: 'Купить',
+                        btnClass: 'btn-primary',
                         canUse: () => true,
                         callback: () => this.buyCard(state),
                     }],
@@ -164,7 +166,7 @@ export class ClankDungeonRowComponent implements OnInit {
         return item.id;
     }
 
-    buyCard(cardState: ClankCardState) {
+    async buyCard(cardState: ClankCardState) {
         const card = this.cardsService.getCardInfo(cardState);
         if (card == null) {
             return;
@@ -173,7 +175,7 @@ export class ClankDungeonRowComponent implements OnInit {
             this.toastService.showWarn(`Можно купить только в подземелье`);
             return;
         }
-        const actions = this.gameCardService.getActions({
+        const actions = await this.gameCardService.getActions({
             card,
             player: this.data.player,
             type: 'acquire',

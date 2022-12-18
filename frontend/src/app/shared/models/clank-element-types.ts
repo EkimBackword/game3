@@ -160,8 +160,12 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     },
     // ClankElementByActions
     [ClankElementByActions.dragon_rage]: {
-        name: 'Карта',
-        url: '/assets/images/cards/dragon.jpg',
+        name: 'Ярость дракона',
+        url: '/assets/images/dragon.png',
+    },
+    [ClankElementByActions.dragon_attack]: {
+        name: 'Атака дракона',
+        url: '/assets/images/dragon.png',
     },
     [ClankElementByActions.card]: {
         name: 'Карта',
@@ -213,6 +217,9 @@ export const checkCost = (data: {
             const userPoints = data.player.benefitInfo[type] ?? 0;
             const healthPoints = data.player.benefitInfo.heal ?? 0;
             const isIgnoreMonster = (data.player.benefitInfo.ignore_monster ?? 0) > 0;
+            if (key === ClankElementTypeEnum.card) {
+                continue;
+            }
             if (data.isMove && key === ClankElementByTurn.sword) {
                 if (!isIgnoreMonster && (userPoints + healthPoints) < costPoints) {
                     return {

@@ -27,7 +27,8 @@
     </div>
     <div class="card_actions" *ngIf="actions.length > 0">
         <ng-container *ngFor="let action of actions">
-            <button class="btn btn-sm btn-primary"
+            <button class="btn btn-sm"
+                [ngClass]="action.btnClass"
                 (click)="action.callback()">
                 {{action.name}}
             </button>

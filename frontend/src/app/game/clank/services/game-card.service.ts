@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import {
     checkAction,
@@ -9,11 +10,14 @@ import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import {
+    ClankCardAction,
     ClankCardActionList,
     ClankCardConfig,
 } from '@shared/clank/clank-card.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
+
+import { ChooseSomeActionsComponent } from '../dialogs/choose-some-actions/choose-some-actions.component';
 
 @Injectable({
     providedIn: 'root',
@@ -22,9 +26,10 @@ export class GameCardService {
 
     constructor(
         private toastService: ToastService,
+        private matDialog: MatDialog,
     ) { }
 
-    getActions({
+    async getActions({
         card,
         player,
         type,
@@ -38,12 +43,25 @@ export class GameCardService {
             return [];
         }
         const count = card.actions?.count ?? 1;
+        if (result.message != null) {
+            this.toastService.showWarn(result.message);
+        }
         if (card.actions?.type === 'some' && result.list.length > count) {
-            /**
-             * TODO: Открыть модальное окно с выбором события
-             * .open(result)
-             */
-            return result.list.filter((_, index) => index < count);
+            const dialog = this.matDialog.open<
+                ChooseSomeActionsComponent,
+                ChooseSomeActionsComponent['data'],
+                ClankCardAction[]
+            >(
+                ChooseSomeActionsComponent,
+                {
+                    data: {
+                        actions: card.actions,
+                        player,
+                    },
+                    width: '500px',
+                },
+            );
+            return await dialog.afterClosed().toPromise() ?? [];
         }
         return result.list;
     }

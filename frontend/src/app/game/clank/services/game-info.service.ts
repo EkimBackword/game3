@@ -473,16 +473,12 @@ export class GameInfoService implements OnDestroy {
             }
         }
 
-        if (benefitInfo.card) {
-            if (benefitInfo.card > 0) {
-                this.drawCards(player, benefitInfo.card);
-                this.addActionLogs(state, {
-                    text: `${player.name} добрал карты (${benefitInfo.card})`,
-                    colorId: player.colorId,
-                });
-            } else {
-                // TODO: Сбросить карту
-            }
+        if (benefitInfo.card && benefitInfo.card > 0) {
+            this.drawCards(player, benefitInfo.card);
+            this.addActionLogs(state, {
+                text: `${player.name} добрал карты (${benefitInfo.card})`,
+                colorId: player.colorId,
+            });
             delete benefitInfo.card;
         }
 

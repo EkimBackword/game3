@@ -45,10 +45,10 @@ export const checkAction = (data: {
         success: data.actions.type === 'some'
             ? false
             : true,
-        list: data.actions.type === 'some'
-            ? []
-            : data.actions.list,
-        message: null,
+        list: data.actions.list,
+        message: data.actions.type === 'some'
+            ? 'Нет возможности выполнить событие'
+            : null,
     };
     for (const action of data.actions.list) {
         const canUseByAction = action.cost != null
@@ -68,7 +68,7 @@ export const checkAction = (data: {
         }
         if (data.actions.type === 'some' && canUseByAction.success) {
             result.success = true;
-            result.list?.push(action);
+            result.message = null;
         }
     }
     return result;

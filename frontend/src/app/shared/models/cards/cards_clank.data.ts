@@ -882,6 +882,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             },
             actions: {
                 type: 'some',
+                count: 1,
                 list: [
                     {
                         target: ClankTarget.current,
@@ -891,6 +892,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
                     },
                     {
                         target: ClankTarget.all,
+                        costDescription: 'Дракон атакует',
                         isDragonAttack: true,
                     },
                 ],
