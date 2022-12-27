@@ -23,7 +23,7 @@ import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
-import { ClankCardState } from '@shared/clank/clank-card.types';
+import { ClankCardConfig } from '@shared/clank/clank-card.types';
 import { ClankCostInfo } from '@shared/clank/clank-info.types';
 import { ClankMapElementConfig } from '@shared/clank/clank-map.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
@@ -69,10 +69,10 @@ export class ClankDungeonRowComponent implements OnInit {
             dungeonRowCards,
             reserveRowCards,
         ]) => {
-            const dungeonDeck: ISelectedPlayerCardInfo[] = dungeonDeckCards.map((state) => {
+            const dungeonDeck: ISelectedPlayerCardInfo[] = dungeonDeckCards.map((card) => {
                 const data: ISelectedPlayerCardInfo = {
-                    id: state.id,
-                    state,
+                    id: card.id,
+                    card,
                     style: {
                         left: `0px`,
                         top: `${this.cardsWrapInfo.dungeonRowTop}px`,
@@ -83,10 +83,10 @@ export class ClankDungeonRowComponent implements OnInit {
                 };
                 return data;
             });
-            const dungeonRow: ISelectedPlayerCardInfo[] = dungeonRowCards.map((state, index) => {
+            const dungeonRow: ISelectedPlayerCardInfo[] = dungeonRowCards.map((card, index) => {
                 const data: ISelectedPlayerCardInfo = {
-                    id: state.id,
-                    state,
+                    id: card.id,
+                    card,
                     style: {
                         left: `${(cardWidth + cardsWrapPadding) * (index + 1)}px`,
                         top: `${this.cardsWrapInfo.dungeonRowTop}px`,
@@ -97,19 +97,19 @@ export class ClankDungeonRowComponent implements OnInit {
                         name: 'Купить',
                         btnClass: 'btn-primary',
                         canUse: () => true,
-                        callback: () => this.buyCard(state),
+                        callback: () => this.buyCard(card),
                     }],
                 };
                 return data;
             });
             const reserveRowGroups = new Map<string, number>();
-            const reserveRow: ISelectedPlayerCardInfo[] = reserveRowCards.map((state) => {
-                const [find_string] = state.id.split('__');
+            const reserveRow: ISelectedPlayerCardInfo[] = reserveRowCards.map((card) => {
+                const [find_string] = card.id.split('__');
                 const index = reserveRowGroups.get(find_string) ?? reserveRowGroups.size;
                 reserveRowGroups.set(find_string, index);
                 const data: ISelectedPlayerCardInfo = {
-                    id: state.id,
-                    state,
+                    id: card.id,
+                    card,
                     style: {
                         left: `${(cardWidth + cardsWrapPadding) * index}px`,
                         top: `${this.cardsWrapInfo.reserveRowTop}px`,
@@ -120,7 +120,7 @@ export class ClankDungeonRowComponent implements OnInit {
                         name: 'Купить',
                         btnClass: 'btn-primary',
                         canUse: () => true,
-                        callback: () => this.buyCard(state),
+                        callback: () => this.buyCard(card),
                     }],
                 };
                 return data;
@@ -129,7 +129,7 @@ export class ClankDungeonRowComponent implements OnInit {
                 ...dungeonDeck,
                 ...dungeonRow,
                 ...reserveRow,
-            ].sort((a, b) => a.state.initIndex - b.state.initIndex);
+            ].sort((a, b) => a.card.initIndex - b.card.initIndex);
         }),
     );
 
@@ -166,11 +166,7 @@ export class ClankDungeonRowComponent implements OnInit {
         return item.id;
     }
 
-    async buyCard(cardState: ClankCardState) {
-        const card = this.cardsService.getCardInfo(cardState);
-        if (card == null) {
-            return;
-        }
+    async buyCard(card: ClankCardConfig) {
         if (card.onlyDepthsArea && !this.playerPosition?.isDungeon) {
             this.toastService.showWarn(`Можно купить только в подземелье`);
             return;
@@ -189,7 +185,7 @@ export class ClankDungeonRowComponent implements OnInit {
         });
         this.data.gameInfoService.useCard({
             playerId: this.data.player.id,
-            cardState,
+            card,
             benefitInfo,
             type: UseCardType.buy,
         });

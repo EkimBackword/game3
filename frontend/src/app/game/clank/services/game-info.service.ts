@@ -2,6 +2,7 @@ import {
     Injectable,
     OnDestroy,
 } from '@angular/core';
+import { Router } from '@angular/router';
 
 import * as lodash from 'lodash';
 import * as moment from 'moment';
@@ -27,7 +28,7 @@ import { TokensService } from 'src/app/shared/services/tokens.service';
 
 import { arrayUpdate } from '@datorama/akita';
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
-import { ClankCardState } from '@shared/clank/clank-card.types';
+import { ClankCardConfig } from '@shared/clank/clank-card.types';
 import { initDragonInfo } from '@shared/clank/clank-dragon.types';
 import {
     GameInfoActionLogData,
@@ -70,6 +71,7 @@ export class GameInfoService implements OnDestroy {
         private socketService: SocketService,
         private toastService: ToastService,
         private tokensService: TokensService,
+        private router: Router,
     ) { }
 
     ngOnDestroy() {
@@ -106,7 +108,7 @@ export class GameInfoService implements OnDestroy {
         this.socket.on('error', (message, type) => {
             this.toastService.showError(message);
             if (type === SocketErrorTypeEnum.gameNotFound) {
-                // TODO: перенести на главную странницу
+                this.router.navigate(['/']);
             }
         });
 
@@ -179,44 +181,43 @@ export class GameInfoService implements OnDestroy {
 
     useCard({
         playerId,
-        cardState,
+        card,
         benefitInfo,
         type,
     }: {
         playerId: string;
-        cardState: ClankCardState;
+        card: ClankCardConfig;
         benefitInfo: ClankCostInfo;
         type: UseCardType;
     }) {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
             const player = state.players.find(p => p.id === playerId);
-            const card = this.cardsService.getCardInfo(cardState);
             if (player == null || card == null) {
                 return state;
             }
             this.addActionLogs(state, {
-                text: `${player.name} ${UseCardInfoByType[type].text} ${cardState.name}`,
+                text: `${player.name} ${UseCardInfoByType[type].text} ${card.name}`,
                 colorId: player.colorId,
                 hideToast: true,
             });
             this.setBenefits(player, benefitInfo, state);
             switch (type) {
                 case UseCardType.use: {
-                    player.hand = player.hand.filter(p => p.id !== cardState.id),
-                    player.board.push(cardState);
+                    player.hand = player.hand.filter(p => p.id !== card.id),
+                    player.board.push(card);
                     player.benefitInfo[card.type] = (player.benefitInfo[card.type] ?? 0) + 1;
                     break;
                 }
                 case UseCardType.buy: {
                     if (card.count > 0) {
-                        state.dungeonRow = state.dungeonRow.filter(p => p.id !== cardState.id);
-                        state.reserveRow = state.reserveRow.filter(p => p.id !== cardState.id);
+                        state.dungeonRow = state.dungeonRow.filter(p => p.id !== card.id);
+                        state.reserveRow = state.reserveRow.filter(p => p.id !== card.id);
                         if (![
                             ClankCardType.device,
                             ClankCardType.monster,
                         ].includes(card.type)) {
-                            player.discard.push(cardState);
+                            player.discard.push(card);
                         }
                     }
                 }
@@ -457,9 +458,9 @@ export class GameInfoService implements OnDestroy {
         return list.sort(() => Math.random() - 0.5);
     }
 
-    private shuffle(deck: ClankCardState[]) {
+    private shuffle(deck: ClankCardConfig[]) {
         return this.simpleShuffle(deck).map((card, index) => {
-            const newState: ClankCardState = {
+            const newState: ClankCardConfig = {
                 ...card,
                 index,
             };
@@ -479,26 +480,22 @@ export class GameInfoService implements OnDestroy {
             return;
         }
         let isDragonAttack = false;
-        const skippedCards: ClankCardState[] = [];
+        const skippedCards: ClankCardConfig[] = [];
         while (state.dungeonRow.length < 6 && state.dungeonDeck.length > 0) {
-            const cardState = state.dungeonDeck.pop();
-            if (!cardState) {
-                break;
-            }
-            const card = this.cardsService.getCardInfo(cardState);
+            const card = state.dungeonDeck.pop();
             if (!card) {
                 break;
             }
             if (card.arrive?.isDragonAttack && options?.initDungeonRow) {
-                skippedCards.push(cardState);
+                skippedCards.push(card);
             } else {
                 if (card.arrive?.isDragonAttack && !options?.ignoreDragonAttack) {
                     isDragonAttack = true;
                 }
                 // TODO: применить свойства из поля arrive
-                state.dungeonRow.push(cardState);
+                state.dungeonRow.push(card);
                 this.addActionLogs(state, {
-                    text: `Карта ${cardState.name} появилась в подземном ряду`,
+                    text: `Карта ${card.name} появилась в подземном ряду`,
                     hideToast: options?.hideToast,
                 });
             }

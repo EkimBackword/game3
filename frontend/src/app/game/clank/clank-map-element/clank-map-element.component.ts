@@ -152,6 +152,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             };
         }
         const isCrystalCave = this.mapElement.isCrystalCave ?? false;
+        const isIgnoreCrystalCave = (this.activePlayer?.benefitInfo.ignore_crystal_cave ?? 0) > 0;
 
         const benefitInfo = updateBenefitInfo({
             benefit: this.activePlayer.benefitInfo,
@@ -163,7 +164,9 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             mapElement: this.mapElement,
             benefitInfo: {
                 ...benefitInfo,
-                boot: isCrystalCave ? 0 : benefitInfo.boot,
+                boot: isCrystalCave && !isIgnoreCrystalCave
+                    ? 0
+                    : benefitInfo.boot,
                 enter_crystal_cave: (benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
             },
         });

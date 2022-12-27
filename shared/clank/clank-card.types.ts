@@ -85,7 +85,7 @@ export interface ClankCardBaseConfig {
     count: number;
 }
 
-export interface ClankCardState {
+export interface ClankCardConfig extends ClankCardBaseConfig, ClankDeckShortConfig {
     /**
      * Уникальный id
      * @description ${config.dlc_name}_${start_index}__${copy_index}_${config.playerId}
@@ -99,9 +99,6 @@ export interface ClankCardState {
     initIndex: number;
     position: ClankCardPositionEnum;
     player_id?: string;
-}
-
-export interface ClankCardConfig extends ClankCardBaseConfig, ClankDeckShortConfig, ClankCardState {
     /**
      * Строка для поиска карты в репозитории
      * @description ${config.dlc_name}_${start_index}

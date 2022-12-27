@@ -1,7 +1,7 @@
 import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 
 import { ClankArtifactConfig } from './clank-artifact.types';
-import { ClankCardState } from './clank-card.types';
+import { ClankCardConfig } from './clank-card.types';
 import { ClankDragonInfo } from './clank-dragon.types';
 import { ClankDlcEnum } from './clank-info.types';
 import { ClankMapConfigIds } from './clank-map.types';
@@ -62,11 +62,11 @@ export interface GameInfoState extends GameInfoConfig {
     /** Информация о драконе */
     dragonInfo: ClankDragonInfo;
     /** Колода подземелья */
-    dungeonDeck: ClankCardState[];
+    dungeonDeck: ClankCardConfig[];
     /** Подземный ряд */
-    dungeonRow: ClankCardState[];
+    dungeonRow: ClankCardConfig[];
     /** Общий резерв */
-    reserveRow: ClankCardState[];
+    reserveRow: ClankCardConfig[];
     /** Жетоны на карте */
     mapTokens: ClankTokenConfig[];
     /** Жетоны в магазине */

@@ -1,5 +1,5 @@
 import { ClankArtifactConfig } from './clank-artifact.types';
-import { ClankCardState } from './clank-card.types';
+import { ClankCardConfig } from './clank-card.types';
 import { ClankCostInfo } from './clank-info.types';
 import { ClankTokenConfig } from './clank-token.types';
 
@@ -19,15 +19,15 @@ export interface ClankPlayerConfig {
     /** Информация о наличии очков для действий */
     benefitInfo: ClankCostInfo;
     /** Колода */
-    deck: ClankCardState[];
+    deck: ClankCardConfig[];
     /** Карты в руке */
-    hand: ClankCardState[];
+    hand: ClankCardConfig[];
     /** Разыгранные карты */
-    board: ClankCardState[];
+    board: ClankCardConfig[];
     /** сброшенные карты */
-    discard: ClankCardState[];
+    discard: ClankCardConfig[];
     /** Карты от которых избавились */
-    trash: ClankCardState[];
+    trash: ClankCardConfig[];
     /** Жетоны */
     tokens: ClankTokenConfig[];
     /** Артефакты */

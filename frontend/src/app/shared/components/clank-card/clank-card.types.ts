@@ -1,8 +1,8 @@
-import { ClankCardState } from '@shared/clank/clank-card.types';
+import { ClankCardConfig } from '@shared/clank/clank-card.types';
 
 export interface ISelectedPlayerCardInfo {
     id: string;
-    state: ClankCardState;
+    card: ClankCardConfig;
     style: Partial<CSSStyleDeclaration>;
     classes: string[];
     actions: ISelectedPlayerCardAction[];

@@ -29,7 +29,7 @@ import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
-import { ClankCardState } from '@shared/clank/clank-card.types';
+import { ClankCardConfig } from '@shared/clank/clank-card.types';
 import {
     ClankCostInfo,
     ClankElementByTurnList,
@@ -139,11 +139,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         });
     }
 
-    async useCard(cardState: ClankCardState, player: ClankPlayerConfig) {
-        const card = this.cardsService.getCardInfo(cardState);
-        if (card == null) {
-            return;
-        }
+    async useCard(card: ClankCardConfig, player: ClankPlayerConfig) {
         const actions = await this.gameCardService.getActions({
             card,
             player,
@@ -178,7 +174,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         }
         this.gameInfoService.useCard({
             playerId: player.id,
-            cardState,
+            card,
             benefitInfo: card?.benefit != null
                 ? updateBenefitInfo({
                     benefit: benefitInfo,
@@ -191,10 +187,10 @@ export class ClankPlayerInfoComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
-    discard(cardState: ClankCardState, player: ClankPlayerConfig) {
+    discard(card: ClankCardConfig, player: ClankPlayerConfig) {
         this.gameInfoService.useCard({
             playerId: player.id,
-            cardState,
+            card,
             benefitInfo: updateBenefitInfo({
                 benefit: player.benefitInfo,
                 cost: {
@@ -265,7 +261,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         const deck = (player?.deck ?? []).map((card, index) => {
             const data: ISelectedPlayerCardInfo = {
                 id: card.id,
-                state: card,
+                card,
                 style: {
                     left: this.cardsWrapInfo.deckLeft,
                     top: `${this.cardsWrapInfo.deckTop}px`,
@@ -280,7 +276,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         const board = (player?.board ?? []).map((card, index) => {
             const data: ISelectedPlayerCardInfo = {
                 id: card.id,
-                state: card,
+                card,
                 style: {
                     left: this.cardsWrapInfo.boardLeft,
                     top: `${this.cardsWrapInfo.deckTop}px`,
@@ -295,7 +291,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         const discard = (player?.discard ?? []).map((card, index) => {
             const data: ISelectedPlayerCardInfo = {
                 id: card.id,
-                state: card,
+                card,
                 style: {
                     left: this.cardsWrapInfo.discardLeft,
                     top: `${this.cardsWrapInfo.deckTop}px`,
@@ -314,7 +310,7 @@ export class ClankPlayerInfoComponent implements OnInit {
             const top = topIndex * this.cardsWrapInfo.cardHeight * this.cardsWrapInfo.cardWidthKoef + this.cardsWrapInfo.boardTop;
             const data: ISelectedPlayerCardInfo = {
                 id: card.id,
-                state: card,
+                card,
                 style: {
                     left: `${left}px`,
                     top: `${top}px`,
@@ -348,7 +344,7 @@ export class ClankPlayerInfoComponent implements OnInit {
             ...board,
             ...discard,
             ...hand,
-        ].sort((a, b) => a.state.initIndex - b.state.initIndex);
+        ].sort((a, b) => a.card.initIndex - b.card.initIndex);
         this.selectedPlayerCardsSubject.next(cards);
 
         const rowCount = Math.ceil(hand.length / this.cardsWrapInfo.cardsInRow);

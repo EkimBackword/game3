@@ -68,16 +68,8 @@ export class ClankCardComponent implements OnInit, OnChanges {
     }
 
     private updateCardInfo() {
-        this.card = this.getCardInfo();
+        this.card = this.data?.card;
         this.actions = this.data?.actions.filter(p => p.canUse()) ?? [];
-    }
-
-    private getCardInfo() {
-        if (this.data?.state == null) {
-            return void 0;
-        }
-        const [find_string] = this.data.state.id.split('__');
-        return this.cardsService.store.find(p => p.find_string === find_string);
     }
 
     private getStyle() {

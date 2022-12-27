@@ -55,8 +55,7 @@ export class ClankComponent implements OnInit {
                     ...player.board,
                     ...player.discard,
                     ...player.hand,
-                ].reduce((acc, cardState) => {
-                    const card = this.cardsService.getCardInfo(cardState);
+                ].reduce((acc, card) => {
                     return acc + (card?.points?.value ?? 0);
                 }, 0);
                 const result: PlayerPointsResult = {

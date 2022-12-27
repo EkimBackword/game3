@@ -37,7 +37,7 @@
                         <span class="player_name">{{activePlayer.name}}</span>
                     </h4>
                 </div>
-                <div class="not_active_player"  *ngIf="player.isFinish">
+                <div class="not_active_player" *ngIf="player.isFinish && player.id !== activePlayer.id">
                     <h4 class="message p-2 shadow-lg">
                         Игра закончена (ожидайте других игроков)
                     </h4>
