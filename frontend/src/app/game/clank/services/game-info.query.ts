@@ -4,7 +4,9 @@ import * as moment from 'moment';
 import {
     filter,
     map,
+    pairwise,
     shareReplay,
+    startWith,
 } from 'rxjs/operators';
 import { SessionQuery } from 'src/app/session/session.query';
 import {
@@ -14,10 +16,20 @@ import {
     MomentDateGroupFormat,
 } from 'src/app/shared/models/game.types';
 import { notEmpty } from 'src/app/shared/models/shared.types';
+import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 import { MapsService } from 'src/app/shared/services/maps.service';
+import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { Query } from '@datorama/akita';
-import { GameInfoState } from '@shared/clank/clank-game.types';
+import { faCube } from '@fortawesome/free-solid-svg-icons';
+import {
+    GameInfoActionLog,
+    GameInfoState,
+} from '@shared/clank/clank-game.types';
+import {
+    GamePlayerColorIdEnum,
+    GamePlayerColorList,
+} from '@shared/clank/clank-player.types';
 
 import { GameInfoStore } from './game-info.store';
 import {
@@ -127,20 +139,42 @@ export class GameInfoQuery extends Query<GameInfoState> {
 
     onArtifactsChangeSubject = this.select('artifacts');
 
+    private logsMap = new Map<string, GameInfoActionLogFrontend[]>();
     onActionLogsChangeSubject = this.select('actionLogs').pipe(
-        map((logs) => {
-            const logMap = new Map<string, GameInfoActionLogFrontend[]>();
-            for (const log of logs) {
+        startWith([] as GameInfoActionLog[]),
+        pairwise(),
+        map(([lastLogs, logs]) => {
+            const showToast = lastLogs.length > 0;
+            const newLogs = logs.slice(lastLogs.length);
+            for (const log of newLogs) {
                 const data: GameInfoActionLogFrontend =  {
                     ...log,
                     createdAtMoment: moment(log.createdAt, MomentDateFormat),
                 };
                 const name = data.createdAtMoment.format(MomentDateGroupFormat);
-                const list = logMap.get(name) ?? [];
+                const list = this.logsMap.get(name) ?? [];
                 list.push(data);
-                logMap.set(name, list);
+                this.logsMap.set(name, list);
+                if (showToast && !log.data.hideToast) {
+                    const colorInfo = GamePlayerColorList[log.data.colorId ?? GamePlayerColorIdEnum.Black];
+                    this.toastService.show(
+                        log.data.severity ?? ToastSeverityEnum.secondary,
+                        log.data.text,
+                        log.data.severity == null
+                        ? {
+                            icon: faCube,
+                            iconStyle: {
+                                color: colorInfo.color,
+                            },
+                            bodyStyle: {
+                                backgroundColor: colorInfo.color,
+                            },
+                        }
+                        : {},
+                    );
+                }
             }
-            return [...logMap.entries()].map(([name, list]) => {
+            return [...this.logsMap.entries()].map(([name, list]) => {
                 const result: GameInfoActionLogGroup = {
                     name,
                     dateForOrder: moment(name, MomentDateGroupFormat),
@@ -178,6 +212,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
         protected store: GameInfoStore,
         private sessionQuery: SessionQuery,
         private mapsService: MapsService,
+        private toastService: ToastService,
     ) {
       super(store);
     }

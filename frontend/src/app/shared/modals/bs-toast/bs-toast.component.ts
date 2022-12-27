@@ -11,6 +11,8 @@ import {
 
 import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+
 @Component({
     selector: 'app-bs-toast',
     templateUrl: './bs-toast.component.html',
@@ -22,10 +24,12 @@ export class BsToastComponent implements OnInit {
     constructor(
         private matSnackBarRef: MatSnackBarRef<BsToastComponent>,
         @Inject(MAT_SNACK_BAR_DATA) public data: {
-            icon: string,
-            severity: ToastSeverityEnum,
-            message: string,
-            submessage?: string,
+            icon: IconDefinition;
+            severity: ToastSeverityEnum;
+            message: string;
+            submessage?: string;
+            iconStyle?: Partial<CSSStyleDeclaration>;
+            bodyStyle?: Partial<CSSStyleDeclaration>;
         },
     ) { }
 

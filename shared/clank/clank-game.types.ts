@@ -1,3 +1,5 @@
+import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
+
 import { ClankArtifactConfig } from './clank-artifact.types';
 import { ClankCardState } from './clank-card.types';
 import { ClankDragonInfo } from './clank-dragon.types';
@@ -40,6 +42,8 @@ export interface GameInfoActionLog {
 export interface GameInfoActionLogData {
     text: string;
     colorId?: GamePlayerColorIdEnum;
+    hideToast?: boolean;
+    severity?: ToastSeverityEnum;
 }
 
 export interface GameInfoState extends GameInfoConfig {

@@ -5,7 +5,10 @@ import {
     checkAction,
     CheckActionResult,
 } from 'src/app/shared/models/actions.types';
-import { checkCost } from 'src/app/shared/models/clank-element-types';
+import {
+    checkCost,
+    CheckCostResult,
+} from 'src/app/shared/models/clank-element-types';
 import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
@@ -14,6 +17,7 @@ import {
     ClankCardActionList,
     ClankCardConfig,
 } from '@shared/clank/clank-card.types';
+import { ClankMapElementLink } from '@shared/clank/clank-map.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
@@ -43,9 +47,6 @@ export class GameCardService {
             return [];
         }
         const count = card.actions?.count ?? 1;
-        if (result.message != null) {
-            this.toastService.showWarn(result.message);
-        }
         if (card.actions?.type === 'some' && result.list.length > count) {
             const dialog = this.matDialog.open<
                 ChooseSomeActionsComponent,
@@ -81,14 +82,7 @@ export class GameCardService {
             actions,
             player,
         });
-        if (result.message) {
-            this.toastService.show(
-                result.success
-                    ? ToastSeverityEnum.success
-                    : ToastSeverityEnum.warning,
-                result.message,
-            );
-        }
+        this.showToast(result);
         return result;
     }
 
@@ -100,14 +94,30 @@ export class GameCardService {
             cost: tokenInfo.cost,
             player,
         });
-        if (result.message) {
-            this.toastService.show(
-                result.success
-                    ? ToastSeverityEnum.success
-                    : ToastSeverityEnum.warning,
-                result.message,
-            );
-        }
+        this.showToast(result);
         return result.success;
     }
+
+    canActivePlayerMove(link: ClankMapElementLink, player: ClankPlayerConfig) {
+        const result = checkCost({
+            cost: link.cost,
+            player,
+            isMove: true,
+        });
+        this.showToast(result);
+        return result.success;
+    }
+
+    private showToast(result: CheckCostResult) {
+        if (!result.message) {
+            return;
+        }
+        this.toastService.show(
+            result.success
+                ? ToastSeverityEnum.success
+                : ToastSeverityEnum.warning,
+            result.message,
+        );
+    }
+
 }

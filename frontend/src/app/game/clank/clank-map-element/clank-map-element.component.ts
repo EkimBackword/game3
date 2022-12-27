@@ -16,14 +16,9 @@ import {
     tap,
 } from 'rxjs/operators';
 import { ClankCostInfoDirection } from 'src/app/shared/components/clank-cost-info/clank-cost-info.types';
-import {
-    checkCost,
-    ClankElementTypeMap,
-} from 'src/app/shared/models/clank-element-types';
+import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
-import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
-import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
 import {
@@ -38,6 +33,7 @@ import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
 import { UseSwordsOrHealthComponent } from '../dialogs/use-swords-or-health/use-swords-or-health.component';
+import { GameCardService } from '../services/game-card.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
 
@@ -113,7 +109,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     private ngUnsubscribe = new Subject();
 
     constructor(
-        private toastService: ToastService,
+        private gameCardService: GameCardService,
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
         private matDialog: MatDialog,
@@ -132,7 +128,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (this.mapElement == null || !this.canDoByPlayer(this.activePlayer)) {
             return;
         }
-        if (!this.canActivePlayerMove(link, this.activePlayer)) {
+        if (!this.gameCardService.canActivePlayerMove(link, this.activePlayer)) {
             return;
         }
         if ((link.cost?.sword ?? 0) > 0) {
@@ -151,14 +147,14 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             cost: link.cost,
             isBenefit: false,
         });
-        this.gameInfoService.updatePlayer(this.activePlayer.id, {
-            elementId: this.mapElement.id,
+        this.gameInfoService.onMove({
+            playerId: this.activePlayer.id,
+            mapElement: this.mapElement,
             benefitInfo: {
                 ...benefitInfo,
                 boot: isCrystalCave ? 0 : benefitInfo.boot,
                 enter_crystal_cave: (benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
             },
-            isFinish: this.mapElement.isStart ?? false,
         });
         const tokenInfo = this.visibleTokens?.pop();
         if (tokenInfo != null) {
@@ -195,23 +191,6 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     private canDoByPlayerPosition(player: ClankPlayerConfig | undefined): player is ClankPlayerConfig {
         return this.canDoByPlayer(player)
             && this.activePlayer?.elementId === this.mapElement?.id;
-    }
-
-    private canActivePlayerMove(link: ClankMapElementLink, player: ClankPlayerConfig) {
-        const result = checkCost({
-            cost: link.cost,
-            player,
-            isMove: true,
-        });
-        if (result.message) {
-            this.toastService.show(
-                result.success
-                    ? ToastSeverityEnum.success
-                    : ToastSeverityEnum.warning,
-                result.message,
-            );
-        }
-        return result.success;
     }
 
     private getStyle() {

@@ -38,6 +38,7 @@ import {
     ClankCardType,
     ClankCostInfo,
 } from '@shared/clank/clank-info.types';
+import { ClankMapElementConfig } from '@shared/clank/clank-map.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorIds,
@@ -85,9 +86,10 @@ export class GameInfoService implements OnDestroy {
         });
 
         this.socket.on('disconnect', (reason) => {
-            this.toastService.showWarn('Разрыв соединения');
             if (reason !== 'io client disconnect') {
                 this.socket?.connect();
+            } else {
+                this.toastService.showWarn('Разрыв соединения');
             }
         });
 
@@ -113,6 +115,39 @@ export class GameInfoService implements OnDestroy {
         this.gameInfoStore.update(({players}) => ({
             players: arrayUpdate(players, id, player),
         }));
+        this.onGameUpdated();
+    }
+
+    onMove({
+        playerId,
+        mapElement,
+        benefitInfo,
+    }: {
+        playerId: string;
+        mapElement: ClankMapElementConfig,
+        benefitInfo: ClankCostInfo;
+    }) {
+        this.gameInfoStore.update((oldState) => {
+            const state = lodash.cloneDeep(oldState);
+            const player = state.players.find(p => p.id === playerId);
+            if (player == null || mapElement == null) {
+                return state;
+            }
+            this.setBenefits(player, benefitInfo, state);
+            player.elementId = mapElement.id;
+            player.isFinish = mapElement.isStart ?? false;
+            player.isEscaped = player.isFinish;
+            state.players = arrayUpdate(
+                state.players,
+                player.id,
+                player,
+            );
+            this.addActionLogs(state, {
+                text: `${player.name} переместился`,
+                colorId: player.colorId,
+            });
+            return state;
+        });
         this.onGameUpdated();
     }
 
@@ -246,12 +281,10 @@ export class GameInfoService implements OnDestroy {
             state.mapTokens = state.mapTokens.filter(p => p.id !== tokenInfo.id);
             state.marketTokens = state.marketTokens.filter(p => p.id !== tokenInfo.id);
             state.players = arrayUpdate(state.players, player.id, player);
-            const text = `${player.name} ${UseTokenInfoByType[type].text} ${tokenInfo.name}`;
             this.addActionLogs(state, {
-                text,
+                text: `${player.name} ${UseTokenInfoByType[type].text} ${tokenInfo.name}`,
                 colorId: player.colorId,
             });
-            this.toastService.showInfo(text);
             return state;
         });
         this.onGameUpdated();
@@ -506,6 +539,7 @@ export class GameInfoService implements OnDestroy {
                 : 'убрал шум';
             this.addActionLogs(state, {
                 text: `${player.name} ${text} (${benefitInfo.clank} бдзынь)`,
+                colorId: player.colorId,
             });
             delete benefitInfo.clank;
         }
