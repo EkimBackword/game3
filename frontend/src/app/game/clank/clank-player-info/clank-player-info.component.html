@@ -69,7 +69,6 @@
             </div>
             <button class="mb-1 btn btn-sm btn-primary"
                 (click)="openDungeonRow(currentPlayer)"
-                [disabled]="currentPlayer.id !== activePlayer.id && currentPlayer.id !== player.id"
             >Показать рынок</button>
             <div class="d-flex justify-content-center">
                 <app-clank-cost-info
@@ -79,7 +78,7 @@
             </div>
             <button class="btn btn-sm btn-danger"
                 (click)="finishTurn()"
-                [disabled]="currentPlayer.id !== activePlayer.id && currentPlayer.id !== player.id"
+                [disabled]="currentPlayer.id !== activePlayer.id || currentPlayer.id !== player.id"
             >Закончить ход</button>
         </div>
     </ng-container>
