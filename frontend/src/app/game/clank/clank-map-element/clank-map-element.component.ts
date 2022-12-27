@@ -131,6 +131,16 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (!this.gameCardService.canActivePlayerMove(link, this.activePlayer)) {
             return;
         }
+        const isIgnoreMonster = (this.activePlayer.benefitInfo.ignore_monster ?? 0) > 0;
+        if (isIgnoreMonster) {
+            link = {
+                element_id: link.element_id,
+                cost: {
+                    ...link.cost,
+                    sword: 0,
+                },
+            };
+        }
         if ((link.cost?.sword ?? 0) > 0) {
             const cost = await this.openDialogAboutSwords(link, this.activePlayer);
             if (cost == null) {
@@ -142,6 +152,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             };
         }
         const isCrystalCave = this.mapElement.isCrystalCave ?? false;
+
         const benefitInfo = updateBenefitInfo({
             benefit: this.activePlayer.benefitInfo,
             cost: link.cost,

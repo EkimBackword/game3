@@ -41,6 +41,7 @@ import {
 import { ClankMapElementConfig } from '@shared/clank/clank-map.types';
 import {
     ClankPlayerConfig,
+    GamePlayerColorIdEnum,
     GamePlayerColorIds,
 } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
@@ -145,6 +146,7 @@ export class GameInfoService implements OnDestroy {
             this.addActionLogs(state, {
                 text: `${player.name} переместился`,
                 colorId: player.colorId,
+                hideToast: true,
             });
             return state;
         });
@@ -172,6 +174,7 @@ export class GameInfoService implements OnDestroy {
             this.addActionLogs(state, {
                 text: `${player.name} ${UseCardInfoByType[type].text} ${cardState.name}`,
                 colorId: player.colorId,
+                hideToast: true,
             });
             this.setBenefits(player, benefitInfo, state);
             switch (type) {
@@ -342,6 +345,7 @@ export class GameInfoService implements OnDestroy {
             });
             this.drawDungeonRow(state, {
                 initDungeonRow: true,
+                hideToast: true,
             });
             return state;
         });
@@ -368,10 +372,7 @@ export class GameInfoService implements OnDestroy {
             currentPlayer.hand = [];
             this.drawCards(currentPlayer, 5);
             state.players = arrayUpdate(state.players, currentPlayer.id, currentPlayer);
-            this.addActionLogs(state, {
-                text: `${currentPlayer.name} закончил свой ход`,
-                colorId: currentPlayer.colorId,
-            });
+
 
             GamePlayerColorIds.forEach(colorId => {
                 if (state.dragonInfo.clankAria[colorId] < 0) {
@@ -379,15 +380,18 @@ export class GameInfoService implements OnDestroy {
                 }
             });
             this.drawDungeonRow(state, {});
-            state.activePlayerIndex = state.activePlayerIndex < state.players.length - 1
-                ? state.activePlayerIndex + 1
-                : 0;
-            const newActivPlayer = state.players[state.activePlayerIndex];
-            state.activePlayerId = newActivPlayer.id;
+            const newActivPlayer = this.getNextPlayer(state);
             this.addActionLogs(state, {
-                text: `Ход переходит к игроку ${newActivPlayer.name}`,
-                colorId: newActivPlayer.colorId,
+                text: `${currentPlayer.name} закончил свой ход`,
+                colorId: currentPlayer.colorId,
+                hideToast: newActivPlayer != null,
             });
+            if (newActivPlayer != null) {
+                this.addActionLogs(state, {
+                    text: `Ход переходит к игроку ${newActivPlayer.name}`,
+                    colorId: newActivPlayer.colorId,
+                });
+            }
 
             state.turnIndex++;
             state.statusId = state.players.every(p => p.isFinish)
@@ -396,6 +400,22 @@ export class GameInfoService implements OnDestroy {
             return state;
         });
         this.onGameUpdated();
+    }
+
+    private getNextPlayer(state: GameInfoState): ClankPlayerConfig | null {
+        state.activePlayerIndex = state.activePlayerIndex < state.players.length - 1
+            ? state.activePlayerIndex + 1
+            : 0;
+        const newActivPlayer = state.players[state.activePlayerIndex];
+        state.activePlayerId = newActivPlayer.id;
+        if (!newActivPlayer.isFinish) {
+            return newActivPlayer;
+        }
+        if (state.players.some(p => !p.isFinish)) {
+            return this.getNextPlayer(state);
+        } else {
+            return null;
+        }
     }
 
     finishGame() {
@@ -426,8 +446,9 @@ export class GameInfoService implements OnDestroy {
     private drawDungeonRow(
         state: GameInfoState,
         options?: {
-            ignoreDragonAttack?: boolean,
-            initDungeonRow?: boolean,
+            ignoreDragonAttack?: boolean;
+            initDungeonRow?: boolean;
+            hideToast?: boolean;
         },
     ): void {
         if (state.dungeonRow == null || state.dungeonDeck == null) {
@@ -454,6 +475,7 @@ export class GameInfoService implements OnDestroy {
                 state.dungeonRow.push(cardState);
                 this.addActionLogs(state, {
                     text: `Карта ${cardState.name} появилась в подземном ряду`,
+                    hideToast: options?.hideToast,
                 });
             }
         }
@@ -463,12 +485,49 @@ export class GameInfoService implements OnDestroy {
         ]);
 
         if (isDragonAttack) {
-            // TODO: атака дракона
-            this.addActionLogs(state, {
-                text: `Дракон атакует`,
-            });
+            this.onDragonAttack(state);
         }
         return;
+    }
+
+    private onDragonAttack(state: GameInfoState) {
+        (Object.keys(state.dragonInfo.clankAria) as GamePlayerColorIdEnum[]).forEach((key) => {
+            const count = state.dragonInfo.clankAria[key];
+            if (count > 0) {
+                state.dragonInfo.clankBag = [
+                    ...state.dragonInfo.clankBag,
+                    ...Array(count).fill(key),
+                ];
+            }
+            state.dragonInfo.clankAria[key] = 0;
+        });
+        state.dragonInfo.clankBag = this.simpleShuffle(state.dragonInfo.clankBag);
+        const attackResult = state.players.reduce((acc, player) => {
+            acc[player.colorId] = {
+                name: player.name,
+                value: 0,
+            };
+            return acc;
+        }, {} as Record<GamePlayerColorIdEnum, {
+            name: string;
+            value: number;
+        }>);
+        for (let index = 0; index < state.dragonInfo.rage; index++) {
+            const colorId = state.dragonInfo.clankBag.pop();
+            const player = state.players.find(p => p.colorId === colorId);
+            if (colorId == null || player == null || player.benefitInfo.heal == null || player.isFinish) {
+                continue;
+            }
+            player.benefitInfo.heal--;
+            attackResult[colorId].value++;
+            this.setBenefits(player, player.benefitInfo, state);
+            state.players = arrayUpdate(state.players, player.id, player);
+        }
+        this.addActionLogs(state, {
+            text: `Дракон атакует`,
+            subtext: Object.values(attackResult).map(p => `${p.name}: ${p.value} урона`).join('\r\n'),
+            isDragon: true,
+        });
     }
 
     private drawCards(player: ClankPlayerConfig, count: number) {
@@ -498,8 +557,9 @@ export class GameInfoService implements OnDestroy {
             if (benefitInfo.heal > 10) {
                 benefitInfo.heal = 10;
             }
-            if (benefitInfo.heal === 0) {
+            if (benefitInfo.heal <= 0) {
                 const mapElement = this.gameInfoQuery.mapInfo?.elements.find(p => p.id === player.elementId);
+                benefitInfo.heal = 0;
                 player.isRescued = !mapElement?.isDungeon;
                 player.isEscaped = false;
                 player.isFinish = true;
@@ -530,6 +590,11 @@ export class GameInfoService implements OnDestroy {
             this.addActionLogs(state, {
                 text: `Повышается ярость дракона`,
             });
+        }
+
+        if (benefitInfo.dragon_attack) {
+            this.onDragonAttack(state);
+            delete benefitInfo.dragon_attack;
         }
 
         if (benefitInfo.clank) {

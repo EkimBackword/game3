@@ -8,6 +8,8 @@
         <small class="text-muted" *ngIf="data.submessage">{{data.submessage}}</small>
         <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
     </div>
-    <div class="toast-body" [style]="data.bodyStyle">
-    </div>
+    <div class="toast-body"
+        [class.toast-body--wo-text]="data.bodyText == null || data.bodyText.length == 0"
+        [style]="data.bodyStyle"
+    >{{data.bodyText ?? ''}}</div>
 </div>

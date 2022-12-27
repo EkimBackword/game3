@@ -1,32 +1,10 @@
-import {
-  GamePlayerColorIdEnum,
-  GamePlayerColorList,
-} from './clank-player.types';
-
-export enum DragonColorIdEnum {
-    Empty = 'Empty',
-}
-
-type ClankDragonBagItem = GamePlayerColorIdEnum | DragonColorIdEnum;
-
-export interface DragonColorInfo {
-    name: string;
-    color: string;
-}
-
-export const DragonColorList: Record<ClankDragonBagItem, DragonColorInfo> = {
-    ...GamePlayerColorList,
-    [DragonColorIdEnum.Empty]: {
-        name: 'Дракон',
-        color: '#EF4E5A',
-    },
-}
+import { GamePlayerColorIdEnum } from './clank-player.types';
 
 export interface ClankDragonInfo {
     /** Ярость дракона */
     rage: number;
     /** Ярость дракона */
-    clankBag: ClankDragonBagItem[];
+    clankBag: GamePlayerColorIdEnum[];
     /** Ярость дракона */
     clankAria: Record<GamePlayerColorIdEnum, number>;
 }
@@ -34,7 +12,7 @@ export interface ClankDragonInfo {
 export const initDragonInfo = (rage = 0) => {
     const data: ClankDragonInfo = {
         rage,
-        clankBag: Array(24).fill(DragonColorIdEnum.Empty),
+        clankBag: Array(24).fill(GamePlayerColorIdEnum.Black),
         clankAria: {
             Blue: 0,
             Green: 0,

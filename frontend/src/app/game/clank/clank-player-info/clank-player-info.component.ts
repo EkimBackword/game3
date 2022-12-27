@@ -27,6 +27,7 @@ import {
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { CardsService } from 'src/app/shared/services/cards.service';
+import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankCardState } from '@shared/clank/clank-card.types';
 import {
@@ -117,6 +118,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         private gameCardService: GameCardService,
         private matBottomSheet: MatBottomSheet,
         private matDialog: MatDialog,
+        private toastService: ToastService,
     ) { }
 
     ngOnInit(): void {
@@ -196,7 +198,7 @@ export class ClankPlayerInfoComponent implements OnInit {
             benefitInfo: updateBenefitInfo({
                 benefit: player.benefitInfo,
                 cost: {
-                    card: 1,
+                    discardCard: 1,
                 },
                 isBenefit: true,
             }),
@@ -222,6 +224,11 @@ export class ClankPlayerInfoComponent implements OnInit {
     }
 
     async finishTurn() {
+        if (((this.activePlayer.benefitInfo.discardCard ?? 0) < 0) && this.activePlayer.hand.length > 0) {
+            this.toastService.showError('Нужно сбросить карту');
+            return;
+        }
+        delete this.activePlayer.benefitInfo.discardCard;
         const unusedList = ClankElementByTurnList
             .filter(p => (this.activePlayer.benefitInfo[p] ?? 0) > 0)
             .map(p => `Остались неиспользованные очки (${ClankElementTypeMap[p].name}: ${this.activePlayer.benefitInfo[p]})`);
@@ -321,7 +328,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                         btnClass: 'btn-primary',
                         canUse: () => player.id === this.activePlayer.id
                             && this.activePlayer.id === this.currentPlayer?.id
-                            && (player.benefitInfo.card ?? 0) >= 0,
+                            && (player.benefitInfo.discardCard ?? 0) >= 0,
                         callback: () => this.useCard(card, player),
                     },
                     {
@@ -329,7 +336,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                         btnClass: 'btn-danger',
                         canUse: () => player.id === this.activePlayer.id
                             && this.activePlayer.id === this.currentPlayer?.id
-                            && (player.benefitInfo.card ?? 0) < 0,
+                            && (player.benefitInfo.discardCard ?? 0) < 0,
                         callback: () => this.discard(card, player),
                     },
                 ],

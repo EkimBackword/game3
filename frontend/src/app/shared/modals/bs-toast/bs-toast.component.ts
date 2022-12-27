@@ -29,6 +29,7 @@ export class BsToastComponent implements OnInit {
             message: string;
             submessage?: string;
             iconStyle?: Partial<CSSStyleDeclaration>;
+            bodyText?: string;
             bodyStyle?: Partial<CSSStyleDeclaration>;
         },
     ) { }

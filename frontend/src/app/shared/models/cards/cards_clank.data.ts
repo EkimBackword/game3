@@ -232,7 +232,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
                 type: 'some',
                 count: 1,
                 cost: {
-                    card: 1,
+                    discardCard: 1,
                 },
                 list: [
                     {

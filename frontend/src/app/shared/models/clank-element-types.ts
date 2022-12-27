@@ -171,6 +171,10 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         name: 'Карта',
         url: '/assets/images/cards/cards_back.jpg',
     },
+    [ClankElementByActions.discardCard]: {
+        name: 'Карта',
+        url: '/assets/images/cards/trash_card.jpg',
+    },
     [ClankElementByActions.trashCard]: {
         name: 'Карта',
         url: '/assets/images/cards/trash_card.jpg',
@@ -204,6 +208,11 @@ export interface CheckCostResult {
     message: string | null;
 }
 
+const ignoreCost: ClankElementType[] = [
+    ClankElementTypeEnum.card,
+    ClankElementTypeEnum.discardCard,
+];
+
 export const checkCost = (data: {
     cost: Partial<Record<ClankElementType, number>>;
     player: ClankPlayerConfig;
@@ -217,7 +226,7 @@ export const checkCost = (data: {
             const userPoints = data.player.benefitInfo[type] ?? 0;
             const healthPoints = data.player.benefitInfo.heal ?? 0;
             const isIgnoreMonster = (data.player.benefitInfo.ignore_monster ?? 0) > 0;
-            if (key === ClankElementTypeEnum.card) {
+            if (ignoreCost.includes(type)) {
                 continue;
             }
             if (data.isMove && key === ClankElementByTurn.sword) {

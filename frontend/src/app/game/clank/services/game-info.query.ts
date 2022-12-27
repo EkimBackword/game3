@@ -16,12 +16,18 @@ import {
     MomentDateGroupFormat,
 } from 'src/app/shared/models/game.types';
 import { notEmpty } from 'src/app/shared/models/shared.types';
-import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
+import {
+    ToastOptions,
+    ToastSeverityEnum,
+} from 'src/app/shared/models/toast.types';
 import { MapsService } from 'src/app/shared/services/maps.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { Query } from '@datorama/akita';
-import { faCube } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCube,
+    faDragon,
+} from '@fortawesome/free-solid-svg-icons';
 import {
     GameInfoActionLog,
     GameInfoState,
@@ -157,20 +163,27 @@ export class GameInfoQuery extends Query<GameInfoState> {
                 this.logsMap.set(name, list);
                 if (showToast && !log.data.hideToast) {
                     const colorInfo = GamePlayerColorList[log.data.colorId ?? GamePlayerColorIdEnum.Black];
+                    const options: Partial<ToastOptions> = {
+                        bodyText: log.data.subtext ?? '',
+                    };
+                    if (log.data.severity == null) {
+                        options.icon = log.data.isDragon
+                            ? faDragon
+                            : faCube;
+                        options.iconStyle = {
+                            color: colorInfo.color,
+                        };
+                        options.bodyStyle = {
+                            backgroundColor: colorInfo.color,
+                        };
+                        options.duration = log.data.isDragon
+                            ? 3000
+                            : 1000;
+                    }
                     this.toastService.show(
                         log.data.severity ?? ToastSeverityEnum.secondary,
                         log.data.text,
-                        log.data.severity == null
-                        ? {
-                            icon: faCube,
-                            iconStyle: {
-                                color: colorInfo.color,
-                            },
-                            bodyStyle: {
-                                backgroundColor: colorInfo.color,
-                            },
-                        }
-                        : {},
+                        options,
                     );
                 }
             }

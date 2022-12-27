@@ -30,11 +30,16 @@
                 appScalable
                 [style.width.px]="playerArea.width"
                 [style.height.px]="playerArea.height">
-                <div class="not_active_player" *ngIf="player.id !== activePlayer.id"
+                <div class="not_active_player" *ngIf="!player.isFinish && player.id !== activePlayer.id"
                     [style.height.px]="cardsWrapInfo.boardTop">
                     <h4 class="message p-2 shadow-lg">
                         Ход игрока
                         <span class="player_name">{{activePlayer.name}}</span>
+                    </h4>
+                </div>
+                <div class="not_active_player"  *ngIf="player.isFinish">
+                    <h4 class="message p-2 shadow-lg">
+                        Игра закончена (ожидайте других игроков)
                     </h4>
                 </div>
                 <div class="d-flex flex-column flex-grow-1 position-relative">
@@ -48,7 +53,7 @@
                 </div>
             </div>
         </div>
-        <div class="footer p-1" *ngIf="currentPlayer != null">
+        <div class="footer p-1" *ngIf="currentPlayer != null && (!player.isFinish || currentPlayer.id === activePlayer.id)">
             <p>Доступные жетоны:</p>
             <div class="clank-tokens">
                 <ng-container *ngFor="let token of player.tokens; trackBy: trackById">

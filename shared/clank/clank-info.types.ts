@@ -54,7 +54,8 @@ export const ClankElementByMarketList = Object.values(ClankElementByMarket);
 export enum ClankElementByActions {
     dragon_attack = 'dragon_attack', // Если у вас есть драконье яйцо
     dragon_rage = 'dragon_rage', // Если у вас есть драконье яйцо
-    card = 'card', // Карта. Например, надо сбросить или добрать карту
+    card = 'card', // Добрать карту
+    discardCard = 'discardCard', // Сбросить карту
     trashCard = 'trashCard', // Избавиться от карты
     pyramid_dice = 'pyramid_dice', // Бросок кубика
     clank = 'clank', // Кланк / шум

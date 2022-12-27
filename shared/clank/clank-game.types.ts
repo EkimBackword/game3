@@ -41,6 +41,8 @@ export interface GameInfoActionLog {
 
 export interface GameInfoActionLogData {
     text: string;
+    subtext?: string;
+    isDragon?: boolean;
     colorId?: GamePlayerColorIdEnum;
     hideToast?: boolean;
     severity?: ToastSeverityEnum;
