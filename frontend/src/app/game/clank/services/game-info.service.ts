@@ -53,6 +53,7 @@ import {
 } from '@shared/clank/clank-token.types';
 import { SocketErrorTypeEnum } from '@shared/socket.types';
 
+import { TrashCardsComponentResult } from '../dialogs/trash-cards/trash-cards.component';
 import { GameInfoQuery } from './game-info.query';
 import { GameInfoStore } from './game-info.store';
 
@@ -207,6 +208,12 @@ export class GameInfoService implements OnDestroy {
                     player.hand = player.hand.filter(p => p.id !== card.id),
                     player.board.push(card);
                     player.benefitInfo[card.type] = (player.benefitInfo[card.type] ?? 0) + 1;
+                    if (card.needTrashCards) {
+                        player.needTrashCards = [
+                            ...player.needTrashCards,
+                            ...card.needTrashCards,
+                        ];
+                    }
                     break;
                 }
                 case UseCardType.buy: {
@@ -279,22 +286,31 @@ export class GameInfoService implements OnDestroy {
                 type = UseTokenType.use;
             }
 
-            if (tokenInfo.cost != null && [UseTokenType.buy, UseTokenType.use].includes(type)) {
-                const benefitInfo = updateBenefitInfo({
-                    benefit: player.benefitInfo,
-                    cost: tokenInfo.cost,
-                    isBenefit: false,
-                });
-                this.setBenefits(player, benefitInfo, state);
-            }
+            if ([UseTokenType.buy, UseTokenType.use].includes(type)) {
+                if (tokenInfo.cost != null) {
+                    const benefitInfo = updateBenefitInfo({
+                        benefit: player.benefitInfo,
+                        cost: tokenInfo.cost,
+                        isBenefit: false,
+                    });
+                    this.setBenefits(player, benefitInfo, state);
+                }
 
-            if (tokenInfo.benefit != null && [UseTokenType.buy, UseTokenType.use].includes(type)) {
-                const benefitInfo = updateBenefitInfo({
-                    benefit: player.benefitInfo,
-                    cost: tokenInfo.benefit,
-                    isBenefit: true,
-                });
-                this.setBenefits(player, benefitInfo, state);
+                if (tokenInfo.benefit != null) {
+                    const benefitInfo = updateBenefitInfo({
+                        benefit: player.benefitInfo,
+                        cost: tokenInfo.benefit,
+                        isBenefit: true,
+                    });
+                    this.setBenefits(player, benefitInfo, state);
+                }
+
+                if (tokenInfo.needTrashCards) {
+                    player.needTrashCards = [
+                        ...player.needTrashCards,
+                        ...tokenInfo.needTrashCards,
+                    ];
+                }
             }
 
             if ([UseTokenType.buy, UseTokenType.take].includes(type)) {
@@ -377,24 +393,19 @@ export class GameInfoService implements OnDestroy {
         this.onGameUpdated();
     }
 
-    finishTurn() {
+    finishTurn(result: TrashCardsComponentResult) {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
             const currentPlayer = state.players[state.activePlayerIndex];
             this.clearTurnInfo(currentPlayer.benefitInfo);
-            if (currentPlayer.benefitInfo.trashCard) {
-                if (currentPlayer.benefitInfo.trashCard > 0) {
-                    // TODO: Избавиться от карты
-                }
-                delete currentPlayer.benefitInfo.trashCard;
-            }
-            currentPlayer.discard = [
-                ...currentPlayer.discard,
-                ...currentPlayer.board,
-                ...currentPlayer.hand,
-            ];
+            currentPlayer.discard = result.discard;
             currentPlayer.board = [];
             currentPlayer.hand = [];
+            currentPlayer.trash = [
+                ...currentPlayer.trash,
+                ...result.trash,
+            ];
+            currentPlayer.needTrashCards = [];
             this.drawCards(currentPlayer, 5);
             state.players = arrayUpdate(state.players, currentPlayer.id, currentPlayer);
 

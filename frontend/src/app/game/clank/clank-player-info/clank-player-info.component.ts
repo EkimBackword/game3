@@ -41,6 +41,11 @@ import {
 } from '@shared/clank/clank-token.types';
 
 import { ClankDungeonRowComponent } from '../clank-dungeon-row/clank-dungeon-row.component';
+import {
+    TrashCardsComponent,
+    TrashCardsComponentData,
+    TrashCardsComponentResult,
+} from '../dialogs/trash-cards/trash-cards.component';
 import { GameCardService } from '../services/game-card.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
@@ -246,7 +251,41 @@ export class ClankPlayerInfoComponent implements OnInit {
                 return;
             }
         }
-        this.gameInfoService.finishTurn();
+
+        if (this.activePlayer.needTrashCards.length > 0) {
+            const matDialogRef = this.matDialog.open<
+                TrashCardsComponent,
+                TrashCardsComponentData,
+                TrashCardsComponentResult
+            >(
+                TrashCardsComponent,
+                {
+                    data: {
+                        cards: [
+                            ...this.activePlayer.discard,
+                            ...this.activePlayer.board,
+                            ...this.activePlayer.hand,
+                        ],
+                        needTrashCards: this.activePlayer.needTrashCards,
+                    },
+                    width: `${this.cardsWrapInfo.cardWidth * 5}px`,
+                },
+            );
+            const result = await matDialogRef.afterClosed().toPromise();
+            if (result == null) {
+                return;
+            }
+            this.gameInfoService.finishTurn(result);
+        } else {
+            this.gameInfoService.finishTurn({
+                discard: [
+                    ...this.activePlayer.discard,
+                    ...this.activePlayer.board,
+                    ...this.activePlayer.hand,
+                ],
+                trash: [],
+            });
+        }
     }
 
     trackById(index: number, player: { id: any }) {

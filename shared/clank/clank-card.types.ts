@@ -79,6 +79,8 @@ export interface ClankCardBaseConfig {
     danger?: number;
     /** События при разыгрывании */
     actions?: ClankCardActionList;
+    /** Необходимость избавиться от карты */
+    needTrashCards?: ClankCardName[];
     /** Победные очки */
     points?: ClankCardPointInfo;
     /** Количество в колоде (-1 не убирается с поля) */
@@ -145,8 +147,6 @@ export interface ClankCardAction {
     benefit?: ClankCostInfo;
     /** Описание */
     benefitDescription?: string;
-    /** Избавиться от разыкгранных карт */
-    trash?: ClankCardName[];
     /** Атака дракона */
     isDragonAttack?: boolean;
     
@@ -154,6 +154,7 @@ export interface ClankCardAction {
 
 /** Ключевые карты, на которые могут ссылаться другие карты */
 export enum ClankCardName {
+    All = 'Любую',
     Burgle = 'Взломать сундук',
     Scramble = 'Сноровка',
     Sidestep = 'Обходной путь',

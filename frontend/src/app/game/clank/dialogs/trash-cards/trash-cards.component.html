@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Нужно избавиться от карт ({{count}} шт.)</h1>
+<div mat-dialog-content>
+    <div *ngIf="allSelected">Выбрано максимально возможное колличество карт</div>
+    <div class="card-list">
+        <ng-container *ngFor="let item of list;">
+            <app-clank-card
+                class="card"
+                [class.card--selectable]="item.selectable"
+                [class.card--selected]="item.value"
+                [width]="cardsWrapInfo.cardWidth"
+                [height]="cardsWrapInfo.cardHeight"
+                [data]="item.data"
+                (click)="selectCard(item)"
+            ></app-clank-card>
+        </ng-container>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end">
+    <button class="btn btn-primary m-1"
+        type="submit"
+        (click)="close()">
+        Избавиться от выбранных карт
+    </button>
+</div>

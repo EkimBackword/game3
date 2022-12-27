@@ -175,10 +175,6 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         name: 'Карта',
         url: '/assets/images/cards/trash_card.jpg',
     },
-    [ClankElementByActions.trashCard]: {
-        name: 'Карта',
-        url: '/assets/images/cards/trash_card.jpg',
-    },
     [ClankElementByActions.pyramid_dice]: {
         name: 'Кубик пирамиды',
         url: '/assets/images/pyramid_dice.png',

@@ -10,6 +10,7 @@ import { ClankPlayerInfoComponent } from './clank-player-info/clank-player-info.
 import { ClankComponent } from './clank.component';
 import { ChooseSomeActionsComponent } from './dialogs/choose-some-actions/choose-some-actions.component';
 import { UseSwordsOrHealthComponent } from './dialogs/use-swords-or-health/use-swords-or-health.component';
+import { TrashCardsComponent } from './dialogs/trash-cards/trash-cards.component';
 
 @NgModule({
     declarations: [
@@ -21,6 +22,7 @@ import { UseSwordsOrHealthComponent } from './dialogs/use-swords-or-health/use-s
         ClankDungeonRowComponent,
         UseSwordsOrHealthComponent,
         ChooseSomeActionsComponent,
+        TrashCardsComponent,
     ],
     imports: [
         SharedModule,

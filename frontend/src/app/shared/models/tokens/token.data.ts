@@ -1,3 +1,4 @@
+import { ClankCardName } from '@shared/clank/clank-card.types';
 import {
     ClankDlcEnum,
     ClankElementByGame,
@@ -161,9 +162,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             url: '/small_trash_card.jpg',
             isImmediatelyBenefit: true,
             isUsable: true,
-            benefit: {
-                trashCard: 1,
-            },
+            needTrashCards: [ClankCardName.All],
             secret_type: ClankTokenSecretTypeEnum.minor,
             element_type: ClankElementByGame.minor_secret,
         },

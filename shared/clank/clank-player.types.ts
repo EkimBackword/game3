@@ -1,5 +1,8 @@
 import { ClankArtifactConfig } from './clank-artifact.types';
-import { ClankCardConfig } from './clank-card.types';
+import {
+  ClankCardConfig,
+  ClankCardName,
+} from './clank-card.types';
 import { ClankCostInfo } from './clank-info.types';
 import { ClankTokenConfig } from './clank-token.types';
 
@@ -18,6 +21,8 @@ export interface ClankPlayerConfig {
     elementId: number;
     /** Информация о наличии очков для действий */
     benefitInfo: ClankCostInfo;
+    /** Необходимость сбросить карты */
+    needTrashCards: ClankCardName[];
     /** Колода */
     deck: ClankCardConfig[];
     /** Карты в руке */

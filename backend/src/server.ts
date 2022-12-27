@@ -144,6 +144,7 @@ io.of(gameRegExp).on('connection', (socket) => {
                 board: [],
                 discard: [],
                 trash: [],
+                needTrashCards: [],
                 tokens: [],
                 artifacts: [],
                 isRescued: false,

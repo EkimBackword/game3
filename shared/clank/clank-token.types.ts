@@ -1,4 +1,7 @@
-import { ClankCardPointInfo } from './clank-card.types';
+import {
+  ClankCardName,
+  ClankCardPointInfo,
+} from './clank-card.types';
 import {
   ClankCostInfo,
   ClankDlcEnum,
@@ -45,8 +48,10 @@ export interface ClankTokenShortConfig {
     isUsable?: boolean;
     /** Выгода */
     benefit?: ClankCostInfo;
-    /** Выгода */
+    /** Оплата */
     cost?: ClankCostInfo;
+    /** Необходимость избавиться от карты */
+    needTrashCards?: ClankCardName[];
     /** Нужно ли получить выгоду немедленно или можно сохранить */
     secret_type?: ClankTokenSecretTypeEnum;
     /** Нужно ли получить выгоду немедленно или можно сохранить */

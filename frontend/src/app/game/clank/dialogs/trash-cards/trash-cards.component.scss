@@ -1,0 +1,32 @@
+.card-list {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+}
+
+.card {
+    cursor: not-allowed;
+    margin: 0.4rem;
+    filter: brightness(80%) drop-shadow(2px 2px 2px var(--bs-black));
+
+    &.card--selectable {
+        cursor: pointer;
+        filter: brightness(90%) drop-shadow(2px 2px 2px var(--bs-black));
+
+        &:hover {
+            filter: brightness(110%) drop-shadow(2px 2px 2px var(--bs-danger));
+        }
+    }
+
+    &.card--selected {
+        cursor: pointer;
+        filter: brightness(125%) drop-shadow(2px 2px 2px var(--bs-danger));
+
+        &:hover {
+            filter: brightness(120%) drop-shadow(2px 2px 2px var(--bs-danger));
+        }
+    }
+}
+

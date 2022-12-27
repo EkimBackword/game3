@@ -204,7 +204,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
                 ],
             },
             benefit: {
-                clank: 4,
+                skill: 4,
             },
             points: {
                 value: 3,
@@ -846,18 +846,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             benefit: {
                 skill: 2,
             },
-            actions: {
-                type: 'every',
-                list: [
-                    {
-                        target: ClankTarget.current,
-                        cost: {
-                            trashCard: 1,
-                        },
-                        trash: [ClankCardName.Burgle],
-                    },
-                ],
-            },
+            needTrashCards: [ClankCardName.Burgle],
             points: {
                 value: 2,
             },
@@ -892,8 +881,10 @@ export const getClankDeckCards = (withCopy: boolean) => {
                     },
                     {
                         target: ClankTarget.all,
-                        costDescription: 'Дракон атакует',
-                        isDragonAttack: true,
+                        benefitDescription: 'Дракон атакует',
+                        benefit: {
+                            dragon_attack: 1,
+                        },
                     },
                 ],
             },
