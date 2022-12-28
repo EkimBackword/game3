@@ -53,6 +53,7 @@ export class TrashCardsComponent implements OnInit {
     count = 0;
     trashInfo: TrashCardsComponentTrashInfo[] = [];
     list: TrashCardsComponentItem[] = [];
+    unselectableCards: ClankCardConfig[] = [];
 
     cardsWrapInfo = {
         cardWidth,
@@ -86,22 +87,30 @@ export class TrashCardsComponent implements OnInit {
             };
             return result;
         });
-        this.list = this.data.cards.filter(card => this.trashInfo.some(p => !p.value && (
-            p.name === ClankCardName.All || p.name === card.name
-        ))).map((card) => {
-            return {
-                data: {
-                    id: card.id,
-                    card,
-                    classes: [],
-                    isOpen: true,
-                    actions: [],
-                    style: {},
-                },
-                value: false,
-                selectable: true,
-            };
-        });
+        this.list = [];
+        this.unselectableCards = [];
+        for (const card of this.data.cards) {
+            const selectable = this.trashInfo.some(p => !p.value && (
+                p.name === ClankCardName.All || p.name === card.name
+            ));
+            if (selectable) {
+                const item: TrashCardsComponentItem = {
+                    data: {
+                        id: card.id,
+                        card,
+                        classes: [],
+                        isOpen: true,
+                        actions: [],
+                        style: {},
+                    },
+                    value: false,
+                    selectable: true,
+                };
+                this.list.push(item);
+            } else {
+                this.unselectableCards.push(card);
+            }
+        }
         this.checkTrashCards();
     }
 
@@ -112,7 +121,7 @@ export class TrashCardsComponent implements OnInit {
 
     close() {
         const result: TrashCardsComponentResult = {
-            discard: [],
+            discard: this.unselectableCards,
             trash: [],
         };
         for (const item of this.list) {
