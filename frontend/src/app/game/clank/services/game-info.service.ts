@@ -38,8 +38,6 @@ import {
 import {
     ClankCardType,
     ClankCostInfo,
-    ClankDlcEnum,
-    ClankElementTypeEnum,
 } from '@shared/clank/clank-info.types';
 import { ClankMapElementConfig } from '@shared/clank/clank-map.types';
 import {
@@ -47,10 +45,7 @@ import {
     GamePlayerColorIdEnum,
     GamePlayerColorIds,
 } from '@shared/clank/clank-player.types';
-import {
-    ClankTokenConfig,
-    ClankTokenTypeEnum,
-} from '@shared/clank/clank-token.types';
+import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 import { SocketErrorTypeEnum } from '@shared/socket.types';
 
 import { TrashCardsComponentResult } from '../dialogs/trash-cards/trash-cards.component';
@@ -149,21 +144,6 @@ export class GameInfoService implements OnDestroy {
                 player.isFinish = true;
                 player.isEscaped = true;
                 player.benefitInfo.mastery_token = 1;
-                player.tokens.push({
-                    id: 'mastery_token',
-                    copy_index: 0,
-                    count: -1,
-                    name: 'Жетон мастерства',
-                    element_type: ClankElementTypeEnum.mastery_token,
-                    url: '/assets/images/tokens/bonus/master.png',
-                    points: {
-                        value: 20,
-                    },
-                    isSquare: true,
-                    dlc_name: ClankDlcEnum.clank,
-                    index: 0,
-                    type: ClankTokenTypeEnum.bonus,
-                });
             }
             state.players = arrayUpdate(
                 state.players,

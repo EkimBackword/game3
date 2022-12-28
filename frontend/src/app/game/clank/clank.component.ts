@@ -48,6 +48,7 @@ export class ClankComponent implements OnInit {
             let winner: PlayerPointsResult | undefined;
             const rows = players.map(player => {
                 const coins = player.benefitInfo.coin ?? 0;
+                const master = player.isEscaped ? 20 : 0;
                 const tokens = player.tokens.reduce((acc, token) => acc + (token.points?.value ?? 0), 0);
                 const artifacts = player.artifacts.reduce((acc, artefact) => acc + (artefact.points?.value ?? 0), 0);
                 const cards = [
@@ -65,8 +66,9 @@ export class ClankComponent implements OnInit {
                     coins,
                     tokens,
                     artifacts,
+                    master,
                     cards,
-                    total: coins + tokens + cards,
+                    total: coins + tokens + artifacts + master + cards,
                 };
                 if (winner == null || winner.total < result.total) {
                     winner = result;

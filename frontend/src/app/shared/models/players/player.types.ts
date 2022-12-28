@@ -14,6 +14,7 @@ export interface PlayerPointsResult {
     coins: number;
     tokens: number;
     artifacts: number;
+    master: number;
     cards: number;
     total: number;
 }
