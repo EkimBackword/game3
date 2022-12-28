@@ -531,6 +531,7 @@ export const getClankDeckCards = (withCopy: boolean) => {
             },
             benefit: {
                 coin: 2,
+                boot: 1,
             },
             points: {
                 value: 4,
