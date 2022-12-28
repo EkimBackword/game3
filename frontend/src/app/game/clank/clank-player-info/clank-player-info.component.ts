@@ -26,7 +26,6 @@ import {
 } from 'src/app/shared/models/clank-element-types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
-import { CardsService } from 'src/app/shared/services/cards.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankCardConfig } from '@shared/clank/clank-card.types';
@@ -119,7 +118,6 @@ export class ClankPlayerInfoComponent implements OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private gameInfoQuery: GameInfoQuery,
         private gameInfoService: GameInfoService,
-        private cardsService: CardsService,
         private gameCardService: GameCardService,
         private matBottomSheet: MatBottomSheet,
         private matDialog: MatDialog,

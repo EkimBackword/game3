@@ -16,9 +16,6 @@ export class HelpComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
-        import('../../shared/models/cards/cards_clank.data').then((response) => {
-            this.cards = response.getClankDeckCards(false);
-        });
     }
 
 }

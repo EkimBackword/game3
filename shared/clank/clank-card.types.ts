@@ -1,3 +1,4 @@
+import { GameInfoState } from './clank-game.types';
 import {
   ClankCardType,
   ClankCostInfo,
@@ -85,6 +86,15 @@ export interface ClankCardBaseConfig {
     points?: ClankCardPointInfo;
     /** Количество в колоде (-1 не убирается с поля) */
     count: number;
+    /** test */
+    events?: {
+        /** при появление */
+        onArrive?: (state: GameInfoState) => GameInfoState;
+        /** при покупке */
+        onAcquire?: (state: GameInfoState) => GameInfoState;
+        /** при разыгрывании */
+        onUse?: (state: GameInfoState) => GameInfoState;
+    }
 }
 
 export interface ClankCardConfig extends ClankCardBaseConfig, ClankDeckShortConfig {

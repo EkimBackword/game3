@@ -19,7 +19,6 @@ import {
     takeUntil,
 } from 'rxjs/operators';
 import { PlayerPointsResult } from 'src/app/shared/models/players/player.types';
-import { CardsService } from 'src/app/shared/services/cards.service';
 
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import { GamePlayerColorList } from '@shared/clank/clank-player.types';
@@ -89,7 +88,6 @@ export class ClankComponent implements OnInit {
         private router: Router,
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
-        private cardsService: CardsService,
     ) { }
 
     ngOnInit(): void {

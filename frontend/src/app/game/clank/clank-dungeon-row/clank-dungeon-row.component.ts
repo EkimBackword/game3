@@ -20,7 +20,6 @@ import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
 import { UseCardType } from 'src/app/shared/models/cards/cards.types';
 import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
-import { CardsService } from 'src/app/shared/services/cards.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankCardConfig } from '@shared/clank/clank-card.types';
@@ -147,7 +146,6 @@ export class ClankDungeonRowComponent implements OnInit {
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
-        private cardsService: CardsService,
         private gameCardService: GameCardService,
         private toastService: ToastService,
         @Inject(MAT_BOTTOM_SHEET_DATA) public data: {

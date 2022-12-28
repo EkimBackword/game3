@@ -15,7 +15,6 @@ import {
     ClankCardWidth,
 } from '@shared/clank/clank-card.types';
 
-import { CardsService } from '../../services/cards.service';
 import {
     ISelectedPlayerCardAction,
     ISelectedPlayerCardInfo,
@@ -42,7 +41,6 @@ export class ClankCardComponent implements OnInit, OnChanges {
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
-        private cardsService: CardsService,
     ) { }
 
     ngOnInit(): void {
