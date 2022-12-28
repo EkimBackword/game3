@@ -7,6 +7,17 @@ export interface ClankDragonInfo {
     clankBag: GamePlayerColorIdEnum[];
     /** Ярость дракона */
     clankAria: Record<GamePlayerColorIdEnum, number>;
+    /** Ярость дракона */
+    endGameCounter: ClankDragonEndGameCounter;
+}
+
+export interface ClankDragonEndGameCounter {
+    /** Флаг, который говорит начался ли отсчет ходов */
+    inited: boolean;
+    /** Цвет игрока, в начале хода которого будет происходить отсчёт */
+    colorId: GamePlayerColorIdEnum;
+    /** Позиция счётчика */
+    index: number;
 }
 
 export const initDragonInfo = (rage = 0) => {
@@ -20,6 +31,11 @@ export const initDragonInfo = (rage = 0) => {
             Yellow: 0,
             Black: 0,
         },
+        endGameCounter: {
+            inited: false,
+            colorId: GamePlayerColorIdEnum.Black,
+            index: 0,
+        }
     };
     return data;
 }

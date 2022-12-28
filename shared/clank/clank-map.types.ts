@@ -35,6 +35,7 @@ export interface ClankMapDragonInfo {
     maxRage: number;
     clankAria: ClankMapPositionInfo;
     track: ClankMapDragonTrackItem[];
+    endGameTrack: ClankMapDragonEndGameTrackItem[];
 }
 
 export interface ClankMapDragonTrackItem {
@@ -43,6 +44,13 @@ export interface ClankMapDragonTrackItem {
     startUserCount: number;
     clank: number;
     effect?: ClankMapDragonTrackEffect;
+}
+
+export interface ClankMapDragonEndGameTrackItem {
+    index: number;
+    position: ClankMapPositionInfo;
+    clank: number;
+    isFinish: boolean;
 }
 
 export interface ClankMapPositionInfo {

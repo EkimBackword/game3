@@ -396,6 +396,8 @@ export class GameInfoService implements OnDestroy {
     finishTurn(result: TrashCardsComponentResult) {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
+
+            /** Конец хода игрока */
             const currentPlayer = state.players[state.activePlayerIndex];
             this.clearTurnInfo(currentPlayer.benefitInfo);
             currentPlayer.discard = result.discard;
@@ -409,13 +411,19 @@ export class GameInfoService implements OnDestroy {
             this.drawCards(currentPlayer, 5);
             state.players = arrayUpdate(state.players, currentPlayer.id, currentPlayer);
 
+            if (currentPlayer.isFinish && state.dragonInfo.endGameCounter.colorId === GamePlayerColorIdEnum.Black) {
+                state.dragonInfo.endGameCounter.colorId = currentPlayer.colorId;
+            }
 
+            /** Обновление состояния карты */
             GamePlayerColorIds.forEach(colorId => {
                 if (state.dragonInfo.clankAria[colorId] < 0) {
                     state.dragonInfo.clankAria[colorId] = 0;
                 }
             });
             this.drawDungeonRow(state, {});
+
+            /** Переход хода */
             const newActivPlayer = this.getNextPlayer(state);
             this.addActionLogs(state, {
                 text: `${currentPlayer.name} закончил свой ход`,
@@ -428,7 +436,6 @@ export class GameInfoService implements OnDestroy {
                     colorId: newActivPlayer.colorId,
                 });
             }
-
             state.turnIndex++;
             state.statusId = state.players.every(p => p.isFinish)
                 ? GameInfoStatusIdEnum.Finished
@@ -446,6 +453,21 @@ export class GameInfoService implements OnDestroy {
         state.activePlayerId = newActivPlayer.id;
         if (!newActivPlayer.isFinish) {
             return newActivPlayer;
+        }
+        if (newActivPlayer.isFinish && state.dragonInfo.endGameCounter.colorId === newActivPlayer.colorId) {
+            state.dragonInfo.endGameCounter.index++;
+            const trackElement = this.gameInfoQuery.mapInfo?.dragonInfo.endGameTrack.find(p =>
+                p.index === state.dragonInfo.endGameCounter.index);
+            if (trackElement?.isFinish) {
+                for (const player of state.players) {
+                    if (!player.isFinish) {
+                        this.onPlayerFinishGame(player);
+                        state.players = arrayUpdate(state.players, player.id, player);
+                    }
+                }
+            } else if (trackElement?.clank) {
+                this.onDragonAttack(state, trackElement.clank);
+            }
         }
         if (state.players.some(p => !p.isFinish)) {
             return this.getNextPlayer(state);
@@ -522,7 +544,7 @@ export class GameInfoService implements OnDestroy {
         return;
     }
 
-    private onDragonAttack(state: GameInfoState) {
+    private onDragonAttack(state: GameInfoState, rage = 0) {
         (Object.keys(state.dragonInfo.clankAria) as GamePlayerColorIdEnum[]).forEach((key) => {
             const count = state.dragonInfo.clankAria[key];
             if (count > 0) {
@@ -544,7 +566,8 @@ export class GameInfoService implements OnDestroy {
             name: string;
             value: number;
         }>);
-        for (let index = 0; index < state.dragonInfo.rage; index++) {
+        const totalRage = state.dragonInfo.rage + rage;
+        for (let index = 0; index < totalRage; index++) {
             const colorId = state.dragonInfo.clankBag.pop();
             const player = state.players.find(p => p.colorId === colorId);
             if (colorId == null || player == null || player.benefitInfo.heal == null || player.isFinish) {
@@ -590,11 +613,8 @@ export class GameInfoService implements OnDestroy {
                 benefitInfo.heal = 10;
             }
             if (benefitInfo.heal <= 0) {
-                const mapElement = this.gameInfoQuery.mapInfo?.elements.find(p => p.id === player.elementId);
                 benefitInfo.heal = 0;
-                player.isRescued = !mapElement?.isDungeon;
-                player.isEscaped = false;
-                player.isFinish = true;
+                this.onPlayerFinishGame(player);
             }
         }
 
@@ -659,6 +679,13 @@ export class GameInfoService implements OnDestroy {
         ClankOneTurnInfo.forEach(key => {
             benefitInfo[key] = 0;
         });
+    }
+
+    private onPlayerFinishGame(player: ClankPlayerConfig,) {
+        const mapElement = this.gameInfoQuery.mapInfo?.elements.find(p => p.id === player.elementId);
+        player.isRescued = !mapElement?.isDungeon;
+        player.isEscaped = false;
+        player.isFinish = true;
     }
 
 }

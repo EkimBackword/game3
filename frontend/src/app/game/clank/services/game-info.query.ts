@@ -58,8 +58,8 @@ export class GameInfoQuery extends Query<GameInfoState> {
         shareReplay(1),
     );
 
-    onPlayersPositionChangeSubject = this.select(['mapId', 'players', 'activePlayerId']).pipe(
-        map(({mapId, players, activePlayerId}) => {
+    onPlayersPositionChangeSubject = this.select(['mapId', 'players', 'activePlayerId', 'dragonInfo']).pipe(
+        map(({mapId, players, activePlayerId, dragonInfo}) => {
             const mapInfo = this.mapsService.getMapById(mapId);
             if (mapInfo == null) {
                 return [];
@@ -69,21 +69,29 @@ export class GameInfoQuery extends Query<GameInfoState> {
             const countByElementId = new Map<number, number>();
             return players.map(player => {
                 const isActive = player.id === activePlayerId;
-                const count = countByElementId.get(player.elementId) ?? 0;
-                countByElementId.set(player.elementId, count + 1);
-                const mapElement = mapInfo.elements.find(p => p.id === player.elementId);
-                const rowIndex = Math.floor(count / rowCount);
-                const columnIndex = (count % rowCount);
-                const style: Partial<CSSStyleDeclaration> = {
-                    top: `${(mapElement?.position.y ?? 0) + rowIndex * size}px`,
-                    left: `${(mapElement?.position.x ?? 0) + columnIndex * size}px`,
-                };
                 const data: PlayersPositionInfo = {
                     player,
-                    style,
+                    style: {},
                     size,
                     isActive,
                 };
+                if (player.isFinish && player.colorId === dragonInfo.endGameCounter.colorId) {
+                    const trackElement = mapInfo.dragonInfo.endGameTrack.find(p => p.index === dragonInfo.endGameCounter.index);
+                    data.style = {
+                        top: `${(trackElement?.position.y ?? 0) + ((trackElement?.position.height ?? 0) - size) / 2}px`,
+                        left: `${(trackElement?.position.x ?? 0) + ((trackElement?.position.width ?? 0) - size) / 2}px`,
+                    };
+                } else {
+                    const count = countByElementId.get(player.elementId) ?? 0;
+                    countByElementId.set(player.elementId, count + 1);
+                    const mapElement = mapInfo.elements.find(p => p.id === player.elementId);
+                    const rowIndex = Math.floor(count / rowCount);
+                    const columnIndex = (count % rowCount);
+                    data.style = {
+                        top: `${(mapElement?.position.y ?? 0) + rowIndex * size}px`,
+                        left: `${(mapElement?.position.x ?? 0) + columnIndex * size}px`,
+                    };
+                }
                 return data;
             });
         }),

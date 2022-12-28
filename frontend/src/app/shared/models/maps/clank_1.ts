@@ -100,6 +100,63 @@ export const getClankMapFirst = () => {
                     startUserCount: 0,
                 },
             ],
+            endGameTrack: [
+                {
+                    index: 0,
+                    clank: 0,
+                    position: {
+                        x: 477,
+                        y: 10,
+                        height: 175,
+                        width: 175,
+                    },
+                    isFinish: false,
+                },
+                {
+                    index: 1,
+                    clank: 1,
+                    position: {
+                        x: 725,
+                        y: 10,
+                        height: 175,
+                        width: 175,
+                    },
+                    isFinish: false,
+                },
+                {
+                    index: 2,
+                    clank: 2,
+                    position: {
+                        x: 965,
+                        y: 10,
+                        height: 175,
+                        width: 175,
+                    },
+                    isFinish: false,
+                },
+                {
+                    index: 3,
+                    clank: 3,
+                    position: {
+                        x: 1205,
+                        y: 10,
+                        height: 175,
+                        width: 175,
+                    },
+                    isFinish: false,
+                },
+                {
+                    index: 4,
+                    clank: 0,
+                    position: {
+                        x: 1450,
+                        y: 10,
+                        height: 175,
+                        width: 175,
+                    },
+                    isFinish: true,
+                },
+            ],
         },
         elements: [
             {
