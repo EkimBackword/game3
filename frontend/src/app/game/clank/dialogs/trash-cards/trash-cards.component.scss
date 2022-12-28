@@ -9,23 +9,23 @@
 .card {
     cursor: not-allowed;
     margin: 0.4rem;
-    filter: brightness(80%) drop-shadow(2px 2px 2px var(--bs-black));
+    filter: brightness(80%);
 
     &.card--selectable {
         cursor: pointer;
         filter: brightness(90%) drop-shadow(2px 2px 2px var(--bs-black));
 
         &:hover {
-            filter: brightness(110%) drop-shadow(2px 2px 2px var(--bs-danger));
+            filter: brightness(95%) drop-shadow(2px 2px 3px var(--bs-danger));
         }
     }
 
     &.card--selected {
         cursor: pointer;
-        filter: brightness(125%) drop-shadow(2px 2px 2px var(--bs-danger));
+        filter: brightness(110%) drop-shadow(2px 2px 2px var(--bs-danger));
 
         &:hover {
-            filter: brightness(120%) drop-shadow(2px 2px 2px var(--bs-danger));
+            filter: brightness(105%) drop-shadow(2px 2px 3px var(--bs-danger));
         }
     }
 }
