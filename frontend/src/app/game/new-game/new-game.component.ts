@@ -14,13 +14,15 @@ import { Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CardsService } from 'src/app/shared/services/cards.service';
 import { GamesService } from 'src/app/shared/services/games.service';
 import { MapsService } from 'src/app/shared/services/maps.service';
 
 import { ClankSelectDeckValue } from '@shared/clank/clank-card.types';
 import { GameInfoConfig } from '@shared/clank/clank-game.types';
-import { ClankDlcEnum } from '@shared/clank/clank-info.types';
+import {
+    ClankDlcEnum,
+    ClankDlcList,
+} from '@shared/clank/clank-info.types';
 import { ClankMapConfig } from '@shared/clank/clank-map.types';
 
 import { GameRouteEnum } from '../game.routing';
@@ -51,7 +53,6 @@ export class NewGameComponent implements OnInit, OnDestroy {
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
-        private cardsService: CardsService,
         private gamesService: GamesService,
         private mapsService: MapsService,
         private router: Router,
@@ -59,8 +60,16 @@ export class NewGameComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.maps = this.mapsService.maps;
-        this.startDecks = this.cardsService.getSelectStartDecks();
-        this.dungeonDecks = this.cardsService.getSelectShareDecks();
+        this.startDecks = ClankDlcList.map(dlc => ({
+            ...dlc,
+            value: dlc.id === ClankDlcEnum.clank,
+            disabled: false,
+        }));
+        this.dungeonDecks = ClankDlcList.map(dlc => ({
+            ...dlc,
+            value: dlc.id === ClankDlcEnum.clank,
+            disabled: false,
+        }));
 
         this.formFields.mapId.valueChanges.pipe(
             takeUntil(this.ngUnsubscribe),

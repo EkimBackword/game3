@@ -1,34 +1,4 @@
 <div class="container container--page shadow d-flex flex-row flex-wrap justify-content-start align-items-start">
     <div class="col-6 mb-3 d-flex flex-row justify-content-start align-items-start" *ngFor="let card of cards">
-        <!-- <app-clank-card
-            [isOpen]="true"
-            [state]="card"
-        ></app-clank-card> -->
-        <div class="card_info p-1 d-flex flex-column justify-content-start align-items-stretch">
-            <p><strong>Имя:</strong> {{card.name}}</p>
-            <ng-container *ngIf="card.acquire">
-                <p><strong>Покупка:</strong></p>
-                <ul *ngFor="let acquire of card.acquire?.list">
-                    <li *ngIf="acquire.cost">
-                        <p><strong>Цена:</strong></p>
-                        <p *ngFor="let item of acquire.cost | keyvalue">
-                            <strong>{{item.key}}:</strong> {{item.value}}
-                        </p>
-                    </li>
-                    <li *ngIf="acquire.benefit">
-                        <p><strong>Выгода:</strong></p>
-                        <p *ngFor="let item of acquire.benefit | keyvalue">
-                            <strong>{{item.key}}:</strong> {{item.value}}
-                        </p>
-                    </li>
-                </ul>
-            </ng-container>
-            <ng-container *ngIf="card.benefit">
-                <p><strong>Выгода:</strong></p>
-                <ul>
-                    <li *ngFor="let item of card.benefit | keyvalue"><strong>{{item.key}}:</strong> {{item.value}}</li>
-                </ul>
-            </ng-container>
-        </div>
     </div>
 </div>

@@ -1,24 +1,41 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+
+import { cloneDeep } from 'lodash';
+import { ClankHelpService } from 'src/app/game/clank/services/clank-help.service';
 
 import {
     ClankCardBaseConfig,
+    ClankCardBaseConfigEventInfoByType,
+    ClankCardBaseConfigEvents,
     ClankCardConfig,
     ClankCardName,
     ClankCardPositionEnum,
     ClankDeckConfig,
     ClankDeckSpriteInfo,
-    ClankSelectDeckValue,
 } from '@shared/clank/clank-card.types';
+import { GameInfoState } from '@shared/clank/clank-game.types';
 import {
     ClankCardType,
+    ClankCostInfo,
     ClankDlcEnum,
-    ClankDlcList,
+    ClankElementByToken,
     ClankTarget,
 } from '@shared/clank/clank-info.types';
+import {
+    ClankPlayerConfig,
+    GamePlayerColorIdEnum,
+} from '@shared/clank/clank-player.types';
 
-@Injectable({
-    providedIn: 'root',
-})
+import {
+    ChooseCardEventComponent,
+    ChooseCardEventComponentData,
+    ChooseCardEventComponentItem,
+} from '../modals/choose-card-event/choose-card-event.component';
+import { updateBenefitInfo } from '../models/players/player.types';
+import { ToastService } from './toast.service';
+
+@Injectable()
 export class CardsService {
 
     private lastIndex = 0;
@@ -56,37 +73,41 @@ export class CardsService {
         },
     };
 
+    private store = [
+        ...this.initClankReserveCards(1, false),
+        ...this.initClankStartCards('', false),
+        ...this.initClankDeckCards(false),
+    ];
+
     private reserveDecks: Partial<Record<ClankDlcEnum, {
-        store: ClankCardConfig[];
         getCards: (userCount: number) => ClankCardConfig[];
     }>> = {
         [ClankDlcEnum.clank]: {
-            store: this.initClankReserveCards(1, false),
             getCards: (userCount) => this.initClankReserveCards(userCount, true),
         },
     };
 
     private startDecks: Partial<Record<ClankDlcEnum, {
-        store: ClankCardConfig[];
-        getCards: (playerId: string) => ClankCardConfig[]
+        getCards: (playerId: string) => ClankCardConfig[];
     }>> = {
         [ClankDlcEnum.clank]: {
-            store: this.initClankStartCards('', false),
             getCards: (playerId) => this.initClankStartCards(playerId, true),
         },
     };
 
     private shareDecks: Partial<Record<ClankDlcEnum, {
-        store: ClankCardConfig[];
-        getCards: () => ClankCardConfig[]
+        getCards: () => ClankCardConfig[];
     }>> = {
         [ClankDlcEnum.clank]: {
-            store: this.initClankDeckCards(false),
             getCards: () => this.initClankDeckCards(true),
         },
     };
 
-    constructor() { }
+    constructor(
+        private clankHelpService: ClankHelpService,
+        private toastService: ToastService,
+        private matDialog: MatDialog,
+    ) { }
 
     getReserveDecksCards(mapDlcId: ClankDlcEnum, userCount: number) {
         const ids: ClankDlcEnum[] = mapDlcId === ClankDlcEnum.clank
@@ -95,28 +116,103 @@ export class CardsService {
         return ids.flatMap((id) => this.reserveDecks[id]?.getCards(userCount) ?? []);
     }
 
-    getSelectStartDecks(): ClankSelectDeckValue[] {
-        return ClankDlcList.map(dlc => ({
-            ...dlc,
-            value: dlc.id === ClankDlcEnum.clank,
-            disabled: dlc.id === ClankDlcEnum.clank || this.startDecks[dlc.id] == null,
-        }));
-    }
-
     getStartDeckCards(id: ClankDlcEnum, playerId: string) {
         return this.startDecks[id]?.getCards(playerId) ?? [];
     }
 
-    getSelectShareDecks(): ClankSelectDeckValue[] {
-        return ClankDlcList.map(dlc => ({
-            ...dlc,
-            value: dlc.id === ClankDlcEnum.clank,
-            disabled: dlc.id === ClankDlcEnum.clank || this.startDecks[dlc.id] == null,
-        }));
-    }
-
     getShareDecksCards(ids: ClankDlcEnum[]) {
         return ids.flatMap((id) => this.shareDecks[id]?.getCards() ?? []);
+    }
+
+    async onEvent(data: {
+        state: GameInfoState,
+        card: ClankCardConfig,
+        eventName: keyof ClankCardBaseConfigEvents,
+    }) {
+        const cardInfo = this.getCardInfo(data.card);
+        const eventInfo = cardInfo?.events?.[data.eventName];
+        const state = cloneDeep(data.state);
+        if (eventInfo != null) {
+            const target = eventInfo.target ?? ClankTarget.current;
+            for (const player of state.players) {
+                const isCurrent = player.id === state.activePlayerId;
+                const isCurrentUpdate = isCurrent && target !== ClankTarget.other;
+                const isOtherUpdate = !isCurrent && target !== ClankTarget.current;
+                if (!isCurrentUpdate && !isOtherUpdate) {
+                    continue;
+                }
+                const isPlayerUpdate = this.updateBenefitInfo({
+                    player,
+                    cost: eventInfo.cost,
+                    benefit: eventInfo.benefit,
+                });
+                if (!isPlayerUpdate) {
+                    return null;
+                }
+                const result = await eventInfo?.callback?.(state, player) ?? true;
+                if (!result) {
+                    return null;
+                }
+                this.clankHelpService.checkBenefit(player, state);
+            }
+        }
+        const currentPlayer = state.players[state.activePlayerIndex];
+        this.clankHelpService.addActionLogs(state, {
+            text: data.eventName !== 'onArrive'
+                ? `${currentPlayer.name} ${ClankCardBaseConfigEventInfoByType[data.eventName].text} ${data.card.name}`
+                : `${ClankCardBaseConfigEventInfoByType[data.eventName].text} ${data.card.name}`,
+            colorId: data.eventName !== 'onArrive'
+                ? currentPlayer.colorId
+                : GamePlayerColorIdEnum.Black,
+            hideToast: true,
+        });
+        switch (data.eventName) {
+            case 'onArrive': {
+                state.dungeonRow.push(data.card);
+                break;
+            }
+            case 'onAcquire': {
+                if (data.card.count > 0) {
+                    state.dungeonRow = state.dungeonRow.filter(p => p.id !== data.card.id);
+                    state.reserveRow = state.reserveRow.filter(p => p.id !== data.card.id);
+                    if (![
+                        ClankCardType.device,
+                        ClankCardType.monster,
+                    ].includes(data.card.type)) {
+                        currentPlayer.discard.push(data.card);
+                    }
+                }
+                break;
+            }
+            case 'onUse': {
+                currentPlayer.hand = currentPlayer.hand.filter(p => p.id !== data.card.id),
+                currentPlayer.board.push(data.card);
+                currentPlayer.benefitInfo[data.card.type] = (currentPlayer.benefitInfo[data.card.type] ?? 0) + 1;
+                break;
+            }
+            case 'onDiscard': {
+                currentPlayer.hand = currentPlayer.hand.filter(p => p.id !== data.card.id),
+                currentPlayer.discard.push(data.card);
+                break;
+            }
+        }
+        this.clankHelpService.checkBenefit(currentPlayer, state);
+        return state;
+    }
+
+    getPoints(data: {
+        state: GameInfoState;
+        player: ClankPlayerConfig;
+        card: ClankCardConfig;
+    }) {
+        const state = cloneDeep(data.state);
+        const cardInfo = this.getCardInfo(data.card);
+        return cardInfo?.events?.getPoints?.(state, data.player) ?? 0;
+    }
+
+    private getCardInfo(card: ClankCardConfig) {
+        const [find_string] = card.id.split('__');
+        return this.store.find(p => p.find_string === find_string);
     }
 
     private initClankReserveCards(userCount: number, withCopy: boolean) {
@@ -128,20 +224,18 @@ export class CardsService {
                 description: 'Исследование',
                 isReserve: true,
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 3,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 3,
                         },
-                    ],
-                },
-                benefit: {
-                    skill: 2,
-                    boot: 1,
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 2,
+                            boot: 1,
+                        },
+                    },
                 },
                 count: (userCount * 4) - 1,
             },
@@ -152,20 +246,18 @@ export class CardsService {
                 description: 'Наёмник',
                 isReserve: true,
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 2,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 2,
                         },
-                    ],
-                },
-                benefit: {
-                    skill: 1,
-                    sword: 2,
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 1,
+                            sword: 2,
+                        },
+                    },
                 },
                 count: (userCount * 4) - 1,
             },
@@ -176,19 +268,15 @@ export class CardsService {
                 description: 'Книга тайн',
                 isReserve: true,
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 7,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 7,
                         },
-                    ],
-                },
-                points: {
-                    value: 7,
+                    },
+                    getPoints(state) {
+                        return 7;
+                    },
                 },
                 count: (userCount * 4) - 1,
             },
@@ -199,19 +287,15 @@ export class CardsService {
                 description: 'Гоблин',
                 isReserve: true,
                 type: ClankCardType.monster,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                sword: 2,
-                            },
-                            benefit: {
-                                coin: 1,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            sword: 2,
                         },
-                    ],
+                        benefit: {
+                            coin: 1,
+                        },
+                    },
                 },
                 count: -1,
             },
@@ -232,8 +316,12 @@ export class CardsService {
                 name: ClankCardName.Burgle,
                 description: ClankCardName.Burgle,
                 type: ClankCardType.start,
-                benefit: {
-                    skill: 1,
+                events: {
+                    onUse: {
+                        benefit: {
+                            skill: 1,
+                        },
+                    },
                 },
                 count: 6,
             },
@@ -243,9 +331,13 @@ export class CardsService {
                 name: ClankCardName.Scramble,
                 description: ClankCardName.Scramble,
                 type: ClankCardType.start,
-                benefit: {
-                    skill: 1,
-                    boot: 1,
+                events: {
+                    onUse: {
+                        benefit: {
+                            skill: 1,
+                            boot: 1,
+                        },
+                    },
                 },
                 count: 1,
             },
@@ -255,8 +347,12 @@ export class CardsService {
                 name: ClankCardName.Sidestep,
                 description: ClankCardName.Sidestep,
                 type: ClankCardType.start,
-                benefit: {
-                    boot: 1,
+                events: {
+                    onUse: {
+                        benefit: {
+                            boot: 1,
+                        },
+                    },
                 },
                 count: 1,
             },
@@ -266,8 +362,12 @@ export class CardsService {
                 name: ClankCardName.Stumble,
                 description: ClankCardName.Stumble,
                 type: ClankCardType.start,
-                benefit: {
-                    clank: 1,
+                events: {
+                    onUse: {
+                        benefit: {
+                            clank: 1,
+                        },
+                    },
                 },
                 count: 2,
             },
@@ -282,6 +382,7 @@ export class CardsService {
     }
 
     private initClankDeckCards(withCopy: boolean) {
+        const self = this;
         const cards: ClankCardBaseConfig[] = [
             {
                 row: 0,
@@ -289,25 +390,23 @@ export class CardsService {
                 name: 'Амулет силы',
                 description: 'Амулет силы',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 7,
-                            },
-                            benefit: {
-                                heal: 1,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 7,
                         },
-                    ],
-                },
-                benefit: {
-                    skill: 4,
-                },
-                points: {
-                    value: 3,
+                        benefit: {
+                            heal: 1,
+                        },
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 4,
+                        },
+                    },
+                    getPoints(state) {
+                        return 3;
+                    },
                 },
                 count: 1,
             },
@@ -317,46 +416,51 @@ export class CardsService {
                 name: 'Аптекарь',
                 description: 'Аптекарь',
                 type: ClankCardType.companion,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 3,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 3,
                         },
-                    ],
-                },
-                actions: {
-                    type: 'some',
-                    count: 1,
-                    cost: {
-                        discardCard: 1,
                     },
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            benefit: {
-                                sword: 3,
-                            },
+                    onUse: {
+                        cost: {
+                            discardCard: 1,
                         },
-                        {
-                            target: ClankTarget.current,
-                            benefit: {
-                                coin: 2,
-                            },
+                        async callback(state) {
+                            return await self.openDialogChooseCardEvent({
+                                count: 1,
+                                list: [
+                                    {
+                                        description: 'Получить одну монетку',
+                                        event: () => {
+                                            const currentPlayer = state.players[state.activePlayerIndex];
+                                            return self.updateBenefitInfo({
+                                                player: currentPlayer,
+                                                benefit: {
+                                                    coin: 1,
+                                                },
+                                            });
+                                        },
+                                    },
+                                    {
+                                        description: 'Восстановить одно очко здоровья',
+                                        event: () => {
+                                            const currentPlayer = state.players[state.activePlayerIndex];
+                                            return self.updateBenefitInfo({
+                                                player: currentPlayer,
+                                                benefit: {
+                                                    heal: 1,
+                                                },
+                                            });
+                                        },
+                                    },
+                                ],
+                            });
                         },
-                        {
-                            target: ClankTarget.current,
-                            benefit: {
-                                heal: 1,
-                            },
-                        },
-                    ],
-                },
-                points: {
-                    value: 2,
+                    },
+                    getPoints(state) {
+                        return 2;
+                    },
                 },
                 count: 1,
             },
@@ -366,42 +470,32 @@ export class CardsService {
                 name: 'Археолог',
                 description: 'Археолог',
                 type: ClankCardType.companion,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 2,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 2,
                         },
-                    ],
-                },
-                actions: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            benefit: {
-                                card: 1,
-                            },
+                    },
+                    onUse: {
+                        benefit: {
+                            card: 1,
                         },
-                        {
-                            target: ClankTarget.current,
-                            has: {
-                                count: 1,
-                                cost: {
-                                    monkey_idol: 1,
+                        async callback(state) {
+                            const currentPlayer = state.players[state.activePlayerIndex];
+                            if (!currentPlayer.benefitInfo.monkey_idol) {
+                                return true;
+                            }
+                            return self.updateBenefitInfo({
+                                player: currentPlayer,
+                                benefit: {
+                                    skill: 2,
                                 },
-                            },
-                            benefit: {
-                                skill: 2,
-                            },
+                            });
                         },
-                    ],
-                },
-                points: {
-                    value: 1,
+                    },
+                    getPoints(state) {
+                        return 1;
+                    },
                 },
                 count: 1,
             },
@@ -411,25 +505,23 @@ export class CardsService {
                 name: 'Ботинки скорости',
                 description: 'Ботинки скорости',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 5,
-                            },
-                            benefit: {
-                                boot: 1,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 5,
                         },
-                    ],
-                },
-                benefit: {
-                    boot: 3,
-                },
-                points: {
-                    value: 3,
+                        benefit: {
+                            boot: 1,
+                        },
+                    },
+                    onUse: {
+                        benefit: {
+                            boot: 3,
+                        },
+                    },
+                    getPoints(state) {
+                        return 3;
+                    },
                 },
                 count: 1,
             },
@@ -439,22 +531,20 @@ export class CardsService {
                 name: 'Наручи проворности',
                 description: 'Наручи проворности',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 5,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 5,
                         },
-                    ],
-                },
-                benefit: {
-                    card: 2,
-                },
-                points: {
-                    value: 2,
+                    },
+                    onUse: {
+                        benefit: {
+                            card: 2,
+                        },
+                    },
+                    getPoints(state) {
+                        return 2;
+                    },
                 },
                 count: 1,
             },
@@ -464,19 +554,17 @@ export class CardsService {
                 name: 'Гениальность',
                 description: 'Гениальность',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 6,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 6,
                         },
-                    ],
-                },
-                benefit: {
-                    card: 3,
+                    },
+                    onUse: {
+                        benefit: {
+                            card: 3,
+                        },
+                    },
                 },
                 count: 1,
             },
@@ -486,26 +574,24 @@ export class CardsService {
                 name: 'Жрица Солнца',
                 description: 'Жрица Солнца',
                 type: ClankCardType.companion,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 3,
-                            },
-                            benefit: {
-                                heal: 1,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 3,
                         },
-                    ],
-                },
-                benefit: {
-                    skill: 2,
-                    sword: 1,
-                },
-                points: {
-                    value: 1,
+                        benefit: {
+                            heal: 1,
+                        },
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 2,
+                            sword: 1,
+                        },
+                    },
+                    getPoints(state) {
+                        return 1;
+                    },
                 },
                 count: 1,
             },
@@ -515,31 +601,19 @@ export class CardsService {
                 name: 'Бежать сломя голову',
                 description: 'Бежать сломя голову',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 3,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 3,
                         },
-                    ],
-                },
-                benefit: {
-                    boot: 2,
-                },
-                actions: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            benefit: {
-                                clank: 2,
-                                ignore_crystal_cave: 1,
-                            },
+                    },
+                    onUse: {
+                        benefit: {
+                            boot: 2,
+                            clank: 2,
+                            ignore_crystal_cave: 1,
                         },
-                    ],
+                    },
                 },
                 count: 1,
             },
@@ -549,28 +623,26 @@ export class CardsService {
                 name: 'Бриллиант',
                 description: 'Бриллиант',
                 type: ClankCardType.gem,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 8,
-                            },
-                            benefit: {
-                                clank: 2,
-                            },
+                events: {
+                    onArrive: {
+                        isDragonAttack: true,
+                    },
+                    onAcquire: {
+                        cost: {
+                            skill: 8,
                         },
-                    ],
-                },
-                benefit: {
-                    card: 1,
-                },
-                arrive: {
-                    isDragonAttack: true,
-                },
-                points: {
-                    value: 8,
+                        benefit: {
+                            clank: 2,
+                        },
+                    },
+                    onUse: {
+                        benefit: {
+                            card: 1,
+                        },
+                    },
+                    getPoints(state) {
+                        return 8;
+                    },
                 },
                 count: 1,
             },
@@ -581,33 +653,27 @@ export class CardsService {
                 description: 'Драконье око',
                 type: ClankCardType.gem,
                 onlyDepthsArea: true,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 5,
-                            },
-                            benefit: {
-                                clank: 2,
-                            },
-                        },
-                    ],
-                },
-                benefit: {
-                    card: 1,
-                },
-                arrive: {
-                    isDragonAttack: true,
-                },
-                points: {
-                    value: 10,
-                    has: {
+                events: {
+                    onArrive: {
+                        isDragonAttack: true,
+                    },
+                    onAcquire: {
                         cost: {
-                            mastery_token: 1,
+                            skill: 5,
                         },
-                        count: 1,
+                        benefit: {
+                            clank: 2,
+                        },
+                    },
+                    onUse: {
+                        benefit: {
+                            card: 1,
+                        },
+                    },
+                    getPoints(state, player) {
+                        return !player.benefitInfo.mastery_token
+                            ? 0
+                            : 10;
                     },
                 },
                 count: 1,
@@ -618,30 +684,33 @@ export class CardsService {
                 name: 'Дварф-лоточник',
                 description: 'Дварф-лоточник',
                 type: ClankCardType.companion,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 4,
-                            },
-                        },
-                    ],
-                },
-                benefit: {
-                    coin: 2,
-                    boot: 1,
-                },
-                points: {
-                    value: 4,
-                    has: {
+                events: {
+                    onAcquire: {
                         cost: {
-                            cup: 1,
-                            dragon_egg: 1,
-                            monkey_idol: 1,
+                            skill: 4,
                         },
-                        count: 2,
+                    },
+                    onUse: {
+                        benefit: {
+                            coin: 2,
+                            boot: 1,
+                        },
+                    },
+                    getPoints(state, player) {
+                        const list = [
+                            ClankElementByToken.cup,
+                            ClankElementByToken.dragon_egg,
+                            ClankElementByToken.monkey_idol,
+                        ];
+                        const count = list.reduce((acc, key) => {
+                            if ((player.benefitInfo[key] ?? 0) > 0) {
+                                return acc + 1;
+                            }
+                            return acc;
+                        }, 0);
+                        return count > 2
+                            ? 4
+                            : 0;
                     },
                 },
                 count: 1,
@@ -652,24 +721,22 @@ export class CardsService {
                 name: 'Эльфийские сапоги',
                 description: 'Эльфийские сапоги',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 4,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 4,
                         },
-                    ],
-                },
-                benefit: {
-                    skill: 1,
-                    boot: 1,
-                    card: 1,
-                },
-                points: {
-                    value: 2,
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 1,
+                            boot: 1,
+                            card: 1,
+                        },
+                    },
+                    getPoints(state, player) {
+                        return 2;
+                    },
                 },
                 count: 1,
             },
@@ -679,24 +746,22 @@ export class CardsService {
                 name: 'Эльфийский плащ',
                 description: 'Эльфийский плащ',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 4,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 4,
                         },
-                    ],
-                },
-                benefit: {
-                    skill: 1,
-                    clank: -2,
-                    card: 1,
-                },
-                points: {
-                    value: 2,
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 1,
+                            clank: -2,
+                            card: 1,
+                        },
+                    },
+                    getPoints(state, player) {
+                        return 2;
+                    },
                 },
                 count: 1,
             },
@@ -706,24 +771,22 @@ export class CardsService {
                 name: 'Эльфийский кинжал',
                 description: 'Эльфийский кинжал',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 4,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 4,
                         },
-                    ],
-                },
-                benefit: {
-                    skill: 1,
-                    sword: 1,
-                    card: 1,
-                },
-                points: {
-                    value: 2,
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 1,
+                            sword: 1,
+                            card: 1,
+                        },
+                    },
+                    getPoints(state, player) {
+                        return 2;
+                    },
                 },
                 count: 1,
             },
@@ -733,28 +796,26 @@ export class CardsService {
                 name: 'Изумруд',
                 description: 'Изумруд',
                 type: ClankCardType.gem,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 5,
-                            },
-                            benefit: {
-                                clank: 2,
-                            },
+                events: {
+                    onArrive: {
+                        isDragonAttack: true,
+                    },
+                    onAcquire: {
+                        cost: {
+                            skill: 5,
                         },
-                    ],
-                },
-                benefit: {
-                    card: 1,
-                },
-                arrive: {
-                    isDragonAttack: true,
-                },
-                points: {
-                    value: 5,
+                        benefit: {
+                            clank: 2,
+                        },
+                    },
+                    onUse: {
+                        benefit: {
+                            card: 1,
+                        },
+                    },
+                    getPoints(state, player) {
+                        return 5;
+                    },
                 },
                 count: 1,
             },
@@ -764,34 +825,22 @@ export class CardsService {
                 name: 'Ковёр-самолёт',
                 description: 'Ковёр-самолёт',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 6,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 6,
                         },
-                    ],
-                },
-                benefit: {
-                    boot: 2,
-                },
-                actions: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            benefit: {
-                                ignore_crystal_cave: 1,
-                                ignore_monster: 1,
-                            },
+                    },
+                    onUse: {
+                        benefit: {
+                            boot: 2,
+                            ignore_crystal_cave: 1,
+                            ignore_monster: 1,
                         },
-                    ],
-                },
-                points: {
-                    value: 2,
+                    },
+                    getPoints(state, player) {
+                        return 2;
+                    },
                 },
                 count: 1,
             },
@@ -801,34 +850,22 @@ export class CardsService {
                 name: 'Сборщик драгоценностей',
                 description: 'Сборщик драгоценностей',
                 type: ClankCardType.companion,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 4,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 4,
                         },
-                    ],
-                },
-                benefit: {
-                    skill: 2,
-                    clank: -2,
-                },
-                actions: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            benefit: {
-                                gem_cost_less: 2,
-                            },
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 2,
+                            clank: -2,
+                            gem_cost_less: 2,
                         },
-                    ],
-                },
-                points: {
-                    value: 2,
+                    },
+                    getPoints(state, player) {
+                        return 2;
+                    },
                 },
                 count: 1,
             },
@@ -838,23 +875,21 @@ export class CardsService {
                 name: 'Взывающий к Древним',
                 description: 'Взывающий к Древним',
                 type: ClankCardType.companion,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 4,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 4,
                         },
-                    ],
-                },
-                benefit: {
-                    teleport: 1,
-                    clank: 1,
-                },
-                points: {
-                    value: 1,
+                    },
+                    onUse: {
+                        benefit: {
+                            teleport: 1,
+                            clank: 1,
+                        },
+                    },
+                    getPoints(state, player) {
+                        return 1;
+                    },
                 },
                 count: 1,
             },
@@ -864,39 +899,31 @@ export class CardsService {
                 name: 'Кобольд-торгаш',
                 description: 'Кобольд-торгаш',
                 type: ClankCardType.companion,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 3,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 3,
                         },
-                    ],
-                },
-                benefit: {
-                    coin: 2,
-                },
-                actions: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            has: {
-                                count: 1,
-                                cost: {
-                                    artefact: 1,
+                    },
+                    onUse: {
+                        benefit: {
+                            coin: 2,
+                        },
+                        async callback(state, player) {
+                            if (!player.artifacts.length) {
+                                return true;
+                            }
+                            return self.updateBenefitInfo({
+                                player,
+                                benefit: {
+                                    skill: 2,
                                 },
-                            },
-                            benefit: {
-                                skill: 2,
-                            },
+                            });
                         },
-                    ],
-                },
-                points: {
-                    value: 1,
+                    },
+                    getPoints(state, player) {
+                        return 1;
+                    },
                 },
                 count: 1,
             },
@@ -906,24 +933,22 @@ export class CardsService {
                 name: 'Счастливая монетка',
                 description: 'Счастливая монетка',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 1,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 1,
                         },
-                    ],
-                },
-                benefit: {
-                    skill: 1,
-                    clank: 1,
-                    card: 1,
-                },
-                points: {
-                    value: 1,
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 1,
+                            clank: 1,
+                            card: 1,
+                        },
+                    },
+                    getPoints(state, player) {
+                        return 1;
+                    },
                 },
                 count: 1,
             },
@@ -933,23 +958,24 @@ export class CardsService {
                 name: 'Профессиональный ворюга',
                 description: 'Профессиональный ворюга',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 3,
-                            },
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 3,
                         },
-                    ],
-                },
-                benefit: {
-                    skill: 2,
-                },
-                needTrashCards: [ClankCardName.Burgle],
-                points: {
-                    value: 2,
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 2,
+                        },
+                        async callback(state, player) {
+                            player.needTrashCards.push(ClankCardName.Burgle);
+                            return true;
+                        },
+                    },
+                    getPoints(state, player) {
+                        return 2;
+                    },
                 },
                 count: 1,
             },
@@ -959,41 +985,51 @@ export class CardsService {
                 name: 'Господин Усач',
                 description: 'Господин Усач',
                 type: ClankCardType.basiс,
-                acquire: {
-                    type: 'every',
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            cost: {
-                                skill: 1,
-                            },
+                events: {
+                    onArrive: {
+                        isDragonAttack: true,
+                    },
+                    onAcquire: {
+                        cost: {
+                            skill: 1,
                         },
-                    ],
-                },
-                actions: {
-                    type: 'some',
-                    count: 1,
-                    list: [
-                        {
-                            target: ClankTarget.current,
-                            benefit: {
-                                clank: -2,
-                            },
+                    },
+                    onUse: {
+                        async callback(state, player) {
+                            return await self.openDialogChooseCardEvent({
+                                count: 1,
+                                list: [
+                                    {
+                                        description: 'Дракон атакует',
+                                        event: () => {
+                                            const currentPlayer = state.players[state.activePlayerIndex];
+                                            return self.updateBenefitInfo({
+                                                player: currentPlayer,
+                                                benefit: {
+                                                    dragon_attack: 1,
+                                                },
+                                            });
+                                        },
+                                    },
+                                    {
+                                        description: '-2 Бдзынь',
+                                        event: () => {
+                                            const currentPlayer = state.players[state.activePlayerIndex];
+                                            return self.updateBenefitInfo({
+                                                player: currentPlayer,
+                                                benefit: {
+                                                    clank: -2,
+                                                },
+                                            });
+                                        },
+                                    },
+                                ],
+                            });
                         },
-                        {
-                            target: ClankTarget.all,
-                            benefitDescription: 'Дракон атакует',
-                            benefit: {
-                                dragon_attack: 1,
-                            },
-                        },
-                    ],
-                },
-                arrive: {
-                    isDragonAttack: true,
-                },
-                points: {
-                    value: 2,
+                    },
+                    getPoints(state, player) {
+                        return 2;
+                    },
                 },
                 count: 1,
             },
@@ -1004,6 +1040,47 @@ export class CardsService {
                 name: 'Святилище',
                 description: 'Получите одну манетку или восстановите 1 очко здоровья',
                 type: ClankCardType.device,
+                events: {
+                    onArrive: {
+                        async callback(state, player) {
+                            Array(3).fill(GamePlayerColorIdEnum.Black).forEach(colorId => {
+                                state.dragonInfo.clankBag.push(colorId);
+                            });
+                            return true;
+                        },
+                    },
+                    onAcquire: {
+                        async callback(state, player) {
+                            return await self.openDialogChooseCardEvent({
+                                count: 1,
+                                list: [
+                                    {
+                                        description: 'Получить одну монетку',
+                                        event: () => {
+                                            return self.updateBenefitInfo({
+                                                player,
+                                                benefit: {
+                                                    coin: 1,
+                                                },
+                                            });
+                                        },
+                                    },
+                                    {
+                                        description: 'Восстановить одно очко здоровья',
+                                        event: () => {
+                                            return self.updateBenefitInfo({
+                                                player,
+                                                benefit: {
+                                                    heal: 1,
+                                                },
+                                            });
+                                        },
+                                    },
+                                ],
+                            });
+                        },
+                    },
+                },
                 count: 2,
             },
         ];
@@ -1013,6 +1090,43 @@ export class CardsService {
             position: ClankCardPositionEnum.dungeonDeck,
         };
         return this.mappingDeckCards(shareDeckConfig, withCopy);
+    }
+
+    private updateBenefitInfo(data: {
+        player: ClankPlayerConfig;
+        cost?: ClankCostInfo;
+        benefit?: ClankCostInfo;
+    }) {
+        if (!this.clankHelpService.canUse(data)) {
+            return false;
+        }
+        data.player.benefitInfo = updateBenefitInfo({
+            benefit: data.player.benefitInfo,
+            cost: data.cost ?? {},
+            isBenefit: false,
+        });
+        data.player.benefitInfo = updateBenefitInfo({
+            benefit: data.player.benefitInfo,
+            cost: data.benefit ?? {},
+            isBenefit: true,
+        });
+        return true;
+    }
+
+    private async openDialogChooseCardEvent(data: ChooseCardEventComponentData) {
+        const dialog = this.matDialog.open<
+            ChooseCardEventComponent,
+            ChooseCardEventComponentData,
+            ChooseCardEventComponentItem[]
+        >(
+            ChooseCardEventComponent,
+            {
+                data,
+                width: '500px',
+            },
+        );
+        const list = await dialog.afterClosed().toPromise();
+        return list?.every(p => p.event()) ?? false;
     }
 
     private mappingDeckCards(data: ClankDeckConfig, withCopy: boolean) {
@@ -1037,6 +1151,6 @@ export class CardsService {
                 return cardConfig;
             });
         });
-    };
+    }
 
 }

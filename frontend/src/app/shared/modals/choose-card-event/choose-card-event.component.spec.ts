@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChooseSomeActionsComponent } from './choose-some-actions.component';
+import { ChooseCardEventComponent } from './choose-card-event.component';
 
-describe('ChooseSomeActionsComponent', () => {
-  let component: ChooseSomeActionsComponent;
-  let fixture: ComponentFixture<ChooseSomeActionsComponent>;
+describe('ChooseCardEventComponent', () => {
+  let component: ChooseCardEventComponent;
+  let fixture: ComponentFixture<ChooseCardEventComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ChooseSomeActionsComponent ]
+      declarations: [ ChooseCardEventComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChooseSomeActionsComponent);
+    fixture = TestBed.createComponent(ChooseCardEventComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

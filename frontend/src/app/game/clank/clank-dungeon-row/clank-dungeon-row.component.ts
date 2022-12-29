@@ -16,19 +16,16 @@ import {
     cardWidth,
     ISelectedPlayerCardInfo,
 } from 'src/app/shared/components/clank-card/clank-card.types';
-import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
-import { UseCardType } from 'src/app/shared/models/cards/cards.types';
 import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankCardConfig } from '@shared/clank/clank-card.types';
-import { ClankCostInfo } from '@shared/clank/clank-info.types';
 import { ClankMapElementConfig } from '@shared/clank/clank-map.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
-import { GameCardService } from '../services/game-card.service';
+import { ClankHelpService } from '../services/clank-help.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
 
@@ -146,12 +143,12 @@ export class ClankDungeonRowComponent implements OnInit {
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
-        private gameCardService: GameCardService,
         private toastService: ToastService,
         @Inject(MAT_BOTTOM_SHEET_DATA) public data: {
             gameInfoQuery: GameInfoQuery;
             gameInfoService: GameInfoService;
             player: ClankPlayerConfig;
+            clankHelpService: ClankHelpService;
         },
     ) { }
 
@@ -169,24 +166,7 @@ export class ClankDungeonRowComponent implements OnInit {
             this.toastService.showWarn(`Можно купить только в подземелье`);
             return;
         }
-        const actions = await this.gameCardService.getActions({
-            card,
-            player: this.data.player,
-            type: 'acquire',
-        });
-        if (!actions.length) {
-            return;
-        }
-        const benefitInfo: ClankCostInfo = updateBenefitInfoByAction({
-            player: this.data.player,
-            list: actions,
-        });
-        this.data.gameInfoService.useCard({
-            playerId: this.data.player.id,
-            card,
-            benefitInfo,
-            type: UseCardType.buy,
-        });
+        this.data.gameInfoService.useCard(card, 'onAcquire');
         this.changeDetectorRef.detectChanges();
     }
 
@@ -194,7 +174,10 @@ export class ClankDungeonRowComponent implements OnInit {
         if (!this.playerPosition?.isMarket) {
             return;
         }
-        if (!this.gameCardService.canUseToken(tokenInfo, this.data.player)) {
+        if (!this.data.clankHelpService.canUse({
+            cost: tokenInfo.cost,
+            player: this.data.player,
+        })) {
             return;
         }
         this.data.gameInfoService.useToken({

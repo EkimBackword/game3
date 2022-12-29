@@ -41,6 +41,7 @@ import {
 import { BsToastComponent } from './modals/bs-toast/bs-toast.component';
 import { ConfirmModalComponent } from './modals/confirm-modal/confirm-modal.component';
 import { SharedComponent } from './shared.component';
+import { ChooseCardEventComponent } from './modals/choose-card-event/choose-card-event.component';
 
 const exports = [
     CommonModule,
@@ -85,6 +86,7 @@ const exportsComponents = [
     declarations: [
         SharedComponent,
         ...exportsComponents,
+        ChooseCardEventComponent,
     ],
     providers: [
         {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},

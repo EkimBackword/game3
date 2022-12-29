@@ -18,21 +18,14 @@ import {
 } from 'src/app/shared/components/clank-card/clank-card.types';
 import { ClankCostInfoDirection } from 'src/app/shared/components/clank-cost-info/clank-cost-info.types';
 import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
-import { updateBenefitInfoByAction } from 'src/app/shared/models/actions.types';
-import { UseCardType } from 'src/app/shared/models/cards/cards.types';
 import {
     ClankCostInfoType,
     ClankElementTypeMap,
 } from 'src/app/shared/models/clank-element-types';
-import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
-import { ClankCardConfig } from '@shared/clank/clank-card.types';
-import {
-    ClankCostInfo,
-    ClankElementByTurnList,
-} from '@shared/clank/clank-info.types';
+import { ClankElementByTurnList } from '@shared/clank/clank-info.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import {
     ClankTokenConfig,
@@ -45,7 +38,7 @@ import {
     TrashCardsComponentData,
     TrashCardsComponentResult,
 } from '../dialogs/trash-cards/trash-cards.component';
-import { GameCardService } from '../services/game-card.service';
+import { ClankHelpService } from '../services/clank-help.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
 
@@ -116,9 +109,9 @@ export class ClankPlayerInfoComponent implements OnInit {
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
+        private clankHelpService: ClankHelpService,
         private gameInfoQuery: GameInfoQuery,
         private gameInfoService: GameInfoService,
-        private gameCardService: GameCardService,
         private matBottomSheet: MatBottomSheet,
         private matDialog: MatDialog,
         private toastService: ToastService,
@@ -142,70 +135,6 @@ export class ClankPlayerInfoComponent implements OnInit {
         });
     }
 
-    async useCard(card: ClankCardConfig, player: ClankPlayerConfig) {
-        const actions = await this.gameCardService.getActions({
-            card,
-            player,
-            type: 'actions',
-        });
-        if (card.actions != null && !actions.length) {
-            const matDialogRef = this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
-                ConfirmModalComponent,
-                {
-                    data: {
-                        textList: ['Вы уверены что хотите разыграть эту карту?'],
-                    },
-                },
-            );
-            const result = await matDialogRef.afterClosed().toPromise();
-            if (!result) {
-                return;
-            }
-        }
-        let benefitInfo: ClankCostInfo = actions.length
-            ? updateBenefitInfoByAction({
-                player,
-                list: actions,
-            })
-            : player.benefitInfo;
-        if (card.actions?.cost != null) {
-            benefitInfo = updateBenefitInfo({
-                benefit: benefitInfo,
-                cost: card.actions?.cost,
-                isBenefit: false,
-            });
-        }
-        this.gameInfoService.useCard({
-            playerId: player.id,
-            card,
-            benefitInfo: card?.benefit != null
-                ? updateBenefitInfo({
-                    benefit: benefitInfo,
-                    cost: card.benefit,
-                    isBenefit: true,
-                })
-                : player.benefitInfo,
-            type: UseCardType.use,
-        });
-        this.changeDetectorRef.detectChanges();
-    }
-
-    discard(card: ClankCardConfig, player: ClankPlayerConfig) {
-        this.gameInfoService.useCard({
-            playerId: player.id,
-            card,
-            benefitInfo: updateBenefitInfo({
-                benefit: player.benefitInfo,
-                cost: {
-                    discardCard: 1,
-                },
-                isBenefit: true,
-            }),
-            type: UseCardType.use,
-        });
-        this.changeDetectorRef.detectChanges();
-    }
-
     openDungeonRow(player: ClankPlayerConfig) {
         this.matBottomSheet.open<
             ClankDungeonRowComponent,
@@ -216,6 +145,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 data: {
                     gameInfoQuery: this.gameInfoQuery,
                     gameInfoService: this.gameInfoService,
+                    clankHelpService: this.clankHelpService,
                     player,
                 },
             },
@@ -362,7 +292,10 @@ export class ClankPlayerInfoComponent implements OnInit {
                         canUse: () => player.id === this.activePlayer.id
                             && this.activePlayer.id === this.currentPlayer?.id
                             && (player.benefitInfo.discardCard ?? 0) >= 0,
-                        callback: () => this.useCard(card, player),
+                        callback: async () => {
+                            await this.gameInfoService.useCard(card, 'onUse');
+                            this.changeDetectorRef.detectChanges();
+                        },
                     },
                     {
                         name: 'Сбросить карту',
@@ -370,7 +303,10 @@ export class ClankPlayerInfoComponent implements OnInit {
                         canUse: () => player.id === this.activePlayer.id
                             && this.activePlayer.id === this.currentPlayer?.id
                             && (player.benefitInfo.discardCard ?? 0) < 0,
-                        callback: () => this.discard(card, player),
+                        callback: async () => {
+                            await this.gameInfoService.useCard(card, 'onDiscard');
+                            this.changeDetectorRef.detectChanges();
+                        },
                     },
                 ],
             };

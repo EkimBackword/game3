@@ -33,7 +33,7 @@ import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
 import { UseSwordsOrHealthComponent } from '../dialogs/use-swords-or-health/use-swords-or-health.component';
-import { GameCardService } from '../services/game-card.service';
+import { ClankHelpService } from '../services/clank-help.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
 
@@ -109,7 +109,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     private ngUnsubscribe = new Subject();
 
     constructor(
-        private gameCardService: GameCardService,
+        private clankHelpService: ClankHelpService,
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
         private matDialog: MatDialog,
@@ -128,7 +128,11 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (this.mapElement == null || !this.canDoByPlayer(this.activePlayer)) {
             return;
         }
-        if (!this.gameCardService.canActivePlayerMove(link, this.activePlayer)) {
+        if (!this.clankHelpService.canUse({
+            cost: link.cost,
+            player: this.activePlayer,
+            isMove: true,
+        })) {
             return;
         }
         const isIgnoreMonster = (this.activePlayer.benefitInfo.ignore_monster ?? 0) > 0;

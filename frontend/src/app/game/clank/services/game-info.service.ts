@@ -6,10 +6,6 @@ import { Router } from '@angular/router';
 
 import * as lodash from 'lodash';
 import * as moment from 'moment';
-import {
-    UseCardInfoByType,
-    UseCardType,
-} from 'src/app/shared/models/cards/cards.types';
 import { ClankOneTurnInfo } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
@@ -28,17 +24,17 @@ import { TokensService } from 'src/app/shared/services/tokens.service';
 
 import { arrayUpdate } from '@datorama/akita';
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
-import { ClankCardConfig } from '@shared/clank/clank-card.types';
+import {
+    ClankCardBaseConfigEvents,
+    ClankCardConfig,
+} from '@shared/clank/clank-card.types';
 import { initDragonInfo } from '@shared/clank/clank-dragon.types';
 import {
     GameInfoActionLogData,
     GameInfoState,
     GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
-import {
-    ClankCardType,
-    ClankCostInfo,
-} from '@shared/clank/clank-info.types';
+import { ClankCostInfo } from '@shared/clank/clank-info.types';
 import { ClankMapElementConfig } from '@shared/clank/clank-map.types';
 import {
     ClankPlayerConfig,
@@ -49,6 +45,7 @@ import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 import { SocketErrorTypeEnum } from '@shared/socket.types';
 
 import { TrashCardsComponentResult } from '../dialogs/trash-cards/trash-cards.component';
+import { ClankHelpService } from './clank-help.service';
 import { GameInfoQuery } from './game-info.query';
 import { GameInfoStore } from './game-info.store';
 
@@ -64,6 +61,7 @@ export class GameInfoService implements OnDestroy {
         private gameInfoQuery: GameInfoQuery,
         private gameInfoStore: GameInfoStore,
         private cardsService: CardsService,
+        private clankHelpService: ClankHelpService,
         private socketService: SocketService,
         private toastService: ToastService,
         private tokensService: TokensService,
@@ -137,7 +135,8 @@ export class GameInfoService implements OnDestroy {
             if (player == null || mapElement == null) {
                 return state;
             }
-            this.setBenefits(player, benefitInfo, state);
+            player.benefitInfo = benefitInfo;
+            this.clankHelpService.checkBenefit(player, state);
             player.elementId = mapElement.id;
             const isFinish = mapElement.isStart ?? false;
             if (isFinish) {
@@ -160,62 +159,19 @@ export class GameInfoService implements OnDestroy {
         this.onGameUpdated();
     }
 
-    useCard({
-        playerId,
-        card,
-        benefitInfo,
-        type,
-    }: {
-        playerId: string;
-        card: ClankCardConfig;
-        benefitInfo: ClankCostInfo;
-        type: UseCardType;
-    }) {
-        this.gameInfoStore.update((oldState) => {
-            const state = lodash.cloneDeep(oldState);
-            const player = state.players.find(p => p.id === playerId);
-            if (player == null || card == null) {
-                return state;
-            }
-            this.addActionLogs(state, {
-                text: `${player.name} ${UseCardInfoByType[type].text} ${card.name}`,
-                colorId: player.colorId,
-                hideToast: true,
-            });
-            this.setBenefits(player, benefitInfo, state);
-            switch (type) {
-                case UseCardType.use: {
-                    player.hand = player.hand.filter(p => p.id !== card.id),
-                    player.board.push(card);
-                    player.benefitInfo[card.type] = (player.benefitInfo[card.type] ?? 0) + 1;
-                    if (card.needTrashCards) {
-                        player.needTrashCards = [
-                            ...player.needTrashCards,
-                            ...card.needTrashCards,
-                        ];
-                    }
-                    break;
-                }
-                case UseCardType.buy: {
-                    if (card.count > 0) {
-                        state.dungeonRow = state.dungeonRow.filter(p => p.id !== card.id);
-                        state.reserveRow = state.reserveRow.filter(p => p.id !== card.id);
-                        if (![
-                            ClankCardType.device,
-                            ClankCardType.monster,
-                        ].includes(card.type)) {
-                            player.discard.push(card);
-                        }
-                    }
-                }
-            }
-            state.players = arrayUpdate(
-                state.players,
-                player.id,
-                player,
-            );
-            return state;
+    async useCard(
+        card: ClankCardConfig,
+        eventName: keyof ClankCardBaseConfigEvents,
+    ) {
+        const newState = await this.cardsService.onEvent({
+            state: this.gameInfoQuery.getValue(),
+            card,
+            eventName,
         });
+        if (newState == null) {
+            return;
+        }
+        this.gameInfoStore.update(newState);
         this.onGameUpdated();
     }
 
@@ -227,12 +183,12 @@ export class GameInfoService implements OnDestroy {
                 return state;
             }
             if (artifact.benefit != null) {
-                const benefitInfo = updateBenefitInfo({
+                player.benefitInfo = updateBenefitInfo({
                     benefit: player.benefitInfo,
                     cost: artifact.benefit,
                     isBenefit: true,
                 });
-                this.setBenefits(player, benefitInfo, state);
+                this.clankHelpService.checkBenefit(player, state);
             }
             state.artifacts = state.artifacts.filter(p => p.id !== artifact.id),
             state.players = arrayUpdate(state.players, player.id, {
@@ -268,21 +224,21 @@ export class GameInfoService implements OnDestroy {
 
             if ([UseTokenType.buy, UseTokenType.use].includes(type)) {
                 if (tokenInfo.cost != null) {
-                    const benefitInfo = updateBenefitInfo({
+                    player.benefitInfo = updateBenefitInfo({
                         benefit: player.benefitInfo,
                         cost: tokenInfo.cost,
                         isBenefit: false,
                     });
-                    this.setBenefits(player, benefitInfo, state);
+                    this.clankHelpService.checkBenefit(player, state);
                 }
 
                 if (tokenInfo.benefit != null) {
-                    const benefitInfo = updateBenefitInfo({
+                    player.benefitInfo = updateBenefitInfo({
                         benefit: player.benefitInfo,
                         cost: tokenInfo.benefit,
                         isBenefit: true,
                     });
-                    this.setBenefits(player, benefitInfo, state);
+                    this.clankHelpService.checkBenefit(player, state);
                 }
 
                 if (tokenInfo.needTrashCards) {
@@ -314,114 +270,110 @@ export class GameInfoService implements OnDestroy {
         this.onGameUpdated();
     }
 
-    startGame() {
-        this.gameInfoStore.update((oldState) => {
-            const state = lodash.cloneDeep(oldState);
-            state.statusId = GameInfoStatusIdEnum.Started;
-            const playerCount = state.players.length;
-            state.activePlayerIndex = Math.floor(Math.random() * playerCount);
-            state.activePlayerId = state.players[state.activePlayerIndex].id;
-            state.players = state.players.map(player => {
-                const deck = this.cardsService.getStartDeckCards(
-                    state.startDeckId,
-                    player.id,
-                );
-                const config: ClankPlayerConfig = {
-                    ...player,
-                    elementId: 1,
-                    benefitInfo: {
-                        heal: 10,
-                        coin: 0,
-                    },
-                    deck: this.shuffle(deck),
-                    hand: [],
-                    board: [],
-                    discard: [],
-                    trash: [],
-                    tokens: [],
-                    artifacts: [],
-                    isRescued: false,
-                    isEscaped: false,
-                    isFinish: false,
-                };
-                this.clearTurnInfo(config.benefitInfo);
-                this.drawCards(config, 5);
-                return config;
-            });
-            const dragonTrackInfo = this.gameInfoQuery.mapInfo?.dragonInfo.track.find(p => p.startUserCount === playerCount);
-            state.dragonInfo = initDragonInfo(dragonTrackInfo?.rage);
-            const dungeonDeck = this.cardsService.getShareDecksCards(state.dungeonDeckIds);
-            state.dungeonDeck = this.shuffle(dungeonDeck);
-            state.dungeonRow = [];
-            state.reserveRow = this.cardsService.getReserveDecksCards(
-                state.mapDlcId,
-                playerCount,
+    async startGame() {
+        const state = lodash.cloneDeep(this.gameInfoQuery.getValue());
+        state.statusId = GameInfoStatusIdEnum.Started;
+        const playerCount = state.players.length;
+        state.activePlayerIndex = Math.floor(Math.random() * playerCount);
+        state.activePlayerId = state.players[state.activePlayerIndex].id;
+        state.players = state.players.map(player => {
+            const deck = this.cardsService.getStartDeckCards(
+                state.startDeckId,
+                player.id,
             );
-            state.mapTokens = this.simpleShuffle(this.tokensService.getMapTokens());
-            state.marketTokens = this.tokensService.getMarketTokens();
-            state.artifacts = this.simpleShuffle(this.artifactsService.getArtifacts());
-            state.turnIndex = 0;
-            this.addActionLogs(state, {
-                text: 'Игра началась',
-            });
-            this.drawDungeonRow(state, {
-                initDungeonRow: true,
-                hideToast: true,
-            });
-            return state;
+            const config: ClankPlayerConfig = {
+                ...player,
+                elementId: 1,
+                benefitInfo: {
+                    heal: 10,
+                    coin: 0,
+                },
+                deck: this.clankHelpService.shuffle(deck),
+                hand: [],
+                board: [],
+                discard: [],
+                trash: [],
+                tokens: [],
+                artifacts: [],
+                isRescued: false,
+                isEscaped: false,
+                isFinish: false,
+            };
+            this.clearTurnInfo(config.benefitInfo);
+            this.clankHelpService.drawCards(config, 5);
+            return config;
         });
+        const dragonTrackInfo = this.gameInfoQuery.mapInfo?.dragonInfo.track.find(p => p.startUserCount === playerCount);
+        state.dragonInfo = initDragonInfo(dragonTrackInfo?.rage);
+        const dungeonDeck = this.cardsService.getShareDecksCards(state.dungeonDeckIds);
+        state.dungeonDeck = this.clankHelpService.shuffle(dungeonDeck);
+        state.dungeonRow = [];
+        state.reserveRow = this.cardsService.getReserveDecksCards(
+            state.mapDlcId,
+            playerCount,
+        );
+        state.mapTokens = this.clankHelpService.simpleShuffle(this.tokensService.getMapTokens());
+        state.marketTokens = this.tokensService.getMarketTokens();
+        state.artifacts = this.clankHelpService.simpleShuffle(this.artifactsService.getArtifacts());
+        state.turnIndex = 0;
+        this.addActionLogs(state, {
+            text: 'Игра началась',
+        });
+        const newState = await this.drawDungeonRow(state, {
+            initDungeonRow: true,
+            hideToast: true,
+        });
+        this.gameInfoStore.update(newState);
         this.onGameUpdated();
     }
 
-    finishTurn(result: TrashCardsComponentResult) {
-        this.gameInfoStore.update((oldState) => {
-            const state = lodash.cloneDeep(oldState);
+    async finishTurn(result: TrashCardsComponentResult) {
+        let state = lodash.cloneDeep(this.gameInfoQuery.getValue());
 
-            /** Конец хода игрока */
-            const currentPlayer = state.players[state.activePlayerIndex];
-            this.clearTurnInfo(currentPlayer.benefitInfo);
-            currentPlayer.discard = result.discard;
-            currentPlayer.board = [];
-            currentPlayer.hand = [];
-            currentPlayer.trash = [
-                ...currentPlayer.trash,
-                ...result.trash,
-            ];
-            currentPlayer.needTrashCards = [];
-            this.drawCards(currentPlayer, 5);
-            state.players = arrayUpdate(state.players, currentPlayer.id, currentPlayer);
+        /** Конец хода игрока */
+        const currentPlayer = state.players[state.activePlayerIndex];
+        this.clearTurnInfo(currentPlayer.benefitInfo);
+        currentPlayer.discard = result.discard;
+        currentPlayer.board = [];
+        currentPlayer.hand = [];
+        currentPlayer.trash = [
+            ...currentPlayer.trash,
+            ...result.trash,
+        ];
+        currentPlayer.needTrashCards = [];
+        this.clankHelpService.drawCards(currentPlayer, 5);
+        state.players = arrayUpdate(state.players, currentPlayer.id, currentPlayer);
 
-            if (currentPlayer.isFinish && state.dragonInfo.endGameCounter.colorId === GamePlayerColorIdEnum.Black) {
-                state.dragonInfo.endGameCounter.colorId = currentPlayer.colorId;
+        if (currentPlayer.isFinish && state.dragonInfo.endGameCounter.colorId === GamePlayerColorIdEnum.Black) {
+            state.dragonInfo.endGameCounter.colorId = currentPlayer.colorId;
+        }
+
+        /** Обновление состояния карты */
+        GamePlayerColorIds.forEach(colorId => {
+            if (state.dragonInfo.clankAria[colorId] < 0) {
+                state.dragonInfo.clankAria[colorId] = 0;
             }
-
-            /** Обновление состояния карты */
-            GamePlayerColorIds.forEach(colorId => {
-                if (state.dragonInfo.clankAria[colorId] < 0) {
-                    state.dragonInfo.clankAria[colorId] = 0;
-                }
-            });
-            this.drawDungeonRow(state, {});
-
-            /** Переход хода */
-            const newActivPlayer = this.getNextPlayer(state);
-            this.addActionLogs(state, {
-                text: `${currentPlayer.name} закончил свой ход`,
-                colorId: currentPlayer.colorId,
-                hideToast: newActivPlayer != null,
-            });
-            if (newActivPlayer != null) {
-                this.addActionLogs(state, {
-                    text: `Ход переходит к игроку ${newActivPlayer.name}`,
-                    colorId: newActivPlayer.colorId,
-                });
-            }
-            state.turnIndex++;
-            state.statusId = state.players.every(p => p.isFinish)
-                ? GameInfoStatusIdEnum.Finished
-                : state.statusId;
-            return state;
         });
+        state = await this.drawDungeonRow(state, {});
+
+        /** Переход хода */
+        const newActivPlayer = this.getNextPlayer(state);
+        this.addActionLogs(state, {
+            text: `${currentPlayer.name} закончил свой ход`,
+            colorId: currentPlayer.colorId,
+            hideToast: newActivPlayer != null,
+        });
+        if (newActivPlayer != null) {
+            this.addActionLogs(state, {
+                text: `Ход переходит к игроку ${newActivPlayer.name}`,
+                colorId: newActivPlayer.colorId,
+            });
+        }
+        state.turnIndex++;
+        state.statusId = state.players.every(p => p.isFinish)
+            ? GameInfoStatusIdEnum.Finished
+            : state.statusId;
+        this.gameInfoStore.update(state);
         this.onGameUpdated();
     }
 
@@ -446,7 +398,7 @@ export class GameInfoService implements OnDestroy {
                     }
                 }
             } else if (trackElement?.clank) {
-                this.onDragonAttack(state, trackElement.clank);
+                this.clankHelpService.onDragonAttack(state, trackElement.clank);
             }
         }
         if (state.players.some(p => !p.isFinish)) {
@@ -467,30 +419,16 @@ export class GameInfoService implements OnDestroy {
         this.socket?.emit('updateGame', this.gameInfoQuery.getValue());
     }
 
-    private simpleShuffle<T = any>(list: T[]) {
-        return list.sort(() => Math.random() - 0.5);
-    }
-
-    private shuffle(deck: ClankCardConfig[]) {
-        return this.simpleShuffle(deck).map((card, index) => {
-            const newState: ClankCardConfig = {
-                ...card,
-                index,
-            };
-            return newState;
-        });
-    }
-
-    private drawDungeonRow(
+    private async drawDungeonRow(
         state: GameInfoState,
         options?: {
             ignoreDragonAttack?: boolean;
             initDungeonRow?: boolean;
             hideToast?: boolean;
         },
-    ): void {
+    ): Promise<GameInfoState> {
         if (state.dungeonRow == null || state.dungeonDeck == null) {
-            return;
+            return state;
         }
         let isDragonAttack = false;
         const skippedCards: ClankCardConfig[] = [];
@@ -499,150 +437,33 @@ export class GameInfoService implements OnDestroy {
             if (!card) {
                 break;
             }
-            if (card.arrive?.isDragonAttack && options?.initDungeonRow) {
+            if (card.events?.onAcquire?.isDragonAttack && options?.initDungeonRow) {
                 skippedCards.push(card);
             } else {
-                if (card.arrive?.isDragonAttack && !options?.ignoreDragonAttack) {
+                if (card.events?.onAcquire?.isDragonAttack && !options?.ignoreDragonAttack) {
                     isDragonAttack = true;
                 }
-                // TODO: применить свойства из поля arrive
-                state.dungeonRow.push(card);
-                this.addActionLogs(state, {
-                    text: `Карта ${card.name} появилась в подземном ряду`,
-                    hideToast: options?.hideToast,
+                const newState = await this.cardsService.onEvent({
+                    state,
+                    card,
+                    eventName: 'onArrive',
                 });
+                if (newState != null) {
+                    state = newState;
+                } else {
+                    skippedCards.push(card);
+                }
             }
         }
-        state.dungeonDeck = this.shuffle([
+        state.dungeonDeck = this.clankHelpService.shuffle([
             ...state.dungeonDeck,
             ...skippedCards,
         ]);
 
         if (isDragonAttack) {
-            this.onDragonAttack(state);
+            this.clankHelpService.onDragonAttack(state);
         }
-        return;
-    }
-
-    private onDragonAttack(state: GameInfoState, rage = 0) {
-        (Object.keys(state.dragonInfo.clankAria) as GamePlayerColorIdEnum[]).forEach((key) => {
-            const count = state.dragonInfo.clankAria[key];
-            if (count > 0) {
-                state.dragonInfo.clankBag = [
-                    ...state.dragonInfo.clankBag,
-                    ...Array(count).fill(key),
-                ];
-            }
-            state.dragonInfo.clankAria[key] = 0;
-        });
-        state.dragonInfo.clankBag = this.simpleShuffle(state.dragonInfo.clankBag);
-        const attackResult = state.players.reduce((acc, player) => {
-            acc[player.colorId] = {
-                name: player.name,
-                value: 0,
-            };
-            return acc;
-        }, {} as Record<GamePlayerColorIdEnum, {
-            name: string;
-            value: number;
-        }>);
-        const totalRage = state.dragonInfo.rage + rage;
-        for (let index = 0; index < totalRage; index++) {
-            const colorId = state.dragonInfo.clankBag.pop();
-            const player = state.players.find(p => p.colorId === colorId);
-            if (colorId == null || player == null || player.benefitInfo.heal == null || player.isFinish) {
-                continue;
-            }
-            player.benefitInfo.heal--;
-            attackResult[colorId].value++;
-            this.setBenefits(player, player.benefitInfo, state);
-            state.players = arrayUpdate(state.players, player.id, player);
-        }
-        this.addActionLogs(state, {
-            text: `Дракон атакует`,
-            subtext: Object.values(attackResult).map(p => `${p.name}: ${p.value} урона`).join('\r\n'),
-            isDragon: true,
-        });
-    }
-
-    private drawCards(player: ClankPlayerConfig, count: number) {
-        while (count > 0) {
-            if (player.deck.length === 0) {
-                player.deck = this.shuffle(player.discard);
-                player.discard = [];
-            }
-            const card = player.deck.pop();
-            if (card != null) {
-                player.hand.push(card);
-            }
-            count--;
-        }
-    }
-
-    private setBenefits(
-        player: ClankPlayerConfig,
-        benefitInfo: ClankCostInfo,
-        state: GameInfoState,
-    ) {
-        if ((benefitInfo.boot ?? 0) > 0 && (benefitInfo.enter_crystal_cave ?? 0) > 0 && (benefitInfo.ignore_crystal_cave ?? 0) === 0) {
-            benefitInfo.boot = 0;
-        }
-
-        if (benefitInfo.heal) {
-            if (benefitInfo.heal > 10) {
-                benefitInfo.heal = 10;
-            }
-            if (benefitInfo.heal <= 0) {
-                benefitInfo.heal = 0;
-                this.onPlayerFinishGame(player);
-            }
-        }
-
-        if (benefitInfo.card && benefitInfo.card > 0) {
-            this.drawCards(player, benefitInfo.card);
-            this.addActionLogs(state, {
-                text: `${player.name} добрал карты (${benefitInfo.card})`,
-                colorId: player.colorId,
-            });
-            delete benefitInfo.card;
-        }
-
-        if (benefitInfo.pyramid_dice) {
-            // TODO: бросить кубик
-            delete benefitInfo.pyramid_dice;
-            this.addActionLogs(state, {
-                text: `${player.name} бросает кубик`,
-                colorId: player.colorId,
-            });
-        }
-
-        if (benefitInfo.dragon_rage && state.dragonInfo.rage < (this.gameInfoQuery.mapInfo?.dragonInfo.maxRage ?? 0)) {
-            state.dragonInfo.rage++;
-            delete benefitInfo.dragon_rage;
-            this.addActionLogs(state, {
-                text: `Повышается ярость дракона`,
-            });
-        }
-
-        if (benefitInfo.dragon_attack) {
-            this.onDragonAttack(state);
-            delete benefitInfo.dragon_attack;
-        }
-
-        if (benefitInfo.clank) {
-            state.dragonInfo.clankAria[player.colorId] += benefitInfo.clank;
-            const text = benefitInfo.clank > 0
-                ? 'добавил шума'
-                : 'убрал шум';
-            this.addActionLogs(state, {
-                text: `${player.name} ${text} (${benefitInfo.clank} бдзынь)`,
-                colorId: player.colorId,
-            });
-            delete benefitInfo.clank;
-        }
-
-        // TODO: реакция на другие
-        player.benefitInfo = benefitInfo;
+        return state;
     }
 
     private addActionLogs(state: GameInfoState, data: GameInfoActionLogData) {
@@ -661,7 +482,7 @@ export class GameInfoService implements OnDestroy {
         });
     }
 
-    private onPlayerFinishGame(player: ClankPlayerConfig,) {
+    private onPlayerFinishGame(player: ClankPlayerConfig) {
         const mapElement = this.gameInfoQuery.mapInfo?.elements.find(p => p.id === player.elementId);
         player.isRescued = !mapElement?.isDungeon;
         player.isEscaped = false;

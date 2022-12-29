@@ -5,6 +5,7 @@ import {
   ClankDlcEnum,
   ClankTarget,
 } from './clank-info.types';
+import { ClankPlayerConfig } from './clank-player.types';
 
 export const ClankCardHeight = 1039;
 
@@ -55,6 +56,52 @@ export interface ClankDeckConfig extends ClankDeckShortConfig {
     cards: ClankCardBaseConfig[];
 }
 
+export interface ClankCardBaseConfigEventResult {
+    state: GameInfoState;
+    success: boolean;
+}
+
+export interface ClankCardBaseConfigEvents {
+    /** при появление */
+    onArrive?: ClankCardBaseConfigEventInfo;
+    /** при покупке */
+    onAcquire?: ClankCardBaseConfigEventInfo;
+    /** при разыгрывании */
+    onUse?: ClankCardBaseConfigEventInfo;
+    /** при сбрасывании */
+    onDiscard?: ClankCardBaseConfigEventInfo;
+}
+
+export interface ClankCardBaseConfigEventInfo {
+    /** Цель */
+    target?: ClankTarget;
+    /** Атака дракона */
+    isDragonAttack?: boolean;
+    /** Стоимость */
+    cost?: ClankCostInfo;
+    /** Выгода */
+    benefit?: ClankCostInfo;
+    /** Функция */
+    callback?: (state: GameInfoState, player: ClankPlayerConfig) => Promise<boolean>;
+}
+
+export const ClankCardBaseConfigEventInfoByType: Record<keyof ClankCardBaseConfigEvents, {
+    text: string,
+}> = {
+    onArrive: {
+        text: 'На рынке появилась карта',
+    },
+    onAcquire: {
+        text: 'купил карту',
+    },
+    onUse: {
+        text: 'использовал карту',
+    },
+    onDiscard: {
+        text: 'сбросил карту',
+    },
+};
+
 export interface ClankCardBaseConfig {
     /** Строка для поиска картинки */
     row: number;
@@ -70,31 +117,15 @@ export interface ClankCardBaseConfig {
     onlyDepthsArea?: boolean;
     /** Тип */
     type: ClankCardType;
-    /** События при покупка */
-    acquire?: ClankCardActionList;
-    /** Выгода */
-    benefit?: ClankCostInfo;
-    /** События при появление */
-    arrive?: ClankCardActionList;
     /** Опасность сколько кубиков надо добавить к значению дракона */
     danger?: number;
-    /** События при разыгрывании */
-    actions?: ClankCardActionList;
-    /** Необходимость избавиться от карты */
-    needTrashCards?: ClankCardName[];
-    /** Победные очки */
-    points?: ClankCardPointInfo;
     /** Количество в колоде (-1 не убирается с поля) */
     count: number;
     /** test */
-    events?: {
-        /** при появление */
-        onArrive?: (state: GameInfoState) => GameInfoState;
-        /** при покупке */
-        onAcquire?: (state: GameInfoState) => GameInfoState;
-        /** при разыгрывании */
-        onUse?: (state: GameInfoState) => GameInfoState;
-    }
+    events?: ClankCardBaseConfigEvents & {
+        /** при подсчёте очков */
+        getPoints?: (state: GameInfoState, player: ClankPlayerConfig) => number;
+    };
 }
 
 export interface ClankCardConfig extends ClankCardBaseConfig, ClankDeckShortConfig {
@@ -159,7 +190,7 @@ export interface ClankCardAction {
     benefitDescription?: string;
     /** Атака дракона */
     isDragonAttack?: boolean;
-    
+        
 }
 
 /** Ключевые карты, на которые могут ссылаться другие карты */

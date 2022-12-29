@@ -19,10 +19,12 @@ import {
     takeUntil,
 } from 'rxjs/operators';
 import { PlayerPointsResult } from 'src/app/shared/models/players/player.types';
+import { CardsService } from 'src/app/shared/services/cards.service';
 
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import { GamePlayerColorList } from '@shared/clank/clank-player.types';
 
+import { ClankHelpService } from './services/clank-help.service';
 import { GameInfoQuery } from './services/game-info.query';
 import { GameInfoService } from './services/game-info.service';
 import { GameInfoStore } from './services/game-info.store';
@@ -35,6 +37,8 @@ import { GameInfoStore } from './services/game-info.store';
         GameInfoService,
         GameInfoStore,
         GameInfoQuery,
+        ClankHelpService,
+        CardsService,
     ],
 })
 export class ClankComponent implements OnInit {
@@ -44,20 +48,27 @@ export class ClankComponent implements OnInit {
     statusSubject = this.gameInfoQuery.onStatusChangeSubject;
     playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(
         map((players) => {
+            const state = this.gameInfoQuery.getValue();
             let winner: PlayerPointsResult | undefined;
-            const rows = players.map(player => {
+            const rows = players.map((player) => {
                 const coins = player.benefitInfo.coin ?? 0;
                 const master = player.isEscaped ? 20 : 0;
                 const tokens = player.tokens.reduce((acc, token) => acc + (token.points?.value ?? 0), 0);
                 const artifacts = player.artifacts.reduce((acc, artefact) => acc + (artefact.points?.value ?? 0), 0);
-                const cards = [
+                const cardList = [
                     ...player.deck,
                     ...player.board,
                     ...player.discard,
                     ...player.hand,
-                ].reduce((acc, card) => {
-                    return acc + (card?.points?.value ?? 0);
-                }, 0);
+                ];
+                let cards = 0;
+                for (const card of cardList) {
+                    cards += this.cardsService.getPoints({
+                        state,
+                        player,
+                        card,
+                    });
+                }
                 const result: PlayerPointsResult = {
                     config: player,
                     name: player.name,
@@ -88,6 +99,7 @@ export class ClankComponent implements OnInit {
         private router: Router,
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
+        private cardsService: CardsService,
     ) { }
 
     ngOnInit(): void {
