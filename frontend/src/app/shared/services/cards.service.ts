@@ -434,12 +434,23 @@ export class CardsService {
                                 count: 1,
                                 list: [
                                     {
-                                        description: 'Получить одну монетку',
+                                        description: 'Получить три мечя',
                                         event: () => {
                                             return self.clankHelpService.updateBenefitInfo({
                                                 player,
                                                 benefit: {
-                                                    coin: 1,
+                                                    sword: 3,
+                                                },
+                                            });
+                                        },
+                                    },
+                                    {
+                                        description: 'Получить две монеты',
+                                        event: () => {
+                                            return self.clankHelpService.updateBenefitInfo({
+                                                player,
+                                                benefit: {
+                                                    coin: 2,
                                                 },
                                             });
                                         },
