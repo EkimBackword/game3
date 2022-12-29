@@ -188,7 +188,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (!this.canDoByPlayerPosition(this.activePlayer)) {
             return;
         }
-        const artefactCount = this.activePlayer.benefitInfo.artefact ?? 0;
+        const artefactCount = this.activePlayer.artifacts.length;
         const backpackCount = this.activePlayer.benefitInfo.backpack ?? 0;
         const count = 1 + backpackCount;
         if (artefactCount >= count) {
