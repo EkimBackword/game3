@@ -97,7 +97,7 @@
                         type="custom"
                         class="alert-custom--{{log.data.colorId}}">
                         {{log.data.text}}
-                        <div *ngIf="log.data.subtext">{{log.data.subtext}}</div>
+                        <div class="alert-subtext" *ngIf="log.data.subtext">{{log.data.subtext}}</div>
                     </ngb-alert>
                 </div>
             </ng-container>
