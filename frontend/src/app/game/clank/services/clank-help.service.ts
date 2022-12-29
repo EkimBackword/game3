@@ -6,6 +6,7 @@ import {
     CheckCostResult,
 } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
+import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
@@ -30,10 +31,29 @@ export class ClankHelpService {
         private toastService: ToastService,
     ) { }
 
-    checkBenefit(
-        player: ClankPlayerConfig,
-        state: GameInfoState,
-    ) {
+    updateBenefitInfo(data: {
+        player: ClankPlayerConfig;
+        cost?: ClankCostInfo;
+        benefit?: ClankCostInfo;
+    }) {
+        if (!this.canUse(data)) {
+            return false;
+        }
+        data.player.benefitInfo = updateBenefitInfo({
+            benefit: data.player.benefitInfo,
+            cost: data.cost ?? {},
+            isBenefit: false,
+        });
+        data.player.benefitInfo = updateBenefitInfo({
+            benefit: data.player.benefitInfo,
+            cost: data.benefit ?? {},
+            isBenefit: true,
+        });
+        this.checkBenefit(data.player);
+        return true;
+    }
+
+    checkBenefit(player: ClankPlayerConfig) {
         if ((player.benefitInfo.boot ?? 0) > 0
             && (player.benefitInfo.enter_crystal_cave ?? 0) > 0
             && (player.benefitInfo.ignore_crystal_cave ?? 0) === 0
@@ -50,54 +70,42 @@ export class ClankHelpService {
                 this.onPlayerFinishGame(player);
             }
         }
-
-        if (player.benefitInfo.card && player.benefitInfo.card > 0) {
-            this.drawCards(player, player.benefitInfo.card);
-            this.addActionLogs(state, {
-                text: `${player.name} добрал карты (${player.benefitInfo.card})`,
-                colorId: player.colorId,
-            });
-            delete player.benefitInfo.card;
-        }
-
-        if (player.benefitInfo.pyramid_dice) {
-            // TODO: бросить кубик
-            delete player.benefitInfo.pyramid_dice;
-            this.addActionLogs(state, {
-                text: `${player.name} бросает кубик`,
-                colorId: player.colorId,
-            });
-        }
-
-        if (player.benefitInfo.dragon_rage && state.dragonInfo.rage < (this.gameInfoQuery.mapInfo?.dragonInfo.maxRage ?? 0)) {
-            state.dragonInfo.rage++;
-            delete player.benefitInfo.dragon_rage;
-            this.addActionLogs(state, {
-                text: `Повышается ярость дракона`,
-            });
-        }
-
-        if (player.benefitInfo.dragon_attack) {
-            this.onDragonAttack(state);
-            delete player.benefitInfo.dragon_attack;
-        }
-
-        if (player.benefitInfo.clank) {
-            state.dragonInfo.clankAria[player.colorId] += player.benefitInfo.clank;
-            const text = player.benefitInfo.clank > 0
-                ? 'добавил шума'
-                : 'убрал шум';
-            this.addActionLogs(state, {
-                text: `${player.name} ${text} (${player.benefitInfo.clank} бдзынь)`,
-                colorId: player.colorId,
-            });
-            delete player.benefitInfo.clank;
-        }
-
-        // TODO: реакция на другие
     }
 
-    drawCards(player: ClankPlayerConfig, count: number) {
+    addClank({
+        state,
+        player,
+        count,
+    }: {
+        state: GameInfoState;
+        player: ClankPlayerConfig;
+        count: number;
+    }) {
+        const text = count > 0
+            ? 'добавил шума'
+            : 'убрал шум';
+        this.addActionLogs(state, {
+            text: `${player.name} ${text} (${count} бдзынь)`,
+            colorId: player.colorId,
+        });
+        state.dragonInfo.clankAria[player.colorId] += count;
+    }
+
+    drawCards({
+        state,
+        player,
+        count,
+    }: {
+        state?: GameInfoState;
+        player: ClankPlayerConfig;
+        count: number;
+    }) {
+        if (state != null) {
+            this.addActionLogs(state, {
+                text: `${player.name} добрал карты (${count})`,
+                colorId: player.colorId,
+            });
+        }
         while (count > 0) {
             if (player.deck.length === 0) {
                 player.deck = this.shuffle(player.discard);
@@ -109,6 +117,17 @@ export class ClankHelpService {
             }
             count--;
         }
+    }
+
+    increaseDragonRage(state: GameInfoState) {
+        const maxRage = this.gameInfoQuery.mapInfo?.dragonInfo.maxRage ?? 0;
+        if (state.dragonInfo.rage === maxRage) {
+            return;
+        }
+        state.dragonInfo.rage++;
+        this.addActionLogs(state, {
+            text: `Повышается ярость дракона`,
+        });
     }
 
     onDragonAttack(state: GameInfoState, rage = 0) {

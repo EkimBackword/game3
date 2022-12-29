@@ -17,7 +17,6 @@ import {
 import { GameInfoState } from '@shared/clank/clank-game.types';
 import {
     ClankCardType,
-    ClankCostInfo,
     ClankDlcEnum,
     ClankElementByToken,
     ClankTarget,
@@ -32,7 +31,6 @@ import {
     ChooseCardEventComponentData,
     ChooseCardEventComponentItem,
 } from '../modals/choose-card-event/choose-card-event.component';
-import { updateBenefitInfo } from '../models/players/player.types';
 import { ToastService } from './toast.service';
 
 @Injectable()
@@ -141,7 +139,7 @@ export class CardsService {
                 if (!isCurrentUpdate && !isOtherUpdate) {
                     continue;
                 }
-                const isPlayerUpdate = this.updateBenefitInfo({
+                const isPlayerUpdate = this.clankHelpService.updateBenefitInfo({
                     player,
                     cost: eventInfo.cost,
                     benefit: eventInfo.benefit,
@@ -153,7 +151,6 @@ export class CardsService {
                 if (!result) {
                     return null;
                 }
-                this.clankHelpService.checkBenefit(player, state);
             }
         }
         const currentPlayer = state.players[state.activePlayerIndex];
@@ -196,7 +193,6 @@ export class CardsService {
                 break;
             }
         }
-        this.clankHelpService.checkBenefit(currentPlayer, state);
         return state;
     }
 
@@ -216,6 +212,7 @@ export class CardsService {
     }
 
     private initClankReserveCards(userCount: number, withCopy: boolean) {
+        const self = this;
         const cards: ClankCardBaseConfig[] = [
             {
                 row: 0,
@@ -309,6 +306,7 @@ export class CardsService {
     }
 
     private initClankStartCards(playerId: string, withCopy: boolean) {
+        const self = this;
         const cards: ClankCardBaseConfig[] = [
             {
                 row: 0,
@@ -364,8 +362,13 @@ export class CardsService {
                 type: ClankCardType.start,
                 events: {
                     onUse: {
-                        benefit: {
-                            clank: 1,
+                        async callback(state, player) {
+                            self.clankHelpService.addClank({
+                                state,
+                                player,
+                                count: 1,
+                            });
+                            return true;
                         },
                     },
                 },
@@ -426,16 +429,15 @@ export class CardsService {
                         cost: {
                             discardCard: 1,
                         },
-                        async callback(state) {
+                        async callback(state, player) {
                             return await self.openDialogChooseCardEvent({
                                 count: 1,
                                 list: [
                                     {
                                         description: 'Получить одну монетку',
                                         event: () => {
-                                            const currentPlayer = state.players[state.activePlayerIndex];
-                                            return self.updateBenefitInfo({
-                                                player: currentPlayer,
+                                            return self.clankHelpService.updateBenefitInfo({
+                                                player,
                                                 benefit: {
                                                     coin: 1,
                                                 },
@@ -445,9 +447,8 @@ export class CardsService {
                                     {
                                         description: 'Восстановить одно очко здоровья',
                                         event: () => {
-                                            const currentPlayer = state.players[state.activePlayerIndex];
-                                            return self.updateBenefitInfo({
-                                                player: currentPlayer,
+                                            return self.clankHelpService.updateBenefitInfo({
+                                                player,
                                                 benefit: {
                                                     heal: 1,
                                                 },
@@ -477,16 +478,17 @@ export class CardsService {
                         },
                     },
                     onUse: {
-                        benefit: {
-                            card: 1,
-                        },
-                        async callback(state) {
-                            const currentPlayer = state.players[state.activePlayerIndex];
-                            if (!currentPlayer.benefitInfo.monkey_idol) {
+                        async callback(state, player) {
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 1,
+                            });
+                            if (!player.benefitInfo.monkey_idol) {
                                 return true;
                             }
-                            return self.updateBenefitInfo({
-                                player: currentPlayer,
+                            return self.clankHelpService.updateBenefitInfo({
+                                player,
                                 benefit: {
                                     skill: 2,
                                 },
@@ -538,8 +540,13 @@ export class CardsService {
                         },
                     },
                     onUse: {
-                        benefit: {
-                            card: 2,
+                        async callback(state, player) {
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 2,
+                            });
+                            return true;
                         },
                     },
                     getPoints(state) {
@@ -561,8 +568,13 @@ export class CardsService {
                         },
                     },
                     onUse: {
-                        benefit: {
-                            card: 3,
+                        async callback(state, player) {
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 3,
+                            });
+                            return true;
                         },
                     },
                 },
@@ -610,8 +622,15 @@ export class CardsService {
                     onUse: {
                         benefit: {
                             boot: 2,
-                            clank: 2,
                             ignore_crystal_cave: 1,
+                        },
+                        async callback(state, player) {
+                            self.clankHelpService.addClank({
+                                state,
+                                player,
+                                count: 2,
+                            });
+                            return true;
                         },
                     },
                 },
@@ -631,13 +650,23 @@ export class CardsService {
                         cost: {
                             skill: 8,
                         },
-                        benefit: {
-                            clank: 2,
+                        async callback(state, player) {
+                            self.clankHelpService.addClank({
+                                state,
+                                player,
+                                count: 2,
+                            });
+                            return true;
                         },
                     },
                     onUse: {
-                        benefit: {
-                            card: 1,
+                        async callback(state, player) {
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 1,
+                            });
+                            return true;
                         },
                     },
                     getPoints(state) {
@@ -661,13 +690,23 @@ export class CardsService {
                         cost: {
                             skill: 5,
                         },
-                        benefit: {
-                            clank: 2,
+                        async callback(state, player) {
+                            self.clankHelpService.addClank({
+                                state,
+                                player,
+                                count: 2,
+                            });
+                            return true;
                         },
                     },
                     onUse: {
-                        benefit: {
-                            card: 1,
+                        async callback(state, player) {
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 1,
+                            });
+                            return true;
                         },
                     },
                     getPoints(state, player) {
@@ -731,7 +770,14 @@ export class CardsService {
                         benefit: {
                             skill: 1,
                             boot: 1,
-                            card: 1,
+                        },
+                        async callback(state, player) {
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 1,
+                            });
+                            return true;
                         },
                     },
                     getPoints(state, player) {
@@ -755,8 +801,19 @@ export class CardsService {
                     onUse: {
                         benefit: {
                             skill: 1,
-                            clank: -2,
-                            card: 1,
+                        },
+                        async callback(state, player) {
+                            self.clankHelpService.addClank({
+                                state,
+                                player,
+                                count: -2,
+                            });
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 1,
+                            });
+                            return true;
                         },
                     },
                     getPoints(state, player) {
@@ -781,7 +838,14 @@ export class CardsService {
                         benefit: {
                             skill: 1,
                             sword: 1,
-                            card: 1,
+                        },
+                        async callback(state, player) {
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 1,
+                            });
+                            return true;
                         },
                     },
                     getPoints(state, player) {
@@ -804,13 +868,23 @@ export class CardsService {
                         cost: {
                             skill: 5,
                         },
-                        benefit: {
-                            clank: 2,
+                        async callback(state, player) {
+                            self.clankHelpService.addClank({
+                                state,
+                                player,
+                                count: 2,
+                            });
+                            return true;
                         },
                     },
                     onUse: {
-                        benefit: {
-                            card: 1,
+                        async callback(state, player) {
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 1,
+                            });
+                            return true;
                         },
                     },
                     getPoints(state, player) {
@@ -859,8 +933,15 @@ export class CardsService {
                     onUse: {
                         benefit: {
                             skill: 2,
-                            clank: -2,
                             gem_cost_less: 2,
+                        },
+                        async callback(state, player) {
+                            self.clankHelpService.addClank({
+                                state,
+                                player,
+                                count: -2,
+                            });
+                            return true;
                         },
                     },
                     getPoints(state, player) {
@@ -884,7 +965,14 @@ export class CardsService {
                     onUse: {
                         benefit: {
                             teleport: 1,
-                            clank: 1,
+                        },
+                        async callback(state, player) {
+                            self.clankHelpService.addClank({
+                                state,
+                                player,
+                                count: 2,
+                            });
+                            return true;
                         },
                     },
                     getPoints(state, player) {
@@ -913,7 +1001,7 @@ export class CardsService {
                             if (!player.artifacts.length) {
                                 return true;
                             }
-                            return self.updateBenefitInfo({
+                            return self.clankHelpService.updateBenefitInfo({
                                 player,
                                 benefit: {
                                     skill: 2,
@@ -942,8 +1030,19 @@ export class CardsService {
                     onUse: {
                         benefit: {
                             skill: 1,
-                            clank: 1,
-                            card: 1,
+                        },
+                        async callback(state, player) {
+                            self.clankHelpService.addClank({
+                                state,
+                                player,
+                                count: 1,
+                            });
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 1,
+                            });
+                            return true;
                         },
                     },
                     getPoints(state, player) {
@@ -1002,25 +1101,19 @@ export class CardsService {
                                     {
                                         description: 'Дракон атакует',
                                         event: () => {
-                                            const currentPlayer = state.players[state.activePlayerIndex];
-                                            return self.updateBenefitInfo({
-                                                player: currentPlayer,
-                                                benefit: {
-                                                    dragon_attack: 1,
-                                                },
-                                            });
+                                            self.clankHelpService.onDragonAttack(state);
+                                            return true;
                                         },
                                     },
                                     {
                                         description: '-2 Бдзынь',
                                         event: () => {
-                                            const currentPlayer = state.players[state.activePlayerIndex];
-                                            return self.updateBenefitInfo({
-                                                player: currentPlayer,
-                                                benefit: {
-                                                    clank: -2,
-                                                },
+                                            self.clankHelpService.addClank({
+                                                state,
+                                                player,
+                                                count: -2,
                                             });
+                                            return true;
                                         },
                                     },
                                 ],
@@ -1050,6 +1143,9 @@ export class CardsService {
                         },
                     },
                     onAcquire: {
+                        cost: {
+                            skill: 2,
+                        },
                         async callback(state, player) {
                             return await self.openDialogChooseCardEvent({
                                 count: 1,
@@ -1057,7 +1153,7 @@ export class CardsService {
                                     {
                                         description: 'Получить одну монетку',
                                         event: () => {
-                                            return self.updateBenefitInfo({
+                                            return self.clankHelpService.updateBenefitInfo({
                                                 player,
                                                 benefit: {
                                                     coin: 1,
@@ -1068,7 +1164,7 @@ export class CardsService {
                                     {
                                         description: 'Восстановить одно очко здоровья',
                                         event: () => {
-                                            return self.updateBenefitInfo({
+                                            return self.clankHelpService.updateBenefitInfo({
                                                 player,
                                                 benefit: {
                                                     heal: 1,
@@ -1092,26 +1188,7 @@ export class CardsService {
         return this.mappingDeckCards(shareDeckConfig, withCopy);
     }
 
-    private updateBenefitInfo(data: {
-        player: ClankPlayerConfig;
-        cost?: ClankCostInfo;
-        benefit?: ClankCostInfo;
-    }) {
-        if (!this.clankHelpService.canUse(data)) {
-            return false;
-        }
-        data.player.benefitInfo = updateBenefitInfo({
-            benefit: data.player.benefitInfo,
-            cost: data.cost ?? {},
-            isBenefit: false,
-        });
-        data.player.benefitInfo = updateBenefitInfo({
-            benefit: data.player.benefitInfo,
-            cost: data.benefit ?? {},
-            isBenefit: true,
-        });
-        return true;
-    }
+
 
     private async openDialogChooseCardEvent(data: ChooseCardEventComponentData) {
         const dialog = this.matDialog.open<

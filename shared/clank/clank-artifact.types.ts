@@ -1,8 +1,5 @@
 import { ClankCardPointInfo } from './clank-card.types';
-import {
-  ClankCostInfo,
-  ClankDlcEnum,
-} from './clank-info.types';
+import { ClankDlcEnum } from './clank-info.types';
 
 export interface ClankArtifactGroup {
     dlc_name: ClankDlcEnum;
@@ -16,8 +13,6 @@ export interface ClankArtifactShortConfig {
     value: number;
     /** Имя */
     url: string;
-    /** Выгода */
-    benefit?: ClankCostInfo;
     /** Победные очки */
     points?: ClankCardPointInfo;
 }

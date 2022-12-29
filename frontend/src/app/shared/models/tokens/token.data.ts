@@ -45,10 +45,8 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: 'Внезапное озарение',
             url: '/big_draw_cards.jpg',
             isImmediatelyBenefit: true,
+            drawCards: 3,
             isUsable: true,
-            benefit: {
-                card: 3,
-            },
             secret_type: ClankTokenSecretTypeEnum.major,
             element_type: ClankElementByGame.major_secret,
         },
@@ -108,9 +106,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             name: 'Яйцо дракона',
             url: '/small_egg.jpg',
             isImmediatelyBenefit: true,
-            cost: {
-                dragon_rage: 1,
-            },
+            needIncreaseDragonRage: true,
             benefit: {
                 dragon_egg: 1,
             },

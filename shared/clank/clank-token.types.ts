@@ -44,6 +44,10 @@ export interface ClankTokenShortConfig {
     points?: ClankCardPointInfo;
     /** Нужно ли получить выгоду немедленно или можно сохранить */
     isImmediatelyBenefit?: boolean;
+    /** Поднять ярость дракона */
+    needIncreaseDragonRage?: boolean;
+    /** Добрать карты */
+    drawCards?: number;
     /** Можно ли воспользоваться выгодой */
     isUsable?: boolean;
     /** Выгода */

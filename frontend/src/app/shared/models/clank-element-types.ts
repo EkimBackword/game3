@@ -159,29 +159,9 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         url: '/assets/images/tokens/market/crown_token.jpg',
     },
     // ClankElementByActions
-    [ClankElementByActions.dragon_rage]: {
-        name: 'Ярость дракона',
-        url: '/assets/images/dragon.png',
-    },
-    [ClankElementByActions.dragon_attack]: {
-        name: 'Атака дракона',
-        url: '/assets/images/dragon.png',
-    },
-    [ClankElementByActions.card]: {
-        name: 'Карта',
-        url: '/assets/images/cards/cards_back.jpg',
-    },
     [ClankElementByActions.discardCard]: {
         name: 'Карта',
         url: '/assets/images/cards/trash_card.jpg',
-    },
-    [ClankElementByActions.pyramid_dice]: {
-        name: 'Кубик пирамиды',
-        url: '/assets/images/pyramid_dice.png',
-    },
-    [ClankElementByActions.clank]: {
-        name: 'Шум',
-        url: '/assets/images/clank.png',
     },
     // ClankEffect
     [ClankEffect.ignore_crystal_cave]: {
@@ -205,7 +185,6 @@ export interface CheckCostResult {
 }
 
 const ignoreCost: ClankElementType[] = [
-    ClankElementTypeEnum.card,
     ClankElementTypeEnum.discardCard,
 ];
 

@@ -8,7 +8,6 @@ import * as lodash from 'lodash';
 import * as moment from 'moment';
 import { ClankOneTurnInfo } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
-import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import {
     UseTokenInfoByType,
     UseTokenType,
@@ -136,7 +135,7 @@ export class GameInfoService implements OnDestroy {
                 return state;
             }
             player.benefitInfo = benefitInfo;
-            this.clankHelpService.checkBenefit(player, state);
+            this.clankHelpService.checkBenefit(player);
             player.elementId = mapElement.id;
             const isFinish = mapElement.isStart ?? false;
             if (isFinish) {
@@ -182,14 +181,7 @@ export class GameInfoService implements OnDestroy {
             if (player == null) {
                 return state;
             }
-            if (artifact.benefit != null) {
-                player.benefitInfo = updateBenefitInfo({
-                    benefit: player.benefitInfo,
-                    cost: artifact.benefit,
-                    isBenefit: true,
-                });
-                this.clankHelpService.checkBenefit(player, state);
-            }
+            this.clankHelpService.increaseDragonRage(state);
             state.artifacts = state.artifacts.filter(p => p.id !== artifact.id),
             state.players = arrayUpdate(state.players, player.id, {
                 artifacts: [
@@ -218,28 +210,28 @@ export class GameInfoService implements OnDestroy {
                 return state;
             }
 
+            if (tokenInfo.needIncreaseDragonRage) {
+                this.clankHelpService.increaseDragonRage(state);
+            }
+
+            if (tokenInfo.drawCards) {
+                this.clankHelpService.drawCards({
+                    state,
+                    player,
+                    count: tokenInfo.drawCards,
+                });
+            }
+
             if (type === UseTokenType.take && tokenInfo.isImmediatelyBenefit) {
                 type = UseTokenType.use;
             }
 
             if ([UseTokenType.buy, UseTokenType.use].includes(type)) {
-                if (tokenInfo.cost != null) {
-                    player.benefitInfo = updateBenefitInfo({
-                        benefit: player.benefitInfo,
-                        cost: tokenInfo.cost,
-                        isBenefit: false,
-                    });
-                    this.clankHelpService.checkBenefit(player, state);
-                }
-
-                if (tokenInfo.benefit != null) {
-                    player.benefitInfo = updateBenefitInfo({
-                        benefit: player.benefitInfo,
-                        cost: tokenInfo.benefit,
-                        isBenefit: true,
-                    });
-                    this.clankHelpService.checkBenefit(player, state);
-                }
+                this.clankHelpService.updateBenefitInfo({
+                    player,
+                    cost: tokenInfo.cost,
+                    benefit: tokenInfo.benefit,
+                });
 
                 if (tokenInfo.needTrashCards) {
                     player.needTrashCards = [
@@ -300,7 +292,10 @@ export class GameInfoService implements OnDestroy {
                 isFinish: false,
             };
             this.clearTurnInfo(config.benefitInfo);
-            this.clankHelpService.drawCards(config, 5);
+            this.clankHelpService.drawCards({
+                player: config,
+                count: 5,
+            });
             return config;
         });
         const dragonTrackInfo = this.gameInfoQuery.mapInfo?.dragonInfo.track.find(p => p.startUserCount === playerCount);
@@ -341,7 +336,10 @@ export class GameInfoService implements OnDestroy {
             ...result.trash,
         ];
         currentPlayer.needTrashCards = [];
-        this.clankHelpService.drawCards(currentPlayer, 5);
+        this.clankHelpService.drawCards({
+            player: currentPlayer,
+            count: 5,
+        });
         state.players = arrayUpdate(state.players, currentPlayer.id, currentPlayer);
 
         if (currentPlayer.isFinish && state.dragonInfo.endGameCounter.colorId === GamePlayerColorIdEnum.Black) {
@@ -443,15 +441,19 @@ export class GameInfoService implements OnDestroy {
                 if (card.events?.onAcquire?.isDragonAttack && !options?.ignoreDragonAttack) {
                     isDragonAttack = true;
                 }
-                const newState = await this.cardsService.onEvent({
-                    state,
-                    card,
-                    eventName: 'onArrive',
-                });
-                if (newState != null) {
-                    state = newState;
+                if (options?.initDungeonRow) {
+                    state.dungeonRow.push(card);
                 } else {
-                    skippedCards.push(card);
+                    const newState = await this.cardsService.onEvent({
+                        state,
+                        card,
+                        eventName: 'onArrive',
+                    });
+                    if (newState != null) {
+                        state = newState;
+                    } else {
+                        skippedCards.push(card);
+                    }
                 }
             }
         }
