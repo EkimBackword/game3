@@ -3,7 +3,6 @@
     flex-flow: column nowrap;
     justify-content: flex-start;
     align-items: stretch;
-    background-color: var(--bs-white);
 }
 
 .header,
@@ -40,4 +39,65 @@
     width: 20px !important;
     height: 20px !important;
     background-size: 400% 100%;
+}
+
+.clank-artifacts {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.clank-artifact {
+    margin-right: 0.2rem;
+    margin-bottom: 0.2rem;
+}
+
+.game_action_logs {
+    min-height: 200px;
+    height: 100px;
+    max-height: 100px;
+    width: 100%;
+    overflow: auto;
+    padding-bottom: 4px;
+    border-bottom: 2px dashed var(--bs-black);
+    margin-bottom: 4px;
+
+    .alert-custom {
+        font-size: 11px;
+        padding: 4px;
+        margin-bottom: 8px;
+        border-color: var(--bs-black);
+
+        &.alert-custom--Red {
+            border-color: #EF4E5A;
+        }
+
+        &.alert-custom--Yellow {
+            border-color: #FFDB46;
+        }
+
+        &.alert-custom--Green {
+            border-color: #339643;
+        }
+
+        &.alert-custom--Blue {
+            border-color: #376EB6;
+        }
+    }
+
+    .alert-subtext {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+}
+
+.card {
+    .card-header,
+    .card-body,
+    .card-footer {
+        padding: 0.5rem 0.75rem;
+    }
 }

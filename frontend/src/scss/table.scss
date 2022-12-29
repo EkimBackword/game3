@@ -1,0 +1,60 @@
+:root {
+    --column_border_color: tomato;
+    --column_border_style: dashed;
+}
+
+.clank_table {
+    tr {
+        border-color: var(--bs-primary);
+        border-style: solid;
+
+        &:not(:last-of-type) {
+            border-bottom-width: 1px;
+        }
+
+        th {
+            color: var(--bs-gray-600);
+            font-weight: normal;
+        }
+
+        td {
+            color: var(--bs-gray-900);
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.4rem 0.8rem;
+
+            &.to_right {
+                text-align: right;
+            }
+
+            &.total {
+                font-weight: bold;
+            }
+        }
+    }
+
+    thead {
+        tr {
+            border-bottom-width: 2px;
+        }
+    }
+
+    tfoot {
+        tr {
+            border-top-width: 2px;
+        }
+    }
+
+    td {
+        &:not(:last-of-type) {
+            border-right: 1px var(--column_border_style) var(--bs-primary);
+        }
+    }
+
+}
+
+.clank_table_head_img {
+    height: 50px;
+}

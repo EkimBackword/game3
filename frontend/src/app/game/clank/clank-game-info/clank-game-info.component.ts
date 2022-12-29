@@ -2,25 +2,26 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    OnDestroy,
     OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { tap } from 'rxjs/operators';
+import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
+import { ToastService } from 'src/app/shared/services/toast.service';
+
+import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import {
-    combineLatest,
-    Subject,
-} from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { ClankPlayer } from 'src/app/shared/models/players/player.class';
-import {
+    ClankPlayerConfig,
+    GamePlayerColorIdEnum,
+    GamePlayerColorIds,
     GamePlayerColorList,
     GamePlayerStatusIdEnum,
-} from 'src/app/shared/models/players/player.types';
+} from '@shared/clank/clank-player.types';
+import { ClankTokenTypeEnum } from '@shared/clank/clank-token.types';
 
-import { GameInfoQuery } from '../../services/game-info/game-info.query';
-import { GameInfoService } from '../../services/game-info/game-info.service';
-import { GameInfoStatusIdEnum } from '../../services/game-info/game-info.types';
+import { GameInfoQuery } from '../services/game-info.query';
+import { GameInfoService } from '../services/game-info.service';
 
 @Component({
     selector: 'app-clank-game-info',
@@ -28,63 +29,63 @@ import { GameInfoStatusIdEnum } from '../../services/game-info/game-info.types';
     styleUrls: ['./clank-game-info.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClankGameInfoComponent implements OnInit, OnDestroy {
+export class ClankGameInfoComponent implements OnInit {
 
+    ClankCostInfoType = ClankCostInfoType;
+    ClankTokenTypeEnum = ClankTokenTypeEnum;
     isStarted = false;
     isFinished = false;
-    gameName = 'Not found';
 
-    players: ClankPlayer[] = [];
-    currentPlayer: ClankPlayer | undefined;
+    statusSubject = this.gameInfoQuery.onStatusChangeSubject.pipe(
+        tap((statusId) => {
+            this.isStarted = statusId === GameInfoStatusIdEnum.Started;
+            this.isFinished = statusId === GameInfoStatusIdEnum.Finished;
+        }),
+    );
+
+    onActionLogs = this.gameInfoQuery.onActionLogsChangeSubject;
+
+    nameSubject = this.gameInfoQuery.onNameChangeSubject;
 
     GamePlayerColorList = GamePlayerColorList;
+    GamePlayerColorIds = GamePlayerColorIds;
+    validColorList = false;
+    invalidColorText = 'Цвета игроков должны отличатся';
+    playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(
+        tap((players) => {
+            this.validColorList = !GamePlayerColorIds.some((id) => {
+                const playerCount = players.filter(p => p.colorId === id).length;
+                return playerCount > 1;
+            });
+            this.changeDetectorRef.detectChanges();
+        }),
+    );
+
+    activePlayerSubject = this.gameInfoQuery.onActivePlayerChangeSubject;
+
     GamePlayerStatusIdEnum = GamePlayerStatusIdEnum;
 
-    private ngUnsubscribe = new Subject();
+    get currentPlayer() {
+        return this.gameInfoQuery.currentPlayer;
+    }
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private gameInfoQuery: GameInfoQuery,
         private gameInfoService: GameInfoService,
+        private toastService: ToastService,
         private router: Router,
     ) { }
 
     ngOnInit(): void {
-        this.gameInfoQuery.onNameChangeSubject.pipe(
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe((name) => {
-            this.gameName = name ?? 'Not found';
-            this.changeDetectorRef.detectChanges();
-        });
 
-        combineLatest([
-            this.gameInfoQuery.onPlayersChangeSubject,
-            this.gameInfoQuery.onActivePlayerChangeSubject,
-        ]).pipe(
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe(() => {
-            this.players = [
-                ...this.gameInfoService.players.values(),
-            ];
-            this.currentPlayer = this.gameInfoService.currentPlayer;
-            this.changeDetectorRef.detectChanges();
-        });
-
-        this.gameInfoQuery.onStatusChangeSubject.pipe(
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe((statusId) => {
-            this.isStarted = statusId === GameInfoStatusIdEnum.Started;
-            this.isFinished = statusId === GameInfoStatusIdEnum.Finished;
-            this.changeDetectorRef.detectChanges();
-        });
-    }
-
-    ngOnDestroy(): void {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
     }
 
     startGame() {
+        if (!this.validColorList) {
+            this.toastService.showWarn(this.invalidColorText);
+            return;
+        }
         this.gameInfoService.startGame();
     }
 
@@ -93,12 +94,20 @@ export class ClankGameInfoComponent implements OnInit, OnDestroy {
     }
 
     exitGame() {
-        this.gameInfoService.disconnect();
         this.router.navigate(['/']);
     }
 
-    trackById(index: number, player: ClankPlayer) {
-        return player.config.id;
+    trackById(index: number, item: { id: any }) {
+        return item.id;
+    }
+
+    changeColor(player: ClankPlayerConfig, colorId: GamePlayerColorIdEnum) {
+        this.gameInfoService.updatePlayer(
+            player.id,
+            {
+                colorId,
+            },
+        );
     }
 
 }

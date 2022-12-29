@@ -1,0 +1,37 @@
+<ng-template #popTitle>
+    {{card?.name}}
+</ng-template>
+<ng-template #popContent>
+    {{card?.description}}
+</ng-template>
+
+<div class="card_container" *ngIf="data"
+    [ngClass]="data.classes"
+    [class.card_container__by_hover]="openByHover"
+    [ngbPopover]="popContent"
+    [popoverTitle]="popTitle"
+    [disablePopover]="!data.isOpen"
+    [openDelay]="500"
+    container="body"
+    triggers="mouseenter:mouseleave">
+    <div class="flip_card"
+        [class.flip_card__open]="data.isOpen">
+        <div class="flip_card_face">
+            <div class="flip_card_face flip_card_face__front">
+                <div class="clank_face" [ngStyle]="style"></div>
+            </div>
+            <div class="flip_card_face flip_card_face__back">
+                <img class="clank_back" src="/assets/images/cards/card_back.jpg" alt="/assets/images/cards/card_back.jpg">
+            </div>
+        </div>
+    </div>
+    <div class="card_actions" *ngIf="actions.length > 0">
+        <ng-container *ngFor="let action of actions">
+            <button class="btn btn-sm"
+                [ngClass]="action.btnClass"
+                (click)="action.callback()">
+                {{action.name}}
+            </button>
+        </ng-container>
+    </div>
+</div>

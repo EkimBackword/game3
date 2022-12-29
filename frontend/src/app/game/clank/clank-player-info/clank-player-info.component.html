@@ -1,17 +1,85 @@
-<div class="header p-1" *ngIf="helpInfo.length > 0">
-    <p-messages [(value)]="helpInfo" class="w-100"></p-messages>
-</div>
-<div class="body p-1">
-    <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
-    <div *ngIf="activePlayer != null">
-        <div class="w-100 d-flex flex-nowrap">
-            <div class="shadow"
-                *ngFor="let card of activePlayer.deck"
-                [ngStyle]="card.style"
-            ></div>
-        </div>
+<ng-container *ngIf="(activePlayerSubject | async) as activePlayer">
+    <div class="header">
+        <ul class="nav nav-tabs">
+            <li class="nav-item" *ngFor="let player of (playersSubject | async); trackBy: trackById;"
+                (click)="onSelectPlayer(player)">
+                <div class="nav-link player_name"
+                    [class.active]="player.id === selectedPlayer?.id">
+                    <mat-icon
+                        [class.spin-lg]="player.id === activePlayer.id"
+                        aria-label="User icon">
+                        {{player.id === activePlayer.id ? 'update' : 'person'}}
+                    </mat-icon>
+                    {{player.name}}
+                </div>
+                <mat-progress-bar *ngIf="player.id === activePlayer.id" mode="buffer"></mat-progress-bar>
+            </li>
+        </ul>
     </div>
-</div>
-<div class="footer p-1">
-    <button class="mb-1 btn btn-danger">Закончить ход</button>
-</div>
+    <ng-container *ngIf="(selectedPlayerSubject | async) as player">
+        <div class="body" appScalableContainer>
+            <div class="cards_wrap_header">
+                <app-clank-cost-info
+                    [data]="player.benefitInfo"
+                    [type]="ClankCostInfoType.cardsInfo"
+                    [direction]="ClankCostInfoDirection.column"
+                ></app-clank-cost-info>
+            </div>
+            <div class="player_area p-1"
+                *ngIf="(selectedPlayerAreaSubject | async) as playerArea"
+                appScalable
+                [style.width.px]="playerArea.width"
+                [style.height.px]="playerArea.height">
+                <div class="not_active_player" *ngIf="!player.isFinish && player.id !== activePlayer.id"
+                    [style.height.px]="cardsWrapInfo.boardTop">
+                    <h4 class="message p-2 shadow-lg">
+                        Ход игрока
+                        <span class="player_name">{{activePlayer.name}}</span>
+                    </h4>
+                </div>
+                <div class="not_active_player" *ngIf="player.isFinish && player.id !== activePlayer.id">
+                    <h4 class="message p-2 shadow-lg">
+                        Игра закончена (ожидайте других игроков)
+                    </h4>
+                </div>
+                <div class="d-flex flex-column flex-grow-1 position-relative">
+                    <app-clank-card class="position-absolute"
+                        *ngFor="let cardInfo of (selectedPlayerCardsSubject | async); trackBy: trackById;"
+                        [width]="cardsWrapInfo.cardWidth"
+                        [height]="cardsWrapInfo.cardHeight"
+                        [data]="cardInfo"
+                        [ngStyle]="cardInfo.style"
+                    ></app-clank-card>
+                </div>
+            </div>
+        </div>
+        <div class="footer p-1" *ngIf="currentPlayer != null && (!player.isFinish || currentPlayer.id === activePlayer.id)">
+            <p>Доступные жетоны:</p>
+            <div class="clank-tokens">
+                <ng-container *ngFor="let token of player.tokens; trackBy: trackById">
+                    <div class="clank-tokens-group" *ngIf="token.isUsable">
+                        <app-clank-token
+                            [isOpen]="true"
+                            [token]="token"
+                            [size]="cardsWrapInfo.tokenSize"
+                            (click)="currentPlayer.id === activePlayer.id && currentPlayer.id === player.id ? useToken(token, player.id) : null"
+                        ></app-clank-token>
+                    </div>
+                </ng-container>
+            </div>
+            <button class="mb-1 btn btn-sm btn-primary"
+                (click)="openDungeonRow(currentPlayer)"
+            >Показать рынок</button>
+            <div class="d-flex justify-content-center">
+                <app-clank-cost-info
+                    [data]="player.benefitInfo"
+                    [type]="ClankCostInfoType.turnInfo"
+                ></app-clank-cost-info>
+            </div>
+            <button class="btn btn-sm btn-danger"
+                (click)="finishTurn()"
+                [disabled]="currentPlayer.id !== activePlayer.id || currentPlayer.id !== player.id"
+            >Закончить ход</button>
+        </div>
+    </ng-container>
+</ng-container>

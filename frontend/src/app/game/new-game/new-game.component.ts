@@ -2,6 +2,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    OnDestroy,
     OnInit,
 } from '@angular/core';
 import {
@@ -11,15 +12,20 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ClankSelectDeckValue } from 'src/app/shared/models/cards/cards.types';
-import { ClankDlcEnum } from 'src/app/shared/models/clank.types';
-import { ClankMapConfig } from 'src/app/shared/models/maps/clank-maps.types';
-import { CardsService } from 'src/app/shared/services/cards.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { GamesService } from 'src/app/shared/services/games.service';
 import { MapsService } from 'src/app/shared/services/maps.service';
 
+import { ClankSelectDeckValue } from '@shared/clank/clank-card.types';
+import { GameInfoConfig } from '@shared/clank/clank-game.types';
+import {
+    ClankDlcEnum,
+    ClankDlcList,
+} from '@shared/clank/clank-info.types';
+import { ClankMapConfig } from '@shared/clank/clank-map.types';
+
 import { GameRouteEnum } from '../game.routing';
-import { GameInfoConfig } from '../services/game-info/game-info.types';
 
 type GameInfoFormFields = Record<keyof GameInfoConfig, FormControl>;
 
@@ -28,25 +34,25 @@ type GameInfoFormFields = Record<keyof GameInfoConfig, FormControl>;
     styleUrls: ['./new-game.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NewGameComponent implements OnInit {
+export class NewGameComponent implements OnInit, OnDestroy {
 
     maps: ClankMapConfig[] = [];
-    reserveDecks: ClankSelectDeckValue[] = [];
     startDecks: ClankSelectDeckValue[] = [];
-    shareDecks: ClankSelectDeckValue[] = [];
+    dungeonDecks: ClankSelectDeckValue[] = [];
 
     formFields: GameInfoFormFields = {
         name: new FormControl(null, Validators.required),
         mapId: new FormControl(null, Validators.required),
-        reserveDeckIds: new FormControl([ClankDlcEnum.clank], Validators.required),
+        mapDlcId: new FormControl(null, Validators.required),
+        dungeonDeckIds: new FormControl([ClankDlcEnum.clank], Validators.required),
         startDeckId: new FormControl(ClankDlcEnum.clank, Validators.required),
-        shareDeckIds: new FormControl([ClankDlcEnum.clank], Validators.required),
     };
     form = new FormGroup(this.formFields);
 
+    private ngUnsubscribe = new Subject();
+
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
-        private cardsService: CardsService,
         private gamesService: GamesService,
         private mapsService: MapsService,
         private router: Router,
@@ -54,17 +60,31 @@ export class NewGameComponent implements OnInit {
 
     ngOnInit(): void {
         this.maps = this.mapsService.maps;
-        this.reserveDecks = this.cardsService.getSelectReserveDecks().map(p => {
-            p.value = this.formFields.reserveDeckIds.value.includes(p.id);
-            return p;
-        });
-        this.startDecks = this.cardsService.getSelectStartDecks();
-        this.shareDecks = this.cardsService.getSelectShareDecks().map(p => {
-            p.value = this.formFields.shareDeckIds.value.includes(p.id);
-            return p;
+        this.startDecks = ClankDlcList.map(dlc => ({
+            ...dlc,
+            value: dlc.id === ClankDlcEnum.clank,
+            disabled: false,
+        }));
+        this.dungeonDecks = ClankDlcList.map(dlc => ({
+            ...dlc,
+            value: dlc.id === ClankDlcEnum.clank,
+            disabled: false,
+        }));
+
+        this.formFields.mapId.valueChanges.pipe(
+            takeUntil(this.ngUnsubscribe),
+        ).subscribe((mapId) => {
+            const map = this.maps.find(p => p.id === mapId);
+            this.formFields.mapDlcId.setValue(map?.dlc_id);
         });
         this.formFields.mapId.setValue(this.maps?.[0]?.id);
+
         this.changeDetectorRef.detectChanges();
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     updateSelectedCards(list: ClankSelectDeckValue[], control: FormControl) {
@@ -72,13 +92,16 @@ export class NewGameComponent implements OnInit {
     }
 
     submit() {
+        if (this.form.invalid) {
+            return;
+        }
         const formValue: GameInfoConfig = this.form.value;
         const gameId = this.gamesService.addNew(formValue);
         this.router.navigate([GameRouteEnum.Clank, gameId]);
     }
 
     cancel() {
-
+        this.router.navigate([GameRouteEnum.Menu]);
     }
 
 }

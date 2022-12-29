@@ -15,15 +15,18 @@ import {
 } from 'rxjs';
 import {
     filter,
-    map,
     takeUntil,
+    tap,
 } from 'rxjs/operators';
-import { ClankMapElement } from 'src/app/shared/models/maps/clank-map-element.class';
-import { ClankMapConfig } from 'src/app/shared/models/maps/clank-maps.types';
-import { MapsService } from 'src/app/shared/services/maps.service';
 
-import { GameInfoQuery } from '../../services/game-info/game-info.query';
-import { GameInfoService } from '../../services/game-info/game-info.service';
+import { ClankMapConfig } from '@shared/clank/clank-map.types';
+import {
+    ClankPlayerConfig,
+    GamePlayerColorList,
+} from '@shared/clank/clank-player.types';
+
+import { GameInfoQuery } from '../services/game-info.query';
+import { GameInfoService } from '../services/game-info.service';
 
 @Component({
     selector: 'app-clank-map',
@@ -34,8 +37,25 @@ import { GameInfoService } from '../../services/game-info/game-info.service';
 export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     mapInfo: ClankMapConfig | undefined;
-    mapElements: ClankMapElement[] = [];
-    backgroundImage: string | undefined;
+    backgroundImage: string | null = null;
+
+    mapSubject = this.gameInfoQuery.onMapChangeSubject.pipe(
+        tap((mapInfo) => {
+            this.mapInfo = mapInfo;
+            this.backgroundImage = this.mapInfo != null
+                ? `url(${mapInfo.url})`
+                : null;
+            this.onResize();
+        }),
+    );
+
+    players = this.gameInfoQuery.onPlayersChangeSubject;
+
+    playersPosition = this.gameInfoQuery.onPlayersPositionChangeSubject;
+
+    dragonPosition = this.gameInfoQuery.onDragonPositionChangeSubject;
+
+    GamePlayerColorList = GamePlayerColorList;
 
     @ViewChild('clankMapContainer', { read: ElementRef }) clankMapContainer: ElementRef<HTMLElement> | undefined;
 
@@ -49,30 +69,10 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
         private changeDetectorRef: ChangeDetectorRef,
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
-        private mapsService: MapsService,
         private elementRef: ElementRef<HTMLElement>,
     ) { }
 
     ngOnInit(): void {
-        this.gameInfoQuery.onMapChangeSubject.pipe(
-            map((id) => this.mapsService.getMapById(id)),
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe((mapInfo) => {
-            this.mapInfo = mapInfo;
-            this.mapElements = [
-                ...this.gameInfoService.mapElements.values(),
-            ];
-            this.backgroundImage = `url(${mapInfo?.url})`;
-            this.onResize();
-            this.changeDetectorRef.detectChanges();
-        });
-
-        this.gameInfoQuery.onAnyChangeSubject.pipe(
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe((data) => {
-            console.log(data);
-            this.changeDetectorRef.detectChanges();
-        });
     }
 
     ngAfterViewInit() {
@@ -127,6 +127,10 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+    }
+
+    trackById(index: number, item: { player: ClankPlayerConfig; }) {
+        return item.player.id;
     }
 
     private onResize() {

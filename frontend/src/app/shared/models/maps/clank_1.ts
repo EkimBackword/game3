@@ -1,33 +1,169 @@
+import { ClankDlcEnum } from '@shared/clank/clank-info.types';
 import {
     ClankMapConfig,
     ClankMapConfigIds,
-} from './clank-maps.types';
+} from '@shared/clank/clank-map.types';
 
 export const getClankMapFirst = () => {
     const map: ClankMapConfig = {
         id: ClankMapConfigIds.clank_1,
+        dlc_id: ClankDlcEnum.clank,
         name: 'Кланк! Подземное приключение',
         url: '/assets/images/maps/clank_1.jpg',
         width: 3000,
         height: 3000,
-        dragonTrack: [
-            {
-                position: {
-                    x: 1940,
-                    y: 2700,
-                    width: 200,
-                    height: 250,
-                },
-                clank: 2,
-                startUserCount: 4,
+        dragonInfo: {
+            url: '/assets/images/dragon.png',
+            maxRage: 6,
+            clankAria: {
+                x: 2340,
+                y: 500,
+                width: 520,
+                height: 600,
             },
-        ],
+            track: [
+                {
+                    rage: 0,
+                    position: {
+                        x: 1940,
+                        y: 2750,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 2,
+                    startUserCount: 4,
+                },
+                {
+                    rage: 1,
+                    position: {
+                        x: 2240,
+                        y: 2720,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 2,
+                    startUserCount: 3,
+                },
+                {
+                    rage: 2,
+                    position: {
+                        x: 2520,
+                        y: 2560,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 3,
+                    startUserCount: 2,
+                },
+                {
+                    rage: 3,
+                    position: {
+                        x: 2690,
+                        y: 2300,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 3,
+                    startUserCount: 1,
+                },
+                {
+                    rage: 4,
+                    position: {
+                        x: 2740,
+                        y: 2020,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 4,
+                    startUserCount: 0,
+                },
+                {
+                    rage: 5,
+                    position: {
+                        x: 2740,
+                        y: 1730,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 4,
+                    startUserCount: 0,
+                },
+                {
+                    rage: 6,
+                    position: {
+                        x: 2740,
+                        y: 1430,
+                        width: 200,
+                        height: 200,
+                    },
+                    clank: 5,
+                    startUserCount: 0,
+                },
+            ],
+            endGameTrack: [
+                {
+                    index: 0,
+                    clank: 0,
+                    position: {
+                        x: 477,
+                        y: 10,
+                        height: 175,
+                        width: 175,
+                    },
+                    isFinish: false,
+                },
+                {
+                    index: 1,
+                    clank: 1,
+                    position: {
+                        x: 725,
+                        y: 10,
+                        height: 175,
+                        width: 175,
+                    },
+                    isFinish: false,
+                },
+                {
+                    index: 2,
+                    clank: 2,
+                    position: {
+                        x: 965,
+                        y: 10,
+                        height: 175,
+                        width: 175,
+                    },
+                    isFinish: false,
+                },
+                {
+                    index: 3,
+                    clank: 3,
+                    position: {
+                        x: 1205,
+                        y: 10,
+                        height: 175,
+                        width: 175,
+                    },
+                    isFinish: false,
+                },
+                {
+                    index: 4,
+                    clank: 0,
+                    position: {
+                        x: 1450,
+                        y: 10,
+                        height: 175,
+                        width: 175,
+                    },
+                    isFinish: true,
+                },
+            ],
+        },
         elements: [
             {
                 id: 1,
                 position: {
-                    x: 83,
-                    y: 60,
+                    x: 65,
+                    y: 75,
                     width: 230,
                     height: 180,
                 },
@@ -44,8 +180,8 @@ export const getClankMapFirst = () => {
             {
                 id: 2,
                 position: {
-                    x: 83,
-                    y: 320,
+                    x: 65,
+                    y: 310,
                     width: 230,
                     height: 180,
                 },
@@ -67,8 +203,8 @@ export const getClankMapFirst = () => {
             {
                 id: 3,
                 position: {
-                    x: 533,
-                    y: 326,
+                    x: 510,
+                    y: 310,
                     width: 230,
                     height: 180,
                 },
@@ -86,6 +222,12 @@ export const getClankMapFirst = () => {
                         },
                     },
                     {
+                        element_id: 7,
+                        cost: {
+                            teleport: 1,
+                        },
+                    },
+                    {
                         element_id: 8,
                         cost: {
                             boot: 1,
@@ -96,8 +238,8 @@ export const getClankMapFirst = () => {
             {
                 id: 4,
                 position: {
-                    x: 957,
-                    y: 334,
+                    x: 930,
+                    y: 310,
                     width: 230,
                     height: 180,
                 },
@@ -137,8 +279,8 @@ export const getClankMapFirst = () => {
             {
                 id: 5,
                 position: {
-                    x: 1375,
-                    y: 336,
+                    x: 1340,
+                    y: 310,
                     width: 230,
                     height: 180,
                 },
@@ -147,6 +289,12 @@ export const getClankMapFirst = () => {
                         element_id: 4,
                         cost: {
                             boot: 2,
+                        },
+                    },
+                    {
+                        element_id: 5,
+                        cost: {
+                            teleport: 1,
                         },
                     },
                     {
@@ -166,8 +314,8 @@ export const getClankMapFirst = () => {
             {
                 id: 6,
                 position: {
-                    x: 1825,
-                    y: 256,
+                    x: 1800,
+                    y: 235,
                     width: 230,
                     height: 180,
                 },
@@ -195,8 +343,8 @@ export const getClankMapFirst = () => {
             {
                 id: 7,
                 position: {
-                    x: 143,
-                    y: 573,
+                    x: 130,
+                    y: 575,
                     width: 280,
                     height: 280,
                 },
@@ -225,8 +373,8 @@ export const getClankMapFirst = () => {
             {
                 id: 8,
                 position: {
-                    x: 615,
-                    y: 640,
+                    x: 585,
+                    y: 625,
                     width: 280,
                     height: 280,
                 },
@@ -256,8 +404,8 @@ export const getClankMapFirst = () => {
             {
                 id: 9,
                 position: {
-                    x: 983,
-                    y: 690,
+                    x: 954,
+                    y: 665,
                     width: 230,
                     height: 180,
                 },
@@ -286,8 +434,8 @@ export const getClankMapFirst = () => {
             {
                 id: 10,
                 position: {
-                    x: 1337,
-                    y: 700,
+                    x: 1320,
+                    y: 680,
                     width: 280,
                     height: 280,
                 },
@@ -320,12 +468,17 @@ export const getClankMapFirst = () => {
                     },
                 ],
                 isCrystalCave: true,
+                items: {
+                    minor_secret: {
+                        count: 2,
+                    },
+                },
             },
             {
                 id: 11,
                 position: {
-                    x: 1753,
-                    y: 607,
+                    x: 1733,
+                    y: 585,
                     width: 230,
                     height: 180,
                 },
@@ -354,8 +507,8 @@ export const getClankMapFirst = () => {
             {
                 id: 12,
                 position: {
-                    x: 85,
-                    y: 988,
+                    x: 72,
+                    y: 986,
                     width: 230,
                     height: 180,
                 },
@@ -374,12 +527,18 @@ export const getClankMapFirst = () => {
                         },
                     },
                 ],
+                items: {
+                    heal: {
+                        count: -1,
+                        value: 1,
+                    },
+                },
             },
             {
                 id: 13,
                 position: {
-                    x: 480,
-                    y: 1037,
+                    x: 455,
+                    y: 1035,
                     width: 230,
                     height: 180,
                 },
@@ -413,8 +572,8 @@ export const getClankMapFirst = () => {
             {
                 id: 14,
                 position: {
-                    x: 923,
-                    y: 1020,
+                    x: 895,
+                    y: 1010,
                     width: 280,
                     height: 280,
                 },
@@ -458,8 +617,8 @@ export const getClankMapFirst = () => {
             {
                 id: 15,
                 position: {
-                    x: 1382,
-                    y: 1095,
+                    x: 1370,
+                    y: 1075,
                     width: 230,
                     height: 180,
                 },
@@ -495,7 +654,7 @@ export const getClankMapFirst = () => {
             {
                 id: 16,
                 position: {
-                    x: 1790,
+                    x: 1785,
                     y: 980,
                     width: 230,
                     height: 180,
@@ -528,9 +687,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 17,
+                isDungeon: true,
                 position: {
-                    x: 169,
-                    y: 1345,
+                    x: 155,
+                    y: 1350,
                     width: 230,
                     height: 180,
                 },
@@ -555,6 +715,12 @@ export const getClankMapFirst = () => {
                         },
                     },
                     {
+                        element_id: 24,
+                        cost: {
+                            boot: 1,
+                        },
+                    },
+                    {
                         element_id: 23,
                         cost: {
                             boot: 1,
@@ -571,8 +737,9 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 18,
+                isDungeon: true,
                 position: {
-                    x: 590,
+                    x: 572,
                     y: 1330,
                     width: 280,
                     height: 280,
@@ -620,9 +787,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 19,
+                isDungeon: true,
                 position: {
-                    x: 1032,
-                    y: 1426,
+                    x: 1015,
+                    y: 1425,
                     width: 213,
                     height: 253,
                 },
@@ -650,9 +818,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 20,
+                isDungeon: true,
                 position: {
-                    x: 1487,
-                    y: 1429,
+                    x: 1475,
+                    y: 1420,
                     width: 215,
                     height: 254,
                 },
@@ -686,9 +855,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 21,
+                isDungeon: true,
                 position: {
-                    x: 1800,
-                    y: 1305,
+                    x: 1808,
+                    y: 1304,
                     width: 230,
                     height: 180,
                 },
@@ -728,9 +898,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 22,
+                isDungeon: true,
                 position: {
-                    x: 2130,
-                    y: 1338,
+                    x: 2145,
+                    y: 1340,
                     width: 280,
                     height: 280,
                 },
@@ -756,12 +927,18 @@ export const getClankMapFirst = () => {
                     },
                 ],
                 isCrystalCave: true,
+                items: {
+                    minor_secret: {
+                        count: 2,
+                    },
+                },
             },
             {
                 id: 23,
+                isDungeon: true,
                 position: {
-                    x: 100,
-                    y: 1810,
+                    x: 92,
+                    y: 1832,
                     width: 220,
                     height: 480,
                 },
@@ -788,9 +965,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 24,
+                isDungeon: true,
                 position: {
-                    x: 350,
-                    y: 1557,
+                    x: 328,
+                    y: 1568,
                     width: 280,
                     height: 280,
                 },
@@ -812,9 +990,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 25,
+                isDungeon: true,
                 position: {
-                    x: 578,
-                    y: 1850,
+                    x: 564,
+                    y: 1860,
                     width: 250,
                     height: 200,
                 },
@@ -842,9 +1021,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 26,
+                isDungeon: true,
                 position: {
-                    x: 1030,
-                    y: 1745,
+                    x: 1015,
+                    y: 1755,
                     width: 215,
                     height: 255,
                 },
@@ -892,9 +1072,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 27,
+                isDungeon: true,
                 position: {
-                    x: 1485,
-                    y: 1750,
+                    x: 1475,
+                    y: 1755,
                     width: 215,
                     height: 255,
                 },
@@ -929,9 +1110,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 28,
+                isDungeon: true,
                 position: {
-                    x: 1786,
-                    y: 1620,
+                    x: 1792,
+                    y: 1635,
                     width: 280,
                     height: 280,
                 },
@@ -953,9 +1135,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 29,
+                isDungeon: true,
                 position: {
-                    x: 2325,
-                    y: 1735,
+                    x: 2342,
+                    y: 1755,
                     width: 250,
                     height: 200,
                 },
@@ -983,9 +1166,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 30,
+                isDungeon: true,
                 position: {
-                    x: 542,
-                    y: 2095,
+                    x: 528,
+                    y: 2118,
                     width: 225,
                     height: 180,
                 },
@@ -1030,9 +1214,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 31,
+                isDungeon: true,
                 position: {
-                    x: 950,
-                    y: 2135,
+                    x: 940,
+                    y: 2157,
                     width: 225,
                     height: 170,
                 },
@@ -1081,9 +1266,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 32,
+                isDungeon: true,
                 position: {
                     x: 1307,
-                    y: 2122,
+                    y: 2150,
                     width: 280,
                     height: 280,
                 },
@@ -1111,12 +1297,18 @@ export const getClankMapFirst = () => {
                     },
                 ],
                 isCrystalCave: true,
+                items: {
+                    minor_secret: {
+                        count: 2,
+                    },
+                },
             },
             {
                 id: 33,
+                isDungeon: true,
                 position: {
                     x: 1736,
-                    y: 2230,
+                    y: 2249,
                     width: 220,
                     height: 170,
                 },
@@ -1158,9 +1350,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 34,
+                isDungeon: true,
                 position: {
-                    x: 2056,
-                    y: 1964,
+                    x: 2062,
+                    y: 1970,
                     width: 220,
                     height: 170,
                 },
@@ -1188,9 +1381,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 35,
+                isDungeon: true,
                 position: {
-                    x: 2335,
-                    y: 2060,
+                    x: 2344,
+                    y: 2072,
                     width: 230,
                     height: 170,
                 },
@@ -1212,9 +1406,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 36,
+                isDungeon: true,
                 position: {
-                    x: 214,
-                    y: 2400,
+                    x: 202,
+                    y: 2422,
                     width: 230,
                     height: 170,
                 },
@@ -1236,9 +1431,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 37,
+                isDungeon: true,
                 position: {
-                    x: 698,
-                    y: 2398,
+                    x: 700,
+                    y: 2442,
                     width: 250,
                     height: 190,
                 },
@@ -1266,9 +1462,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 38,
+                isDungeon: true,
                 position: {
-                    x: 1208,
-                    y: 2424,
+                    x: 1200,
+                    y: 2450,
                     width: 220,
                     height: 170,
                 },
@@ -1303,9 +1500,10 @@ export const getClankMapFirst = () => {
             },
             {
                 id: 39,
+                isDungeon: true,
                 position: {
-                    x: 2108,
-                    y: 2273,
+                    x: 2120,
+                    y: 2300,
                     width: 280,
                     height: 280,
                 },

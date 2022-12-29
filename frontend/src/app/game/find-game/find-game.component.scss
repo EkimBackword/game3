@@ -1,0 +1,39 @@
+.container {
+    background-color: #c0c0c0;
+    display: flex;
+    flex-flow: column wrap;
+    align-content: space-between;
+    /* Your container needs a fixed height, and it
+     * needs to be taller than your tallest column. */
+    height: 600px;
+}
+
+.item {
+    width: 32%;
+    margin-bottom: 2%;
+    /* Optional */
+
+    background-color: #fff;
+}
+
+/* Re-order items into 3 rows */
+.item:nth-child(3n+1) {
+    order: 1;
+}
+
+.item:nth-child(3n+2) {
+    order: 2;
+}
+
+.item:nth-child(3n) {
+    order: 3;
+}
+
+/* Force new columns */
+.container::before,
+.container::after {
+    content: "";
+    flex-basis: 100%;
+    width: 0;
+    order: 2;
+}

@@ -1,0 +1,22 @@
+:host {
+    height: 100%;
+}
+
+.toast {
+    width: 500px;
+}
+
+.toast-body {
+    padding: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+
+    &.toast-body--wo-text {
+        height: 1px;
+    }
+}
+
+fa-icon {
+    margin-right: 4px;
+    font-size: 20px;
+}

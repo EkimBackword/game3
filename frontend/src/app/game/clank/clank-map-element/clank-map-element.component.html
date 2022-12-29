@@ -1,21 +1,32 @@
-<ng-container *ngIf="mapElement != null">
-    <div class="player_layer">
-        <div *ngFor="let player of mapElement.playersList" [ngStyle]="player.meepleStyle"></div>
-    </div>
-    <div class="actions_layer">
-        <button type="button"
-            class="btn btn-primary"
-            *ngIf="link"
-            (click)="onMove()">
-            <div class="cost_container">
-                <div class="cost_item" *ngFor="let item of link.cost | keyvalue">
-                    <img class="cost_img"
-                        [src]="ClankElementTypeMap[item.key].url"
-                        [alt]="ClankElementTypeMap[item.key].name"
-                        [title]="ClankElementTypeMap[item.key].name">
-                    <span class="cost_value">{{item.value}}</span>
+<ng-container *ngIf="dataSubject | async">
+    <ng-container *ngIf="mapElement != null">
+        <div class="actions_layer"
+            [class.crystal_cave]="mapElement.isCrystalCave">
+            <ng-container *ngFor="let artifact of (onArtifactsChangeSubject | async); trackBy: trackById">
+                <div class="clank-artifact" (click)="takeArtifact(artifact)" *ngIf="mapElement.items?.artefact?.value === artifact.value">
+                    <app-clank-artifact
+                        [data]="artifact"
+                    ></app-clank-artifact>
                 </div>
+            </ng-container>
+            <ng-container *ngIf="(onTokensChangeSubject | async) as tokens">
+                <div class="clank-artifact" *ngIf="tokens.length > 0 && visibleTokens.length > 0">
+                    <app-clank-token
+                        *ngFor="let token of visibleTokens"
+                        [token]="token"
+                    ></app-clank-token>
+                </div>
+            </ng-container>
+            <div class="action_move"
+                *ngIf="link"
+                (click)="onMove(link)">
+                <app-clank-cost-info
+                    class="action_move__cost"
+                    [data]="link.cost"
+                    [direction]="ClankCostInfoDirection.column"
+                    [elementHeight]="100"
+                ></app-clank-cost-info>
             </div>
-        </button>
-    </div>
+        </div>
+    </ng-container>
 </ng-container>

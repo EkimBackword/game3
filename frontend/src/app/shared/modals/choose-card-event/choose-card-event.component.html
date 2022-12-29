@@ -1,0 +1,32 @@
+<h1 mat-dialog-title>
+    Выберите события ({{count}} шт.)
+</h1>
+<div mat-dialog-content>
+    <mat-list>
+        <ng-container *ngFor="let item of list; let last = last">
+            <mat-list-item>
+                <mat-slide-toggle
+                    [(ngModel)]="item.checked"
+                    (ngModelChange)="onSelect()"
+                    [disabled]="!item.checked && !canSelect"
+                >
+                    {{item.description}}
+                </mat-slide-toggle>
+            </mat-list-item>
+            <mat-divider *ngIf="!last"></mat-divider>
+        </ng-container>
+    </mat-list>
+</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end">
+    <button class="btn btn-primary m-1"
+        type="submit"
+        [disabled]="!canSubmit"
+        (click)="submit()">
+        Использовать
+    </button>
+    <button class="btn btn-danger m-1"
+        type="submit"
+        (click)="cancel()">
+        Отменить
+    </button>
+</div>

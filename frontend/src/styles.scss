@@ -1,12 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
+@import './scss/theme.scss';
+@import './scss/table.scss';
 
 :root {
-    --bs-white: #f4f3ee;
-    --bs-gray: #8a817c;
-    --bs-black: #463f3a;
-    --bs-body-color: #463f3a;
-    --bs-body-bg: #f4f3ee;
-    --bs-gradient: linear-gradient(0deg, #bcb8b1 0%, #f4f3ee 50%, #8a817c 100%);
+    --gray-0:  #fff;
+    --gray-50:  #FAFAFA;
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-400: #ced4da;
+    --gray-500: #adb5bd;
+    --gray-600: #6c757d;
+    --gray-700: #495057;
+    --gray-800: #343a40;
+    --gray-900: #212529;
+
+    --surface-0: var(--gray-0);
+    --surface-50: var(--gray-50);
+    --surface-100: var(--gray-100);
+    --surface-200: var(--gray-200);
+    --surface-300: var(--gray-300);
+    --surface-400: var(--gray-400);
+    --surface-500: var(--gray-500);
+    --surface-600: var(--gray-600);
+    --surface-700: var(--gray-700);
+    --surface-800: var(--gray-800);
+    --surface-900: var(--gray-900);
+
+    --text-color: var(--bs-dark);
+    --text-color-secondary: var(--bs-gray);
+    --primary-color-text: var(--bs-light);
+    --font-family: var(--bs-font-sans-serif);
+
+    --bs-gradient: radial-gradient(
+        circle,
+        var(--gray-0) 0%,
+        var(--gray-100) 10%,
+        var(--gray-200) 25%,
+        var(--gray-300) 50%,
+        var(--gray-400) 75%,
+        var(--gray-500) 100%
+    );
 }
 
 html,
@@ -14,11 +48,14 @@ body {
     margin: 0;
     padding: 0;
     border: 0;
+    height: 100%;
 }
 
 body {
     width: 100vw;
     height: 100vh;
+    background: var(--bs-gradient);
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 .container--page {
@@ -26,59 +63,35 @@ body {
     background-color: #fff;
 }
 
-.flip_card {
-    position: relative;
-    background-color: transparent;
-    height: 520px;
-    width: 373px;
-    border-radius: 0.8rem;
-    transform-style: preserve-3d;
-}
-
-.flip_card_face {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 0.8rem;
-    background-size: cover;
-    background-position: center center;
-    backface-visibility: hidden;
-    transition: transform 0.5s ease-in-out;
-}
-
-.flip_card_face__front {
-    background: #2c3e50;
-
-    .clank_face {
-        transform: scale(0.5) translate(-50%, -50%);
-        border-radius: 0.8rem;
-    }
-}
-
-.flip_card_face__back {
-    background: #2c3e50;
-    transform: rotateY(180deg);
-
-    .clank_back {
-        height: 100%;
-        width: 100%;
-        border-radius: 0.8rem;
-    }
-}
-
-.flip_card:hover .flip_card_face__front {
-    transform: rotateY(-180deg);
-}
-
-.flip_card:hover .flip_card_face__back {
-    transform: rotateY(0deg);
-}
-
 .text-ellipsis {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+*[disabled],
+.not-allowed {
+    cursor: not-allowed;
+}
+
+.spin {
+    animation: spin 2s infinite linear;
+}
+
+.spin-lg {
+    animation: spin 4s infinite linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+.mat-snack-bar-container {
+    padding: 0 !important;
+    background: transparent !important
 }

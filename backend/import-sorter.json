@@ -1,0 +1,6 @@
+{
+    "trailingComma": "multiLine",
+    "quoteMark": "single",
+    "maxLineLength": 0,
+    "tabSize": 4
+}

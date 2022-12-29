@@ -1,0 +1,108 @@
+:host {
+    border-radius: 0.8rem;
+    filter: drop-shadow(2px 2px 2px var(--bs-black));
+    transition: all ease-in-out 300ms;
+    z-index: 1;
+
+    &:hover {
+        z-index: 1000 !important;
+    }
+}
+
+.card_container {
+    position: relative;
+    transform-origin: top left;
+    transition: all ease-in-out 300ms;
+    width: var(--card_width, 373px);
+    height: var(--card_height, 520px);
+
+    &.card_container__hand:hover {
+        transform: scale(1.1, 1.1);
+        z-index: 1000;
+    }
+
+    &.card_container__by_hover {
+        &.flip_card {
+            &:hover .flip_card_face__front {
+                transform: rotateY(0deg);
+            }
+
+            &:hover .flip_card_face__back {
+                transform: rotateY(180deg);
+            }
+        }
+    }
+}
+
+.flip_card {
+    position: relative;
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.8rem;
+    transform-style: preserve-3d;
+
+    &.flip_card__open .flip_card_face__front {
+        transform: rotateY(0deg);
+    }
+
+    &.flip_card__open .flip_card_face__back {
+        transform: rotateY(180deg);
+    }
+}
+
+.flip_card_face {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.8rem;
+    background-size: cover;
+    background-position: center center;
+    backface-visibility: hidden;
+    transition: transform ease-in-out 300ms;
+}
+
+.flip_card_face__front {
+    background: #2c3e50;
+    transform: rotateY(-180deg);
+
+    .clank_face {
+        border-radius: 0.8rem;
+    }
+}
+
+.flip_card_face__back {
+    background: #2c3e50;
+
+    .clank_back {
+        height: 100%;
+        width: 100%;
+        border-radius: 0.8rem;
+    }
+}
+
+.card_actions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-content: stretch;
+    align-items: stretch;
+    padding: 10px;
+    background-color: rgba(var(--bs-light-rgb), 0.5);
+    opacity: 0;
+    transition: opacity 300ms ease-in-out;
+
+    &:hover {
+        opacity: 1;
+    }
+}
