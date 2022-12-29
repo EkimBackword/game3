@@ -38,7 +38,6 @@ import { ClankMapElementConfig } from '@shared/clank/clank-map.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorIdEnum,
-    GamePlayerColorIds,
 } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 import { SocketErrorTypeEnum } from '@shared/socket.types';
@@ -137,8 +136,8 @@ export class GameInfoService implements OnDestroy {
             player.benefitInfo = benefitInfo;
             this.clankHelpService.checkBenefit(player);
             player.elementId = mapElement.id;
-            const isFinish = mapElement.isStart ?? false;
-            if (isFinish) {
+            const isStart = mapElement.isStart ?? false;
+            if (isStart) {
                 player.isFinish = true;
                 player.isEscaped = true;
                 player.benefitInfo.mastery_token = 1;
@@ -347,11 +346,7 @@ export class GameInfoService implements OnDestroy {
         }
 
         /** Обновление состояния карты */
-        GamePlayerColorIds.forEach(colorId => {
-            if (state.dragonInfo.clankAria[colorId] < 0) {
-                state.dragonInfo.clankAria[colorId] = 0;
-            }
-        });
+        this.clankHelpService.checkClankAria(state);
         state = await this.drawDungeonRow(state, {});
 
         /** Переход хода */
@@ -435,25 +430,26 @@ export class GameInfoService implements OnDestroy {
             if (!card) {
                 break;
             }
-            if (card.events?.onAcquire?.isDragonAttack && options?.initDungeonRow) {
-                skippedCards.push(card);
+            if (options?.initDungeonRow) {
+                if (card.events?.onArrive?.isDragonAttack) {
+                    skippedCards.push(card);
+                } else {
+                    state.dungeonRow.push(card);
+                }
             } else {
-                if (card.events?.onAcquire?.isDragonAttack && !options?.ignoreDragonAttack) {
+                if (card.events?.onArrive?.isDragonAttack && !options?.ignoreDragonAttack) {
                     isDragonAttack = true;
                 }
-                if (options?.initDungeonRow) {
-                    state.dungeonRow.push(card);
+
+                const newState = await this.cardsService.onEvent({
+                    state,
+                    card,
+                    eventName: 'onArrive',
+                });
+                if (newState != null) {
+                    state = newState;
                 } else {
-                    const newState = await this.cardsService.onEvent({
-                        state,
-                        card,
-                        eventName: 'onArrive',
-                    });
-                    if (newState != null) {
-                        state = newState;
-                    } else {
-                        skippedCards.push(card);
-                    }
+                    skippedCards.push(card);
                 }
             }
         }

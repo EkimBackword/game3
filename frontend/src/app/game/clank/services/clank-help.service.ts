@@ -19,6 +19,7 @@ import { ClankCostInfo } from '@shared/clank/clank-info.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorIdEnum,
+    GamePlayerColorIds,
 } from '@shared/clank/clank-player.types';
 
 import { GameInfoQuery } from './game-info.query';
@@ -91,6 +92,14 @@ export class ClankHelpService {
         state.dragonInfo.clankAria[player.colorId] += count;
     }
 
+    checkClankAria(state: GameInfoState) {
+        GamePlayerColorIds.forEach(colorId => {
+            if (state.dragonInfo.clankAria[colorId] < 0) {
+                state.dragonInfo.clankAria[colorId] = 0;
+            }
+        });
+    }
+
     drawCards({
         state,
         player,
@@ -131,15 +140,15 @@ export class ClankHelpService {
     }
 
     onDragonAttack(state: GameInfoState, rage = 0) {
-        (Object.keys(state.dragonInfo.clankAria) as GamePlayerColorIdEnum[]).forEach((key) => {
-            const count = state.dragonInfo.clankAria[key];
+        GamePlayerColorIds.forEach(colorId => {
+            const count = state.dragonInfo.clankAria[colorId];
             if (count > 0) {
                 state.dragonInfo.clankBag = [
                     ...state.dragonInfo.clankBag,
-                    ...Array(count).fill(key),
+                    ...Array(count).fill(colorId),
                 ];
             }
-            state.dragonInfo.clankAria[key] = 0;
+            state.dragonInfo.clankAria[colorId] = 0;
         });
         state.dragonInfo.clankBag = this.simpleShuffle(state.dragonInfo.clankBag);
         const attackResult = state.players.reduce((acc, player) => {
