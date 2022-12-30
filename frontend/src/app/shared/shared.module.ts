@@ -24,6 +24,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -39,9 +40,9 @@ import {
     ScalableDirective,
 } from './directives/scalable.directive';
 import { BsToastComponent } from './modals/bs-toast/bs-toast.component';
+import { ChooseCardEventComponent } from './modals/choose-card-event/choose-card-event.component';
 import { ConfirmModalComponent } from './modals/confirm-modal/confirm-modal.component';
 import { SharedComponent } from './shared.component';
-import { ChooseCardEventComponent } from './modals/choose-card-event/choose-card-event.component';
 
 const exports = [
     CommonModule,
@@ -60,6 +61,7 @@ const exports = [
     MatSlideToggleModule,
     MatDividerModule,
     MatListModule,
+    MatTableModule,
     NgbModule,
 ];
 

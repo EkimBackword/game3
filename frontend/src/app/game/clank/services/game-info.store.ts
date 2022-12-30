@@ -19,8 +19,6 @@ export class GameInfoStore extends Store<GameInfoState> {
             name: 'Not found',
             mapDlcId: ClankDlcEnum.clank,
             mapId: ClankMapConfigIds.clank_1,
-            startDeckId: ClankDlcEnum.clank,
-            dungeonDeckIds: [ClankDlcEnum.clank],
         }));
     }
 

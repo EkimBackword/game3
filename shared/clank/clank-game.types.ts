@@ -11,11 +11,23 @@ import {
 import { ClankTokenConfig } from './clank-token.types';
 
 export enum GameInfoStatusIdEnum {
-    Empty,
-    New,
-    Created,
-    Started,
-    Finished,
+    Created = 1,
+    Started = 2,
+    Finished = 3,
+}
+
+export const GameInfoStatus: Record<GameInfoStatusIdEnum, {
+    name: string
+}> = {
+    [GameInfoStatusIdEnum.Created]: {
+        name: 'Новая игра',
+    },
+    [GameInfoStatusIdEnum.Started]: {
+        name: 'Игра в прогрессе',
+    },
+    [GameInfoStatusIdEnum.Finished]: {
+        name: 'Законченая игра',
+    },
 }
 
 export interface GameInfoConfig {
@@ -25,10 +37,6 @@ export interface GameInfoConfig {
     mapId: ClankMapConfigIds;
     /** DLC к которому привязана карта */
     mapDlcId: ClankDlcEnum;
-    /** Список DLC участвующийх в игре */
-    dungeonDeckIds: ClankDlcEnum[];
-    /** DLC для определения стартовой руки игрока */
-    startDeckId: ClankDlcEnum;
 }
 
 export interface GameInfoActionLog {

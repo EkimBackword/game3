@@ -1,23 +1,31 @@
 <div class="card game_menu shadow">
     <div class="card-header">
-        <h1>Game menu</h1>
+        <h1>Меню</h1>
     </div>
     <div class="card-body">
         <ul class="list-group list-group-flush">
             <li class="list-group-item" *ngFor="let item of menuList">
                 <a  class="game_menu_item"
+                    *ngIf="!item.disabled;else disabledTemplateLink"
+                    [class.disabled]="item.disabled"
                     [routerLink]="item.url"
                     routerLinkActive="active"
                     ariaCurrentWhenActive="page">
                     <fa-icon [icon]="item.icon"></fa-icon>
                     <span class="game_menu_item_text">{{item.name}}</span>
                 </a>
+                <ng-template #disabledTemplateLink>
+                    <a  class="game_menu_item disabled">
+                        <fa-icon [icon]="item.icon"></fa-icon>
+                        <span class="game_menu_item_text">{{item.name}}</span>
+                    </a>
+                </ng-template>
             </li>
         </ul>
     </div>
     <div class="card-footer">
         <div class="row">
-            <button type="button" class="btn btn-link" (click)="logout()">Logout</button>
+            <button type="button" class="btn btn-link" (click)="logout()">Выход</button>
         </div>
     </div>
 </div>

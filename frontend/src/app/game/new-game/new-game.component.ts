@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { GameRouteEnum } from 'src/app/game.routing.enum';
 import { GamesService } from 'src/app/shared/services/games.service';
 import { MapsService } from 'src/app/shared/services/maps.service';
 
@@ -24,8 +25,6 @@ import {
     ClankDlcList,
 } from '@shared/clank/clank-info.types';
 import { ClankMapConfig } from '@shared/clank/clank-map.types';
-
-import { GameRouteEnum } from '../game.routing';
 
 type GameInfoFormFields = Record<keyof GameInfoConfig, FormControl>;
 
@@ -44,8 +43,6 @@ export class NewGameComponent implements OnInit, OnDestroy {
         name: new FormControl(null, Validators.required),
         mapId: new FormControl(null, Validators.required),
         mapDlcId: new FormControl(null, Validators.required),
-        dungeonDeckIds: new FormControl([ClankDlcEnum.clank], Validators.required),
-        startDeckId: new FormControl(ClankDlcEnum.clank, Validators.required),
     };
     form = new FormGroup(this.formFields);
 

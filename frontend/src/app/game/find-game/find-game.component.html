@@ -1,13 +1,42 @@
-<div class="container">
-    <div style="height: 300px;" class="item">1</div>
-    <div style="height: 320px;" class="item">2</div>
-    <div style="height: 340px;" class="item">3</div>
-    <div style="height: 400px;" class="item">4</div>
-    <div style="height: 280px;" class="item">5</div>
-    <div style="height: 220px;" class="item">6</div>
-    <div style="height: 500px;" class="item">7</div>
-    <div style="height: 700px;" class="item">8</div>
-    <div style="height: 720px;" class="item">9</div>
-    <div style="height: 280px;" class="item">10</div>
-    <div style="height: 410px;" class="item">11</div>
-  </div>
+<div class="container h-100 d-flex flex-column justify-content-center align-items-cente">
+    <div class="card game_menu shadow">
+        <div class="card-header">
+            <h1>Список игр</h1>
+        </div>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 card-body">
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Название игры </th>
+                <td mat-cell *matCellDef="let element">
+                    <a  class="game_menu_item"
+                        [routerLink]="'/' + clankUrl + '/' + element.id"
+                        routerLinkActive="active"
+                        ariaCurrentWhenActive="page">
+                        <fa-icon [icon]="linkIcon"></fa-icon>
+                        <span class="game_menu_item_text">{{element.name}}</span>
+                    </a>
+                </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="statusId">
+                <th mat-header-cell *matHeaderCellDef> Статус игры </th>
+                <td mat-cell *matCellDef="let element"> {{GameInfoStatus[element.statusId].name}} </td>
+            </ng-container>
+
+            <!-- Map Column -->
+            <ng-container matColumnDef="mapId">
+                <th mat-header-cell *matHeaderCellDef> Название карты </th>
+                <td mat-cell *matCellDef="let element"> {{mapsService.getMapById(element.mapId)?.name}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <div class="card-footer">
+            <a class="btn btn-link" routerLink="..">Вернуться в меню</a>
+        </div>
+    </div>
+
+</div>

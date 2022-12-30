@@ -5,6 +5,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
+import { GameRouteEnum } from 'src/app/game.routing.enum';
 import { SessionStore } from 'src/app/session/session.store';
 import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
 
@@ -25,34 +26,34 @@ export class MenuComponent implements OnInit {
 
     menuList = [
         {
-            url: '/clank/test',
-            name: 'Test',
+            url: `/${GameRouteEnum.NewGame}`,
+            name: 'Создать игру',
             icon: faDice,
+            disabled: false,
         },
         {
-            url: '/new-game',
-            name: 'New game',
-            icon: faDice,
-        },
-        {
-            url: '/find-game',
-            name: 'Find game',
+            url: `/${GameRouteEnum.FindGame}`,
+            name: 'Поиск игры',
             icon: faMagnifyingGlass,
+            disabled: false,
         },
         {
-            url: '/join-game',
-            name: 'Join game',
+            url: `/${GameRouteEnum.Clank}/test`,
+            name: 'Тестовая игра',
             icon: faGamepad,
+            disabled: false,
         },
         {
-            url: '/settings',
-            name: 'Settings',
+            url: `/${GameRouteEnum.Settings}`,
+            name: 'Настройки',
             icon: faGears,
+            disabled: true,
         },
         {
-            url: '/help',
-            name: 'Help',
+            url: `/${GameRouteEnum.Help}`,
+            name: 'Помощь',
             icon: faInfo,
+            disabled: true,
         },
     ];
 

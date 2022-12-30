@@ -269,7 +269,7 @@ export class GameInfoService implements OnDestroy {
         state.activePlayerId = state.players[state.activePlayerIndex].id;
         state.players = state.players.map(player => {
             const deck = this.cardsService.getStartDeckCards(
-                state.startDeckId,
+                state.mapDlcId,
                 player.id,
             );
             const config: ClankPlayerConfig = {
@@ -299,7 +299,7 @@ export class GameInfoService implements OnDestroy {
         });
         const dragonTrackInfo = this.gameInfoQuery.mapInfo?.dragonInfo.track.find(p => p.startUserCount === playerCount);
         state.dragonInfo = initDragonInfo(dragonTrackInfo?.rage);
-        const dungeonDeck = this.cardsService.getShareDecksCards(state.dungeonDeckIds);
+        const dungeonDeck = this.cardsService.getShareDecksCards(state.mapDlcId);
         state.dungeonDeck = this.clankHelpService.shuffle(dungeonDeck);
         state.dungeonRow = [];
         state.reserveRow = this.cardsService.getReserveDecksCards(

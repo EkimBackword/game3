@@ -16,8 +16,7 @@ import { SocketService } from './socket.service';
 export class GamesService {
 
     inited = false;
-    gamesList: GameInfoState[] = [];
-    gamesListChange = new BehaviorSubject<void>(void 0);
+    gamesListSubject = new BehaviorSubject<GameInfoState[]>([]);
 
     constructor(
         private socketService: SocketService,
@@ -30,13 +29,16 @@ export class GamesService {
         }
         this.inited = true;
         this.socketService.socket.on('gameListChanged', (gamesList) => {
-            this.gamesList = gamesList;
+            this.gamesListSubject.next(gamesList);
         });
     }
 
     addNew(config: GameInfoConfig) {
         const gameState = createInitialGameInfoState(config);
-        this.gamesList.push(gameState);
+        this.gamesListSubject.next([
+            ...this.gamesListSubject.getValue(),
+            gameState,
+        ]);
         this.socketService.socket.emit('addGame', gameState);
         return gameState.id;
     }

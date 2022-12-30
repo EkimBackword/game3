@@ -14,7 +14,7 @@ export function createInitialGameInfoState(config: GameInfoConfig): GameInfoStat
     return {
         ...config,
         id: guid(),
-        statusId: GameInfoStatusIdEnum.New,
+        statusId: GameInfoStatusIdEnum.Created,
         players: [],
         dragonInfo: initDragonInfo(),
         dungeonDeck: [],

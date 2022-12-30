@@ -52,11 +52,9 @@ const gamesList = new Map<string, GameInfoState>();
 const testGame: GameInfoState = {
     id: 'test',
     name: 'Test',
-    statusId: 2,
+    statusId: GameInfoStatusIdEnum.Created,
     mapId: 0,
     mapDlcId: ClankDlcEnum.clank,
-    dungeonDeckIds: [ClankDlcEnum.clank],
-    startDeckId: ClankDlcEnum.clank,
     dungeonDeck: [],
     dungeonRow: [],
     reserveRow: [],

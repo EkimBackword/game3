@@ -108,18 +108,21 @@ export class CardsService {
     ) { }
 
     getReserveDecksCards(mapDlcId: ClankDlcEnum, userCount: number) {
-        const ids: ClankDlcEnum[] = mapDlcId === ClankDlcEnum.clank
+        return this.getDeckIds(mapDlcId).flatMap((id) => this.reserveDecks[id]?.getCards(userCount) ?? []);
+    }
+
+    getStartDeckCards(mapDlcId: ClankDlcEnum, playerId: string) {
+        return this.getDeckIds(mapDlcId).flatMap((id) => this.startDecks[id]?.getCards(playerId) ?? []);
+    }
+
+    getShareDecksCards(mapDlcId: ClankDlcEnum) {
+        return this.getDeckIds(mapDlcId).flatMap((id) => this.shareDecks[id]?.getCards() ?? []);
+    }
+
+    private getDeckIds(mapDlcId: ClankDlcEnum): ClankDlcEnum[] {
+        return mapDlcId === ClankDlcEnum.clank
             ? [ClankDlcEnum.clank]
             : [ClankDlcEnum.clank, mapDlcId];
-        return ids.flatMap((id) => this.reserveDecks[id]?.getCards(userCount) ?? []);
-    }
-
-    getStartDeckCards(id: ClankDlcEnum, playerId: string) {
-        return this.startDecks[id]?.getCards(playerId) ?? [];
-    }
-
-    getShareDecksCards(ids: ClankDlcEnum[]) {
-        return ids.flatMap((id) => this.shareDecks[id]?.getCards() ?? []);
     }
 
     async onEvent(data: {
