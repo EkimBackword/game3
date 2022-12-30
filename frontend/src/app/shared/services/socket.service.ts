@@ -19,7 +19,7 @@ export type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 })
 export class SocketService {
 
-    private manager = new Manager(environment.socketUrl);
+    private manager = new Manager(`${environment.socketPrefix}://${location.hostname}:${environment.socketPort}`);
     socket: GameSocket = this.manager.socket('/');
 
     constructor(

@@ -7,7 +7,6 @@ import {
 } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
-import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankCardConfig } from '@shared/clank/clank-card.types';
@@ -21,6 +20,7 @@ import {
     GamePlayerColorIdEnum,
     GamePlayerColorIds,
 } from '@shared/clank/clank-player.types';
+import { ToastSeverityEnum } from '@shared/toast.types';
 
 import { GameInfoQuery } from './game-info.query';
 

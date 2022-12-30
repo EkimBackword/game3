@@ -16,10 +16,7 @@ import {
     MomentDateGroupFormat,
 } from 'src/app/shared/models/game.types';
 import { notEmpty } from 'src/app/shared/models/shared.types';
-import {
-    ToastOptions,
-    ToastSeverityEnum,
-} from 'src/app/shared/models/toast.types';
+import { ToastOptions } from 'src/app/shared/models/toast.types';
 import { MapsService } from 'src/app/shared/services/maps.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
@@ -36,6 +33,7 @@ import {
     GamePlayerColorIdEnum,
     GamePlayerColorList,
 } from '@shared/clank/clank-player.types';
+import { ToastSeverityEnum } from '@shared/toast.types';
 
 import { GameInfoStore } from './game-info.store';
 import {

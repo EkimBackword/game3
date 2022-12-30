@@ -11,12 +11,10 @@ import {
     faExclamationTriangle,
     faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
+import { ToastSeverityEnum } from '@shared/toast.types';
 
 import { BsToastComponent } from '../modals/bs-toast/bs-toast.component';
-import {
-    ToastOptions,
-    ToastSeverityEnum,
-} from '../models/toast.types';
+import { ToastOptions } from '../models/toast.types';
 
 @Injectable({
     providedIn: 'root',

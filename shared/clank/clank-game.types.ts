@@ -1,5 +1,4 @@
-import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
-
+import { ToastSeverityEnum } from '../toast.types';
 import { ClankArtifactConfig } from './clank-artifact.types';
 import { ClankCardConfig } from './clank-card.types';
 import { ClankDragonInfo } from './clank-dragon.types';

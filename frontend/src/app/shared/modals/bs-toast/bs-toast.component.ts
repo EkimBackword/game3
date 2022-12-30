@@ -9,9 +9,8 @@ import {
     MatSnackBarRef,
 } from '@angular/material/snack-bar';
 
-import { ToastSeverityEnum } from 'src/app/shared/models/toast.types';
-
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { ToastSeverityEnum } from '@shared/toast.types';
 
 @Component({
     selector: 'app-bs-toast',
