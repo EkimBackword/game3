@@ -66,10 +66,11 @@ export class ClankDungeonRowComponent implements OnInit {
             dungeonRowCards,
             reserveRowCards,
         ]) => {
-            const dungeonDeck: ISelectedPlayerCardInfo[] = dungeonDeckCards.map((card) => {
-                const data: ISelectedPlayerCardInfo = {
-                    id: card.id,
-                    card,
+            const firstCard = dungeonDeckCards[0];
+            const dungeonDeck: ISelectedPlayerCardInfo[] = firstCard != null
+                ? [{
+                    id: firstCard.id,
+                    card: firstCard,
                     style: {
                         left: `0px`,
                         top: `${this.cardsWrapInfo.dungeonRowTop}px`,
@@ -77,9 +78,8 @@ export class ClankDungeonRowComponent implements OnInit {
                     isOpen: false,
                     classes: [],
                     actions: [],
-                };
-                return data;
-            });
+                }]
+                : [];
             const dungeonRow: ISelectedPlayerCardInfo[] = dungeonRowCards.map((card, index) => {
                 const data: ISelectedPlayerCardInfo = {
                     id: card.id,
