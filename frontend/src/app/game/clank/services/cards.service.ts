@@ -31,7 +31,6 @@ import {
     ChooseCardEventComponentData,
     ChooseCardEventComponentItem,
 } from '../../../shared/modals/choose-card-event/choose-card-event.component';
-import { ToastService } from '../../../shared/services/toast.service';
 
 @Injectable()
 export class CardsService {
@@ -103,7 +102,6 @@ export class CardsService {
 
     constructor(
         private clankHelpService: ClankHelpService,
-        private toastService: ToastService,
         private matDialog: MatDialog,
     ) { }
 
@@ -117,6 +115,27 @@ export class CardsService {
 
     getShareDecksCards(mapDlcId: ClankDlcEnum) {
         return this.getDeckIds(mapDlcId).flatMap((id) => this.shareDecks[id]?.getCards() ?? []);
+    }
+
+    getCardActionName(card: ClankCardConfig, eventName: keyof ClankCardBaseConfigEvents) {
+        const actionName = card.events?.[eventName]?.actionName;
+        if (actionName != null) {
+            return actionName;
+        }
+        if (eventName === 'onUse') {
+            return 'Использовать';
+        }
+        switch (card.type) {
+            case ClankCardType.monster: {
+                return 'Сразиться';
+            }
+            case ClankCardType.device: {
+                return 'Использовать';
+            }
+            default: {
+                return 'Купить';
+            }
+        }
     }
 
     private getDeckIds(mapDlcId: ClankDlcEnum): ClankDlcEnum[] {

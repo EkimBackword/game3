@@ -38,6 +38,7 @@ import {
     TrashCardsComponentData,
     TrashCardsComponentResult,
 } from '../dialogs/trash-cards/trash-cards.component';
+import { CardsService } from '../services/cards.service';
 import { ClankHelpService } from '../services/clank-help.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
@@ -110,6 +111,7 @@ export class ClankPlayerInfoComponent implements OnInit {
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private clankHelpService: ClankHelpService,
+        private cardsService: CardsService,
         private gameInfoQuery: GameInfoQuery,
         private gameInfoService: GameInfoService,
         private matBottomSheet: MatBottomSheet,
@@ -146,6 +148,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                     gameInfoQuery: this.gameInfoQuery,
                     gameInfoService: this.gameInfoService,
                     clankHelpService: this.clankHelpService,
+                    cardsService: this.cardsService,
                     player,
                 },
             },
@@ -287,7 +290,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 classes: [`card_container__hand`],
                 actions: [
                     {
-                        name: 'Использовать карту',
+                        name: this.cardsService.getCardActionName(card, 'onUse'),
                         btnClass: 'btn-primary',
                         canUse: () => player.id === this.activePlayer.id
                             && this.activePlayer.id === this.currentPlayer?.id

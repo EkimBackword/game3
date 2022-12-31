@@ -25,6 +25,7 @@ import { ClankMapElementConfig } from '@shared/clank/clank-map.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
+import { CardsService } from '../services/cards.service';
 import { ClankHelpService } from '../services/clank-help.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
@@ -90,7 +91,7 @@ export class ClankDungeonRowComponent implements OnInit {
                     isOpen: true,
                     classes: [],
                     actions: [{
-                        name: 'Купить',
+                        name: this.data.cardsService.getCardActionName(card, 'onAcquire'),
                         btnClass: 'btn-primary',
                         canUse: () => true,
                         callback: () => this.buyCard(card),
@@ -113,7 +114,7 @@ export class ClankDungeonRowComponent implements OnInit {
                     isOpen: true,
                     classes: [],
                     actions: [{
-                        name: 'Купить',
+                        name: this.data.cardsService.getCardActionName(card, 'onAcquire'),
                         btnClass: 'btn-primary',
                         canUse: () => true,
                         callback: () => this.buyCard(card),
@@ -149,6 +150,7 @@ export class ClankDungeonRowComponent implements OnInit {
             gameInfoService: GameInfoService;
             player: ClankPlayerConfig;
             clankHelpService: ClankHelpService;
+            cardsService: CardsService;
         },
     ) { }
 

@@ -73,6 +73,8 @@ export interface ClankCardBaseConfigEvents {
 }
 
 export interface ClankCardBaseConfigEventInfo {
+    /** Надпись на кнопке */
+    actionName?: string;
     /** Цель */
     target?: ClankTarget;
     /** Атака дракона */
