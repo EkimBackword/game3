@@ -240,7 +240,7 @@ export class CardsService {
                 row: 0,
                 column: 0,
                 name: 'Исследование',
-                description: 'Исследование',
+                description: 'Получите 2 очка навыки и 1 ботинок',
                 isReserve: true,
                 type: ClankCardType.basiс,
                 events: {
@@ -262,7 +262,7 @@ export class CardsService {
                 row: 0,
                 column: 2,
                 name: 'Наёмник',
-                description: 'Наёмник',
+                description: 'Получите 1 очко навыка и 2 мечя',
                 isReserve: true,
                 type: ClankCardType.basiс,
                 events: {
@@ -284,7 +284,7 @@ export class CardsService {
                 row: 0,
                 column: 3,
                 name: 'Книга тайн',
-                description: 'Книга тайн',
+                description: 'В конце игры приносит 7 победных очков',
                 isReserve: true,
                 type: ClankCardType.basiс,
                 events: {
@@ -303,7 +303,7 @@ export class CardsService {
                 row: 0,
                 column: 1,
                 name: 'Гоблин',
-                description: 'Гоблин',
+                description: 'При победе игрок получает 1 монету',
                 isReserve: true,
                 type: ClankCardType.monster,
                 events: {
