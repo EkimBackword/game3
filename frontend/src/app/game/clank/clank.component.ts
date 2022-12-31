@@ -18,8 +18,8 @@ import {
     map,
     takeUntil,
 } from 'rxjs/operators';
+import { CardsService } from 'src/app/game/clank/services/cards.service';
 import { PlayerPointsResult } from 'src/app/shared/models/players/player.types';
-import { CardsService } from 'src/app/shared/services/cards.service';
 
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import { GamePlayerColorList } from '@shared/clank/clank-player.types';

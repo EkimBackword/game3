@@ -30,8 +30,8 @@ import {
     ChooseCardEventComponent,
     ChooseCardEventComponentData,
     ChooseCardEventComponentItem,
-} from '../modals/choose-card-event/choose-card-event.component';
-import { ToastService } from './toast.service';
+} from '../../../shared/modals/choose-card-event/choose-card-event.component';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Injectable()
 export class CardsService {

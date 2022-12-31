@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 
 import * as lodash from 'lodash';
 import * as moment from 'moment';
+import { CardsService } from 'src/app/game/clank/services/cards.service';
 import { ClankOneTurnInfo } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
 import {
@@ -13,7 +14,6 @@ import {
     UseTokenType,
 } from 'src/app/shared/models/tokens/token.types';
 import { ArtifactsService } from 'src/app/shared/services/artifacts.service';
-import { CardsService } from 'src/app/shared/services/cards.service';
 import {
     GameSocket,
     SocketService,
