@@ -334,7 +334,7 @@ export class CardsService {
                 row: 0,
                 column: 4,
                 name: ClankCardName.Burgle,
-                description: ClankCardName.Burgle,
+                description: 'Получите 1 очко навыка',
                 type: ClankCardType.start,
                 events: {
                     onUse: {
@@ -349,7 +349,7 @@ export class CardsService {
                 row: 0,
                 column: 5,
                 name: ClankCardName.Scramble,
-                description: ClankCardName.Scramble,
+                description: 'Получите 1 очко навыка и 1 ботинок',
                 type: ClankCardType.start,
                 events: {
                     onUse: {
@@ -365,7 +365,7 @@ export class CardsService {
                 row: 0,
                 column: 6,
                 name: ClankCardName.Sidestep,
-                description: ClankCardName.Sidestep,
+                description: 'Получите 1 ботинок',
                 type: ClankCardType.start,
                 events: {
                     onUse: {
@@ -380,7 +380,7 @@ export class CardsService {
                 row: 0,
                 column: 7,
                 name: ClankCardName.Stumble,
-                description: ClankCardName.Stumble,
+                description: 'Получите 1 бдзынь',
                 type: ClankCardType.start,
                 events: {
                     onUse: {

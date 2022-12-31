@@ -83,10 +83,10 @@ export class ClankHelpService {
         count: number;
     }) {
         const text = count > 0
-            ? 'добавил шума'
-            : 'убрал шум';
+            ? 'получил'
+            : 'убрал';
         this.addActionLogs(state, {
-            text: `${player.name} ${text} (${count} бдзынь)`,
+            text: `${player.name} ${text} ${Math.abs(count)} бдзынь`,
             colorId: player.colorId,
         });
         state.dragonInfo.clankAria[player.colorId] += count;

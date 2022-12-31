@@ -199,7 +199,7 @@ export interface ClankCardAction {
 export enum ClankCardName {
     All = 'Любую',
     Burgle = 'Взломать сундук',
-    Scramble = 'Сноровка',
-    Sidestep = 'Обходной путь',
-    Stumble = 'Препятствие',
+    Scramble = 'Проскользнуть мимо',
+    Sidestep = 'Шаг вперёд',
+    Stumble = 'Споткнулся!',
 }
