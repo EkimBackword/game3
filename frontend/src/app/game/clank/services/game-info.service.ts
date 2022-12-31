@@ -5,14 +5,9 @@ import {
 import { Router } from '@angular/router';
 
 import * as lodash from 'lodash';
-import * as moment from 'moment';
 import { CardsService } from 'src/app/game/clank/services/cards.service';
 import { ClankOneTurnInfo } from 'src/app/shared/models/clank-element-types';
-import { MomentDateFormat } from 'src/app/shared/models/game.types';
-import {
-    UseTokenInfoByType,
-    UseTokenType,
-} from 'src/app/shared/models/tokens/token.types';
+import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { ArtifactsService } from 'src/app/shared/services/artifacts.service';
 import {
     GameSocket,
@@ -29,7 +24,6 @@ import {
 } from '@shared/clank/clank-card.types';
 import { initDragonInfo } from '@shared/clank/clank-dragon.types';
 import {
-    GameInfoActionLogData,
     GameInfoState,
     GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
@@ -147,7 +141,7 @@ export class GameInfoService implements OnDestroy {
                 player.id,
                 player,
             );
-            this.addActionLogs(state, {
+            this.clankHelpService.addActionLogs(state, {
                 text: `${player.name} переместился`,
                 colorId: player.colorId,
                 hideToast: true,
@@ -193,7 +187,7 @@ export class GameInfoService implements OnDestroy {
         this.onGameUpdated();
     }
 
-    useToken({
+    async useToken({
         playerId,
         tokenInfo,
         type,
@@ -202,62 +196,21 @@ export class GameInfoService implements OnDestroy {
         tokenInfo: ClankTokenConfig;
         type: UseTokenType;
     }) {
-        this.gameInfoStore.update((oldState) => {
-            const state = lodash.cloneDeep(oldState);
-            const player = state.players.find(p => p.id === playerId);
-            if (player == null) {
-                return state;
-            }
-
-            if (tokenInfo.needIncreaseDragonRage) {
-                this.clankHelpService.increaseDragonRage(state);
-            }
-
-            if (tokenInfo.drawCards) {
-                this.clankHelpService.drawCards({
-                    state,
-                    player,
-                    count: tokenInfo.drawCards,
-                });
-            }
-
-            if (type === UseTokenType.take && tokenInfo.isImmediatelyBenefit) {
-                type = UseTokenType.use;
-            }
-
-            if ([UseTokenType.buy, UseTokenType.use].includes(type)) {
-                this.clankHelpService.updateBenefitInfo({
-                    player,
-                    cost: tokenInfo.cost,
-                    benefit: tokenInfo.benefit,
-                });
-
-                if (tokenInfo.needTrashCards) {
-                    player.needTrashCards = [
-                        ...player.needTrashCards,
-                        ...tokenInfo.needTrashCards,
-                    ];
-                }
-            }
-
-            if ([UseTokenType.buy, UseTokenType.take].includes(type)) {
-                player.tokens = [
-                    ...player.tokens,
-                    tokenInfo,
-                ];
-            } else {
-                player.tokens = player.tokens.filter(p => p.id !== tokenInfo.id);
-            }
-
-            state.mapTokens = state.mapTokens.filter(p => p.id !== tokenInfo.id);
-            state.marketTokens = state.marketTokens.filter(p => p.id !== tokenInfo.id);
-            state.players = arrayUpdate(state.players, player.id, player);
-            this.addActionLogs(state, {
-                text: `${player.name} ${UseTokenInfoByType[type].text} ${tokenInfo.name}`,
-                colorId: player.colorId,
-            });
-            return state;
-        });
+        const state = lodash.cloneDeep(this.gameInfoQuery.getValue());
+        const player = state.players.find(p => p.id === playerId);
+        if (player == null) {
+            return;
+        }
+        const success = await this.clankHelpService.takeToken(
+            state,
+            player,
+            tokenInfo,
+            type,
+        );
+        if (!success) {
+            return;
+        }
+        this.gameInfoStore.update(state);
         this.onGameUpdated();
     }
 
@@ -310,7 +263,7 @@ export class GameInfoService implements OnDestroy {
         state.marketTokens = this.tokensService.getMarketTokens();
         state.artifacts = this.clankHelpService.simpleShuffle(this.artifactsService.getArtifacts());
         state.turnIndex = 0;
-        this.addActionLogs(state, {
+        this.clankHelpService.addActionLogs(state, {
             text: 'Игра началась',
         });
         const newState = await this.drawDungeonRow(state, {
@@ -351,13 +304,13 @@ export class GameInfoService implements OnDestroy {
 
         /** Переход хода */
         const newActivPlayer = this.getNextPlayer(state);
-        this.addActionLogs(state, {
+        this.clankHelpService.addActionLogs(state, {
             text: `${currentPlayer.name} закончил свой ход`,
             colorId: currentPlayer.colorId,
             hideToast: newActivPlayer != null,
         });
         if (newActivPlayer != null) {
-            this.addActionLogs(state, {
+            this.clankHelpService.addActionLogs(state, {
                 text: `Ход переходит к игроку ${newActivPlayer.name}`,
                 colorId: newActivPlayer.colorId,
             });
@@ -462,16 +415,6 @@ export class GameInfoService implements OnDestroy {
             this.clankHelpService.onDragonAttack(state);
         }
         return state;
-    }
-
-    private addActionLogs(state: GameInfoState, data: GameInfoActionLogData) {
-        const momentTime = moment();
-        state.actionLogs.push({
-            index: state.actionLogs.length,
-            turnIndex: state.turnIndex,
-            createdAt: momentTime.format(MomentDateFormat),
-            data,
-        });
     }
 
     private clearTurnInfo(benefitInfo: ClankCostInfo) {

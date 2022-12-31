@@ -13,6 +13,7 @@ export enum ClankElementByTurn {
     skill = 'skill', // Навык
     sword = 'sword', // Меч
     boot = 'boot', // Ботинок
+    clank = 'clank', // бдзынь, только полученные в этом ходу
     teleport = 'teleport', // Возможность телепортироваться в соседнее помещение
 }
 
@@ -62,6 +63,7 @@ export enum ClankEffect {
     ignore_crystal_cave = 'ignore_crystal_cave',
     ignore_monster = 'ignore_monster',
     gem_cost_less = 'gem_cost_less',
+    additional_coin = 'additional_coin',
 }
 
 export const ClankEffectList = Object.values(ClankEffect);

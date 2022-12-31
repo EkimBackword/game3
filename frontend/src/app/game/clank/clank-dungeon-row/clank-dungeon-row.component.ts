@@ -168,6 +168,10 @@ export class ClankDungeonRowComponent implements OnInit {
             this.toastService.showWarn(`Можно купить только в подземелье`);
             return;
         }
+        if (card.onlyCrystalCave && !this.playerPosition?.isCrystalCave) {
+            this.toastService.showWarn(`Можно купить только в Кристальной пещере`);
+            return;
+        }
         this.data.gameInfoService.useCard(card, 'onAcquire');
         this.changeDetectorRef.detectChanges();
     }

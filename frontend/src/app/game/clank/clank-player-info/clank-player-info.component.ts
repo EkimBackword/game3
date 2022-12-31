@@ -25,7 +25,10 @@ import {
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
-import { ClankElementByTurnList } from '@shared/clank/clank-info.types';
+import {
+    ClankElementByTurn,
+    ClankElementByTurnList,
+} from '@shared/clank/clank-info.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import {
     ClankTokenConfig,
@@ -162,7 +165,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         }
         delete this.activePlayer.benefitInfo.discardCard;
         const unusedList = ClankElementByTurnList
-            .filter(p => (this.activePlayer.benefitInfo[p] ?? 0) > 0)
+            .filter(p => p !== ClankElementByTurn.clank && (this.activePlayer.benefitInfo[p] ?? 0) > 0)
             .map(p => `Остались неиспользованные очки (${ClankElementTypeMap[p].name}: ${this.activePlayer.benefitInfo[p]})`);
         if (this.activePlayer.hand.length > 0) {
             unusedList.push(`Остались неиспользованные карты (${this.activePlayer.hand.length} шт.)`);

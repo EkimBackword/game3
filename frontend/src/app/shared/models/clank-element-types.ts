@@ -101,7 +101,11 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     },
     [ClankElementByTurn.teleport]: {
         name: 'Телепорт',
-        url: '/assets/images//teleport.png',
+        url: '/assets/images/teleport.png',
+    },
+    [ClankElementByTurn.clank]: {
+        name: 'Бдзынь',
+        url: '/assets/images/clank.png',
     },
     // ClankElementByGame
     [ClankElementByGame.heal]: {

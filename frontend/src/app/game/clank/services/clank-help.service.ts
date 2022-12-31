@@ -7,6 +7,10 @@ import {
 } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
+import {
+    UseTokenInfoByType,
+    UseTokenType,
+} from 'src/app/shared/models/tokens/token.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankCardConfig } from '@shared/clank/clank-card.types';
@@ -20,6 +24,7 @@ import {
     GamePlayerColorIdEnum,
     GamePlayerColorIds,
 } from '@shared/clank/clank-player.types';
+import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 import { ToastSeverityEnum } from '@shared/toast.types';
 
 import { GameInfoQuery } from './game-info.query';
@@ -45,6 +50,15 @@ export class ClankHelpService {
             cost: data.cost ?? {},
             isBenefit: false,
         });
+        if ((data.player.benefitInfo.additional_coin ?? 0) > 0 && (data.benefit?.coin ?? 0) > 0) {
+            const coin = data.benefit?.coin ?? 0;
+            data.benefit = {
+                ...data.benefit ?? {},
+                coin: coin > 0
+                    ? coin + 1
+                    : 0,
+            };
+        }
         data.player.benefitInfo = updateBenefitInfo({
             benefit: data.player.benefitInfo,
             cost: data.benefit ?? {},
@@ -89,6 +103,9 @@ export class ClankHelpService {
             text: `${player.name} ${text} ${Math.abs(count)} бдзынь`,
             colorId: player.colorId,
         });
+        player.benefitInfo.clank = count > 0
+            ? (player.benefitInfo.clank ?? 0) + count
+            : player.benefitInfo.clank;
         state.dragonInfo.clankAria[player.colorId] += count;
     }
 
@@ -126,6 +143,65 @@ export class ClankHelpService {
             }
             count--;
         }
+    }
+
+    takeToken(
+        state: GameInfoState,
+        player: ClankPlayerConfig,
+        tokenInfo: ClankTokenConfig,
+        type: UseTokenType,
+    ): boolean {
+        if (player == null) {
+            return true;
+        }
+
+        if (tokenInfo.needIncreaseDragonRage) {
+            this.increaseDragonRage(state);
+        }
+
+        if (tokenInfo.drawCards) {
+            this.drawCards({
+                state,
+                player,
+                count: tokenInfo.drawCards,
+            });
+        }
+
+        if (type === UseTokenType.take && tokenInfo.isImmediatelyBenefit) {
+            type = UseTokenType.use;
+        }
+
+        if ([UseTokenType.buy, UseTokenType.use].includes(type)) {
+            this.updateBenefitInfo({
+                player,
+                cost: tokenInfo.cost,
+                benefit: tokenInfo.benefit,
+            });
+
+            if (tokenInfo.needTrashCards) {
+                player.needTrashCards = [
+                    ...player.needTrashCards,
+                    ...tokenInfo.needTrashCards,
+                ];
+            }
+        }
+
+        if ([UseTokenType.buy, UseTokenType.take].includes(type)) {
+            player.tokens = [
+                ...player.tokens,
+                tokenInfo,
+            ];
+        } else {
+            player.tokens = player.tokens.filter(p => p.id !== tokenInfo.id);
+        }
+
+        state.mapTokens = state.mapTokens.filter(p => p.id !== tokenInfo.id);
+        state.marketTokens = state.marketTokens.filter(p => p.id !== tokenInfo.id);
+        this.addActionLogs(state, {
+            text: `${player.name} ${UseTokenInfoByType[type].text} ${tokenInfo.name}`,
+            colorId: player.colorId,
+        });
+        return true;
     }
 
     increaseDragonRage(state: GameInfoState) {
