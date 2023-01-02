@@ -1,32 +1,35 @@
-<label>Очки доступные для покупки карт или жетонов:</label>
-<div class="position-relative clank-cost-info">
-    <app-clank-cost-info
-        [data]="data.player.benefitInfo"
-        [type]="ClankCostInfoType.marketInfo"
-        [elementHeight]="cardsWrapInfo.clankCostInfoHeight * 2"
-    ></app-clank-cost-info>
-</div>
-<label>Жетоны можно купить за 7 монет (только находясь в магазине):</label>
-<div class="position-relative clank-tokens" *ngIf="(onMarketTokensChangeSubject | async) as groups">
-    <div class="position-relative clank-tokens-group" *ngFor="let tokens of groups"
-        [class.clank-tokens-group--disable]="!playerPosition?.isMarket">
-        <div class="position-absolute clank-token" *ngFor="let token of tokens">
-            <app-clank-token
-                [size]="cardsWrapInfo.dungeonTokenSize"
-                [token]="token"
-                (click)="useToken(token)"
-            ></app-clank-token>
+<ng-container *ngIf="(onPlayersChangeSubject | async) as players">
+    <label>Очки доступные для покупки карт или жетонов:</label>
+    <div class="position-relative clank-cost-info">
+        <app-clank-cost-info
+            *ngIf="activePlayer"
+            [data]="activePlayer.benefitInfo"
+            [type]="ClankCostInfoType.marketInfo"
+            [elementHeight]="cardsWrapInfo.clankCostInfoHeight * 2"
+        ></app-clank-cost-info>
+    </div>
+    <label>Жетоны можно купить за 7 монет (только находясь в магазине):</label>
+    <div class="position-relative clank-tokens" *ngIf="(onMarketTokensChangeSubject | async) as groups">
+        <div class="position-relative clank-tokens-group" *ngFor="let tokens of groups"
+            [class.clank-tokens-group--disable]="!playerPosition?.isMarket">
+            <div class="position-absolute clank-token" *ngFor="let token of tokens">
+                <app-clank-token
+                    [size]="cardsWrapInfo.dungeonTokenSize"
+                    [token]="token"
+                    (click)="useToken(token)"
+                ></app-clank-token>
+            </div>
         </div>
     </div>
-</div>
-<label>Карты доступные для покупки:</label>
-<div class="position-relative">
-    <app-clank-card class="position-absolute"
-        *ngFor="let cardInfo of (cardsSubject | async); trackBy: trackById"
-        [width]="cardsWrapInfo.cardWidth"
-        [height]="cardsWrapInfo.cardHeight"
-        [data]="cardInfo"
-        [ngClass]="cardInfo.classes"
-        [ngStyle]="cardInfo.style"
-    ></app-clank-card>
-</div>
+    <label>Карты доступные для покупки:</label>
+    <div class="position-relative">
+        <app-clank-card class="position-absolute"
+            *ngFor="let cardInfo of (cardsSubject | async); trackBy: trackById"
+            [width]="cardsWrapInfo.cardWidth"
+            [height]="cardsWrapInfo.cardHeight"
+            [data]="cardInfo"
+            [ngClass]="cardInfo.classes"
+            [ngStyle]="cardInfo.style"
+        ></app-clank-card>
+    </div>
+</ng-container>

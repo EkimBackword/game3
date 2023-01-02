@@ -152,7 +152,6 @@ export class ClankPlayerInfoComponent implements OnInit {
                     gameInfoService: this.gameInfoService,
                     clankHelpService: this.clankHelpService,
                     cardsService: this.cardsService,
-                    player,
                 },
             },
         );

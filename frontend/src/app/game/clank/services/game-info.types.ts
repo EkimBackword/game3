@@ -38,6 +38,7 @@ export interface PlayersPositionInfo {
 }
 
 export interface DragonPositionInfo {
+    clankCount: number;
     dragonInfo: ClankDragonInfo;
     style: Partial<CSSStyleDeclaration>;
     clankAriaStyle: Partial<CSSStyleDeclaration>;

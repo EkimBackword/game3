@@ -9,7 +9,10 @@ import {
 import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 
 import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+    map,
+    tap,
+} from 'rxjs/operators';
 import {
     cardHeight,
     cardsWrapPadding,
@@ -142,21 +145,32 @@ export class ClankDungeonRowComponent implements OnInit {
         }),
     );
 
+    onPlayersChangeSubject = this.data.gameInfoQuery.onPlayersChangeSubject.pipe(
+        tap((players) => {
+            this.activePlayer = this.data.gameInfoQuery.activePlayer;
+            this.currentPlayer = this.data.gameInfoQuery.currentPlayer;
+        }),
+    );
+
+    activePlayer: ClankPlayerConfig | undefined;
+    currentPlayer: ClankPlayerConfig | undefined;
+
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private toastService: ToastService,
         @Inject(MAT_BOTTOM_SHEET_DATA) public data: {
             gameInfoQuery: GameInfoQuery;
             gameInfoService: GameInfoService;
-            player: ClankPlayerConfig;
             clankHelpService: ClankHelpService;
             cardsService: CardsService;
         },
     ) { }
 
     ngOnInit(): void {
+        this.activePlayer = this.data.gameInfoQuery.activePlayer;
+        this.currentPlayer = this.data.gameInfoQuery.currentPlayer;
         const mapInfo = this.data.gameInfoQuery.mapInfo;
-        this.playerPosition = mapInfo?.elements.find(p => p.id === this.data.player.elementId);
+        this.playerPosition = mapInfo?.elements.find(p => p.id === this.activePlayer?.elementId);
     }
 
     trackById(index: number, item: { id: any }) {
@@ -164,6 +178,9 @@ export class ClankDungeonRowComponent implements OnInit {
     }
 
     async buyCard(card: ClankCardConfig) {
+        if (this.activePlayer == null || this.activePlayer.id !== this.currentPlayer?.id) {
+            return;
+        }
         if (card.onlyDepthsArea && !this.playerPosition?.isDungeon) {
             this.toastService.showWarn(`Можно купить только в подземелье`);
             return;
@@ -177,17 +194,17 @@ export class ClankDungeonRowComponent implements OnInit {
     }
 
     useToken(tokenInfo: ClankTokenConfig) {
-        if (!this.playerPosition?.isMarket) {
+        if (this.activePlayer == null || !this.playerPosition?.isMarket) {
             return;
         }
         if (!this.data.clankHelpService.canUse({
             cost: tokenInfo.cost,
-            player: this.data.player,
+            player: this.activePlayer,
         })) {
             return;
         }
         this.data.gameInfoService.useToken({
-            playerId: this.data.player.id,
+            playerId: this.activePlayer.id,
             tokenInfo,
             type: UseTokenType.buy,
         });

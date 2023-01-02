@@ -99,6 +99,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
     onDragonPositionChangeSubject = this.select(['mapId', 'dragonInfo']).pipe(
         map(({mapId, dragonInfo}): DragonPositionInfo => {
             const data: DragonPositionInfo = {
+                clankCount: 0,
                 dragonInfo,
                 style: {},
                 clankAriaStyle: {},
@@ -112,6 +113,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
             if (dragonPosition == null) {
                 return data;
             }
+            data.clankCount = dragonPosition.clank;
             data.style = {
                 top: `${(dragonPosition.position.y ?? 0)}px`,
                 left: `${(dragonPosition.position.x ?? 0)}px`,
