@@ -1,4 +1,10 @@
 import {
+    animate,
+    style,
+    transition,
+    trigger,
+} from '@angular/animations';
+import {
     ChangeDetectorRef,
     Component,
     HostBinding,
@@ -18,6 +24,7 @@ import {
     tap,
 } from 'rxjs/operators';
 import { ClankCostInfoDirection } from 'src/app/shared/components/clank-cost-info/clank-cost-info.types';
+import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
 import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 
@@ -42,6 +49,20 @@ import { GameInfoService } from '../services/game-info.service';
     selector: 'app-clank-map-element',
     templateUrl: './clank-map-element.component.html',
     styleUrls: ['./clank-map-element.component.scss'],
+    animations: [
+        trigger(
+            'inOutAnimation',
+            [
+                transition(
+                    ':leave',
+                    [
+                        style({ marginLeft: 0, opacity: 1 }),
+                        animate('1s ease-in', style({ marginLeft: 1000, opacity: 0 })),
+                    ],
+                ),
+            ],
+        ),
+    ],
 })
 export class ClankMapElementComponent implements OnInit, OnDestroy {
 
@@ -84,7 +105,14 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         }),
     );
 
-    onArtifactsChangeSubject = this.gameInfoQuery.onArtifactsChangeSubject;
+    private artifact: ClankArtifactConfig | undefined;
+    onArtifactsChangeSubject = this.gameInfoQuery.onArtifactsChangeSubject.pipe(
+        map((artifacts) => {
+            const artifact = artifacts.find(p => this.mapElement?.items?.artefact?.value === p.value);
+            this.artifact = artifact;
+            return artifact;
+        }),
+    );
 
     visibleTokens: ClankTokenConfig[] = [];
     onTokensChangeSubject = this.gameInfoQuery.onMapTokensChangeSubject.pipe(
@@ -103,7 +131,6 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     private takeTokenSubject = new Subject<ClankTokenConfig | null>();
     onTakeTokenSubject = this.takeTokenSubject.pipe(
         tap((token) => {
-            console.log(token);
             if (token != null) {
                 setTimeout(() => {
                     this.takeTokenSubject.next(null);
@@ -198,6 +225,25 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                 enter_crystal_cave: (this.activePlayer.benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
             },
         });
+        if (this.artifact) {
+            const matDialogRef = this.matDialog.open<
+                ConfirmModalComponent,
+                ConfirmModalComponent['data'],
+                boolean
+            >(
+                ConfirmModalComponent,
+                {
+                    data: {
+                        title: 'Хотите ли взять артефакт?',
+                        textList: [`В ячейке есть артефакт (Значимость: ${this.artifact.value})`],
+                    },
+                },
+            );
+            const result = await matDialogRef.afterClosed().toPromise();
+            if (result) {
+                this.takeArtifact(this.artifact);
+            }
+        }
         const tokenInfo = this.visibleTokens?.pop();
         if (tokenInfo != null) {
             this.takeTokenSubject.next(tokenInfo);

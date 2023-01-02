@@ -25,7 +25,7 @@ export interface ConfirmModalComponentData {
 export class ConfirmModalComponent implements OnInit {
 
     constructor(
-        public dialogRef: MatDialogRef<ConfirmModalComponent>,
+        public dialogRef: MatDialogRef<ConfirmModalComponent, boolean>,
         @Inject(MAT_DIALOG_DATA) public data: ConfirmModalComponentData,
     ) { }
 
