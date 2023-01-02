@@ -238,10 +238,10 @@ export const getMarketTokens = (withCopy: boolean) => {
         },
         {
             count: 2,
-            name: ClankElementTypeMap[ClankElementByMarket.key].name,
-            url: ClankElementTypeMap[ClankElementByMarket.key].url,
+            name: ClankElementTypeMap[ClankElementByMarket.key_token].name,
+            url: ClankElementTypeMap[ClankElementByMarket.key_token].url,
             benefit: {
-                [ClankElementByMarket.key]: 1,
+                [ClankElementByMarket.key_token]: 1,
             },
             cost: {
                 coin: 7,
@@ -249,7 +249,7 @@ export const getMarketTokens = (withCopy: boolean) => {
             points: {
                 value: 5,
             },
-            element_type: ClankElementByMarket.key,
+            element_type: ClankElementByMarket.key_token,
         },
         {
             count: 1,

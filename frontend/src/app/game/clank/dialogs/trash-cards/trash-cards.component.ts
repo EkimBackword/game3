@@ -115,7 +115,7 @@ export class TrashCardsComponent implements OnInit {
     }
 
     selectCard(item: TrashCardsComponentItem) {
-        if (!item.selectable) {
+        if (!item.selectable && !item.value) {
             return;
         }
         item.value = !item.value;

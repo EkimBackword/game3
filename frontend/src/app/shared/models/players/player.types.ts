@@ -1,5 +1,7 @@
 import {
     ClankCostInfo,
+    ClankElementByMarket,
+    ClankElementByMarketList,
     ClankElementType,
 } from '@shared/clank/clank-info.types';
 import {
@@ -25,6 +27,13 @@ export const updateBenefitInfo = (data: {
     isBenefit: boolean,
 }) => {
     return (Object.keys(data.cost) as ClankElementType[]).reduce((acc, key) => {
+        /**
+         * Жетоны с маркета можно только получить, при необходимости потратить проверяется только их наличие
+         * @description Например, при перемещении по туннелям проверяться только наличие Отмычки.
+         */
+        if (!data.isBenefit && ClankElementByMarketList.includes(key as ClankElementByMarket)) {
+            return acc;
+        }
         const prevValue = acc[key] ?? 0;
         const nextValue = data.cost?.[key] ?? 0;
         acc[key] = data.isBenefit

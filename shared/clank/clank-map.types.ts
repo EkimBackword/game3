@@ -97,6 +97,7 @@ export interface ClankMapElementItem {
 export interface ClankMapElementLink {
     element_id: number;
     cost: ClankCostInfo;
+    benefit?: ClankCostInfo;
 }
 
 export interface ClankMapFragmentLink {

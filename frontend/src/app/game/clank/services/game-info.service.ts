@@ -5,6 +5,10 @@ import {
 import { Router } from '@angular/router';
 
 import * as lodash from 'lodash';
+import {
+    BehaviorSubject,
+    Subject,
+} from 'rxjs';
 import { CardsService } from 'src/app/game/clank/services/cards.service';
 import { ClankOneTurnInfo } from 'src/app/shared/models/clank-element-types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
@@ -35,6 +39,7 @@ import {
 } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 import { SocketErrorTypeEnum } from '@shared/socket.types';
+import { ToastSeverityEnum } from '@shared/toast.types';
 
 import { TrashCardsComponentResult } from '../dialogs/trash-cards/trash-cards.component';
 import { ClankHelpService } from './clank-help.service';
@@ -43,6 +48,9 @@ import { GameInfoStore } from './game-info.store';
 
 @Injectable()
 export class GameInfoService implements OnDestroy {
+
+    useManualFunctionSubject = new Subject();
+    isMapElementIdShowSubject = new BehaviorSubject(false);
 
     private gameId: string | undefined;
 
@@ -58,9 +66,29 @@ export class GameInfoService implements OnDestroy {
         private toastService: ToastService,
         private tokensService: TokensService,
         private router: Router,
-    ) { }
+    ) {
+        window['getGameState'] = () => {
+            return lodash.cloneDeep(gameInfoQuery.getValue());
+        };
+        window['setGameState'] = (state: GameInfoState) => {
+            this.clankHelpService.addActionLogs(state, {
+                text: `Игрок ${gameInfoQuery.currentPlayer?.name} вручную изменил состояние игры`,
+                severity: ToastSeverityEnum.warning,
+            });
+            gameInfoStore.update(state);
+            this.onGameUpdated();
+            this.useManualFunctionSubject.next();
+        };
+        window['showMapElementId'] = (value: boolean) => {
+            this.isMapElementIdShowSubject.next(value);
+            this.useManualFunctionSubject.next();
+        };
+    }
 
     ngOnDestroy() {
+        delete window['getGameState'];
+        delete window['setGameState'];
+        delete window['showMapElementId'];
         this.socket?.disconnect();
     }
 

@@ -114,6 +114,10 @@ export class ClankComponent implements OnInit {
             this.gameInfoService.connectToGame(gameId);
             this.changeDetectorRef.detectChanges();
         });
+
+        this.gameInfoService.useManualFunctionSubject.pipe(
+            takeUntil(this.ngUnsubscribe),
+        ).subscribe(() => this.changeDetectorRef.detectChanges());
     }
 
     ngOnDestroy() {

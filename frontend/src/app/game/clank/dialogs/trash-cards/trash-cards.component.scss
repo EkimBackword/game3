@@ -7,9 +7,22 @@
 }
 
 .card {
+    position: relative;
     cursor: not-allowed;
     margin: 0.4rem;
-    filter: brightness(80%);
+    filter: brightness(70%);
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: tomato;
+        opacity: 0;
+        z-index: 1;
+    }
 
     &.card--selectable {
         cursor: pointer;
@@ -17,6 +30,10 @@
 
         &:hover {
             filter: brightness(95%) drop-shadow(2px 2px 3px var(--bs-danger));
+
+            &::after {
+                opacity: 0.20;
+            }
         }
     }
 
@@ -24,8 +41,16 @@
         cursor: pointer;
         filter: brightness(110%) drop-shadow(2px 2px 2px var(--bs-danger));
 
+        &::after {
+            opacity: 0.30;
+        }
+
         &:hover {
             filter: brightness(105%) drop-shadow(2px 2px 3px var(--bs-danger));
+
+            &::after {
+                opacity: 0.25;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 import {
+    ChangeDetectorRef,
     Component,
     HostBinding,
     Input,
@@ -13,11 +14,11 @@ import {
 } from 'rxjs';
 import {
     map,
+    takeUntil,
     tap,
 } from 'rxjs/operators';
 import { ClankCostInfoDirection } from 'src/app/shared/components/clank-cost-info/clank-cost-info.types';
 import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
-import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
@@ -48,6 +49,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     @HostBinding('style') style: Partial<CSSStyleDeclaration> = {};
     link: ClankMapElementLink | undefined;
     activePlayer: ClankPlayerConfig | undefined;
+    isMapElementIdShow = false;
 
     dataSubject = combineLatest([
         this.gameInfoQuery.onMapChangeSubject,
@@ -109,6 +111,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     private ngUnsubscribe = new Subject();
 
     constructor(
+        private changeDetectorRef: ChangeDetectorRef,
         private clankHelpService: ClankHelpService,
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
@@ -117,6 +120,12 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.style = this.getStyle();
+        this.gameInfoService.isMapElementIdShowSubject.pipe(
+            takeUntil(this.ngUnsubscribe),
+        ).subscribe((value) => {
+            this.isMapElementIdShow = value;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 
     ngOnDestroy(): void {
@@ -138,7 +147,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         const isIgnoreMonster = (this.activePlayer.benefitInfo.ignore_monster ?? 0) > 0;
         if (isIgnoreMonster) {
             link = {
-                element_id: link.element_id,
+                ...link,
                 cost: {
                     ...link.cost,
                     sword: 0,
@@ -151,27 +160,31 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                 return;
             }
             link = {
-                element_id: link.element_id,
+                ...link,
                 cost,
             };
         }
         const isCrystalCave = this.mapElement.isCrystalCave ?? false;
         const isIgnoreCrystalCave = (this.activePlayer?.benefitInfo.ignore_crystal_cave ?? 0) > 0;
 
-        const benefitInfo = updateBenefitInfo({
-            benefit: this.activePlayer.benefitInfo,
+        const success = this.clankHelpService.updateBenefitInfo({
+            player: this.activePlayer,
             cost: link.cost,
-            isBenefit: false,
+            benefit: link.benefit,
+            skipCheckCanUse: true,
         });
+        if (!success) {
+            return;
+        }
         this.gameInfoService.onMove({
             playerId: this.activePlayer.id,
             mapElement: this.mapElement,
             benefitInfo: {
-                ...benefitInfo,
+                ...this.activePlayer.benefitInfo,
                 boot: isCrystalCave && !isIgnoreCrystalCave
                     ? 0
-                    : benefitInfo.boot,
-                enter_crystal_cave: (benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
+                    : this.activePlayer.benefitInfo.boot,
+                enter_crystal_cave: (this.activePlayer.benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
             },
         });
         const tokenInfo = this.visibleTokens?.pop();

@@ -41,8 +41,12 @@ export class ClankHelpService {
         player: ClankPlayerConfig;
         cost?: ClankCostInfo;
         benefit?: ClankCostInfo;
+        skipCheckCanUse?: boolean
     }) {
-        if (!this.canUse(data)) {
+        const canUse = !data.skipCheckCanUse
+            ? this.canUse(data)
+            : true;
+        if (!canUse) {
             return false;
         }
         data.player.benefitInfo = updateBenefitInfo({

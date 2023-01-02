@@ -154,7 +154,7 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         name: 'Рюкзак',
         url: '/assets/images/tokens/market/backpack_token.jpg',
     },
-    [ClankElementByMarket.key]: {
+    [ClankElementByMarket.key_token]: {
         name: 'Отмычка',
         url: '/assets/images/tokens/market/key_token.jpg',
     },
