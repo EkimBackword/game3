@@ -118,6 +118,8 @@ export class ClankComponent implements OnInit {
         this.gameInfoService.useManualFunctionSubject.pipe(
             takeUntil(this.ngUnsubscribe),
         ).subscribe(() => this.changeDetectorRef.detectChanges());
+
+        // TODO: Если здоровья <= 0, то надо вывести модальное окно с это информацией и кнопкой закончить ход
     }
 
     ngOnDestroy() {

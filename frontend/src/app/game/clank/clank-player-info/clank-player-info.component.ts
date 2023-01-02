@@ -158,6 +158,7 @@ export class ClankPlayerInfoComponent implements OnInit {
     }
 
     async finishTurn() {
+        // TODO: Надо пометить карты обязательные к применению
         const unusedList = ClankElementByTurnList
             .filter(p => p !== ClankElementByTurn.clank && (this.activePlayer.benefitInfo[p] ?? 0) > 0)
             .map(p => `Остались неиспользованные очки (${ClankElementTypeMap[p].name}: ${this.activePlayer.benefitInfo[p]})`);
