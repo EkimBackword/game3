@@ -237,7 +237,8 @@ export class ClankHelpService {
             name: string;
             value: number;
         }>);
-        const totalRage = state.dragonInfo.rage + rage;
+        const dangerRage = state.dungeonRow.reduce((acc, card) => acc + (card.danger ?? 0), 0);
+        const totalRage = state.dragonInfo.rage + dangerRage + rage;
         for (let index = 0; index < totalRage; index++) {
             const colorId = state.dragonInfo.clankBag.pop();
             const player = state.players.find(p => p.colorId === colorId);
