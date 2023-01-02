@@ -251,7 +251,14 @@ export class ClankPlayerInfoComponent implements OnInit {
                 },
                 isOpen: true,
                 classes: [],
-                actions: [],
+                actions: [{
+                    name: 'Посмотреть карты',
+                    btnClass: 'btn-primary',
+                    canUse: () => true,
+                    callback: async () => {
+                        this.clankHelpService.openCardList(player.board, 'Список разыгранных на этом ходу карт');
+                    },
+                }],
             };
             return data;
         });
@@ -266,7 +273,14 @@ export class ClankPlayerInfoComponent implements OnInit {
                 },
                 isOpen: true,
                 classes: [],
-                actions: [],
+                actions: [{
+                    name: 'Посмотреть карты',
+                    btnClass: 'btn-primary',
+                    canUse: () => true,
+                    callback: async () => {
+                        this.clankHelpService.openCardList(player.discard, 'Список сброшеных карт');
+                    },
+                }],
             };
             return data;
         });

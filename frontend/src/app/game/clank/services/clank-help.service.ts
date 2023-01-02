@@ -203,6 +203,23 @@ export class ClankHelpService {
         };
     }
 
+    openCardList(cards: ClankCardConfig[], title: string) {
+        this.matDialog.open<
+            CardListComponent,
+            CardListComponent['data'],
+            CardListComponentResult
+        >(
+            CardListComponent,
+            {
+                data: {
+                    cards,
+                    title,
+                },
+                width: `${cardWidth * 5}px`,
+            },
+        );
+    }
+
     takeToken(
         state: GameInfoState,
         player: ClankPlayerConfig,

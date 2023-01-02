@@ -58,6 +58,7 @@ export class CardListComponent implements OnInit {
         this.totalCount = this.data.count ?? 0;
         this.list = this.data.cards.map((card) => {
             const item = new CardListItem(card);
+            item.value = this.totalCount === 0;
             item.data.actions.push({
                 name: 'Выбрать карту',
                 btnClass: 'btn-primary',
@@ -67,7 +68,7 @@ export class CardListComponent implements OnInit {
             item.data.actions.push({
                 name: 'Снять выбор',
                 btnClass: 'btn-danger',
-                canUse: () => item.value,
+                canUse: () => item.value && this.totalCount > 0,
                 callback: () => this.onSelect(item),
             });
             return item;
