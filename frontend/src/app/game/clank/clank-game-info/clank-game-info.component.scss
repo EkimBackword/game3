@@ -6,7 +6,8 @@
 }
 
 .header,
-.footer {
+.footer,
+.game_action_buttons {
     display: flex;
     flex-flow: column nowrap;
     justify-content: flex-start;
@@ -25,10 +26,6 @@
     align-items: stretch;
     flex: 1 1 auto;
     overflow: auto;
-}
-
-.footer {
-    border-top: 1px solid var(--bs-black);
 }
 
 .online_state_icon {
@@ -62,14 +59,22 @@
     width: 100%;
     overflow: auto;
     padding-bottom: 4px;
-    border-bottom: 2px dashed var(--bs-black);
-    margin-bottom: 4px;
+    background-color: #eee;
+    border-top: 2px dashed var(--bs-secondary);
+    border-bottom: 2px dashed var(--bs-secondary);
+
+    .game_action_logs__group_name {
+        font-size: 12px;
+        font-weight: 700;
+    }
 
     .alert-custom {
         font-size: 11px;
         padding: 4px;
         margin-bottom: 8px;
         border-color: var(--bs-black);
+        box-shadow: 0 0 2px var(--bs-secondary);
+        background-color: var(--bs-white);
 
         &.alert-custom--Red {
             border-color: #EF4E5A;
@@ -91,6 +96,7 @@
     .alert-subtext {
         white-space: pre-wrap;
         word-wrap: break-word;
+        border-top: 1px dashed var(--bs-secondary);
     }
 }
 
@@ -98,6 +104,11 @@
     .card-header,
     .card-body,
     .card-footer {
-        padding: 0.5rem 0.75rem;
+        padding: 0.25rem 0.5rem;
     }
+}
+
+.game-label {
+    font-size: 12px;
+    font-weight: 700;
 }

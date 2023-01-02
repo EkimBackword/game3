@@ -215,11 +215,14 @@ export class GameInfoService implements OnDestroy {
     }
 
     async startGame() {
+        let subtext = '';
         const state = lodash.cloneDeep(this.gameInfoQuery.getValue());
         state.statusId = GameInfoStatusIdEnum.Started;
         const playerCount = state.players.length;
         state.activePlayerIndex = Math.floor(Math.random() * playerCount);
-        state.activePlayerId = state.players[state.activePlayerIndex].id;
+        const activePlayer = state.players[state.activePlayerIndex];
+        subtext += `Первым ход будет делать ${activePlayer.name}\r\n`;
+        state.activePlayerId = activePlayer.id;
         state.players = state.players.map(player => {
             const deck = this.cardsService.getStartDeckCards(
                 state.mapDlcId,
@@ -252,6 +255,14 @@ export class GameInfoService implements OnDestroy {
         });
         const dragonTrackInfo = this.gameInfoQuery.mapInfo?.dragonInfo.track.find(p => p.startUserCount === playerCount);
         state.dragonInfo = initDragonInfo(dragonTrackInfo?.rage);
+        state.players.forEach((player, index) => {
+            const clankIndex = index < state.activePlayerIndex
+                ? index + state.players.length
+                : index;
+            const clankCount = 3 - (clankIndex - state.activePlayerIndex);
+            subtext += `${player.name}: ${clankCount} бдзынь\r\n`;
+            state.dragonInfo.clankAria[player.colorId] = clankCount;
+        });
         const dungeonDeck = this.cardsService.getShareDecksCards(state.mapDlcId);
         state.dungeonDeck = this.clankHelpService.shuffle(dungeonDeck);
         state.dungeonRow = [];
@@ -265,6 +276,7 @@ export class GameInfoService implements OnDestroy {
         state.turnIndex = 0;
         this.clankHelpService.addActionLogs(state, {
             text: 'Игра началась',
+            subtext,
         });
         const newState = await this.drawDungeonRow(state, {
             initDungeonRow: true,

@@ -1,12 +1,12 @@
 
 <ng-container *ngIf="(statusSubject | async)">
     <div class="header p-1" *ngIf="(nameSubject | async) as gameName">
-        <h6>Название игры:</h6>
-        <h5 class="text-ellipsis" [title]="gameName">{{gameName}}</h5>
+        <label class="game-label">Название игры:</label>
+        <h6 class="text-ellipsis" [title]="gameName">{{gameName}}</h6>
     </div>
     <div class="body p-1">
         <div class="players_list">
-            <h6>Список игроков:</h6>
+            <label class="game-label">Список игроков:</label>
             <div class="card w-100 mb-2" *ngFor="let player of (playersSubject | async); trackBy: trackById; let i = index">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
@@ -19,6 +19,7 @@
                         <app-clank-cost-info
                             [data]="player.benefitInfo"
                             [type]="ClankCostInfoType.gameInfo"
+                            [elementHeight]="40"
                         ></app-clank-cost-info>
                     </div>
                     <div class="clank-artifacts">
@@ -86,8 +87,8 @@
             </div>
         </div>
     </div>
-    <div class="footer p-1">
-        <div class="game_action_logs">
+    <div class="footer">
+        <div class="game_action_logs p-1">
             <ng-container *ngFor="let group of (onActionLogs | async)">
                 <div class="game_action_logs__group">
                     <div class="game_action_logs__group_name">{{group.name}}</div>
@@ -101,25 +102,26 @@
                     </ngb-alert>
                 </div>
             </ng-container>
-
         </div>
-        <button class="btn btn-sm btn-primary mb-1"
-            [class.not-allowed]="!validColorList"
-            (click)="startGame()"
-            *ngIf="currentPlayer?.isAdmin && !isStarted && !isFinished"
-            [matTooltip]="invalidColorText"
-            matTooltipPosition="left"
-            [matTooltipDisabled]="validColorList">
-            Начать игру
-        </button>
-        <button class="btn btn-sm btn-primary mb-1"
-            (click)="finishGame()"
-            *ngIf="currentPlayer?.isAdmin && isStarted && !isFinished">
-            Закончить игру
-        </button>
-        <button class="btn btn-sm btn-secondary"
-            (click)="exitGame()">
-            Выйти из игры
-        </button>
+        <div class="game_action_buttons p-1">
+            <button class="btn btn-sm btn-primary mb-1"
+                [class.not-allowed]="!validColorList"
+                (click)="startGame()"
+                *ngIf="currentPlayer?.isAdmin && !isStarted && !isFinished"
+                [matTooltip]="invalidColorText"
+                matTooltipPosition="left"
+                [matTooltipDisabled]="validColorList">
+                Начать игру
+            </button>
+            <button class="btn btn-sm btn-primary mb-1"
+                (click)="finishGame()"
+                *ngIf="currentPlayer?.isAdmin && isStarted && !isFinished">
+                Закончить игру
+            </button>
+            <button class="btn btn-sm btn-secondary"
+                (click)="exitGame()">
+                Выйти из игры
+            </button>
+        </div>
     </div>
 </ng-container>

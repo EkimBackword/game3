@@ -5,6 +5,7 @@
     justify-content: var(--cost-element-justify-content, flex-start);
     align-content: flex-start;
     align-items: flex-start;
+    font-size: calc(var(--cost-element-height, 50px) / 2);
 }
 
 .cost_group + .cost_group {
@@ -33,5 +34,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 1.2em;
+    font-size: 0.8em;
+    line-height: 1;
 }
