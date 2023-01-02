@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import * as moment from 'moment';
+import { cardWidth } from 'src/app/shared/components/clank-card/clank-card.types';
 import {
     checkCost,
     CheckCostResult,
@@ -27,6 +29,10 @@ import {
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 import { ToastSeverityEnum } from '@shared/toast.types';
 
+import {
+    CardListComponent,
+    CardListComponentResult,
+} from '../dialogs/card-list/card-list.component';
 import { GameInfoQuery } from './game-info.query';
 
 @Injectable()
@@ -35,6 +41,7 @@ export class ClankHelpService {
     constructor(
         private gameInfoQuery: GameInfoQuery,
         private toastService: ToastService,
+        private matDialog: MatDialog,
     ) { }
 
     updateBenefitInfo(data: {
@@ -147,6 +154,53 @@ export class ClankHelpService {
             }
             count--;
         }
+    }
+
+    async discard(data: {
+        player: ClankPlayerConfig;
+        card: ClankCardConfig;
+        count: number;
+    }) {
+        const cards = data.player.hand.filter(p => p.id !== data.card.id);
+        if (cards.length < data.count) {
+            this.toastService.showWarn('Недостаточно карт для сброса');
+            return {
+                success: true,
+                discard: false,
+            };
+        }
+        const matDialogRef = this.matDialog.open<
+            CardListComponent,
+            CardListComponent['data'],
+            CardListComponentResult
+        >(
+            CardListComponent,
+            {
+                data: {
+                    cards,
+                    title: 'Выберите карты для сброса',
+                    actionText: 'Сбросить карту',
+                    count: data.count,
+                },
+                width: `${cardWidth * 5}px`,
+            },
+        );
+        const result = await matDialogRef.afterClosed().toPromise();
+        if (result == null) {
+            return {
+                success: false,
+                discard: false,
+            };
+        }
+        data.player.hand = result.other;
+        data.player.discard = [
+            ...data.player.discard,
+            ...result.selected,
+        ];
+        return {
+            success: true,
+            discard: true,
+        };
     }
 
     takeToken(

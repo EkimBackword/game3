@@ -52,12 +52,6 @@ export enum ClankElementByMarket {
 
 export const ClankElementByMarketList = Object.values(ClankElementByMarket);
 
-export enum ClankElementByActions {
-    discardCard = 'discardCard', // Сбросить карту
-}
-
-export const ClankElementByActionsList = Object.values(ClankElementByActions);
-
 export enum ClankEffect {
     enter_crystal_cave = 'enter_crystal_cave',
     ignore_crystal_cave = 'ignore_crystal_cave',
@@ -74,7 +68,6 @@ export const ClankElementTypeEnum = {
     ...ClankElementByGame,
     ...ClankElementByToken,
     ...ClankElementByMarket,
-    ...ClankElementByActions,
     ...ClankEffect,
 }
 
@@ -85,7 +78,6 @@ export type ClankElementType = ClankCardType
     | ClankElementByGame
     | ClankElementByToken
     | ClankElementByMarket
-    | ClankElementByActions
     | ClankEffect;
 
 export type ClankCostInfo = Partial<Record<ClankElementType, number>>;

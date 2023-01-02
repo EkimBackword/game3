@@ -3,7 +3,6 @@ import {
     ClankCardTypeList,
     ClankEffect,
     ClankEffectList,
-    ClankElementByActions,
     ClankElementByGame,
     ClankElementByGameList,
     ClankElementByMarket,
@@ -162,11 +161,6 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         name: 'Корона',
         url: '/assets/images/tokens/market/crown_token.jpg',
     },
-    // ClankElementByActions
-    [ClankElementByActions.discardCard]: {
-        name: 'Карта',
-        url: '/assets/images/cards/trash_card.jpg',
-    },
     // ClankEffect
     [ClankEffect.ignore_crystal_cave]: {
         name: 'Игнорирование кристальных пещер',
@@ -188,10 +182,6 @@ export interface CheckCostResult {
     message: string | null;
 }
 
-const ignoreCost: ClankElementType[] = [
-    ClankElementTypeEnum.discardCard,
-];
-
 export const checkCost = (data: {
     cost: Partial<Record<ClankElementType, number>>;
     player: ClankPlayerConfig;
@@ -205,9 +195,6 @@ export const checkCost = (data: {
             const userPoints = data.player.benefitInfo[type] ?? 0;
             const healthPoints = data.player.benefitInfo.heal ?? 0;
             const isIgnoreMonster = (data.player.benefitInfo.ignore_monster ?? 0) > 0;
-            if (ignoreCost.includes(type)) {
-                continue;
-            }
             if (data.isMove && key === ClankElementByTurn.sword) {
                 if (!isIgnoreMonster && (userPoints + healthPoints) < costPoints) {
                     return {

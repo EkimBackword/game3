@@ -17,6 +17,26 @@ export interface ISelectedPlayerCardAction {
     callback: () => void;
 }
 
+export class CardListItem {
+
+    data!: ISelectedPlayerCardInfo;
+    selectable = true;
+    value = false;
+
+    constructor(card: ClankCardConfig) {
+        this.data = {
+            id: card.id,
+            card,
+            isOpen: true,
+            openByHover: false,
+            style: {},
+            classes: [],
+            actions: [],
+        };
+    }
+
+}
+
 export const cardWidth = 160;
 export const cardHeight = 220;
 export const cardsWrapPadding = 16;

@@ -1,0 +1,17 @@
+.card-list {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+}
+
+.card {
+    margin: 0.4rem;
+    cursor: pointer;
+    filter: brightness(80%);
+
+    &.card--selected {
+        filter: brightness(100%) drop-shadow(2px 2px 2px var(--bs-black));
+    }
+}

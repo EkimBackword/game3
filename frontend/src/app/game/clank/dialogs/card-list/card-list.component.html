@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>
+    {{data.title}} <span *ngIf="totalCount > 0">({{selectedCount}} / {{totalCount}} шт.)</span>
+</h1>
+<div mat-dialog-content>
+    <div class="card-list">
+        <ng-container *ngFor="let item of list">
+            <app-clank-card
+                class="card"
+                [class.card--selected]="item.value"
+                [width]="cardsWrapInfo.cardWidth"
+                [height]="cardsWrapInfo.cardHeight"
+                [data]="item.data"
+                [onChangeSubject]="onChangeSubject"
+            ></app-clank-card>
+        </ng-container>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end">
+    <button class="btn btn-primary m-1"
+        type="submit"
+        (click)="close()"
+        *ngIf="totalCount > 0"
+        [disabled]="selectedCount < totalCount">
+        {{data.actionText ?? 'Сохранить'}}
+    </button>
+    <button class="btn btn-primary m-1"
+        type="submit"
+        (click)="cancel()">
+        Закрыть
+    </button>
+</div>

@@ -158,11 +158,6 @@ export class ClankPlayerInfoComponent implements OnInit {
     }
 
     async finishTurn() {
-        if (((this.activePlayer.benefitInfo.discardCard ?? 0) < 0) && this.activePlayer.hand.length > 0) {
-            this.toastService.showError('Нужно сбросить карту');
-            return;
-        }
-        delete this.activePlayer.benefitInfo.discardCard;
         const unusedList = ClankElementByTurnList
             .filter(p => p !== ClankElementByTurn.clank && (this.activePlayer.benefitInfo[p] ?? 0) > 0)
             .map(p => `Остались неиспользованные очки (${ClankElementTypeMap[p].name}: ${this.activePlayer.benefitInfo[p]})`);
@@ -295,21 +290,9 @@ export class ClankPlayerInfoComponent implements OnInit {
                         name: this.cardsService.getCardActionName(card, 'onUse'),
                         btnClass: 'btn-primary',
                         canUse: () => player.id === this.activePlayer.id
-                            && this.activePlayer.id === this.currentPlayer?.id
-                            && (player.benefitInfo.discardCard ?? 0) >= 0,
+                            && this.activePlayer.id === this.currentPlayer?.id,
                         callback: async () => {
                             await this.gameInfoService.useCard(card, 'onUse');
-                            this.changeDetectorRef.detectChanges();
-                        },
-                    },
-                    {
-                        name: 'Сбросить карту',
-                        btnClass: 'btn-danger',
-                        canUse: () => player.id === this.activePlayer.id
-                            && this.activePlayer.id === this.currentPlayer?.id
-                            && (player.benefitInfo.discardCard ?? 0) < 0,
-                        callback: async () => {
-                            await this.gameInfoService.useCard(card, 'onDiscard');
                             this.changeDetectorRef.detectChanges();
                         },
                     },

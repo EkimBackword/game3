@@ -84,7 +84,11 @@ export interface ClankCardBaseConfigEventInfo {
     /** Выгода */
     benefit?: ClankCostInfo;
     /** Функция */
-    callback?: (state: GameInfoState, player: ClankPlayerConfig) => Promise<boolean>;
+    callback?: (
+        state: GameInfoState,
+        player: ClankPlayerConfig,
+        card: ClankCardConfig,
+    ) => Promise<boolean>;
 }
 
 export const ClankCardBaseConfigEventInfoByType: Record<keyof ClankCardBaseConfigEvents, {
