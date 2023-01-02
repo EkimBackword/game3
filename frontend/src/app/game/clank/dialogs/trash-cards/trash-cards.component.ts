@@ -50,7 +50,8 @@ export interface TrashCardsComponentResult {
 })
 export class TrashCardsComponent implements OnInit {
 
-    count = 0;
+    selectedCount = 0;
+    totalCount = 0;
     trashInfo: TrashCardsComponentTrashInfo[] = [];
     list: TrashCardsComponentItem[] = [];
     unselectableCards: ClankCardConfig[] = [];
@@ -71,7 +72,7 @@ export class TrashCardsComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.count = this.data.needTrashCards.length;
+        this.totalCount = this.data.needTrashCards.length;
         this.trashInfo = this.data.needTrashCards.sort((a, b) => {
             if (a === ClankCardName.All) {
                 return 1;
@@ -119,6 +120,7 @@ export class TrashCardsComponent implements OnInit {
             return;
         }
         item.value = !item.value;
+        this.selectedCount += item.value ? 1 : -1;
         this.checkTrashCards();
     }
 

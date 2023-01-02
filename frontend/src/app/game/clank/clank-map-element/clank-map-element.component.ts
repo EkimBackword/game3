@@ -100,6 +100,17 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                 : nosecrets;
         }),
     );
+    private takeTokenSubject = new Subject<ClankTokenConfig | null>();
+    onTakeTokenSubject = this.takeTokenSubject.pipe(
+        tap((token) => {
+            console.log(token);
+            if (token != null) {
+                setTimeout(() => {
+                    this.takeTokenSubject.next(null);
+                }, 1000);
+            }
+        }),
+    );
 
     ClankElementTypeMap = ClankElementTypeMap;
     ClankCostInfoDirection = ClankCostInfoDirection;
@@ -189,6 +200,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         });
         const tokenInfo = this.visibleTokens?.pop();
         if (tokenInfo != null) {
+            this.takeTokenSubject.next(tokenInfo);
             this.gameInfoService.useToken({
                 playerId: this.activePlayer.id,
                 tokenInfo,

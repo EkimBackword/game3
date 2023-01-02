@@ -68,6 +68,75 @@
     z-index: 5;
 }
 
+.used-token {
+    animation: usedToken 1s linear;
+}
+
+@keyframes usedToken {
+    0% {
+        opacity: 0;
+        margin-top: 0;
+    }
+    25% {
+        opacity: 1;
+        margin-top: 0;
+    }
+    75% {
+        opacity: 1;
+        margin-top: 0;
+    }
+    100% {
+        opacity: 1;
+        margin-top: -100vh;
+    }
+}
+
+.taken-token-usable {
+    animation: takenTokenUsable 1s linear;
+}
+
+@keyframes takenTokenUsable {
+    0% {
+        opacity: 0;
+        margin-left: 0;
+    }
+    25% {
+        opacity: 1;
+        margin-left: 0;
+    }
+    75% {
+        opacity: 1;
+        margin-left: 0;
+    }
+    100% {
+        opacity: 1;
+        margin-left: -70vw;
+    }
+}
+
+.taken-token-nousable {
+    animation: takenTokenNousable 1s linear;
+}
+
+@keyframes takenTokenNousable {
+    0% {
+        opacity: 0;
+        margin-left: 0;
+    }
+    25% {
+        opacity: 1;
+        margin-left: 0;
+    }
+    75% {
+        opacity: 1;
+        margin-left: 0;
+    }
+    100% {
+        opacity: 1;
+        margin-left: 70vw;
+    }
+}
+
 .element-map-id {
     background-color: #fff;
     font-size: 50px;

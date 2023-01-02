@@ -171,11 +171,7 @@ export class ClankHelpService {
             });
         }
 
-        if (type === UseTokenType.take && tokenInfo.isImmediatelyBenefit) {
-            type = UseTokenType.use;
-        }
-
-        if ([UseTokenType.buy, UseTokenType.use].includes(type)) {
+        if ([UseTokenType.buy, UseTokenType.use].includes(type) || tokenInfo.isImmediatelyBenefit) {
             this.updateBenefitInfo({
                 player,
                 cost: tokenInfo.cost,
@@ -190,7 +186,7 @@ export class ClankHelpService {
             }
         }
 
-        if ([UseTokenType.buy, UseTokenType.take].includes(type)) {
+        if ([UseTokenType.buy, UseTokenType.take].includes(type) && (!tokenInfo.isImmediatelyBenefit || !tokenInfo.isUsable)) {
             player.tokens = [
                 ...player.tokens,
                 tokenInfo,

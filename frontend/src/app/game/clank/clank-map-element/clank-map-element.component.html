@@ -17,6 +17,17 @@
                     ></app-clank-token>
                 </div>
             </ng-container>
+            <ng-container *ngIf="(onTakeTokenSubject | async) as takenToken">
+                <div class="clank-artifact" *ngIf="takenToken != null">
+                    <app-clank-token
+                        [class.used-token]="takenToken.isUsable && takenToken.isImmediatelyBenefit"
+                        [class.taken-token-usable]="takenToken.isUsable && !takenToken.isImmediatelyBenefit"
+                        [class.taken-token-nousable]="!takenToken.isUsable"
+                        [token]="takenToken"
+                        [isOpen]="true"
+                    ></app-clank-token>
+                </div>
+            </ng-container>
             <div class="action_move"
                 *ngIf="link"
                 (click)="onMove(link)">
