@@ -225,7 +225,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                 enter_crystal_cave: (this.activePlayer.benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
             },
         });
-        if (this.artifact) {
+        if (this.artifact && this.canTakeArtifact(this.activePlayer)) {
             const matDialogRef = this.matDialog.open<
                 ConfirmModalComponent,
                 ConfirmModalComponent['data'],
@@ -259,10 +259,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (!this.canDoByPlayerPosition(this.activePlayer)) {
             return;
         }
-        const artefactCount = this.activePlayer.artifacts.length;
-        const backpackCount = this.activePlayer.benefitInfo.backpack ?? 0;
-        const count = 1 + backpackCount;
-        if (artefactCount >= count) {
+        if (!this.canTakeArtifact(this.activePlayer)) {
             return;
         }
         this.gameInfoService.takeArtifact(this.activePlayer.id, artifact);
@@ -282,17 +279,25 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             && this.activePlayer?.elementId === this.mapElement?.id;
     }
 
+    private canTakeArtifact(player: ClankPlayerConfig) {
+
+        const artefactCount = player.artifacts.length;
+        const backpackCount = player.benefitInfo.backpack ?? 0;
+        const count = 1 + backpackCount;
+        return artefactCount < count;
+    }
+
     private getStyle() {
         if (this.mapElement == null) {
             return {};
         }
-        const style: Partial<CSSStyleDeclaration> = {
+        const styleInfo: Partial<CSSStyleDeclaration> = {
             top: `${this.mapElement.position.y}px`,
             left: `${this.mapElement.position.x}px`,
             width: `${this.mapElement.position.width}px`,
             height: `${this.mapElement.position.height}px`,
         };
-        return style;
+        return styleInfo;
     }
 
     private async openDialogAboutSwords(link: ClankMapElementLink, player: ClankPlayerConfig) {
