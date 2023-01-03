@@ -331,15 +331,18 @@ export class ClankHelpService {
             value: number;
         }>);
         const dangerRage = state.dungeonRow.reduce((acc, card) => acc + (card.danger ?? 0), 0);
-        const totalRage = state.dragonInfo.rage + dangerRage + rage;
+        const mapInfo = this.gameInfoQuery.mapInfo;
+        const dragonPosition = mapInfo?.dragonInfo.track.find(p => p.rage === state.dragonInfo.rage);
+        const clankCount = dragonPosition?.clank ?? state.dragonInfo.rage;
+        const totalRage = clankCount + dangerRage + rage;
         for (let index = 0; index < totalRage; index++) {
             const colorId = state.dragonInfo.clankBag.pop();
-            const player = state.players.find(p => p.colorId === colorId);
-            if (colorId === GamePlayerColorIdEnum.Black) {
-                attackResult[colorId].value++;
+            if (colorId == null) {
                 continue;
             }
-            if (colorId == null || player == null || player.benefitInfo.heal == null || player.isFinish) {
+            attackResult[colorId].value++;
+            const player = state.players.find(p => p.colorId === colorId);
+            if (player == null || player.benefitInfo.heal == null || player.isFinish) {
                 continue;
             }
             this.updateBenefitInfo({
@@ -348,8 +351,8 @@ export class ClankHelpService {
                     heal: -1,
                 },
             });
-            attackResult[colorId].value++;
         }
+        // TODO: Добавить кубики для отображения атаки дракона
         this.addActionLogs(state, {
             text: `Дракон атакует`,
             subtext: Object.values(attackResult).map(p => `${p.name}: ${p.value} урона`).join('\r\n'),

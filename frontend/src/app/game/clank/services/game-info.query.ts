@@ -103,7 +103,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
                 dragonInfo,
                 style: {},
                 clankAriaStyle: {},
-                tooltip: `Уровень ярости дакона: ${dragonInfo.rage} `,
+                tooltip: `Уровень ярости дакона: ${dragonInfo.rage}`,
             };
             const mapInfo = this.mapsService.getMapById(mapId);
             if (mapInfo == null) {
@@ -114,6 +114,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
                 return data;
             }
             data.clankCount = dragonPosition.clank;
+            data.tooltip = `Уровень ярости дакона: ${dragonInfo.rage} (${data.clankCount} бдзынь)`,
             data.style = {
                 top: `${(dragonPosition.position.y ?? 0)}px`,
                 left: `${(dragonPosition.position.x ?? 0)}px`,
