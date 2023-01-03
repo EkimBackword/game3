@@ -959,38 +959,40 @@ export class CardsService {
                 },
                 count: 1,
             },
-            {
-                row: 2,
-                column: 4,
-                name: 'Сборщик драгоценностей',
-                description: 'Получите 2 очка навыка. Уберите 2 бдзынь. В этот ход драгоценности стоят на 2 меньше',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 4,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 2,
-                            gem_cost_less: 2,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: -2,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 1,
-            },
+            // Вернуть карту после реализации gem_cost_less
+            // {
+            //     row: 2,
+            //     column: 4,
+            //     name: 'Сборщик драгоценностей',
+            //     description: 'Получите 2 очка навыка. Уберите 2 бдзынь. В этот ход драгоценности стоят на 2 меньше',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 4,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 2,
+            //                 // TODO: Уменьшить gem стоимоть на 2
+            //                 gem_cost_less: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: -2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 1,
+            // },
             {
                 row: 2,
                 column: 5,
