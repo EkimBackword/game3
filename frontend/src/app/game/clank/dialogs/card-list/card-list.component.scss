@@ -8,10 +8,18 @@
 
 .card {
     margin: 0.4rem;
+    outline: 2px solid var(--bs-secondary);
     cursor: pointer;
-    filter: brightness(80%);
+    filter: brightness(90%);
 
     &.card--selected {
-        filter: brightness(100%) drop-shadow(2px 2px 2px var(--bs-black));
+        outline: 4px solid var(--bs-primary);
+        filter: brightness(100%);
+    }
+
+    &.card--notselectable {
+        cursor: not-allowed;
+        outline: 0;
+        filter: brightness(80%);
     }
 }
