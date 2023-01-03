@@ -87,7 +87,7 @@ export class ClankHelpService {
             player.benefitInfo.boot = 0;
         }
 
-        if (player.benefitInfo.heal) {
+        if (player.benefitInfo.heal != null) {
             if (player.benefitInfo.heal > 10) {
                 player.benefitInfo.heal = 10;
             }
@@ -321,7 +321,12 @@ export class ClankHelpService {
                 value: 0,
             };
             return acc;
-        }, {} as Record<GamePlayerColorIdEnum, {
+        }, {
+            [GamePlayerColorIdEnum.Black]: {
+                name: 'Дракон',
+                value: 0,
+            },
+        } as Record<GamePlayerColorIdEnum, {
             name: string;
             value: number;
         }>);
@@ -330,10 +335,19 @@ export class ClankHelpService {
         for (let index = 0; index < totalRage; index++) {
             const colorId = state.dragonInfo.clankBag.pop();
             const player = state.players.find(p => p.colorId === colorId);
+            if (colorId === GamePlayerColorIdEnum.Black) {
+                attackResult[colorId].value++;
+                continue;
+            }
             if (colorId == null || player == null || player.benefitInfo.heal == null || player.isFinish) {
                 continue;
             }
-            player.benefitInfo.heal--;
+            this.updateBenefitInfo({
+                player,
+                benefit: {
+                    heal: -1,
+                },
+            });
             attackResult[colorId].value++;
         }
         this.addActionLogs(state, {

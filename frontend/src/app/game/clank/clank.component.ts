@@ -51,42 +51,49 @@ export class ClankComponent implements OnInit {
             const state = this.gameInfoQuery.getValue();
             let winner: PlayerPointsResult | undefined;
             const rows = players.map((player) => {
-                const coins = player.benefitInfo.coin ?? 0;
-                const master = player.isEscaped ? 20 : 0;
-                const tokens = player.tokens.reduce((acc, token) => acc + (token.points?.value ?? 0), 0);
-                const artifacts = player.artifacts.reduce((acc, artefact) => acc + (artefact.points?.value ?? 0), 0);
+                const result: PlayerPointsResult = {
+                    config: player,
+                    name: player.name,
+                    colorInfo: GamePlayerColorList[player.colorId],
+                    coins: 0,
+                    tokens: 0,
+                    artifacts: 0,
+                    master: 0,
+                    cards: 0,
+                    total: 0,
+                };
+                if (!player.isEscaped && !player.isRescued) {
+                    return result;
+                }
+                result.coins = player.benefitInfo.coin ?? 0;
+                result.master = player.isEscaped ? 20 : 0;
+                result.tokens = player.tokens.reduce((acc, token) => acc + (token.points?.value ?? 0), 0);
+                result.artifacts = player.artifacts.reduce((acc, artefact) => acc + (artefact.points?.value ?? 0), 0);
                 const cardList = [
                     ...player.deck,
                     ...player.board,
                     ...player.discard,
                     ...player.hand,
                 ];
-                let cards = 0;
                 for (const card of cardList) {
-                    cards += this.cardsService.getPoints({
+                    result.cards += this.cardsService.getPoints({
                         state,
                         player,
                         card,
                     });
                 }
-                const result: PlayerPointsResult = {
-                    config: player,
-                    name: player.name,
-                    colorInfo: GamePlayerColorList[player.colorId],
-                    coins,
-                    tokens,
-                    artifacts,
-                    master,
-                    cards,
-                    total: coins + tokens + artifacts + master + cards,
-                };
+                result.total = result.coins
+                    + result.tokens
+                    + result.artifacts
+                    + result.master
+                    + result.cards;
                 if (winner == null || winner.total < result.total) {
                     winner = result;
                 }
                 return result;
             });
             return {
-                rows,
+                rows: rows.sort((a, b) => b.total - a.total),
                 winner,
             };
         }),
@@ -118,8 +125,6 @@ export class ClankComponent implements OnInit {
         this.gameInfoService.useManualFunctionSubject.pipe(
             takeUntil(this.ngUnsubscribe),
         ).subscribe(() => this.changeDetectorRef.detectChanges());
-
-        // TODO: Если здоровья <= 0, то надо вывести модальное окно с это информацией и кнопкой закончить ход
     }
 
     ngOnDestroy() {
