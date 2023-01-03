@@ -68,8 +68,6 @@ export interface ClankCardBaseConfigEvents {
     onAcquire?: ClankCardBaseConfigEventInfo;
     /** при разыгрывании */
     onUse?: ClankCardBaseConfigEventInfo;
-    /** при сбрасывании */
-    onDiscard?: ClankCardBaseConfigEventInfo;
 }
 
 export interface ClankCardBaseConfigEventInfo {
@@ -102,9 +100,6 @@ export const ClankCardBaseConfigEventInfoByType: Record<keyof ClankCardBaseConfi
     },
     onUse: {
         text: 'использовал карту',
-    },
-    onDiscard: {
-        text: 'сбросил карту',
     },
 };
 

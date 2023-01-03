@@ -210,11 +210,6 @@ export class CardsService {
                 currentPlayer.benefitInfo[data.card.type] = (currentPlayer.benefitInfo[data.card.type] ?? 0) + 1;
                 break;
             }
-            case 'onDiscard': {
-                currentPlayer.hand = currentPlayer.hand.filter(p => p.id !== data.card.id),
-                currentPlayer.discard.push(data.card);
-                break;
-            }
         }
         return state;
     }

@@ -158,13 +158,13 @@ export class ClankPlayerInfoComponent implements OnInit {
     }
 
     async finishTurn() {
-        // TODO: Надо пометить карты обязательные к применению
+        if (this.activePlayer.hand.length > 0) {
+            this.toastService.showWarn(`Остались неиспользованные карты (${this.activePlayer.hand.length} шт.)`);
+            return;
+        }
         const unusedList = ClankElementByTurnList
             .filter(p => p !== ClankElementByTurn.clank && (this.activePlayer.benefitInfo[p] ?? 0) > 0)
             .map(p => `Остались неиспользованные очки (${ClankElementTypeMap[p].name}: ${this.activePlayer.benefitInfo[p]})`);
-        if (this.activePlayer.hand.length > 0) {
-            unusedList.push(`Остались неиспользованные карты (${this.activePlayer.hand.length} шт.)`);
-        }
         if (unusedList.length > 0) {
             const matDialogRef = this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
                 ConfirmModalComponent,

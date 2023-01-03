@@ -79,6 +79,9 @@
             <button class="btn btn-sm btn-danger"
                 (click)="finishTurn()"
                 [disabled]="currentPlayer.id !== activePlayer.id || currentPlayer.id !== player.id"
+                matTooltip="Нужно разыграть все карты"
+                matTooltipPosition="above"
+                [matTooltipDisabled]="player.hand.length > 0"
             >Закончить ход</button>
         </div>
     </ng-container>
