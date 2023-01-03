@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
+import { preloadImage } from '../models/game.types';
 import {
     getMapTokens,
     getMarketTokens,
@@ -19,7 +20,9 @@ export class TokensService {
         ...getMarketTokens(false),
     ];
 
-    constructor() { }
+    constructor() {
+        preloadImage(this.store.map(p => p.url));
+    }
 
     getMapTokens() {
         const tokens = [

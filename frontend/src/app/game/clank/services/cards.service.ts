@@ -3,6 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { cloneDeep } from 'lodash';
 import { ClankHelpService } from 'src/app/game/clank/services/clank-help.service';
+import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
+import { preloadImage } from 'src/app/shared/models/game.types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
@@ -20,7 +22,6 @@ import { GameInfoState } from '@shared/clank/clank-game.types';
 import {
     ClankCardType,
     ClankDlcEnum,
-    ClankElementByToken,
     ClankTarget,
 } from '@shared/clank/clank-info.types';
 import {
@@ -106,7 +107,10 @@ export class CardsService {
         private clankHelpService: ClankHelpService,
         private toastService: ToastService,
         private matDialog: MatDialog,
-    ) { }
+    ) {
+        preloadImage(Object.values(this.spriteInfo).map(p => p.url));
+        preloadImage(Object.values(ClankElementTypeMap).map(p => p.url));
+    }
 
     getReserveDecksCards(mapDlcId: ClankDlcEnum, userCount: number) {
         return this.getDeckIds(mapDlcId).flatMap((id) => this.reserveDecks[id]?.getCards(userCount) ?? []);
@@ -407,32 +411,32 @@ export class CardsService {
     private initClankDeckCards(withCopy: boolean) {
         const self = this;
         const cards: ClankCardBaseConfig[] = [
-            {
-                row: 0,
-                column: 8,
-                name: 'Амулет силы',
-                description: 'Получите 4 очка навыка. При покупке восстанавливает 1 очко здоровья.',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 7,
-                        },
-                        benefit: {
-                            heal: 1,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 4,
-                        },
-                    },
-                    getPoints(state) {
-                        return 3;
-                    },
-                },
-                count: 1,
-            },
+            // {
+            //     row: 0,
+            //     column: 8,
+            //     name: 'Амулет силы',
+            //     description: 'Получите 4 очка навыка. При покупке восстанавливает 1 очко здоровья.',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 7,
+            //             },
+            //             benefit: {
+            //                 heal: 1,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 4,
+            //             },
+            //         },
+            //         getPoints(state) {
+            //             return 3;
+            //         },
+            //     },
+            //     count: 1,
+            // },
             {
                 row: 0,
                 column: 9,
@@ -501,1088 +505,1088 @@ export class CardsService {
                 },
                 count: 1,
             },
-            {
-                row: 1,
-                column: 0,
-                name: 'Археолог',
-                description: 'Возьмите 1 карту. Если у вас есть обезьяна-идол, колучите 2 очка навыка',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 2,
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            if (!player.benefitInfo.monkey_idol) {
-                                return true;
-                            }
-                            return self.clankHelpService.updateBenefitInfo({
-                                player,
-                                benefit: {
-                                    skill: 2,
-                                },
-                            });
-                        },
-                    },
-                    getPoints(state) {
-                        return 1;
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 1,
-                column: 1,
-                name: 'Ботинки скорости',
-                description: 'Получите 3 ботинка. При покупке игрок получает 1 ботинок.',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 5,
-                        },
-                        benefit: {
-                            boot: 1,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            boot: 3,
-                        },
-                    },
-                    getPoints(state) {
-                        return 3;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 1,
-                column: 2,
-                name: 'Наручи проворности',
-                description: 'Возьмите 2 карты',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 5,
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 2,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state) {
-                        return 2;
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 1,
-                column: 3,
-                name: 'Гениальность',
-                description: 'Возьмите 3 карты',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 6,
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 3,
-                            });
-                            return true;
-                        },
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 1,
-                column: 4,
-                name: 'Жрица Солнца',
-                description: 'Получите 2 очка навыка и 1 меч. При покупке восстанавливает 1 очко здоровья.',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 3,
-                        },
-                        benefit: {
-                            heal: 1,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 2,
-                            sword: 1,
-                        },
-                    },
-                    getPoints(state) {
-                        return 1;
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 1,
-                column: 5,
-                name: 'Бежать сломя голову',
-                description: 'Получите 2 ботинка и 2 бдзынь! Вы не обязаны останавливаться в Кристальных пещерах в этот ход',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 3,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            boot: 2,
-                            ignore_crystal_cave: 1,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 2,
-                            });
-                            return true;
-                        },
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 1,
-                column: 6,
-                name: 'Бриллиант',
-                description: 'Возьмите 1 карты. При покупке получите 2 бдзынь',
-                type: ClankCardType.gem,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            skill: 8,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 2,
-                            });
-                            return true;
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state) {
-                        return 8;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 1,
-                column: 7,
-                name: 'Драконье око',
-                description: 'Можно купить только в Глубинах. Возьмите 1 карту. Приносит 10 победных очков, если у вас есть жетон мастерства.',
-                type: ClankCardType.gem,
-                onlyDepthsArea: true,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            skill: 5,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 2,
-                            });
-                            return true;
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return !player.benefitInfo.mastery_token
-                            ? 0
-                            : 10;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 1,
-                column: 8,
-                name: 'Дварф-лоточник',
-                description: 'Получите 2 монетки и 1 ботинок. Приносит 4 очка, если у вас есть 2 предмета из списка: Кубок, драконье яйцо и обезьяна-идол.',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 4,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            coin: 2,
-                            boot: 1,
-                        },
-                    },
-                    getPoints(state, player) {
-                        const list = [
-                            ClankElementByToken.cup,
-                            ClankElementByToken.dragon_egg,
-                            ClankElementByToken.monkey_idol,
-                        ];
-                        const count = list.reduce((acc, key) => {
-                            if ((player.benefitInfo[key] ?? 0) > 0) {
-                                return acc + 1;
-                            }
-                            return acc;
-                        }, 0);
-                        return count > 2
-                            ? 4
-                            : 0;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 1,
-                column: 9,
-                name: 'Эльфийские сапоги',
-                description: 'Возьмите 1 карту. Получите 1 очко навыка и 1 ботинок.',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 4,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 1,
-                            boot: 1,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 2,
-                column: 0,
-                name: 'Эльфийский плащ',
-                description: 'Получите 1 очко навыка. Уберите 2 бдзынь. Возьмите 1 карту.',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 4,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 1,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: -2,
-                            });
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 2,
-                column: 1,
-                name: 'Эльфийский кинжал',
-                description: 'Получите 1 очко навыка и 1 меч. Возьмите карту.',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 4,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 1,
-                            sword: 1,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 2,
-                column: 2,
-                name: 'Изумруд',
-                description: 'Возьмите 1 карту. При покупке получите 2 бдзынь.',
-                type: ClankCardType.gem,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            skill: 5,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 2,
-                            });
-                            return true;
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 5;
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 2,
-                column: 3,
-                name: 'Ковёр-самолёт',
-                description: 'Получите 2 ботинка. В этот ход играрируйте монстров в туннелях, и вы не обязаны останавливаться в Кристальных пещерах',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 6,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            boot: 2,
-                            ignore_crystal_cave: 1,
-                            ignore_monster: 1,
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 2,
-                column: 4,
-                name: 'Сборщик драгоценностей',
-                description: 'Получите 2 очка навыка. Уберите 2 бдзынь. В этот ход драгоценности стоят на 2 меньше',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 4,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 2,
-                            gem_cost_less: 2,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: -2,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 2,
-                column: 5,
-                name: 'Взывающий к Древним',
-                description: 'Получите 1 бдзынь. Телепортируйтесь в соседнюю комнату',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 4,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            teleport: 1,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 2,
-                column: 6,
-                name: 'Кобольд-торгаш',
-                description: 'Получите 2 монетки. Если у вас есть артефакт, получите 2 навыка',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 3,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            coin: 2,
-                        },
-                        async callback(state, player) {
-                            if (!player.artifacts.length) {
-                                return true;
-                            }
-                            return self.clankHelpService.updateBenefitInfo({
-                                player,
-                                benefit: {
-                                    skill: 2,
-                                },
-                            });
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 2,
-                column: 7,
-                name: 'Счастливая монетка',
-                description: 'Получите 1 очко навыка и 1 бдзынь. Возьмите 1 карту',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 1,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 1,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 2,
-                column: 8,
-                name: 'Профессиональный ворюга',
-                description: 'Получите 2 очка навыка. В конце хода уничтожте свою карту "Взломать сундук", сыгранную или лежащую в сбросе.',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 3,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 2,
-                        },
-                        async callback(state, player) {
-                            player.needTrashCards.push(ClankCardName.Burgle);
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 2,
-                column: 9,
-                name: 'Господин Усач',
-                description: 'Выберите: дракон атакует или -2 бдзынь',
-                type: ClankCardType.basiс,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            skill: 1,
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            return await self.openDialogChooseCardEvent({
-                                count: 1,
-                                list: [
-                                    {
-                                        description: 'Дракон атакует',
-                                        event: () => {
-                                            self.clankHelpService.onDragonAttack(state);
-                                            return true;
-                                        },
-                                    },
-                                    {
-                                        description: '-2 бдзынь',
-                                        event: () => {
-                                            self.clankHelpService.addClank({
-                                                state,
-                                                player,
-                                                count: -2,
-                                            });
-                                            return true;
-                                        },
-                                    },
-                                ],
-                            });
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 1,
-            },
+            // {
+            //     row: 1,
+            //     column: 0,
+            //     name: 'Археолог',
+            //     description: 'Возьмите 1 карту. Если у вас есть обезьяна-идол, колучите 2 очка навыка',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 2,
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 if (!player.benefitInfo.monkey_idol) {
+            //                     return true;
+            //                 }
+            //                 return self.clankHelpService.updateBenefitInfo({
+            //                     player,
+            //                     benefit: {
+            //                         skill: 2,
+            //                     },
+            //                 });
+            //             },
+            //         },
+            //         getPoints(state) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 1,
+            //     column: 1,
+            //     name: 'Ботинки скорости',
+            //     description: 'Получите 3 ботинка. При покупке игрок получает 1 ботинок.',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 5,
+            //             },
+            //             benefit: {
+            //                 boot: 1,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 boot: 3,
+            //             },
+            //         },
+            //         getPoints(state) {
+            //             return 3;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 1,
+            //     column: 2,
+            //     name: 'Наручи проворности',
+            //     description: 'Возьмите 2 карты',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 5,
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 1,
+            //     column: 3,
+            //     name: 'Гениальность',
+            //     description: 'Возьмите 3 карты',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 6,
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 3,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 1,
+            //     column: 4,
+            //     name: 'Жрица Солнца',
+            //     description: 'Получите 2 очка навыка и 1 меч. При покупке восстанавливает 1 очко здоровья.',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 3,
+            //             },
+            //             benefit: {
+            //                 heal: 1,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 2,
+            //                 sword: 1,
+            //             },
+            //         },
+            //         getPoints(state) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 1,
+            //     column: 5,
+            //     name: 'Бежать сломя голову',
+            //     description: 'Получите 2 ботинка и 2 бдзынь! Вы не обязаны останавливаться в Кристальных пещерах в этот ход',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 3,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 boot: 2,
+            //                 ignore_crystal_cave: 1,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 1,
+            //     column: 6,
+            //     name: 'Бриллиант',
+            //     description: 'Возьмите 1 карты. При покупке получите 2 бдзынь',
+            //     type: ClankCardType.gem,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 8,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state) {
+            //             return 8;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 1,
+            //     column: 7,
+            //     name: 'Драконье око',
+            //     description: 'Можно купить только в Глубинах. Возьмите 1 карту. Приносит 10 победных очков, если у вас есть жетон мастерства.',
+            //     type: ClankCardType.gem,
+            //     onlyDepthsArea: true,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 5,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return !player.benefitInfo.mastery_token
+            //                 ? 0
+            //                 : 10;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 1,
+            //     column: 8,
+            //     name: 'Дварф-лоточник',
+            //     description: 'Получите 2 монетки и 1 ботинок. Приносит 4 очка, если у вас есть 2 предмета из списка: Кубок, драконье яйцо и обезьяна-идол.',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 4,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 coin: 2,
+            //                 boot: 1,
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             const list = [
+            //                 ClankElementByToken.cup,
+            //                 ClankElementByToken.dragon_egg,
+            //                 ClankElementByToken.monkey_idol,
+            //             ];
+            //             const count = list.reduce((acc, key) => {
+            //                 if ((player.benefitInfo[key] ?? 0) > 0) {
+            //                     return acc + 1;
+            //                 }
+            //                 return acc;
+            //             }, 0);
+            //             return count > 2
+            //                 ? 4
+            //                 : 0;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 1,
+            //     column: 9,
+            //     name: 'Эльфийские сапоги',
+            //     description: 'Возьмите 1 карту. Получите 1 очко навыка и 1 ботинок.',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 4,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 1,
+            //                 boot: 1,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 2,
+            //     column: 0,
+            //     name: 'Эльфийский плащ',
+            //     description: 'Получите 1 очко навыка. Уберите 2 бдзынь. Возьмите 1 карту.',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 4,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 1,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: -2,
+            //                 });
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 2,
+            //     column: 1,
+            //     name: 'Эльфийский кинжал',
+            //     description: 'Получите 1 очко навыка и 1 меч. Возьмите карту.',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 4,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 1,
+            //                 sword: 1,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 2,
+            //     column: 2,
+            //     name: 'Изумруд',
+            //     description: 'Возьмите 1 карту. При покупке получите 2 бдзынь.',
+            //     type: ClankCardType.gem,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 5,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 5;
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 2,
+            //     column: 3,
+            //     name: 'Ковёр-самолёт',
+            //     description: 'Получите 2 ботинка. В этот ход играрируйте монстров в туннелях, и вы не обязаны останавливаться в Кристальных пещерах',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 6,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 boot: 2,
+            //                 ignore_crystal_cave: 1,
+            //                 ignore_monster: 1,
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 2,
+            //     column: 4,
+            //     name: 'Сборщик драгоценностей',
+            //     description: 'Получите 2 очка навыка. Уберите 2 бдзынь. В этот ход драгоценности стоят на 2 меньше',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 4,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 2,
+            //                 gem_cost_less: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: -2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 2,
+            //     column: 5,
+            //     name: 'Взывающий к Древним',
+            //     description: 'Получите 1 бдзынь. Телепортируйтесь в соседнюю комнату',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 4,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 teleport: 1,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 2,
+            //     column: 6,
+            //     name: 'Кобольд-торгаш',
+            //     description: 'Получите 2 монетки. Если у вас есть артефакт, получите 2 навыка',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 3,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 coin: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 if (!player.artifacts.length) {
+            //                     return true;
+            //                 }
+            //                 return self.clankHelpService.updateBenefitInfo({
+            //                     player,
+            //                     benefit: {
+            //                         skill: 2,
+            //                     },
+            //                 });
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 2,
+            //     column: 7,
+            //     name: 'Счастливая монетка',
+            //     description: 'Получите 1 очко навыка и 1 бдзынь. Возьмите 1 карту',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 1,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 1,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 2,
+            //     column: 8,
+            //     name: 'Профессиональный ворюга',
+            //     description: 'Получите 2 очка навыка. В конце хода уничтожте свою карту "Взломать сундук", сыгранную или лежащую в сбросе.',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 3,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 player.needTrashCards.push(ClankCardName.Burgle);
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 2,
+            //     column: 9,
+            //     name: 'Господин Усач',
+            //     description: 'Выберите: дракон атакует или -2 бдзынь',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 1,
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 return await self.openDialogChooseCardEvent({
+            //                     count: 1,
+            //                     list: [
+            //                         {
+            //                             description: 'Дракон атакует',
+            //                             event: () => {
+            //                                 self.clankHelpService.onDragonAttack(state);
+            //                                 return true;
+            //                             },
+            //                         },
+            //                         {
+            //                             description: '-2 бдзынь',
+            //                             event: () => {
+            //                                 self.clankHelpService.addClank({
+            //                                     state,
+            //                                     player,
+            //                                     count: -2,
+            //                                 });
+            //                                 return true;
+            //                             },
+            //                         },
+            //                     ],
+            //                 });
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 1,
+            // },
 
-            //#region 30
-            {
-                row: 3,
-                column: 0,
-                name: 'Робомартышка 3000',
-                description: 'Получите 3 бдзынь. Возьмите 3 карты.',
-                type: ClankCardType.companion,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            skill: 5,
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 3,
-                            });
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 3,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 3,
-                column: 1,
-                name: 'Двигаться бесшумно',
-                description: 'Получите 2 ботинка и уберите 2 бдзынь',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 3,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            boot: 2,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: -2,
-                            });
-                            return true;
-                        },
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 3,
-                column: 2,
-                name: 'Кирка',
-                description: 'Получите 2 меча и 2 монеты',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 4,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            sword: 2,
-                            coin: 2,
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 3,
-                column: 3,
-                name: 'Мятежный капитан',
-                description: 'Получите 2 очка навыка. Если у вас сыгран хотя бы 1 компаньон, возьмите 1 карту',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 3,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 2,
-                        },
-                        async callback(state, player) {
-                            if (!player.benefitInfo.companion) {
-                                return true;
-                            }
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 3,
-                column: 4,
-                name: 'Мятежный шахтёр',
-                description: 'Получите 2 монетки. Если у вас сыгран хотя бы 1 компаньон, возьмите 1 карту',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 2,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            coin: 2,
-                        },
-                        async callback(state, player) {
-                            if (!player.benefitInfo.companion) {
-                                return true;
-                            }
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 3,
-                column: 5,
-                name: 'Разведчик-мятежник',
-                description: 'Получите 2 ботинка. Если у вас сыгран хотя бы 1 компаньон, возьмите 1 карту',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 3,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            boot: 2,
-                        },
-                        async callback(state, player) {
-                            if (!player.benefitInfo.companion) {
-                                return true;
-                            }
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 3,
-                column: 6,
-                name: 'Солдат-мятежник',
-                description: 'Получите 2 меча. Если у вас сыгран хотя бы 1 компаньон, возьмите 1 карту',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 2,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            sword: 2,
-                        },
-                        async callback(state, player) {
-                            if (!player.benefitInfo.companion) {
-                                return true;
-                            }
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 3,
-                column: 7,
-                name: 'Рубин',
-                description: 'Возьмите 1 карту. При покупке получите 2 бдзынь',
-                type: ClankCardType.gem,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            skill: 6,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 2,
-                            });
-                            return true;
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 6;
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 3,
-                column: 8,
-                name: 'Сапфир',
-                description: 'Возьмите 1 карту. При покупке получите 2 бдзынь',
-                type: ClankCardType.gem,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            skill: 4,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 2,
-                            });
-                            return true;
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 4;
-                    },
-                },
-                count: 3,
-            },
-            {
-                row: 3,
-                column: 9,
-                name: 'Скипетр повелителя обезьян',
-                description: 'Получите 3 очка навыка и 3 бдзынь',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 3,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 3,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 3,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 1,
-            },
-            //#endregion 30
+            // //#region 30
+            // {
+            //     row: 3,
+            //     column: 0,
+            //     name: 'Робомартышка 3000',
+            //     description: 'Получите 3 бдзынь. Возьмите 3 карты.',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 5,
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 3,
+            //                 });
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 3,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 3,
+            //     column: 1,
+            //     name: 'Двигаться бесшумно',
+            //     description: 'Получите 2 ботинка и уберите 2 бдзынь',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 3,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 boot: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: -2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 3,
+            //     column: 2,
+            //     name: 'Кирка',
+            //     description: 'Получите 2 меча и 2 монеты',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 4,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 sword: 2,
+            //                 coin: 2,
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 3,
+            //     column: 3,
+            //     name: 'Мятежный капитан',
+            //     description: 'Получите 2 очка навыка. Если у вас сыгран хотя бы 1 компаньон, возьмите 1 карту',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 3,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 if (!player.benefitInfo.companion) {
+            //                     return true;
+            //                 }
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 3,
+            //     column: 4,
+            //     name: 'Мятежный шахтёр',
+            //     description: 'Получите 2 монетки. Если у вас сыгран хотя бы 1 компаньон, возьмите 1 карту',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 2,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 coin: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 if (!player.benefitInfo.companion) {
+            //                     return true;
+            //                 }
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 3,
+            //     column: 5,
+            //     name: 'Разведчик-мятежник',
+            //     description: 'Получите 2 ботинка. Если у вас сыгран хотя бы 1 компаньон, возьмите 1 карту',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 3,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 boot: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 if (!player.benefitInfo.companion) {
+            //                     return true;
+            //                 }
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 3,
+            //     column: 6,
+            //     name: 'Солдат-мятежник',
+            //     description: 'Получите 2 меча. Если у вас сыгран хотя бы 1 компаньон, возьмите 1 карту',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 2,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 sword: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 if (!player.benefitInfo.companion) {
+            //                     return true;
+            //                 }
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 3,
+            //     column: 7,
+            //     name: 'Рубин',
+            //     description: 'Возьмите 1 карту. При покупке получите 2 бдзынь',
+            //     type: ClankCardType.gem,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 6,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 6;
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 3,
+            //     column: 8,
+            //     name: 'Сапфир',
+            //     description: 'Возьмите 1 карту. При покупке получите 2 бдзынь',
+            //     type: ClankCardType.gem,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 4,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 4;
+            //         },
+            //     },
+            //     count: 3,
+            // },
+            // {
+            //     row: 3,
+            //     column: 9,
+            //     name: 'Скипетр повелителя обезьян',
+            //     description: 'Получите 3 очка навыка и 3 бдзынь',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 3,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 3,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 3,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // //#endregion 30
 
-            //#region 40
-            {
-                row: 4,
-                column: 0,
-                name: 'Обыск',
-                description: 'Получите 2 очка навыка и ботинок. Каждый раз, когда вы в этот ход получаете золото, получаемое количество золота увеличивается на 1',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 4,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 2,
-                            boot: 1,
-                            additional_coin: 1,
-                        },
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 4,
-                column: 1,
-                name: 'Серебреное копьё',
-                description: 'Получите 3 меча',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 3,
-                        },
-                        benefit: {
-                            sword: 1,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            sword: 3,
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 4,
-                column: 2,
-                name: 'Поющий меч',
-                description: 'Получите 3 очка навыка, 2 меча и 1 бдзынь.',
-                type: ClankCardType.basiс,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            skill: 5,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 3,
-                            sword: 2,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 2;
-                    },
-                },
-                count: 1,
-            },
+            // //#region 40
+            // {
+            //     row: 4,
+            //     column: 0,
+            //     name: 'Обыск',
+            //     description: 'Получите 2 очка навыка и ботинок. Каждый раз, когда вы в этот ход получаете золото, получаемое количество золота увеличивается на 1',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 4,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 2,
+            //                 boot: 1,
+            //                 additional_coin: 1,
+            //             },
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 4,
+            //     column: 1,
+            //     name: 'Серебреное копьё',
+            //     description: 'Получите 3 меча',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 3,
+            //             },
+            //             benefit: {
+            //                 sword: 1,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 sword: 3,
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 4,
+            //     column: 2,
+            //     name: 'Поющий меч',
+            //     description: 'Получите 3 очка навыка, 2 меча и 1 бдзынь.',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 5,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 3,
+            //                 sword: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 2;
+            //         },
+            //     },
+            //     count: 1,
+            // },
             {
                 row: 4,
                 column: 3,
@@ -1616,190 +1620,190 @@ export class CardsService {
                 },
                 count: 2,
             },
-            {
-                row: 4,
-                column: 4,
-                name: 'Подкрадываться',
-                description: 'Получите 1 очко навыка и 1 ботинок. Уберите 2 бдзынь',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 2,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 1,
-                            boot: 1,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: -2,
-                            });
-                            return true;
-                        },
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 4,
-                column: 5,
-                name: 'Бахвальство',
-                description: 'Получите ботинок и по 1 очку навыка за каждый сделаный вами в этом ходу бдзынь',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 2,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            boot: 1,
-                        },
-                        async callback(state, player) {
-                            return self.clankHelpService.updateBenefitInfo({
-                                player,
-                                benefit: {
-                                    skill: player.benefitInfo.clank,
-                                },
-                            });
-                        },
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 4,
-                column: 6,
-                name: 'Болтовня',
-                description: 'Каждый другой игрок получает 1 бдзынь',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 3,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 2,
-                        },
-                        async callback(state, player) {
-                            state.players.filter(p => p.id !== player.id).forEach((p) => {
-                                self.clankHelpService.addClank({
-                                    state,
-                                    player: p,
-                                    count: 1,
-                                });
-                            });
-                            return true;
-                        },
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 4,
-                column: 7,
-                name: 'Герцог',
-                description: 'Получите 2 очка навыка и 2 меча. Приносит по 1 победному, за каждые 5 монет',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 5,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 2,
-                            sword: 2,
-                        },
-                    },
-                    getPoints(state, player) {
-                        const coins = player.benefitInfo.coin ?? 0;
-                        return Math.floor(coins / 5);
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 4,
-                column: 8,
-                name: 'Король под горой',
-                description: 'Получите 2 очка навыка, меч и ботинок. Если у вас есть корона, то получите меч и ботинок',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 6,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 2,
-                            sword: 1,
-                            boot: 1,
-                        },
-                        async callback(state, player) {
-                            if (!player.benefitInfo.crown) {
-                                return true;
-                            }
-                            return self.clankHelpService.updateBenefitInfo({
-                                player,
-                                benefit: {
-                                    sword: 1,
-                                    boot: 1,
-                                },
-                            });
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 3;
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 4,
-                column: 9,
-                name: 'Королева червей',
-                description: 'Получите 3 очка навыков и меч. Если у вас есть корона, восстановите 1 очко здоровья',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 6,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 3,
-                            sword: 1,
-                        },
-                        async callback(state, player) {
-                            if (!player.benefitInfo.crown) {
-                                return true;
-                            }
-                            return self.clankHelpService.updateBenefitInfo({
-                                player,
-                                benefit: {
-                                    heal: 1,
-                                },
-                            });
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 3;
-                    },
-                },
-                count: 1,
-            },
+            // {
+            //     row: 4,
+            //     column: 4,
+            //     name: 'Подкрадываться',
+            //     description: 'Получите 1 очко навыка и 1 ботинок. Уберите 2 бдзынь',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 2,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 1,
+            //                 boot: 1,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: -2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 4,
+            //     column: 5,
+            //     name: 'Бахвальство',
+            //     description: 'Получите ботинок и по 1 очку навыка за каждый сделаный вами в этом ходу бдзынь',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 2,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 boot: 1,
+            //             },
+            //             async callback(state, player) {
+            //                 return self.clankHelpService.updateBenefitInfo({
+            //                     player,
+            //                     benefit: {
+            //                         skill: player.benefitInfo.clank,
+            //                     },
+            //                 });
+            //             },
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 4,
+            //     column: 6,
+            //     name: 'Болтовня',
+            //     description: 'Каждый другой игрок получает 1 бдзынь',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 3,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 state.players.filter(p => p.id !== player.id).forEach((p) => {
+            //                     self.clankHelpService.addClank({
+            //                         state,
+            //                         player: p,
+            //                         count: 1,
+            //                     });
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 4,
+            //     column: 7,
+            //     name: 'Герцог',
+            //     description: 'Получите 2 очка навыка и 2 меча. Приносит по 1 победному, за каждые 5 монет',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 5,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 2,
+            //                 sword: 2,
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             const coins = player.benefitInfo.coin ?? 0;
+            //             return Math.floor(coins / 5);
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 4,
+            //     column: 8,
+            //     name: 'Король под горой',
+            //     description: 'Получите 2 очка навыка, меч и ботинок. Если у вас есть корона, то получите меч и ботинок',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 6,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 2,
+            //                 sword: 1,
+            //                 boot: 1,
+            //             },
+            //             async callback(state, player) {
+            //                 if (!player.benefitInfo.crown) {
+            //                     return true;
+            //                 }
+            //                 return self.clankHelpService.updateBenefitInfo({
+            //                     player,
+            //                     benefit: {
+            //                         sword: 1,
+            //                         boot: 1,
+            //                     },
+            //                 });
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 3;
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 4,
+            //     column: 9,
+            //     name: 'Королева червей',
+            //     description: 'Получите 3 очка навыков и меч. Если у вас есть корона, восстановите 1 очко здоровья',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 6,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 3,
+            //                 sword: 1,
+            //             },
+            //             async callback(state, player) {
+            //                 if (!player.benefitInfo.crown) {
+            //                     return true;
+            //                 }
+            //                 return self.clankHelpService.updateBenefitInfo({
+            //                     player,
+            //                     benefit: {
+            //                         heal: 1,
+            //                     },
+            //                 });
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 3;
+            //         },
+            //     },
+            //     count: 1,
+            // },
             //#endregion 40
 
             //#region 50
@@ -1807,7 +1811,7 @@ export class CardsService {
                 row: 5,
                 column: 0,
                 name: 'Искатель сокровищ',
-                description: 'Получите 2 очка навыка и 2 меча. Замените карту в ряду подземелья. (Если на новой карте есть символ дракона, игнорируйте его',
+                description: 'Получите 2 очка навыка и 2 меча. Замените карту в ряду подземелья. (Если на новой карте есть символ дракона, игнорируйте его)',
                 type: ClankCardType.companion,
                 events: {
                     onAcquire: {
@@ -1848,145 +1852,145 @@ export class CardsService {
                 },
                 count: 2,
             },
-            {
-                row: 5,
-                column: 1,
-                name: 'Карта сокровищ',
-                description: 'Получите 5 монет',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 6,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            coin: 5,
-                        },
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 5,
-                column: 2,
-                name: 'Всё-всё знающий о туннелях',
-                description: 'Получите 1 меч и 1 ботинок',
-                type: ClankCardType.companion,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 1,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            sword: 1,
-                            boot: 1,
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 5,
-                column: 3,
-                name: 'Теневая сделка',
-                description: 'Получить 1 монету или потратить 7 монет, чтобы взять 2 книги тайн',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 1,
-                        },
-                    },
-                    onUse: {
-                        async callback(state, player) {
-                            return self.openDialogChooseCardEvent({
-                                count: 1,
-                                list: [
-                                    {
-                                        description: 'Получить 1 монету',
-                                        event: () => {
-                                            return self.clankHelpService.updateBenefitInfo({
-                                                player,
-                                                benefit: {
-                                                    coin: 1,
-                                                },
-                                            });
-                                        },
-                                    },
-                                    {
-                                        description: 'Потратить 7 монет, чтобы взять 2 книги тайн',
-                                        event: () => {
-                                            const success = self.clankHelpService.updateBenefitInfo({
-                                                player,
-                                                cost: {
-                                                    coin: 7,
-                                                },
-                                            });
-                                            if (!success) {
-                                                return false;
-                                            }
-                                            let count = 2;
-                                            const list = state.reserveRow.filter(p => p.name === ClankCardName.SecretTom);
-                                            while (count > 0 && list.length > 0) {
-                                                const tomCard = list.pop();
-                                                if (tomCard == null) {
-                                                    return true;
-                                                }
-                                                state.reserveRow = state.reserveRow.filter(p => p.id === tomCard.id);
-                                                player.discard.push(tomCard);
-                                                count--;
-                                            }
-                                            return true;
-                                        },
-                                    },
-                                ],
-                            });
-                        },
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 5,
-                column: 4,
-                name: 'Жезл ветра',
-                description: 'Получите 2 очка навыка. Если у вас есть артефакт, телепортируйтесь в соседнюю комнату',
-                type: ClankCardType.basiс,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            skill: 5,
-                        },
-                    },
-                    onUse: {
-                        benefit: {
-                            skill: 2,
-                        },
-                        async callback(state, player) {
-                            if (player.artifacts.length > 0) {
-                                return self.clankHelpService.updateBenefitInfo({
-                                    player,
-                                    benefit: {
-                                        teleport: 1,
-                                    },
-                                });
-                            }
-                            return true;
-                        },
-                    },
-                    getPoints(state, player) {
-                        return 1;
-                    },
-                },
-                count: 2,
-            },
+            // {
+            //     row: 5,
+            //     column: 1,
+            //     name: 'Карта сокровищ',
+            //     description: 'Получите 5 монет',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 6,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 coin: 5,
+            //             },
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 5,
+            //     column: 2,
+            //     name: 'Всё-всё знающий о туннелях',
+            //     description: 'Получите 1 меч и 1 ботинок',
+            //     type: ClankCardType.companion,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 1,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 sword: 1,
+            //                 boot: 1,
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 5,
+            //     column: 3,
+            //     name: 'Теневая сделка',
+            //     description: 'Получить 1 монету или потратить 7 монет, чтобы взять 2 книги тайн',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 1,
+            //             },
+            //         },
+            //         onUse: {
+            //             async callback(state, player) {
+            //                 return self.openDialogChooseCardEvent({
+            //                     count: 1,
+            //                     list: [
+            //                         {
+            //                             description: 'Получить 1 монету',
+            //                             event: () => {
+            //                                 return self.clankHelpService.updateBenefitInfo({
+            //                                     player,
+            //                                     benefit: {
+            //                                         coin: 1,
+            //                                     },
+            //                                 });
+            //                             },
+            //                         },
+            //                         {
+            //                             description: 'Потратить 7 монет, чтобы взять 2 книги тайн',
+            //                             event: () => {
+            //                                 const success = self.clankHelpService.updateBenefitInfo({
+            //                                     player,
+            //                                     cost: {
+            //                                         coin: 7,
+            //                                     },
+            //                                 });
+            //                                 if (!success) {
+            //                                     return false;
+            //                                 }
+            //                                 let count = 2;
+            //                                 const list = state.reserveRow.filter(p => p.name === ClankCardName.SecretTom);
+            //                                 while (count > 0 && list.length > 0) {
+            //                                     const tomCard = list.pop();
+            //                                     if (tomCard == null) {
+            //                                         return true;
+            //                                     }
+            //                                     state.reserveRow = state.reserveRow.filter(p => p.id === tomCard.id);
+            //                                     player.discard.push(tomCard);
+            //                                     count--;
+            //                                 }
+            //                                 return true;
+            //                             },
+            //                         },
+            //                     ],
+            //                 });
+            //             },
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 5,
+            //     column: 4,
+            //     name: 'Жезл ветра',
+            //     description: 'Получите 2 очка навыка. Если у вас есть артефакт, телепортируйтесь в соседнюю комнату',
+            //     type: ClankCardType.basiс,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 skill: 5,
+            //             },
+            //         },
+            //         onUse: {
+            //             benefit: {
+            //                 skill: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 if (player.artifacts.length > 0) {
+            //                     return self.clankHelpService.updateBenefitInfo({
+            //                         player,
+            //                         benefit: {
+            //                             teleport: 1,
+            //                         },
+            //                     });
+            //                 }
+            //                 return true;
+            //             },
+            //         },
+            //         getPoints(state, player) {
+            //             return 1;
+            //         },
+            //     },
+            //     count: 2,
+            // },
             {
                 row: 5,
                 column: 5,
@@ -2255,181 +2259,181 @@ export class CardsService {
                 },
                 count: 2,
             },
-            {
-                row: 6,
-                column: 3,
-                name: 'Громогласный рыг',
-                description: 'Получите 4 монеты и 2 бдзынь',
-                type: ClankCardType.monster,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            sword: 2,
-                        },
-                        benefit: {
-                            coin: 4,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 2,
-                            });
-                            return true;
-                        },
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 6,
-                column: 4,
-                name: 'Пещерный тролль',
-                description: 'Можно купить только в Глубинах. Получить 3 монеты и взять 2 карты',
-                type: ClankCardType.monster,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            sword: 4,
-                        },
-                        benefit: {
-                            coin: 3,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 2,
-                            });
-                            return true;
-                        },
-                    },
-                },
-                count: 1,
-            },
-            {
-                row: 6,
-                column: 5,
-                name: 'Кристальный голем',
-                description: 'Можно сражаться только в Кристальной пещере. Получить 3 очка навыка',
-                type: ClankCardType.monster,
-                onlyCrystalCave: true,
-                events: {
-                    onAcquire: {
-                        cost: {
-                            sword: 3,
-                        },
-                        benefit: {
-                            skill: 3,
-                        },
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 6,
-                column: 6,
-                name: 'Кобальд',
-                description: 'Получить 1 очко навыка',
-                type: ClankCardType.monster,
-                danger: 1,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            sword: 1,
-                        },
-                        benefit: {
-                            skill: 1,
-                        },
-                    },
-                },
-                count: 3,
-            },
-            {
-                row: 6,
-                column: 7,
-                name: 'Огр',
-                description: 'Получить 5 монет',
-                type: ClankCardType.monster,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            sword: 3,
-                        },
-                        benefit: {
-                            coin: 5,
-                        },
-                    },
-                },
-                count: 2,
-            },
-            {
-                row: 6,
-                column: 8,
-                name: 'Орк-пехотинец',
-                description: 'Получить 3 монеты',
-                type: ClankCardType.monster,
-                events: {
-                    onArrive: {
-                        isDragonAttack: true,
-                    },
-                    onAcquire: {
-                        cost: {
-                            sword: 2,
-                        },
-                        benefit: {
-                            coin: 3,
-                        },
-                    },
-                },
-                count: 3,
-            },
-            {
-                row: 6,
-                column: 9,
-                name: 'Повелитель',
-                description: 'Возьмите 2 карты',
-                type: ClankCardType.monster,
-                events: {
-                    onArrive: {
-                        target: ClankTarget.all,
-                        async callback(state, player) {
-                            self.clankHelpService.addClank({
-                                state,
-                                player,
-                                count: 1,
-                            });
-                            return true;
-                        },
-                    },
-                    onAcquire: {
-                        cost: {
-                            sword: 2,
-                        },
-                        async callback(state, player) {
-                            self.clankHelpService.drawCards({
-                                state,
-                                player,
-                                count: 2,
-                            });
-                            return true;
-                        },
-                    },
-                },
-                count: 2,
-            },
+            // {
+            //     row: 6,
+            //     column: 3,
+            //     name: 'Громогласный рыг',
+            //     description: 'Получите 4 монеты и 2 бдзынь',
+            //     type: ClankCardType.monster,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 sword: 2,
+            //             },
+            //             benefit: {
+            //                 coin: 4,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 6,
+            //     column: 4,
+            //     name: 'Пещерный тролль',
+            //     description: 'Можно купить только в Глубинах. Получить 3 монеты и взять 2 карты',
+            //     type: ClankCardType.monster,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 sword: 4,
+            //             },
+            //             benefit: {
+            //                 coin: 3,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //     },
+            //     count: 1,
+            // },
+            // {
+            //     row: 6,
+            //     column: 5,
+            //     name: 'Кристальный голем',
+            //     description: 'Можно сражаться только в Кристальной пещере. Получить 3 очка навыка',
+            //     type: ClankCardType.monster,
+            //     onlyCrystalCave: true,
+            //     events: {
+            //         onAcquire: {
+            //             cost: {
+            //                 sword: 3,
+            //             },
+            //             benefit: {
+            //                 skill: 3,
+            //             },
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 6,
+            //     column: 6,
+            //     name: 'Кобальд',
+            //     description: 'Получить 1 очко навыка',
+            //     type: ClankCardType.monster,
+            //     danger: 1,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 sword: 1,
+            //             },
+            //             benefit: {
+            //                 skill: 1,
+            //             },
+            //         },
+            //     },
+            //     count: 3,
+            // },
+            // {
+            //     row: 6,
+            //     column: 7,
+            //     name: 'Огр',
+            //     description: 'Получить 5 монет',
+            //     type: ClankCardType.monster,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 sword: 3,
+            //             },
+            //             benefit: {
+            //                 coin: 5,
+            //             },
+            //         },
+            //     },
+            //     count: 2,
+            // },
+            // {
+            //     row: 6,
+            //     column: 8,
+            //     name: 'Орк-пехотинец',
+            //     description: 'Получить 3 монеты',
+            //     type: ClankCardType.monster,
+            //     events: {
+            //         onArrive: {
+            //             isDragonAttack: true,
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 sword: 2,
+            //             },
+            //             benefit: {
+            //                 coin: 3,
+            //             },
+            //         },
+            //     },
+            //     count: 3,
+            // },
+            // {
+            //     row: 6,
+            //     column: 9,
+            //     name: 'Повелитель',
+            //     description: 'Возьмите 2 карты',
+            //     type: ClankCardType.monster,
+            //     events: {
+            //         onArrive: {
+            //             target: ClankTarget.all,
+            //             async callback(state, player) {
+            //                 self.clankHelpService.addClank({
+            //                     state,
+            //                     player,
+            //                     count: 1,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //         onAcquire: {
+            //             cost: {
+            //                 sword: 2,
+            //             },
+            //             async callback(state, player) {
+            //                 self.clankHelpService.drawCards({
+            //                     state,
+            //                     player,
+            //                     count: 2,
+            //                 });
+            //                 return true;
+            //             },
+            //         },
+            //     },
+            //     count: 2,
+            // },
             //#endregion 60
         ];
         const shareDeckConfig: ClankDeckConfig = {

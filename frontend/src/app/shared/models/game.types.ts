@@ -15,3 +15,10 @@ export interface GameInfoActionLogFrontend extends GameInfoActionLog {
 export const MomentDateFormat = 'YYYY MM DD HH:mm:ss Z';
 
 export const MomentDateGroupFormat = 'HH:mm';
+
+export function preloadImage(urls: string[]) {
+    for (const url of urls) {
+        const img = new Image();
+        img.src = url;
+    }
+}
