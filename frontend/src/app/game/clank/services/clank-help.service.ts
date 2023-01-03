@@ -162,11 +162,34 @@ export class ClankHelpService {
         count: number;
     }) {
         const cards = data.player.hand.filter(p => p.id !== data.card.id);
-        if (cards.length < data.count) {
-            this.toastService.showWarn('Недостаточно карт для сброса');
+        const result = await this.chooseCards({
+            cards,
+            count: data.count,
+            errorText: 'Недостаточно карт для сброса',
+            title: 'Выберите карты для сброса',
+            actionText: 'Сбросить карту',
+        });
+        if (result.data) {
+            data.player.hand = result.data.other;
+            data.player.discard = [
+                ...data.player.discard,
+                ...result.data.selected,
+            ];
+        }
+        return result;
+    }
+
+    async chooseCards(data: {
+        cards: ClankCardConfig[],
+        count: number;
+        errorText: string;
+        title: string;
+        actionText: string;
+    }) {
+        if (data.cards.length < data.count) {
+            this.toastService.showWarn(data.errorText);
             return {
                 success: true,
-                discard: false,
             };
         }
         const matDialogRef = this.matDialog.open<
@@ -177,9 +200,9 @@ export class ClankHelpService {
             CardListComponent,
             {
                 data: {
-                    cards,
-                    title: 'Выберите карты для сброса',
-                    actionText: 'Сбросить карту',
+                    cards: data.cards,
+                    title: data.title,
+                    actionText: data.actionText,
                     count: data.count,
                 },
                 width: `${cardWidth * 5}px`,
@@ -189,17 +212,11 @@ export class ClankHelpService {
         if (result == null) {
             return {
                 success: false,
-                discard: false,
             };
         }
-        data.player.hand = result.other;
-        data.player.discard = [
-            ...data.player.discard,
-            ...result.selected,
-        ];
         return {
             success: true,
-            discard: true,
+            data: result,
         };
     }
 
