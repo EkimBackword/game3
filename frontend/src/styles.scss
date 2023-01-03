@@ -71,7 +71,7 @@ body {
 
 *[disabled],
 .not-allowed {
-    cursor: not-allowed;
+    cursor: not-allowed !important;
 }
 
 .spin {
