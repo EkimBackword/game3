@@ -282,7 +282,7 @@ export class GameInfoService implements OnDestroy {
             return config;
         });
         const dragonTrackInfo = this.gameInfoQuery.mapInfo?.dragonInfo.track.find(p => p.startUserCount === playerCount);
-        state.dragonInfo = initDragonInfo(dragonTrackInfo?.rage);
+        state.dragonInfo = initDragonInfo(dragonTrackInfo?.rage, playerCount);
         state.players.forEach((player, index) => {
             const clankIndex = index < state.activePlayerIndex
                 ? index + state.players.length

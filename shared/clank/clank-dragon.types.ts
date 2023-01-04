@@ -20,10 +20,13 @@ export interface ClankDragonEndGameCounter {
     index: number;
 }
 
-export const initDragonInfo = (rage = 0) => {
+export const initDragonInfo = (rage = 0, playerCount = 4) => {
+    const initDragonClank = playerCount < 4
+        ? 6 * playerCount
+        : 24
     const data: ClankDragonInfo = {
         rage,
-        clankBag: Array(24).fill(GamePlayerColorIdEnum.Black),
+        clankBag: Array(initDragonClank).fill(GamePlayerColorIdEnum.Black),
         clankAria: {
             Blue: 0,
             Green: 0,
