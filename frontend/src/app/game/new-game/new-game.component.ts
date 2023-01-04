@@ -19,14 +19,14 @@ import { GamesService } from 'src/app/shared/services/games.service';
 import { MapsService } from 'src/app/shared/services/maps.service';
 
 import { ClankSelectDeckValue } from '@shared/clank/clank-card.types';
-import { GameInfoConfig } from '@shared/clank/clank-game.types';
 import {
     ClankDlcEnum,
     ClankDlcList,
 } from '@shared/clank/clank-info.types';
-import { ClankMapConfig } from '@shared/clank/clank-map.types';
-
-type GameInfoFormFields = Record<keyof GameInfoConfig, FormControl>;
+import {
+    ClankMapConfig,
+    ClankMapConfigIds,
+} from '@shared/clank/clank-map.types';
 
 @Component({
     templateUrl: './new-game.component.html',
@@ -39,10 +39,31 @@ export class NewGameComponent implements OnInit, OnDestroy {
     startDecks: ClankSelectDeckValue[] = [];
     dungeonDecks: ClankSelectDeckValue[] = [];
 
-    formFields: GameInfoFormFields = {
-        name: new FormControl(null, Validators.required),
-        mapId: new FormControl(null, Validators.required),
-        mapDlcId: new FormControl(null, Validators.required),
+    formFields = {
+        name: new FormControl<string>(
+            '',
+            {
+                nonNullable: true,
+                validators: [
+                    Validators.required,
+                ],
+            }),
+        mapId: new FormControl<ClankMapConfigIds>(
+            ClankMapConfigIds.clank_1,
+            {
+                nonNullable: true,
+                validators: [
+                    Validators.required,
+                ],
+            }),
+        mapDlcId: new FormControl<ClankDlcEnum>(
+            ClankDlcEnum.clank,
+            {
+                nonNullable: true,
+                validators: [
+                    Validators.required,
+                ],
+            }),
     };
     form = new FormGroup(this.formFields);
 
@@ -72,7 +93,7 @@ export class NewGameComponent implements OnInit, OnDestroy {
             takeUntil(this.ngUnsubscribe),
         ).subscribe((mapId) => {
             const map = this.maps.find(p => p.id === mapId);
-            this.formFields.mapDlcId.setValue(map?.dlc_id);
+            this.formFields.mapDlcId.setValue(map?.dlc_id ?? ClankDlcEnum.clank);
         });
         this.formFields.mapId.setValue(this.maps?.[0]?.id);
 
@@ -92,8 +113,7 @@ export class NewGameComponent implements OnInit, OnDestroy {
         if (this.form.invalid) {
             return;
         }
-        const formValue: GameInfoConfig = this.form.value;
-        const gameId = this.gamesService.addNew(formValue);
+        const gameId = this.gamesService.addNew(this.form.getRawValue());
         this.router.navigate([GameRouteEnum.Clank, gameId]);
     }
 

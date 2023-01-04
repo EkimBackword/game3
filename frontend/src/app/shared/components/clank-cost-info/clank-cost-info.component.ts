@@ -31,10 +31,12 @@ export class ClankCostInfoComponent implements OnInit {
     @Input() @HostBinding('style.--cost-element-justify-content') justifyContent = 'flex-start';
     @Input() set elementHeight(value: number) {
         this.height = `${value ?? 50}px`;
+        this.size = value / 2;
     }
 
     keysGroup: ClankElementType[][] = [];
 
+    size = 25;
     @HostBinding('style.--cost-element-height') height = '50px';
 
     ClankElementTypeMap = ClankElementTypeMap;

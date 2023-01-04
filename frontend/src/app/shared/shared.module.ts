@@ -1,4 +1,7 @@
-import { CommonModule } from '@angular/common';
+import {
+    CommonModule,
+    NgOptimizedImage,
+} from '@angular/common';
 import { NgModule } from '@angular/core';
 import {
     FormsModule,
@@ -63,6 +66,7 @@ const exports = [
     MatListModule,
     MatTableModule,
     NgbModule,
+    NgOptimizedImage,
 ];
 
 const exportsComponents = [

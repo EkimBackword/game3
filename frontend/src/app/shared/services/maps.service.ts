@@ -18,7 +18,7 @@ export class MapsService {
 
     constructor() { }
 
-    getMapById(id: ClankMapConfigIds) {
+    getMapById(id: ClankMapConfigIds | null) {
         return this.maps.find(p => p.id === id);
     }
 

@@ -9,7 +9,6 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { LoginFormFields } from '../session.model';
 import { SessionQuery } from '../session.query';
 import { SessionStore } from '../session.store';
 
@@ -20,8 +19,11 @@ import { SessionStore } from '../session.store';
 })
 export class LoginComponent implements OnInit {
 
-    formFields: LoginFormFields = {
-        login: new FormControl('', Validators.required),
+    formFields = {
+        login: new FormControl<string>('', {
+            nonNullable: true,
+            validators: [Validators.required],
+        }),
     };
     form = new FormGroup(this.formFields);
 
@@ -39,7 +41,7 @@ export class LoginComponent implements OnInit {
             console.warn(this.form.errors);
             return;
         }
-        this.sessionStore.login(this.form.value);
+        this.sessionStore.login(this.form.getRawValue());
         this.router.navigateByUrl(this.sessionQuery.redirectUrl ?? '');
     }
 

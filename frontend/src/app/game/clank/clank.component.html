@@ -16,35 +16,46 @@
                             </th>
                             <th>
                                 <img class="clank_table_head_img"
-                                    src="/assets/images/coins/coins.png"
+                                    ngSrc="/assets/images/coins/coins.png"
+                                    [height]="50"
+                                    [width]="50"
+
                                     alt="Монеты"
                                     matTooltip="Монеты"
                                     matTooltipPosition="above">
                             </th>
                             <th>
                                 <img class="clank_table_head_img"
-                                    src="/assets/images/tokens/tokens.png"
+                                    ngSrc="/assets/images/tokens/tokens.png"
+                                    [height]="50"
+                                    [width]="50"
                                     alt="Жетоны"
                                     matTooltip="Жетоны"
                                     matTooltipPosition="above">
                             </th>
                             <th>
                                 <img class="clank_table_head_img"
-                                    src="/assets/images/tokens/bonus/master.png"
+                                    ngSrc="/assets/images/tokens/bonus/master.png"
+                                    [height]="50"
+                                    [width]="50"
                                     alt="Жетон мастерства"
                                     matTooltip="Жетон мастерства"
                                     matTooltipPosition="above">
                             </th>
                             <th>
                                 <img class="clank_table_head_img"
-                                    src="/assets/images/artefact.png"
+                                    ngSrc="/assets/images/artefact.png"
+                                    [height]="50"
+                                    [width]="50"
                                     alt="Артефакты"
                                     matTooltip="Артефакты"
                                     matTooltipPosition="above">
                             </th>
                             <th>
                                 <img class="clank_table_head_img"
-                                    src="/assets/images/cards/card_point.png"
+                                    ngSrc="/assets/images/cards/card_point.png"
+                                    [height]="50"
+                                    [width]="50"
                                     alt="Карты"
                                     matTooltip="Карты"
                                     matTooltipPosition="above">
@@ -58,7 +69,11 @@
                         <tr *ngFor="let player of result.rows">
                             <td class="player_name_cell">
                                 <div class="player_name_cell_element">
-                                    <img class="clank_aria_player_img" [src]="player.colorInfo.url" [alt]="player.config.colorId">
+                                    <img class="clank_aria_player_img"
+                                        [ngSrc]="player.colorInfo.url"
+                                        [height]="25"
+                                        [width]="25"
+                                        [alt]="player.config.colorId">
                                     <div class="text-ellipsis">{{player.name}}</div>
                                 </div>
                             </td>

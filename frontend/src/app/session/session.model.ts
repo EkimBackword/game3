@@ -1,5 +1,3 @@
-import { FormControl } from '@angular/forms';
-
 export const SESSION_KEY: Readonly<string> = 'session';
 
 export interface SessionState {
@@ -27,5 +25,3 @@ export function getEmptySessionState(): SessionState {
 export interface LoginFormValue {
     login: string;
 }
-
-export type LoginFormFields = Record<keyof LoginFormValue, FormControl>;

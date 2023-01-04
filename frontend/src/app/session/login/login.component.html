@@ -1,5 +1,10 @@
 <form [formGroup]="form" class="card login-form">
-    <img src="/assets/images/clank.jpg" class="card-img-top" alt="clank logo">
+    <img
+        ngSrc="/assets/images/clank.jpg"
+        [height]="285"
+        [width]="600"
+        class="card-img-top"
+        alt="clank logo">
     <div class="card-body">
         <div class="row">
             <label for="login" class="col-sm-4 col-form-label">Имя пользователя</label>

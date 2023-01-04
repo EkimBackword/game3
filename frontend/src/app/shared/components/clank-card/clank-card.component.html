@@ -21,7 +21,11 @@
                 <div class="clank_face" [ngStyle]="style"></div>
             </div>
             <div class="flip_card_face flip_card_face__back">
-                <img class="clank_back" src="/assets/images/cards/card_back.jpg" alt="/assets/images/cards/card_back.jpg">
+                <img class="clank_back"
+                    [width]="width"
+                    [height]="height"
+                    ngSrc="/assets/images/cards/card_back.jpg"
+                    alt="/assets/images/cards/card_back.jpg">
             </div>
         </div>
     </div>
