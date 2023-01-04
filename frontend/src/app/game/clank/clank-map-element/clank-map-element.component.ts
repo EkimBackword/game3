@@ -225,24 +225,8 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                 enter_crystal_cave: (this.activePlayer.benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
             },
         });
-        if (this.artifact && this.canTakeArtifact(this.activePlayer)) {
-            const matDialogRef = this.matDialog.open<
-                ConfirmModalComponent,
-                ConfirmModalComponent['data'],
-                boolean
-            >(
-                ConfirmModalComponent,
-                {
-                    data: {
-                        title: 'Хотите ли взять артефакт?',
-                        textList: [`В ячейке есть артефакт (Значимость: ${this.artifact.value})`],
-                    },
-                },
-            );
-            const result = await matDialogRef.afterClosed().toPromise();
-            if (result) {
-                this.takeArtifact(this.artifact);
-            }
+        if (this.artifact) {
+            this.takeArtifact(this.artifact);
         }
         const tokenInfo = this.visibleTokens?.pop();
         if (tokenInfo != null) {
@@ -255,11 +239,28 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         }
     }
 
-    takeArtifact(artifact: ClankArtifactConfig) {
+    async takeArtifact(artifact: ClankArtifactConfig) {
         if (!this.canDoByPlayerPosition(this.activePlayer)) {
             return;
         }
         if (!this.canTakeArtifact(this.activePlayer)) {
+            return;
+        }
+        const matDialogRef = this.matDialog.open<
+            ConfirmModalComponent,
+            ConfirmModalComponent['data'],
+            boolean
+        >(
+            ConfirmModalComponent,
+            {
+                data: {
+                    title: 'Хотите ли взять артефакт?',
+                    textList: [`В ячейке есть артефакт (Значимость: ${artifact.value})`],
+                },
+            },
+        );
+        const result = await matDialogRef.afterClosed().toPromise();
+        if (!result) {
             return;
         }
         this.gameInfoService.takeArtifact(this.activePlayer.id, artifact);
