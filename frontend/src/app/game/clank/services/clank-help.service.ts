@@ -93,7 +93,9 @@ export class ClankHelpService {
             }
             if (player.benefitInfo.heal <= 0) {
                 player.benefitInfo.heal = 0;
-                this.onPlayerFinishGame(player);
+                if (!player.isFinish) {
+                    this.onPlayerFinishGame(player);
+                }
             }
         }
     }
