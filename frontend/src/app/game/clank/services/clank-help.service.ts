@@ -376,9 +376,11 @@ export class ClankHelpService {
 
     onPlayerFinishGame(player: ClankPlayerConfig) {
         const mapElement = this.gameInfoQuery.mapInfo?.elements.find(p => p.id === player.elementId);
+        const startMapElement = this.gameInfoQuery.mapInfo?.elements.find(p => p.isStart);
         player.isRescued = !mapElement?.isDungeon;
         player.isEscaped = false;
         player.isFinish = true;
+        player.elementId = startMapElement?.id ?? 1;
     }
 
     addActionLogs(state: GameInfoState, data: GameInfoActionLogData) {

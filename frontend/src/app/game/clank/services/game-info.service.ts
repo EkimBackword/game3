@@ -408,6 +408,9 @@ export class GameInfoService implements OnDestroy {
         const state = lodash.cloneDeep(this.gameInfoQuery.getValue());
         for (const player of state.players) {
             this.clankHelpService.checkBenefit(player);
+            if (player.isFinish && state.dragonInfo.endGameCounter.colorId === GamePlayerColorIdEnum.Black) {
+                state.dragonInfo.endGameCounter.colorId = player.colorId;
+            }
         }
         const hasActivePlayers = state.players.some(p => !p.isFinish);
         const activePlayer = state.players[state.activePlayerIndex];
