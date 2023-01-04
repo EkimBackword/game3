@@ -267,7 +267,7 @@ export class CardsService {
                 name: 'Наёмник',
                 description: 'Получите 1 очко навыка и 2 меча',
                 isReserve: true,
-                type: ClankCardType.basiс,
+                type: ClankCardType.companion,
                 events: {
                     onAcquire: {
                         cost: {
@@ -1099,7 +1099,7 @@ export class CardsService {
                 column: 8,
                 name: 'Профессиональный ворюга',
                 description: 'Получите 2 очка навыка. В конце хода уничтожте свою карту "Взломать сундук", сыгранную или лежащую в сбросе.',
-                type: ClankCardType.basiс,
+                type: ClankCardType.companion,
                 events: {
                     onAcquire: {
                         cost: {
@@ -1126,7 +1126,7 @@ export class CardsService {
                 column: 9,
                 name: 'Господин Усач',
                 description: 'Выберите: дракон атакует или -2 бдзынь',
-                type: ClankCardType.basiс,
+                type: ClankCardType.companion,
                 events: {
                     onArrive: {
                         isDragonAttack: true,
@@ -1963,7 +1963,7 @@ export class CardsService {
             {
                 row: 5,
                 column: 4,
-                name: 'Жезл ветра',
+                name: 'Жезл перемещения',
                 description: 'Получите 2 очка навыка. Если у вас есть артефакт, телепортируйтесь в соседнюю комнату',
                 type: ClankCardType.basiс,
                 events: {
@@ -2342,7 +2342,7 @@ export class CardsService {
             {
                 row: 6,
                 column: 6,
-                name: 'Кобальд',
+                name: 'Кобольд',
                 description: 'Получить 1 очко навыка',
                 type: ClankCardType.monster,
                 danger: 1,
@@ -2416,7 +2416,7 @@ export class CardsService {
                             self.clankHelpService.addClank({
                                 state,
                                 player,
-                                count: 1,
+                                count: 2,
                             });
                             return true;
                         },
