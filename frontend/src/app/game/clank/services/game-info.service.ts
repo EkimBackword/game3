@@ -247,7 +247,7 @@ export class GameInfoService implements OnDestroy {
         const state = lodash.cloneDeep(this.gameInfoQuery.getValue());
         state.statusId = GameInfoStatusIdEnum.Started;
         const playerCount = state.players.length;
-        state.activePlayerIndex = Math.floor(Math.random() * playerCount);
+        state.activePlayerIndex = lodash.random(0, playerCount);
         const activePlayer = state.players[state.activePlayerIndex];
         subtext += `Первым ход будет делать ${activePlayer.name}\r\n`;
         state.activePlayerId = activePlayer.id;
