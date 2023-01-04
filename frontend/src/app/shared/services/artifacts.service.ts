@@ -11,15 +11,15 @@ import { preloadImage } from '../models/game.types';
 export class ArtifactsService {
 
     readonly store: ClankArtifactConfig[] = [
-        ...getArtifacts(),
+        ...getArtifacts(4),
     ];
 
     constructor() {
         preloadImage(this.store.map(p => p.url));
     }
 
-    getArtifacts() {
-        return getArtifacts() ?? [];
+    getArtifacts(playerCount: number) {
+        return getArtifacts(playerCount) ?? [];
     }
 
 }

@@ -298,9 +298,9 @@ export class GameInfoService implements OnDestroy {
             state.mapDlcId,
             playerCount,
         );
-        state.mapTokens = this.clankHelpService.simpleShuffle(this.tokensService.getMapTokens());
-        state.marketTokens = this.tokensService.getMarketTokens();
-        state.artifacts = this.clankHelpService.simpleShuffle(this.artifactsService.getArtifacts());
+        state.mapTokens = this.clankHelpService.simpleShuffle(this.tokensService.getMapTokens(playerCount));
+        state.marketTokens = this.tokensService.getMarketTokens(playerCount);
+        state.artifacts = this.clankHelpService.simpleShuffle(this.artifactsService.getArtifacts(playerCount));
         state.turnIndex = 0;
         this.clankHelpService.addActionLogs(state, {
             text: 'Игра началась',

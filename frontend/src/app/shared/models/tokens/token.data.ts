@@ -15,11 +15,12 @@ import {
 import { ClankElementTypeMap } from '../clank-element-types';
 import { mappingTokens } from './token.types';
 
-export const getSecretTokens = (withCopy: boolean) => {
+export const getSecretTokens = (playerCount: number, withCopy: boolean) => {
+    const additionalCount = playerCount > 4 ? 1 : 0;
     const tokens: ClankTokenShortConfig[] = [
         //#region major secret
         {
-            count: 2,
+            count: Math.ceil(playerCount / 2),
             name: '5 монет',
             url: '/big_coins_5.jpg',
             isImmediatelyBenefit: true,
@@ -31,7 +32,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             element_type: ClankElementByGame.major_secret,
         },
         {
-            count: 3,
+            count: Math.ceil(playerCount / 2) + 1,
             name: 'Кубок',
             url: '/big_cup.jpg',
             points: {
@@ -41,7 +42,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             element_type: ClankElementByGame.major_secret,
         },
         {
-            count: 2,
+            count: Math.ceil(playerCount / 2),
             name: 'Внезапное озарение',
             url: '/big_draw_cards.jpg',
             isImmediatelyBenefit: true,
@@ -51,7 +52,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             element_type: ClankElementByGame.major_secret,
         },
         {
-            count: 2,
+            count: Math.ceil(playerCount / 2),
             name: 'Зелье великого исцеления',
             url: '/big_heal.jpg',
             isImmediatelyBenefit: false,
@@ -63,7 +64,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             element_type: ClankElementByGame.major_secret,
         },
         {
-            count: 2,
+            count: Math.ceil(playerCount / 2),
             name: '5 навыков',
             url: '/big_skill_5.jpg',
             isImmediatelyBenefit: true,
@@ -78,7 +79,7 @@ export const getSecretTokens = (withCopy: boolean) => {
 
         //#region minor secret
         {
-            count: 3,
+            count: Math.ceil(playerCount / 2) + 1 + additionalCount,
             name: '2 монеты',
             url: '/small_coins_2.jpg',
             isImmediatelyBenefit: true,
@@ -90,7 +91,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             element_type: ClankElementByGame.minor_secret,
         },
         {
-            count: 2,
+            count: Math.ceil(playerCount / 2) + additionalCount,
             name: 'Зелье силы',
             url: '/small_attack.jpg',
             isImmediatelyBenefit: false,
@@ -102,7 +103,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             element_type: ClankElementByGame.minor_secret,
         },
         {
-            count: 3,
+            count: Math.ceil(playerCount / 2) + 1 + additionalCount,
             name: 'Яйцо дракона',
             url: '/small_egg.jpg',
             isImmediatelyBenefit: true,
@@ -117,7 +118,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             element_type: ClankElementByGame.minor_secret,
         },
         {
-            count: 3,
+            count: Math.ceil(playerCount / 2) + 1 + additionalCount,
             name: 'Зелье исцеления',
             url: '/small_heal.jpg',
             isImmediatelyBenefit: false,
@@ -129,7 +130,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             element_type: ClankElementByGame.minor_secret,
         },
         {
-            count: 2,
+            count: Math.ceil(playerCount / 2) + additionalCount,
             name: 'Зелье ускорения',
             url: '/small_move.jpg',
             isImmediatelyBenefit: false,
@@ -141,7 +142,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             element_type: ClankElementByGame.minor_secret,
         },
         {
-            count: 3,
+            count: Math.ceil(playerCount / 2) + 1 + additionalCount,
             name: '2 навыка',
             url: '/small_skill_2.jpg',
             isImmediatelyBenefit: true,
@@ -153,7 +154,7 @@ export const getSecretTokens = (withCopy: boolean) => {
             element_type: ClankElementByGame.minor_secret,
         },
         {
-            count: 2,
+            count: Math.ceil(playerCount / 2) + additionalCount,
             name: 'Избавьтесь от карты',
             url: '/small_trash_card.jpg',
             isImmediatelyBenefit: true,
@@ -219,10 +220,10 @@ export const getMapTokens = (withCopy: boolean) => {
     return mappingTokens(group, withCopy);
 };
 
-export const getMarketTokens = (withCopy: boolean) => {
+export const getMarketTokens = (playerCount: number, withCopy: boolean) => {
     const tokens: ClankTokenShortConfig[] = [
         {
-            count: 2,
+            count: Math.ceil(playerCount / 2),
             name: ClankElementTypeMap[ClankElementByMarket.backpack].name,
             url: ClankElementTypeMap[ClankElementByMarket.backpack].url,
             benefit: {
@@ -237,7 +238,7 @@ export const getMarketTokens = (withCopy: boolean) => {
             element_type: ClankElementByMarket.backpack,
         },
         {
-            count: 2,
+            count: Math.ceil(playerCount / 2),
             name: ClankElementTypeMap[ClankElementByMarket.key_token].name,
             url: ClankElementTypeMap[ClankElementByMarket.key_token].url,
             benefit: {
@@ -251,7 +252,9 @@ export const getMarketTokens = (withCopy: boolean) => {
             },
             element_type: ClankElementByMarket.key_token,
         },
-        {
+    ];
+    if (playerCount > 3) {
+        tokens.push({
             count: 1,
             name: ClankElementTypeMap[ClankElementByMarket.crown].name,
             url: '/assets/images/tokens/market/crown_token_8.jpg',
@@ -265,8 +268,10 @@ export const getMarketTokens = (withCopy: boolean) => {
                 value: 8,
             },
             element_type: ClankElementByMarket.crown,
-        },
-        {
+        });
+    }
+    if (playerCount > 2) {
+        tokens.push({
             count: 1,
             name: ClankElementTypeMap[ClankElementByMarket.crown].name,
             url: '/assets/images/tokens/market/crown_token_9.jpg',
@@ -280,23 +285,23 @@ export const getMarketTokens = (withCopy: boolean) => {
                 value: 9,
             },
             element_type: ClankElementByMarket.crown,
+        });
+    }
+    tokens.push({
+        count: 1,
+        name: ClankElementTypeMap[ClankElementByMarket.crown].name,
+        url: '/assets/images/tokens/market/crown_token_10.jpg',
+        benefit: {
+            [ClankElementByMarket.crown]: 1,
         },
-        {
-            count: 1,
-            name: ClankElementTypeMap[ClankElementByMarket.crown].name,
-            url: '/assets/images/tokens/market/crown_token_10.jpg',
-            benefit: {
-                [ClankElementByMarket.crown]: 1,
-            },
-            cost: {
-                coin: 7,
-            },
-            points: {
-                value: 10,
-            },
-            element_type: ClankElementByMarket.crown,
+        cost: {
+            coin: 7,
         },
-    ];
+        points: {
+            value: 10,
+        },
+        element_type: ClankElementByMarket.crown,
+    });
     const group: ClankTokenGroup = {
         dlc_name: ClankDlcEnum.clank,
         type: ClankTokenTypeEnum.market,

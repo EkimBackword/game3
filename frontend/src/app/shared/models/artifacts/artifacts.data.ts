@@ -1,10 +1,12 @@
+import * as lodash from 'lodash';
+
 import { ClankArtifactShortConfig } from '@shared/clank/clank-artifact.types';
 import { ClankDlcEnum } from '@shared/clank/clank-info.types';
 
 import { mappingArtifacts } from './artifacts.types';
 
-export const getArtifacts = () => {
-    const list: ClankArtifactShortConfig[] = [
+export const getArtifacts = (playerCount: number) => {
+    let list: ClankArtifactShortConfig[] = [
         {
             name: 'Золотое кольцо',
             url: '/5.jpg',
@@ -62,6 +64,16 @@ export const getArtifacts = () => {
             },
         },
     ];
+    if (playerCount > 4) {
+        // TODO: Добавить серебреные артефакты
+    }
+    if (playerCount < 4) {
+        list = list.filter(p => p.value !== 5);
+    }
+    if (playerCount < 3) {
+        const index = lodash.random(0, list.length - 1);
+        list = list.filter((_, i) => i !== index);
+    }
     return mappingArtifacts(
         list,
         {

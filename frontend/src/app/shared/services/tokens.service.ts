@@ -15,26 +15,26 @@ import {
 export class TokensService {
 
     readonly store: ClankTokenConfig[] = [
-        ...getSecretTokens(false),
+        ...getSecretTokens(4, false),
         ...getMapTokens(false),
-        ...getMarketTokens(false),
+        ...getMarketTokens(4, false),
     ];
 
     constructor() {
         preloadImage(this.store.map(p => p.url));
     }
 
-    getMapTokens() {
+    getMapTokens(playerCount: number) {
         const tokens = [
-            ...getSecretTokens(true),
+            ...getSecretTokens(playerCount, true),
             ...getMapTokens(true),
         ];
         return tokens;
     }
 
-    getMarketTokens() {
+    getMarketTokens(playerCount: number) {
         const tokens = [
-            ...getMarketTokens(true),
+            ...getMarketTokens(playerCount, true),
         ];
         return tokens;
     }
