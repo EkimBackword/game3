@@ -214,9 +214,24 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (!success) {
             return;
         }
-        const isArtifactTaken = this.artifact
-            ? await this.takeArtifact(this.artifact, true)
-            : false;
+        this.gameInfoService.onMove({
+            playerId: this.activePlayer.id,
+            mapElement: this.mapElement,
+            benefitInfo: {
+                ...this.activePlayer.benefitInfo,
+                boot: isCrystalCave && !isIgnoreCrystalCave
+                    ? 0
+                    : this.activePlayer.benefitInfo.boot,
+                enter_crystal_cave: (this.activePlayer.benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
+            },
+            skipSocketUpdate: true,
+        });
+
+        let isArtifactTaken = false;
+        if (this.artifact) {
+            isArtifactTaken = await this.takeArtifact(this.artifact);
+        }
+
         let isTokenTaken = false;
         const tokenInfo = this.visibleTokens?.pop();
         if (tokenInfo != null) {
@@ -229,16 +244,8 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             });
             isTokenTaken = true;
         }
-        this.gameInfoService.onMove({
-            playerId: this.activePlayer.id,
-            mapElement: this.mapElement,
-            benefitInfo: {
-                ...this.activePlayer.benefitInfo,
-                boot: isCrystalCave && !isIgnoreCrystalCave
-                    ? 0
-                    : this.activePlayer.benefitInfo.boot,
-                enter_crystal_cave: (this.activePlayer.benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
-            },
+
+        this.gameInfoService.updateSocketState({
             canCancel: !isArtifactTaken && !isTokenTaken,
         });
     }

@@ -132,7 +132,7 @@ export class GameInfoService implements OnDestroy {
                 },
             });
             this.gameInfoStore.update(state);
-            this.onGameUpdated({ canCancel: true });
+            this.updateSocketState({ canCancel: true });
             this.useManualFunctionSubject.next();
         };
         window['showMapElementId'] = (value: boolean) => {
@@ -145,19 +145,19 @@ export class GameInfoService implements OnDestroy {
         this.gameInfoStore.update(({players}) => ({
             players: arrayUpdate(players, id, player),
         }));
-        this.onGameUpdated({ canCancel: false });
+        this.updateSocketState({ canCancel: false });
     }
 
     onMove({
         playerId,
         mapElement,
         benefitInfo,
-        canCancel,
+        skipSocketUpdate,
     }: {
         playerId: string;
         mapElement: ClankMapElementConfig,
         benefitInfo: ClankCostInfo;
-        canCancel: boolean;
+        skipSocketUpdate: boolean;
     }) {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
@@ -191,7 +191,10 @@ export class GameInfoService implements OnDestroy {
             this.soundService.play('/assets/sounds/Move.mp3');
             return state;
         });
-        this.onGameUpdated({ canCancel });
+        if (skipSocketUpdate) {
+            return;
+        }
+        this.updateSocketState({ canCancel: true });
     }
 
     async useCard(
@@ -207,7 +210,7 @@ export class GameInfoService implements OnDestroy {
             return;
         }
         this.gameInfoStore.update(newState);
-        this.onGameUpdated({ canCancel: true });
+        this.updateSocketState({ canCancel: true });
     }
 
     takeArtifact({
@@ -238,7 +241,7 @@ export class GameInfoService implements OnDestroy {
         if (skipSocketUpdate) {
             return;
         }
-        this.onGameUpdated({ canCancel: false });
+        this.updateSocketState({ canCancel: false });
     }
 
     async useToken({
@@ -270,7 +273,7 @@ export class GameInfoService implements OnDestroy {
         if (skipSocketUpdate) {
             return;
         }
-        this.onGameUpdated({ canCancel: false });
+        this.updateSocketState({ canCancel: false });
     }
 
     async startGame() {
@@ -346,7 +349,7 @@ export class GameInfoService implements OnDestroy {
             hideToast: true,
         });
         this.gameInfoStore.update(newState);
-        this.onGameUpdated({ canCancel: false });
+        this.updateSocketState({ canCancel: false });
     }
 
     async finishTurn(result: TrashCardsComponentResult) {
@@ -404,7 +407,7 @@ export class GameInfoService implements OnDestroy {
             ? GameInfoStatusIdEnum.Finished
             : state.statusId;
         this.gameInfoStore.update(state);
-        this.onGameUpdated({ canCancel: false });
+        this.updateSocketState({ canCancel: false });
     }
 
     private getNextPlayer(state: GameInfoState): ClankPlayerConfig | null {
@@ -445,7 +448,7 @@ export class GameInfoService implements OnDestroy {
         this.gameInfoStore.update((state) => ({
             statusId: GameInfoStatusIdEnum.Finished,
         }));
-        this.onGameUpdated({ canCancel: false });
+        this.updateSocketState({ canCancel: false });
     }
 
     cancelState() {
@@ -457,7 +460,7 @@ export class GameInfoService implements OnDestroy {
         this.socket?.emit('cancelState', state);
     }
 
-    private onGameUpdated({ canCancel }: { canCancel: boolean; }) {
+    updateSocketState({ canCancel }: { canCancel: boolean; }) {
         const state = lodash.cloneDeep(this.gameInfoQuery.getValue());
         state.canCancel = canCancel;
         for (const player of state.players) {
