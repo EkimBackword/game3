@@ -122,9 +122,9 @@ export class ClankHelpService {
             data: {
                 text: `${player.name} ${text} ${Math.abs(count)} бдзынь`,
                 colorId: player.colorId,
+                soundUrl: '/assets/sounds/Clank.mp3',
             },
         });
-        this.soundService.play('/assets/sounds/Clank.mp3');
         player.benefitInfo.clank = isAdd
             ? (player.benefitInfo.clank ?? 0) + count
             : player.benefitInfo.clank;
