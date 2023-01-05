@@ -17,6 +17,7 @@ import {
     GameSocket,
     SocketService,
 } from 'src/app/shared/services/socket.service';
+import { SoundService } from 'src/app/shared/services/sound.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { TokensService } from 'src/app/shared/services/tokens.service';
 
@@ -28,6 +29,7 @@ import {
 } from '@shared/clank/clank-card.types';
 import { initDragonInfo } from '@shared/clank/clank-dragon.types';
 import {
+    GameInfoActionLogType,
     GameInfoState,
     GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
@@ -65,15 +67,20 @@ export class GameInfoService implements OnDestroy {
         private socketService: SocketService,
         private toastService: ToastService,
         private tokensService: TokensService,
+        private soundService: SoundService,
         private router: Router,
     ) {
         window['getGameState'] = () => {
             return lodash.cloneDeep(gameInfoQuery.getValue());
         };
         window['setGameState'] = (state: GameInfoState) => {
-            this.clankHelpService.addActionLogs(state, {
-                text: `Игрок ${gameInfoQuery.currentPlayer?.name} вручную изменил состояние игры`,
-                severity: ToastSeverityEnum.warning,
+            this.clankHelpService.addActionLogs({
+                state,
+                type: GameInfoActionLogType.ManualFunction,
+                data: {
+                    text: `Игрок ${gameInfoQuery.currentPlayer?.name} вручную изменил состояние игры`,
+                    severity: ToastSeverityEnum.warning,
+                },
             });
             gameInfoStore.update(state);
             this.onGameUpdated();
@@ -169,11 +176,16 @@ export class GameInfoService implements OnDestroy {
                 player.id,
                 player,
             );
-            this.clankHelpService.addActionLogs(state, {
-                text: `${player.name} переместился`,
-                colorId: player.colorId,
-                hideToast: true,
+            this.clankHelpService.addActionLogs({
+                state,
+                type: GameInfoActionLogType.Move,
+                data: {
+                    text: `${player.name} переместился`,
+                    colorId: player.colorId,
+                    hideToast: true,
+                },
             });
+            this.soundService.play('/assets/sounds/Move.mp3');
             return state;
         });
         this.onGameUpdated();
@@ -247,7 +259,7 @@ export class GameInfoService implements OnDestroy {
         const state = lodash.cloneDeep(this.gameInfoQuery.getValue());
         state.statusId = GameInfoStatusIdEnum.Started;
         const playerCount = state.players.length;
-        state.activePlayerIndex = lodash.random(0, playerCount);
+        state.activePlayerIndex = lodash.random(0, playerCount - 1);
         const activePlayer = state.players[state.activePlayerIndex];
         subtext += `Первым ход будет делать ${activePlayer.name}\r\n`;
         state.activePlayerId = activePlayer.id;
@@ -302,9 +314,13 @@ export class GameInfoService implements OnDestroy {
         state.marketTokens = this.tokensService.getMarketTokens(playerCount);
         state.artifacts = this.clankHelpService.simpleShuffle(this.artifactsService.getArtifacts(playerCount));
         state.turnIndex = 0;
-        this.clankHelpService.addActionLogs(state, {
-            text: 'Игра началась',
-            subtext,
+        this.clankHelpService.addActionLogs({
+            state,
+            type: GameInfoActionLogType.Game,
+            data: {
+                text: 'Игра началась',
+                subtext,
+            },
         });
         const newState = await this.drawDungeonRow(state, {
             initDungeonRow: true,
@@ -344,15 +360,24 @@ export class GameInfoService implements OnDestroy {
 
         /** Переход хода */
         const newActivPlayer = this.getNextPlayer(state);
-        this.clankHelpService.addActionLogs(state, {
-            text: `${currentPlayer.name} закончил свой ход`,
-            colorId: currentPlayer.colorId,
-            hideToast: newActivPlayer != null,
+        this.clankHelpService.addActionLogs({
+            state,
+            type: GameInfoActionLogType.Turn,
+            data: {
+                text: `${currentPlayer.name} закончил свой ход`,
+                colorId: currentPlayer.colorId,
+                hideToast: newActivPlayer != null,
+            },
         });
         if (newActivPlayer != null) {
-            this.clankHelpService.addActionLogs(state, {
-                text: `Ход переходит к игроку ${newActivPlayer.name}`,
-                colorId: newActivPlayer.colorId,
+            this.clankHelpService.addActionLogs({
+                state,
+                type: GameInfoActionLogType.Turn,
+                data: {
+                    text: `Ход переходит к игроку ${newActivPlayer.name}`,
+                    colorId: newActivPlayer.colorId,
+                    soundUrl: '/assets/sounds/StartTurn.mp3',
+                },
             });
         }
         state.turnIndex++;
@@ -427,6 +452,14 @@ export class GameInfoService implements OnDestroy {
                 return;
             } else {
                 state.statusId = GameInfoStatusIdEnum.Finished;
+                this.clankHelpService.addActionLogs({
+                    state,
+                    type: GameInfoActionLogType.Game,
+                    data: {
+                        text: 'Игра закончилась',
+                        soundUrl: '/assets/sounds/FinishGame.mp3',
+                    },
+                });
             }
         }
         this.gameInfoStore.update(state);

@@ -74,6 +74,10 @@ body {
     cursor: not-allowed !important;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .spin {
     animation: spin 2s infinite linear;
 }

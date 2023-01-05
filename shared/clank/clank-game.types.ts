@@ -39,11 +39,23 @@ export interface GameInfoConfig {
     mapDlcId: ClankDlcEnum;
 }
 
+export enum GameInfoActionLogType {
+    Game,
+    Turn,
+    Clank,
+    Card,
+    Token,
+    Dragon,
+    Move,
+    ManualFunction,
+}
+
 export interface GameInfoActionLog {
     index: number;
     turnIndex: number;
     createdAt: string;
     data: GameInfoActionLogData;
+    type: GameInfoActionLogType;
 }
 
 export interface GameInfoActionLogData {
@@ -53,6 +65,7 @@ export interface GameInfoActionLogData {
     colorId?: GamePlayerColorIdEnum;
     hideToast?: boolean;
     severity?: ToastSeverityEnum;
+    soundUrl?: string;
 }
 
 export interface GameInfoState extends GameInfoConfig {

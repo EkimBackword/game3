@@ -1,7 +1,15 @@
 
 <ng-container *ngIf="(statusSubject | async)">
     <div class="header p-1" *ngIf="(nameSubject | async) as gameName">
-        <label class="game-label">Название игры:</label>
+        <div class="d-flex flex-row justify-content-between">
+            <label class="game-label">Название игры:</label>
+            <fa-icon
+                class="pointer"
+                [style.width.px]="20"
+                [icon]="soundService.soundState.icon"
+                (click)="soundService.changeSoundState()"
+            ></fa-icon>
+        </div>
         <h6 class="text-ellipsis" [title]="gameName">{{gameName}}</h6>
     </div>
     <div class="body p-1">

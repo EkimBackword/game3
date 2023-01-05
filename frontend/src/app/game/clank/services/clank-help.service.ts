@@ -13,11 +13,13 @@ import {
     UseTokenInfoByType,
     UseTokenType,
 } from 'src/app/shared/models/tokens/token.types';
+import { SoundService } from 'src/app/shared/services/sound.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { ClankCardConfig } from '@shared/clank/clank-card.types';
 import {
     GameInfoActionLogData,
+    GameInfoActionLogType,
     GameInfoState,
 } from '@shared/clank/clank-game.types';
 import { ClankCostInfo } from '@shared/clank/clank-info.types';
@@ -41,6 +43,7 @@ export class ClankHelpService {
     constructor(
         private gameInfoQuery: GameInfoQuery,
         private toastService: ToastService,
+        private soundService: SoundService,
         private matDialog: MatDialog,
     ) { }
 
@@ -109,14 +112,20 @@ export class ClankHelpService {
         player: ClankPlayerConfig;
         count: number;
     }) {
-        const text = count > 0
+        const isAdd = count > 0;
+        const text = isAdd
             ? 'получил'
             : 'убрал';
-        this.addActionLogs(state, {
-            text: `${player.name} ${text} ${Math.abs(count)} бдзынь`,
-            colorId: player.colorId,
+        this.addActionLogs({
+            state,
+            type: GameInfoActionLogType.Clank,
+            data: {
+                text: `${player.name} ${text} ${Math.abs(count)} бдзынь`,
+                colorId: player.colorId,
+            },
         });
-        player.benefitInfo.clank = count > 0
+        this.soundService.play('/assets/sounds/Clank.mp3');
+        player.benefitInfo.clank = isAdd
             ? (player.benefitInfo.clank ?? 0) + count
             : player.benefitInfo.clank;
         state.dragonInfo.clankAria[player.colorId] += count;
@@ -140,11 +149,16 @@ export class ClankHelpService {
         count: number;
     }) {
         if (state != null) {
-            this.addActionLogs(state, {
-                text: `${player.name} добрал карты (${count})`,
-                colorId: player.colorId,
+            this.addActionLogs({
+                state,
+                type: GameInfoActionLogType.Card,
+                data: {
+                    text: `${player.name} добрал карты (${count})`,
+                    colorId: player.colorId,
+                },
             });
         }
+        this.soundService.play('/assets/sounds/DrawCard.mp3');
         while (count > 0) {
             if (player.deck.length === 0) {
                 player.deck = this.shuffle(player.discard);
@@ -287,9 +301,13 @@ export class ClankHelpService {
 
         state.mapTokens = state.mapTokens.filter(p => p.id !== tokenInfo.id);
         state.marketTokens = state.marketTokens.filter(p => p.id !== tokenInfo.id);
-        this.addActionLogs(state, {
-            text: `${player.name} ${UseTokenInfoByType[type].text} ${tokenInfo.name}`,
-            colorId: player.colorId,
+        this.addActionLogs({
+            state,
+            type: GameInfoActionLogType.Token,
+            data: {
+                text: `${player.name} ${UseTokenInfoByType[type].text} ${tokenInfo.name}`,
+                colorId: player.colorId,
+            },
         });
         return true;
     }
@@ -300,8 +318,12 @@ export class ClankHelpService {
             return;
         }
         state.dragonInfo.rage++;
-        this.addActionLogs(state, {
-            text: `Повышается ярость дракона`,
+        this.addActionLogs({
+            state,
+            type: GameInfoActionLogType.Dragon,
+            data: {
+                text: `Повышается ярость дракона`,
+            },
         });
     }
 
@@ -355,10 +377,15 @@ export class ClankHelpService {
             });
         }
         // TODO: Добавить кубики для отображения атаки дракона
-        this.addActionLogs(state, {
-            text: `Дракон атакует`,
-            subtext: Object.values(attackResult).map(p => `${p.name}: ${p.value} урона`).join('\r\n'),
-            isDragon: true,
+        this.addActionLogs({
+            state,
+            type: GameInfoActionLogType.Dragon,
+            data: {
+                text: `Дракон атакует`,
+                subtext: Object.values(attackResult).map(p => `${p.name}: ${p.value} урона`).join('\r\n'),
+                isDragon: true,
+                soundUrl: '/assets/sounds/DragonAttack.mp3',
+            },
         });
     }
 
@@ -385,13 +412,18 @@ export class ClankHelpService {
         player.elementId = startMapElement?.id ?? 1;
     }
 
-    addActionLogs(state: GameInfoState, data: GameInfoActionLogData) {
+    addActionLogs(params: {
+        state: GameInfoState;
+        type: GameInfoActionLogType;
+        data: GameInfoActionLogData;
+    }) {
         const momentTime = moment();
-        state.actionLogs.push({
-            index: state.actionLogs.length,
-            turnIndex: state.turnIndex,
+        params.state.actionLogs.push({
+            index: params.state.actionLogs.length,
+            turnIndex: params.state.turnIndex,
             createdAt: momentTime.format(MomentDateFormat),
-            data,
+            data: params.data,
+            type: params.type,
         });
     }
 

@@ -17,7 +17,10 @@ import {
     ClankDeckConfig,
     ClankDeckSpriteInfo,
 } from '@shared/clank/clank-card.types';
-import { GameInfoState } from '@shared/clank/clank-game.types';
+import {
+    GameInfoActionLogType,
+    GameInfoState,
+} from '@shared/clank/clank-game.types';
 import {
     ClankCardType,
     ClankDlcEnum,
@@ -184,14 +187,18 @@ export class CardsService {
             }
         }
         const currentPlayer = state.players[state.activePlayerIndex];
-        this.clankHelpService.addActionLogs(state, {
-            text: data.eventName !== 'onArrive'
-                ? `${currentPlayer.name} ${ClankCardBaseConfigEventInfoByType[data.eventName].text} ${data.card.name}`
-                : `${ClankCardBaseConfigEventInfoByType[data.eventName].text} ${data.card.name}`,
-            colorId: data.eventName !== 'onArrive'
-                ? currentPlayer.colorId
-                : GamePlayerColorIdEnum.Black,
-            hideToast: true,
+        this.clankHelpService.addActionLogs({
+            state,
+            type: GameInfoActionLogType.Card,
+            data: {
+                text: data.eventName !== 'onArrive' ?
+                    `${currentPlayer.name} ${ClankCardBaseConfigEventInfoByType[data.eventName].text} ${data.card.name}` :
+                    `${ClankCardBaseConfigEventInfoByType[data.eventName].text} ${data.card.name}`,
+                colorId: data.eventName !== 'onArrive' ?
+                    currentPlayer.colorId :
+                    GamePlayerColorIdEnum.Black,
+                hideToast: true,
+            },
         });
         switch (data.eventName) {
             case 'onArrive': {

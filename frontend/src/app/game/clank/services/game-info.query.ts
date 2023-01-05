@@ -18,6 +18,7 @@ import {
 import { notEmpty } from 'src/app/shared/models/shared.types';
 import { ToastOptions } from 'src/app/shared/models/toast.types';
 import { MapsService } from 'src/app/shared/services/maps.service';
+import { SoundService } from 'src/app/shared/services/sound.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { Query } from '@datorama/akita';
@@ -27,6 +28,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {
     GameInfoActionLog,
+    GameInfoActionLogType,
     GameInfoState,
 } from '@shared/clank/clank-game.types';
 import {
@@ -195,6 +197,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
                         options,
                     );
                 }
+                this.soundNotificationByLog(log);
             }
             return [...this.logsMap.entries()].map(([name, list]) => {
                 const result: GameInfoActionLogGroup = {
@@ -235,8 +238,27 @@ export class GameInfoQuery extends Query<GameInfoState> {
         private sessionQuery: SessionQuery,
         private mapsService: MapsService,
         private toastService: ToastService,
+        private soundService: SoundService,
     ) {
       super(store);
+    }
+
+    private soundNotificationByLog(log: GameInfoActionLog) {
+        if (log.data.soundUrl == null) {
+            return;
+        }
+        switch (log.type) {
+            case GameInfoActionLogType.Dragon: {
+                this.soundService.play(log.data.soundUrl);
+                return;
+            }
+            default: {
+                if (this.currentPlayer?.colorId === log.data.colorId) {
+                    this.soundService.play(log.data.soundUrl);
+                }
+                return;
+            }
+        }
     }
 
 }
