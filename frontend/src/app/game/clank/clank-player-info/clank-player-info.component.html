@@ -42,7 +42,64 @@
                 appScalable
                 [style.width.px]="playerArea.width"
                 [style.height.px]="playerArea.height">
-                <div class="d-flex flex-column flex-grow-1 position-relative">
+                <div class="d-flex flex-column flex-grow-1 position-relative card_container">
+                    <div class="position-absolute deck_header"
+                        [style.top.px]="0"
+                        [style.left]="cardsWrapInfo.deckLeft"
+                        [style.width.px]="cardsWrapInfo.cardWidth"
+                        [style.height.px]="cardsWrapInfo.headerHeight">
+                        <span class="text-uppercase text-muted deck_header_text">Колода</span>
+                        <span class="badge bg-secondary">{{player.deck.length}}</span>
+                    </div>
+                    <div class="position-absolute deck_position"
+                        [style.top.px]="cardsWrapInfo.deckTop"
+                        [style.left]="cardsWrapInfo.deckLeft"
+                        [style.width.px]="cardsWrapInfo.cardWidth"
+                        [style.height.px]="cardsWrapInfo.cardHeight">
+                        <small class="text-uppercase text-muted">Колода</small>
+                    </div>
+
+                    <div class="position-absolute deck_header"
+                        [style.top.px]="0"
+                        [style.left]="cardsWrapInfo.boardLeft"
+                        [style.width.px]="cardsWrapInfo.cardWidth"
+                        [style.height.px]="cardsWrapInfo.headerHeight">
+                        <span class="text-uppercase text-muted deck_header_text">Игровая зона</span>
+                        <span class="badge bg-secondary">{{player.board.length}}</span>
+                    </div>
+                    <div class="position-absolute deck_position"
+                        [style.top.px]="cardsWrapInfo.deckTop"
+                        [style.left]="cardsWrapInfo.boardLeft"
+                        [style.width.px]="cardsWrapInfo.cardWidth"
+                        [style.height.px]="cardsWrapInfo.cardHeight">
+                        <small class="text-uppercase text-muted">Игровая зона</small>
+                    </div>
+
+                    <div class="position-absolute deck_header"
+                        [style.top.px]="0"
+                        [style.left]="cardsWrapInfo.discardLeft"
+                        [style.width.px]="cardsWrapInfo.cardWidth"
+                        [style.height.px]="cardsWrapInfo.headerHeight">
+                        <span class="text-uppercase text-muted deck_header_text">Сброс</span>
+                        <span class="badge bg-secondary">{{player.discard.length}}</span>
+                    </div>
+                    <div class="position-absolute deck_position"
+                        [style.top.px]="cardsWrapInfo.deckTop"
+                        [style.left]="cardsWrapInfo.discardLeft"
+                        [style.width.px]="cardsWrapInfo.cardWidth"
+                        [style.height.px]="cardsWrapInfo.cardHeight">
+                        <small class="text-uppercase text-muted">Сброс</small>
+                    </div>
+
+                    <div class="position-absolute deck_header deck_header__hand"
+                        [style.top.px]="cardsWrapInfo.handHeaderTop"
+                        [style.left]="cardsWrapInfo.deckLeft"
+                        [style.width.%]="90"
+                        [style.height.px]="cardsWrapInfo.headerHeight">
+                        <span class="text-uppercase text-muted deck_header_text">Карты на руке</span>
+                        <span class="badge bg-secondary">{{player.hand.length}}</span>
+                    </div>
+
                     <app-clank-card class="position-absolute"
                         *ngFor="let cardInfo of (selectedPlayerCardsSubject | async); trackBy: trackById;"
                         [width]="cardsWrapInfo.cardWidth"

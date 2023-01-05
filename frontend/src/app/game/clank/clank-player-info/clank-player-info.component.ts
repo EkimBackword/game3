@@ -12,6 +12,7 @@ import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
     cardHeight,
+    cardsWrapHeader,
     cardsWrapPadding,
     cardWidth,
     ISelectedPlayerCardInfo,
@@ -62,11 +63,13 @@ export class ClankPlayerInfoComponent implements OnInit {
         cardWidth,
         cardHeight,
         cardWidthKoef: 0.8,
-        deckTop: cardsWrapPadding,
+        headerHeight: cardsWrapHeader,
+        deckTop: cardsWrapHeader,
         deckLeft: `${cardsWrapPadding}px`,
         boardLeft: `calc(33% + ${cardsWrapPadding}px)`,
         discardLeft: `calc(66% + ${cardsWrapPadding}px)`,
-        boardTop: 300 + cardsWrapPadding * 2,
+        handHeaderTop: cardHeight + cardsWrapHeader + cardsWrapPadding,
+        handTop: cardHeight + cardsWrapHeader + cardsWrapPadding * 3,
         tokenSize: 50,
     };
 
@@ -289,7 +292,7 @@ export class ClankPlayerInfoComponent implements OnInit {
             const leftIndex = (index % this.cardsWrapInfo.cardsInRow);
             const topIndex = Math.floor(index / this.cardsWrapInfo.cardsInRow);
             const left = leftIndex * this.cardsWrapInfo.cardWidth * this.cardsWrapInfo.cardWidthKoef;
-            const top = topIndex * this.cardsWrapInfo.cardHeight * this.cardsWrapInfo.cardWidthKoef + this.cardsWrapInfo.boardTop;
+            const top = topIndex * this.cardsWrapInfo.cardHeight * this.cardsWrapInfo.cardWidthKoef + this.cardsWrapInfo.handTop;
             const data: ISelectedPlayerCardInfo = {
                 id: card.id,
                 card,
@@ -327,7 +330,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         this.selectedPlayerAreaSubject.next({
             width: (this.cardsWrapInfo.cardsInRow - 1) * this.cardsWrapInfo.cardWidth * this.cardsWrapInfo.cardWidthKoef
                 + this.cardsWrapInfo.cardWidth * 1.2,
-            height: this.cardsWrapInfo.boardTop + rowCount * this.cardsWrapInfo.cardHeight + cardsWrapPadding * 2,
+            height: this.cardsWrapInfo.handTop + rowCount * this.cardsWrapInfo.cardHeight + cardsWrapPadding * 2,
         });
     }
 

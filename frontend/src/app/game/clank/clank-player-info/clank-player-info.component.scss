@@ -63,6 +63,8 @@
         align-content: center;
         justify-content: center;
         align-items: center;
+        margin: 0;
+        --bs-alert-padding-y: 0.5rem;
     }
 
     .player_name {
@@ -70,9 +72,41 @@
     }
 }
 
+.deck_header {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.deck_header_text {
+    font-size: 12px;
+    margin-right: 4px;
+}
+
+.deck_header__hand {
+    justify-content: flex-start;
+    border-bottom: 1px dashed #ccc;
+}
+
+.deck_position {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    background-color: #ccc;
+    border-radius: 0.8rem;
+}
+
 .player_area {
     overflow: hidden;
     flex-shrink: 0;
+}
+
+.card_container {
+    height: 100%;
 }
 
 .clank-tokens {
