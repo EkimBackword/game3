@@ -1946,7 +1946,7 @@ export class CardsService {
                                                 if (tomCard == null) {
                                                     return true;
                                                 }
-                                                state.reserveRow = state.reserveRow.filter(p => p.id === tomCard.id);
+                                                state.reserveRow = state.reserveRow.filter(p => p.id !== tomCard.id);
                                                 player.discard.push(tomCard);
                                                 count--;
                                             }
