@@ -19,23 +19,31 @@
     <ng-container *ngIf="(selectedPlayerSubject | async) as player">
         <div class="body" appScalableContainer>
             <div class="cards_wrap_header">
-                <ngb-alert
-                    *ngIf="!player.isFinish && player.id == activePlayer.id"
-                    [dismissible]="false"
-                    [type]="'success'"
-                >Ваш ход</ngb-alert>
+                <ng-container *ngIf="player.id === currentPlayer?.id;else otherPlayerAlert">
+                    <ngb-alert
+                        *ngIf="!player.isFinish && player.id == activePlayer.id"
+                        [dismissible]="false"
+                        [type]="'success'"
+                    >Ваш ход</ngb-alert>
 
-                <ngb-alert
-                    *ngIf="!player.isFinish && player.id !== activePlayer.id"
-                    [dismissible]="false"
-                    [type]="'danger'"
-                >Ход игрока <strong class="player_name">{{activePlayer.name}}</strong></ngb-alert>
+                    <ngb-alert
+                        *ngIf="!player.isFinish && player.id !== activePlayer.id"
+                        [dismissible]="false"
+                        [type]="'danger'"
+                    >Ход игрока <strong class="player_name">{{activePlayer.name}}</strong></ngb-alert>
 
-                <ngb-alert
-                    *ngIf="player.isFinish && player.id !== activePlayer.id"
-                    [dismissible]="false"
-                    [type]="'secondary'"
-                >Игра закончена (ожидайте других игроков)</ngb-alert>
+                    <ngb-alert
+                        *ngIf="player.isFinish && player.id !== activePlayer.id"
+                        [dismissible]="false"
+                        [type]="'secondary'"
+                    >Игра закончена (ожидайте других игроков)</ngb-alert>
+                </ng-container>
+                <ng-template #otherPlayerAlert>
+                    <ngb-alert
+                        [dismissible]="false"
+                        [type]="'info'"
+                    >Вы смотрите на экран <strong class="player_name">{{player.name}}</strong></ngb-alert>
+                </ng-template>
             </div>
             <div class="player_area p-1"
                 *ngIf="(selectedPlayerAreaSubject | async) as playerArea"
