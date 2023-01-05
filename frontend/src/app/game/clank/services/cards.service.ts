@@ -6,7 +6,6 @@ import { ClankHelpService } from 'src/app/game/clank/services/clank-help.service
 import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
 import { preloadImage } from 'src/app/shared/models/game.types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
-import { ToastService } from 'src/app/shared/services/toast.service';
 
 import {
     ClankCardBaseConfig,
@@ -106,10 +105,8 @@ export class CardsService {
 
     constructor(
         private clankHelpService: ClankHelpService,
-        private toastService: ToastService,
         private matDialog: MatDialog,
     ) {
-        preloadImage(Object.values(this.spriteInfo).map(p => p.url));
         preloadImage(Object.values(ClankElementTypeMap).map(p => p.url));
     }
 
@@ -122,7 +119,10 @@ export class CardsService {
     }
 
     getShareDecksCards(mapDlcId: ClankDlcEnum) {
-        return this.getDeckIds(mapDlcId).flatMap((id) => this.shareDecks[id]?.getCards() ?? []);
+        return this.getDeckIds(mapDlcId).flatMap((id) => {
+            preloadImage([this.spriteInfo[id].url]);
+            return this.shareDecks[id]?.getCards() ?? [];
+        });
     }
 
     getCardActionName(card: ClankCardConfig, eventName: keyof ClankCardBaseConfigEvents) {
