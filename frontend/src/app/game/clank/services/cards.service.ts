@@ -532,7 +532,7 @@ export class CardsService {
                                 player,
                                 count: 1,
                             });
-                            if (!player.tokens.some(p => p.element_type === ClankElementByToken.monkey_idol)) {
+                            if (!player.benefitInfo.monkey_idol) {
                                 return true;
                             }
                             return self.clankHelpService.updateBenefitInfo({

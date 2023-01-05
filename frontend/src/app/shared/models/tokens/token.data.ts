@@ -35,6 +35,9 @@ export const getSecretTokens = (playerCount: number, withCopy: boolean) => {
             count: Math.ceil(playerCount / 2) + 1,
             name: 'Кубок',
             url: '/big_cup.jpg',
+            benefit: {
+                cup: 1,
+            },
             points: {
                 value: 7,
             },
@@ -182,6 +185,9 @@ export const getMapTokens = (withCopy: boolean) => {
             url: '/idol_5_1.jpg',
             isImmediatelyBenefit: false,
             isUsable: false,
+            benefit: {
+                monkey_idol: 1,
+            },
             points: {
                 value: 5,
             },
@@ -193,6 +199,9 @@ export const getMapTokens = (withCopy: boolean) => {
             url: '/idol_5_2.jpg',
             isImmediatelyBenefit: false,
             isUsable: false,
+            benefit: {
+                monkey_idol: 1,
+            },
             points: {
                 value: 5,
             },
@@ -204,6 +213,9 @@ export const getMapTokens = (withCopy: boolean) => {
             url: '/idol_5_3.jpg',
             isImmediatelyBenefit: false,
             isUsable: false,
+            benefit: {
+                monkey_idol: 1,
+            },
             points: {
                 value: 5,
             },
