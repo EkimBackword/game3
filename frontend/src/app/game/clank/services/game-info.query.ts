@@ -156,13 +156,22 @@ export class GameInfoQuery extends Query<GameInfoState> {
 
     onArtifactsChangeSubject = this.select('artifacts');
 
+    onCanCancelChangeSubject = this.select('canCancel');
+
     private logsMap = new Map<string, GameInfoActionLogFrontend[]>();
     onActionLogsChangeSubject = this.select('actionLogs').pipe(
         startWith([] as GameInfoActionLog[]),
         pairwise(),
         map(([lastLogs, logs]) => {
-            const showToast = lastLogs.length > 0;
-            const newLogs = logs.slice(lastLogs.length);
+            let showToast = false;
+            let newLogs: GameInfoActionLog[] = logs;
+            console.log(lastLogs, logs);
+            if (lastLogs.length === 0 || lastLogs.length > logs.length) {
+                this.logsMap = new Map<string, GameInfoActionLogFrontend[]>();
+            } else {
+                showToast = true;
+                newLogs = logs.slice(lastLogs.length);
+            }
             for (const log of newLogs) {
                 const data: GameInfoActionLogFrontend =  {
                     ...log,

@@ -1,4 +1,4 @@
-<ng-container *ngIf="(activePlayerSubject | async) as activePlayer">
+<ng-container *ngIf="(activePlayerSubject | async) && activePlayer != null">
     <div class="header">
         <ul class="nav nav-tabs">
             <li class="nav-item" *ngFor="let player of (playersSubject | async); trackBy: trackById;"
@@ -124,23 +124,55 @@
                     </div>
                 </ng-container>
             </div>
-            <button class="mb-1 btn btn-sm btn-primary"
-                (click)="openDungeonRow(currentPlayer)"
-            >Показать рынок</button>
             <div class="d-flex justify-content-center">
                 <app-clank-cost-info
                     [data]="player.benefitInfo"
                     [type]="ClankCostInfoType.turnInfo"
                 ></app-clank-cost-info>
             </div>
-            <button class="btn btn-sm btn-danger"
-                (click)="finishTurn()"
+            <button class="mb-1 btn btn-sm btn-primary"
+                (click)="openDungeonRow(currentPlayer)"
+            >Показать рынок</button>
+            <ng-template #cancelStatePopoverTitle>
+                Отменить последнее действие?
+            </ng-template>
+            <ng-template #cancelStatePopoverContent>
+                <div class="d-flex flex-column">
+                    <div class="btn-group" role="group" aria-label="Popover actions"
+                        *ngIf="(canCancelSubject | async);else cancelStatePopoverContentNotAllowed">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-primary"
+                            (click)="cancelState()"
+                        >Да</button>
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-danger"
+                            (click)="cancelStatePopover.close()"
+                        >Нет</button>
+                    </div>
+                    <ng-template #cancelStatePopoverContentNotAllowed>
+                        Последнее действие нельзя отменить
+                    </ng-template>
+                </div>
+            </ng-template>
+            <button
+                class="mb-1 btn btn-sm btn-secondary"
                 [disabled]="currentPlayer.id !== activePlayer.id || currentPlayer.id !== player.id"
-                matTooltip="Нужно разыграть все карты"
-                matTooltipPosition="above"
-                [matTooltipDisabled]="player.hand.length === 0"
+                [ngbPopover]="cancelStatePopoverContent"
+                [popoverTitle]="cancelStatePopoverTitle"
+                #cancelStatePopover="ngbPopover"
+            >Отменить действие</button>
+
+            <button class="btn btn-sm btn-danger"
+                (click)="finishTurn(activePlayer)"
+                [disabled]="currentPlayer.id !== activePlayer.id || currentPlayer.id !== player.id"
+                ngbTooltip="Нужно разыграть все карты"
+                [disableTooltip]="player.hand.length === 0"
+                placement="top"
+                container="body"
                 [class.not-allowed]="player.hand.length > 0"
-            >Закончить ход</button>
+            >Закончить ход <ng-container *ngIf="activePlayer.needTrashCards.length > 0">+ Избавиться от карты</ng-container></button>
         </div>
     </ng-container>
 </ng-container>

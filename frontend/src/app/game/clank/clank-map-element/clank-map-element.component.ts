@@ -214,6 +214,21 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (!success) {
             return;
         }
+        const isArtifactTaken = this.artifact
+            ? await this.takeArtifact(this.artifact, true)
+            : false;
+        let isTokenTaken = false;
+        const tokenInfo = this.visibleTokens?.pop();
+        if (tokenInfo != null) {
+            this.takeTokenSubject.next(tokenInfo);
+            await this.gameInfoService.useToken({
+                playerId: this.activePlayer.id,
+                tokenInfo,
+                type: UseTokenType.take,
+                skipSocketUpdate: true,
+            });
+            isTokenTaken = true;
+        }
         this.gameInfoService.onMove({
             playerId: this.activePlayer.id,
             mapElement: this.mapElement,
@@ -224,27 +239,16 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                     : this.activePlayer.benefitInfo.boot,
                 enter_crystal_cave: (this.activePlayer.benefitInfo.enter_crystal_cave ?? 0) + (isCrystalCave ? 1 : 0),
             },
+            canCancel: !isArtifactTaken && !isTokenTaken,
         });
-        if (this.artifact) {
-            this.takeArtifact(this.artifact);
-        }
-        const tokenInfo = this.visibleTokens?.pop();
-        if (tokenInfo != null) {
-            this.takeTokenSubject.next(tokenInfo);
-            this.gameInfoService.useToken({
-                playerId: this.activePlayer.id,
-                tokenInfo,
-                type: UseTokenType.take,
-            });
-        }
     }
 
-    async takeArtifact(artifact: ClankArtifactConfig) {
+    async takeArtifact(artifact: ClankArtifactConfig, skipSocketUpdate = false) {
         if (!this.canDoByPlayerPosition(this.activePlayer)) {
-            return;
+            return false;
         }
         if (!this.canTakeArtifact(this.activePlayer)) {
-            return;
+            return false;
         }
         const matDialogRef = this.matDialog.open<
             ConfirmModalComponent,
@@ -261,9 +265,14 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         );
         const result = await matDialogRef.afterClosed().toPromise();
         if (!result) {
-            return;
+            return false;
         }
-        this.gameInfoService.takeArtifact(this.activePlayer.id, artifact);
+        this.gameInfoService.takeArtifact({
+            playerId: this.activePlayer.id,
+            artifact,
+            skipSocketUpdate,
+        });
+        return true;
     }
 
     trackById(index: number, item: { id: any }) {

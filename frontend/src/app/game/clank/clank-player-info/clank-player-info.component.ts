@@ -91,10 +91,6 @@ export class ClankPlayerInfoComponent implements OnInit {
         return this.gameInfoQuery.currentPlayer;
     }
 
-    get activePlayer() {
-        return this.gameInfoQuery.activePlayer;
-    }
-
     get selectedPlayer() {
         return this.selectedPlayerSubject.getValue();
     }
@@ -112,7 +108,14 @@ export class ClankPlayerInfoComponent implements OnInit {
         }),
     );
 
-    activePlayerSubject = this.gameInfoQuery.onActivePlayerChangeSubject;
+    activePlayer: ClankPlayerConfig | undefined;
+    activePlayerSubject = this.gameInfoQuery.onActivePlayerChangeSubject.pipe(
+        tap((player) => {
+            this.activePlayer = player;
+        }),
+    );
+
+    canCancelSubject = this.gameInfoQuery.onCanCancelChangeSubject;
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -143,6 +146,10 @@ export class ClankPlayerInfoComponent implements OnInit {
         });
     }
 
+    cancelState() {
+        this.gameInfoService.cancelState();
+    }
+
     openDungeonRow(player: ClankPlayerConfig) {
         this.matBottomSheet.open<
             ClankDungeonRowComponent,
@@ -160,31 +167,25 @@ export class ClankPlayerInfoComponent implements OnInit {
         );
     }
 
-    async finishTurn() {
-        if (this.activePlayer.hand.length > 0) {
-            this.toastService.showWarn(`Остались неиспользованные карты (${this.activePlayer.hand.length} шт.)`);
+    async finishTurn(activePlayer: ClankPlayerConfig ) {
+        if (activePlayer.hand.length > 0) {
+            this.toastService.showWarn(`Остались неиспользованные карты (${activePlayer.hand.length} шт.)`);
             return;
         }
         const unusedList = ClankElementByTurnList
-            .filter(p => p !== ClankElementByTurn.clank && (this.activePlayer.benefitInfo[p] ?? 0) > 0)
-            .map(p => `Остались неиспользованные очки (${ClankElementTypeMap[p].name}: ${this.activePlayer.benefitInfo[p]})`);
+            .filter(p => p !== ClankElementByTurn.clank && (activePlayer.benefitInfo[p] ?? 0) > 0)
+            .map(p => `Остались неиспользованные очки (${ClankElementTypeMap[p].name}: ${activePlayer.benefitInfo[p]})`);
         if (unusedList.length > 0) {
-            const matDialogRef = this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
-                ConfirmModalComponent,
-                {
-                    data: {
-                        title: 'Вы уверены что хотите закончить ход?',
-                        textList: unusedList,
-                    },
-                },
+            const result = await this.openConfirmDialog(
+                'Вы уверены что хотите закончить ход?',
+                unusedList,
             );
-            const result = await matDialogRef.afterClosed().toPromise();
             if (!result) {
                 return;
             }
         }
 
-        if (this.activePlayer.needTrashCards.length > 0) {
+        if (activePlayer.needTrashCards.length > 0) {
             const matDialogRef = this.matDialog.open<
                 TrashCardsComponent,
                 TrashCardsComponentData,
@@ -194,11 +195,11 @@ export class ClankPlayerInfoComponent implements OnInit {
                 {
                     data: {
                         cards: [
-                            ...this.activePlayer.discard,
-                            ...this.activePlayer.board,
-                            ...this.activePlayer.hand,
+                            ...activePlayer.discard,
+                            ...activePlayer.board,
+                            ...activePlayer.hand,
                         ],
-                        needTrashCards: this.activePlayer.needTrashCards,
+                        needTrashCards: activePlayer.needTrashCards,
                     },
                     width: `${this.cardsWrapInfo.cardWidth * 5}px`,
                 },
@@ -211,9 +212,9 @@ export class ClankPlayerInfoComponent implements OnInit {
         } else {
             this.gameInfoService.finishTurn({
                 discard: [
-                    ...this.activePlayer.discard,
-                    ...this.activePlayer.board,
-                    ...this.activePlayer.hand,
+                    ...activePlayer.discard,
+                    ...activePlayer.board,
+                    ...activePlayer.hand,
                 ],
                 trash: [],
             });
@@ -222,6 +223,19 @@ export class ClankPlayerInfoComponent implements OnInit {
 
     trackById(index: number, player: { id: any }) {
         return player.id;
+    }
+
+    private async openConfirmDialog(title: string, textList: string[]) {
+        const matDialogRef = this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
+            ConfirmModalComponent,
+            {
+                data: {
+                    title,
+                    textList,
+                },
+            },
+        );
+        return await matDialogRef.afterClosed().toPromise();
     }
 
     private updatePlayerCards(player: ClankPlayerConfig | undefined) {
@@ -239,6 +253,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                     zIndex: `${index}`,
                 },
                 isOpen: false,
+                disablePopover: true,
                 classes: [],
                 actions: [],
             };
@@ -254,6 +269,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                     zIndex: `${index}`,
                 },
                 isOpen: true,
+                disablePopover: true,
                 classes: [],
                 actions: [{
                     name: 'Посмотреть карты',
@@ -276,6 +292,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                     zIndex: `${index}`,
                 },
                 isOpen: true,
+                disablePopover: true,
                 classes: [],
                 actions: [{
                     name: 'Посмотреть карты',
@@ -307,7 +324,8 @@ export class ClankPlayerInfoComponent implements OnInit {
                     {
                         name: this.cardsService.getCardActionName(card, 'onUse'),
                         btnClass: 'btn-primary',
-                        canUse: () => player.id === this.activePlayer.id
+                        canUse: () => this.activePlayer != null
+                            && player.id === this.activePlayer.id
                             && this.activePlayer.id === this.currentPlayer?.id,
                         callback: async () => {
                             await this.gameInfoService.useCard(card, 'onUse');

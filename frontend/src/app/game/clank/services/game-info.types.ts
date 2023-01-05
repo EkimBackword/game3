@@ -27,6 +27,7 @@ export function createInitialGameInfoState(config: GameInfoConfig): GameInfoStat
         activePlayerId: '',
         turnIndex: 0,
         actionLogs: [],
+        canCancel: false,
     };
 }
 

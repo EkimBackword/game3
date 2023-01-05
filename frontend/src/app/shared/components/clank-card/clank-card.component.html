@@ -10,7 +10,7 @@
     [class.card_container__by_hover]="openByHover"
     [ngbPopover]="popContent"
     [popoverTitle]="popTitle"
-    [disablePopover]="!data.isOpen"
+    [disablePopover]="data.disablePopover || !data.isOpen"
     [openDelay]="500"
     container="body"
     triggers="mouseenter:mouseleave">

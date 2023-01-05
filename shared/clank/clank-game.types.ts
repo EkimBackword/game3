@@ -101,4 +101,6 @@ export interface GameInfoState extends GameInfoConfig {
     turnIndex: number;
     /** Идентификатор активного игрока */
     actionLogs: GameInfoActionLog[];
+    /** Возможность отменить ход */
+    canCancel: boolean;
 }

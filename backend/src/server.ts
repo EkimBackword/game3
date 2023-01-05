@@ -48,27 +48,70 @@ const io = new Server<
     },
 });
 
-const gamesList = new Map<string, GameInfoState>();
-const testGame: GameInfoState = {
-    id: 'test',
-    name: 'Test',
-    statusId: GameInfoStatusIdEnum.Created,
-    mapId: 0,
-    mapDlcId: ClankDlcEnum.clank,
-    dungeonDeck: [],
-    dungeonRow: [],
-    reserveRow: [],
-    mapTokens: [],
-    marketTokens: [],
-    artifacts: [],
-    players: [],
-    dragonInfo: initDragonInfo(),
-    actionLogs: [],
-    turnIndex: 0,
-    activePlayerIndex: 0,
-    activePlayerId: '',
-};
-gamesList.set(testGame.id, testGame);
+class GamesInfo {
+    gamesList = new Map<string, GameInfoState>();
+    gamesHistory = new Map<string, GameInfoState[]>();
+
+    constructor() {
+        const testGame: GameInfoState = {
+            id: 'test',
+            name: 'Test',
+            statusId: GameInfoStatusIdEnum.Created,
+            mapId: 0,
+            mapDlcId: ClankDlcEnum.clank,
+            dungeonDeck: [],
+            dungeonRow: [],
+            reserveRow: [],
+            mapTokens: [],
+            marketTokens: [],
+            artifacts: [],
+            players: [],
+            dragonInfo: initDragonInfo(),
+            actionLogs: [],
+            turnIndex: 0,
+            activePlayerIndex: 0,
+            activePlayerId: '',
+            canCancel: false,
+        };
+        this.gamesList.set(testGame.id, testGame);
+    }
+
+    addState(state: GameInfoState) {
+        this.gamesList.set(state.id, state);
+        this.gamesHistory.set(state.id, []);
+    }
+
+    updateState(state: GameInfoState) {
+        const oldState = this.gamesList.get(state.id);
+        this.gamesHistory.set(state.id, [
+            ...this.gamesHistory.get(state.id) ?? [],
+            oldState,
+        ]);
+        this.gamesList.set(state.id, state);
+    }
+
+    cancelState(oldState: GameInfoState) {
+        const history = this.gamesHistory.get(oldState.id);
+        const state = history.pop();
+        this.gamesList.set(state.id, state);
+        return state;
+    }
+
+    hasStateById(id: string) {
+        return this.gamesList.has(id);
+    }
+
+    getStateById(id: string) {
+        return id ? this.gamesList.get(id) : null;
+    }
+
+    getList() {
+        return [...this.gamesList.values()];
+    }
+
+}
+
+const games = new GamesInfo();
 
 io.on('connection', (socket) => {
 
@@ -76,14 +119,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('addGame', (game) => {
-        if (gamesList.has(game.id)) {
+        if (games.hasStateById(game.id)) {
             return;
         }
-        gamesList.set(game.id, game);
-        socket.broadcast.emit('gameListChanged', [...gamesList.values()]);
+        games.addState(game);
+        socket.broadcast.emit('gameListChanged', games.getList());
     });
 
-    socket.emit('gameListChanged', [...gamesList.values()]);
+    socket.emit('gameListChanged', games.getList());
 });
 
 const gameRegExp = /^\/clank-(.+)$/;
@@ -97,7 +140,7 @@ io.of(gameRegExp).on('connection', (socket) => {
     const getGameInfo = () => {
         const match = gameRegExp.exec(clankNamespace.name);
         const gameId = match?.[1];
-        const gameInfo = gameId ? gamesList.get(gameId) : null;
+        const gameInfo = games.getStateById(gameId);
 
         if (gameInfo == null) {
             socket.emit(
@@ -186,8 +229,17 @@ io.of(gameRegExp).on('connection', (socket) => {
         if (gameInfo == null) {
             return;
         }
-        gamesList.set(state.id, state);
+        games.updateState(state);
         socket.broadcast.emit('gameUpdated', state);
+    });
+
+    socket.on('cancelState', (oldState) => {
+        const gameInfo = getGameInfo();
+        if (gameInfo == null) {
+            return;
+        }
+        const state = games.cancelState(oldState);
+        clankNamespace.emit('gameUpdated', state);
     });
 
     socket.on('disconnect', () => {

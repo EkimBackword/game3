@@ -7,6 +7,7 @@ export interface ISelectedPlayerCardInfo {
     classes: string[];
     actions: ISelectedPlayerCardAction[];
     isOpen?: boolean;
+    disablePopover?: boolean;
     openByHover?: boolean;
 }
 

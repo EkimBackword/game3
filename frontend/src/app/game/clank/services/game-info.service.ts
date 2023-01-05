@@ -70,26 +70,6 @@ export class GameInfoService implements OnDestroy {
         private soundService: SoundService,
         private router: Router,
     ) {
-        window['getGameState'] = () => {
-            return lodash.cloneDeep(gameInfoQuery.getValue());
-        };
-        window['setGameState'] = (state: GameInfoState) => {
-            this.clankHelpService.addActionLogs({
-                state,
-                type: GameInfoActionLogType.ManualFunction,
-                data: {
-                    text: `Игрок ${gameInfoQuery.currentPlayer?.name} вручную изменил состояние игры`,
-                    severity: ToastSeverityEnum.warning,
-                },
-            });
-            gameInfoStore.update(state);
-            this.onGameUpdated();
-            this.useManualFunctionSubject.next();
-        };
-        window['showMapElementId'] = (value: boolean) => {
-            this.isMapElementIdShowSubject.next(value);
-            this.useManualFunctionSubject.next();
-        };
     }
 
     ngOnDestroy() {
@@ -138,23 +118,46 @@ export class GameInfoService implements OnDestroy {
                 this.socket.connect();
             }
         }, 500);
+
+        window['getGameState'] = () => {
+            return lodash.cloneDeep(this.gameInfoQuery.getValue());
+        };
+        window['setGameState'] = (state: GameInfoState) => {
+            this.clankHelpService.addActionLogs({
+                state,
+                type: GameInfoActionLogType.ManualFunction,
+                data: {
+                    text: `Игрок ${this.gameInfoQuery.currentPlayer?.name} вручную изменил состояние игры`,
+                    severity: ToastSeverityEnum.warning,
+                },
+            });
+            this.gameInfoStore.update(state);
+            this.onGameUpdated({ canCancel: true });
+            this.useManualFunctionSubject.next();
+        };
+        window['showMapElementId'] = (value: boolean) => {
+            this.isMapElementIdShowSubject.next(value);
+            this.useManualFunctionSubject.next();
+        };
     }
 
     updatePlayer(id: string, player: Partial<ClankPlayerConfig>) {
         this.gameInfoStore.update(({players}) => ({
             players: arrayUpdate(players, id, player),
         }));
-        this.onGameUpdated();
+        this.onGameUpdated({ canCancel: false });
     }
 
     onMove({
         playerId,
         mapElement,
         benefitInfo,
+        canCancel,
     }: {
         playerId: string;
         mapElement: ClankMapElementConfig,
         benefitInfo: ClankCostInfo;
+        canCancel: boolean;
     }) {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
@@ -188,7 +191,7 @@ export class GameInfoService implements OnDestroy {
             this.soundService.play('/assets/sounds/Move.mp3');
             return state;
         });
-        this.onGameUpdated();
+        this.onGameUpdated({ canCancel });
     }
 
     async useCard(
@@ -204,10 +207,18 @@ export class GameInfoService implements OnDestroy {
             return;
         }
         this.gameInfoStore.update(newState);
-        this.onGameUpdated();
+        this.onGameUpdated({ canCancel: true });
     }
 
-    takeArtifact(playerId: string, artifact: ClankArtifactConfig) {
+    takeArtifact({
+        playerId,
+        artifact,
+        skipSocketUpdate = false,
+    }: {
+        playerId: string;
+        artifact: ClankArtifactConfig;
+        skipSocketUpdate?: boolean;
+    }) {
         this.gameInfoStore.update((oldState) => {
             const state = lodash.cloneDeep(oldState);
             const player = state.players.find(p => p.id === playerId);
@@ -224,17 +235,22 @@ export class GameInfoService implements OnDestroy {
             });
             return state;
         });
-        this.onGameUpdated();
+        if (skipSocketUpdate) {
+            return;
+        }
+        this.onGameUpdated({ canCancel: false });
     }
 
     async useToken({
         playerId,
         tokenInfo,
         type,
+        skipSocketUpdate = false,
     }: {
         playerId: string;
         tokenInfo: ClankTokenConfig;
         type: UseTokenType;
+        skipSocketUpdate?: boolean;
     }) {
         const state = lodash.cloneDeep(this.gameInfoQuery.getValue());
         const player = state.players.find(p => p.id === playerId);
@@ -251,7 +267,10 @@ export class GameInfoService implements OnDestroy {
             return;
         }
         this.gameInfoStore.update(state);
-        this.onGameUpdated();
+        if (skipSocketUpdate) {
+            return;
+        }
+        this.onGameUpdated({ canCancel: false });
     }
 
     async startGame() {
@@ -327,7 +346,7 @@ export class GameInfoService implements OnDestroy {
             hideToast: true,
         });
         this.gameInfoStore.update(newState);
-        this.onGameUpdated();
+        this.onGameUpdated({ canCancel: false });
     }
 
     async finishTurn(result: TrashCardsComponentResult) {
@@ -385,7 +404,7 @@ export class GameInfoService implements OnDestroy {
             ? GameInfoStatusIdEnum.Finished
             : state.statusId;
         this.gameInfoStore.update(state);
-        this.onGameUpdated();
+        this.onGameUpdated({ canCancel: false });
     }
 
     private getNextPlayer(state: GameInfoState): ClankPlayerConfig | null {
@@ -426,11 +445,21 @@ export class GameInfoService implements OnDestroy {
         this.gameInfoStore.update((state) => ({
             statusId: GameInfoStatusIdEnum.Finished,
         }));
-        this.onGameUpdated();
+        this.onGameUpdated({ canCancel: false });
     }
 
-    private onGameUpdated() {
+    cancelState() {
+        const state = this.gameInfoQuery.getValue();
+        if (!state.canCancel) {
+            this.toastService.showWarn('Последнее действие нельзя отменить');
+            return;
+        }
+        this.socket?.emit('cancelState', state);
+    }
+
+    private onGameUpdated({ canCancel }: { canCancel: boolean; }) {
         const state = lodash.cloneDeep(this.gameInfoQuery.getValue());
+        state.canCancel = canCancel;
         for (const player of state.players) {
             this.clankHelpService.checkBenefit(player);
             if (player.isFinish && state.dragonInfo.endGameCounter.colorId === GamePlayerColorIdEnum.Black) {

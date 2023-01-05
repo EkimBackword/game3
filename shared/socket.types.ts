@@ -15,6 +15,7 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
     addGame: (game: GameInfoState) => void;
     updateGame: (state: GameInfoState) => void;
+    cancelState: (state: GameInfoState) => void;
 }
 
 export interface InterServerEvents {
