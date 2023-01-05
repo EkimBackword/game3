@@ -8,7 +8,10 @@ import {
 } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 
-import { combineLatest } from 'rxjs';
+import {
+    combineLatest,
+    Subject,
+} from 'rxjs';
 import {
     map,
     tap,
@@ -96,7 +99,7 @@ export class ClankDungeonRowComponent implements OnInit {
                     actions: [{
                         name: this.data.cardsService.getCardActionName(card, 'onAcquire'),
                         btnClass: 'btn-primary',
-                        canUse: () => true,
+                        canUse: () => this.activePlayer?.id === this.currentPlayer?.id,
                         callback: () => this.buyCard(card),
                     }],
                 };
@@ -119,7 +122,7 @@ export class ClankDungeonRowComponent implements OnInit {
                     actions: [{
                         name: this.data.cardsService.getCardActionName(card, 'onAcquire'),
                         btnClass: 'btn-primary',
-                        canUse: () => true,
+                        canUse: () => this.activePlayer?.id === this.currentPlayer?.id,
                         callback: () => this.buyCard(card),
                     }],
                 };
@@ -145,10 +148,12 @@ export class ClankDungeonRowComponent implements OnInit {
         }),
     );
 
+    onChangeSubject = new Subject<boolean>();
     onPlayersChangeSubject = this.data.gameInfoQuery.onPlayersChangeSubject.pipe(
         tap((players) => {
             this.activePlayer = this.data.gameInfoQuery.activePlayer;
             this.currentPlayer = this.data.gameInfoQuery.currentPlayer;
+            this.onChangeSubject.next(true);
         }),
     );
 
@@ -194,7 +199,7 @@ export class ClankDungeonRowComponent implements OnInit {
     }
 
     useToken(tokenInfo: ClankTokenConfig) {
-        if (this.activePlayer == null || !this.playerPosition?.isMarket) {
+        if (this.activePlayer == null || this.activePlayer.id !== this.currentPlayer?.id || !this.playerPosition?.isMarket) {
             return;
         }
         if (!this.data.clankHelpService.canUse({
