@@ -4,7 +4,6 @@ import {
     Component,
     OnInit,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import {
     ActivatedRoute,
     Router,
@@ -20,15 +19,14 @@ import {
     takeUntil,
 } from 'rxjs/operators';
 import { CardsService } from 'src/app/game/clank/services/cards.service';
-import { cardWidth } from 'src/app/shared/components/clank-card/clank-card.types';
 import { PlayerPointsResult } from 'src/app/shared/models/players/player.types';
 
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import { GamePlayerColorList } from '@shared/clank/clank-player.types';
 
-import { PlayerRowDetailComponent } from './dialogs/player-row-detail/player-row-detail.component';
 import { ClankHelpService } from './services/clank-help.service';
+import { GameDialogsService } from './services/game-dialogs.service';
 import { GameInfoQuery } from './services/game-info.query';
 import { GameInfoService } from './services/game-info.service';
 import { GameInfoStore } from './services/game-info.store';
@@ -41,6 +39,7 @@ import { GameInfoStore } from './services/game-info.store';
         GameInfoService,
         GameInfoStore,
         GameInfoQuery,
+        GameDialogsService,
         ClankHelpService,
         CardsService,
     ],
@@ -142,8 +141,8 @@ export class ClankComponent implements OnInit {
         private router: Router,
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
+        private gameDialogsService: GameDialogsService,
         private cardsService: CardsService,
-        private matDialog: MatDialog,
     ) { }
 
     ngOnInit(): void {
@@ -178,13 +177,7 @@ export class ClankComponent implements OnInit {
     }
 
     openPlayerRowDetail(player: PlayerPointsResult) {
-        this.matDialog.open(
-            PlayerRowDetailComponent,
-            {
-                data: player,
-                width: `${cardWidth * 5}px`,
-            },
-        );
+        this.gameDialogsService.openPlayerRowDetail(player);
     }
 
 }

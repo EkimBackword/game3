@@ -37,13 +37,9 @@ import {
 } from '@shared/clank/clank-token.types';
 
 import { ClankDungeonRowComponent } from '../clank-dungeon-row/clank-dungeon-row.component';
-import {
-    TrashCardsComponent,
-    TrashCardsComponentData,
-    TrashCardsComponentResult,
-} from '../dialogs/trash-cards/trash-cards.component';
 import { CardsService } from '../services/cards.service';
 import { ClankHelpService } from '../services/clank-help.service';
+import { GameDialogsService } from '../services/game-dialogs.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
 
@@ -123,6 +119,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         private cardsService: CardsService,
         private gameInfoQuery: GameInfoQuery,
         private gameInfoService: GameInfoService,
+        private gameDialogsService: GameDialogsService,
         private matBottomSheet: MatBottomSheet,
         private matDialog: MatDialog,
         private toastService: ToastService,
@@ -199,24 +196,14 @@ export class ClankPlayerInfoComponent implements OnInit {
         }
 
         if (activePlayer.needTrashCards.length > 0) {
-            const matDialogRef = this.matDialog.open<
-                TrashCardsComponent,
-                TrashCardsComponentData,
-                TrashCardsComponentResult
-            >(
-                TrashCardsComponent,
-                {
-                    data: {
-                        cards: [
-                            ...activePlayer.discard,
-                            ...activePlayer.board,
-                            ...activePlayer.hand,
-                        ],
-                        needTrashCards: activePlayer.needTrashCards,
-                    },
-                    width: `${this.cardsWrapInfo.cardWidth * 5}px`,
-                },
-            );
+            const matDialogRef = this.gameDialogsService.openTrashCardsComponent({
+                cards: [
+                    ...activePlayer.discard,
+                    ...activePlayer.board,
+                    ...activePlayer.hand,
+                ],
+                needTrashCards: activePlayer.needTrashCards,
+            });
             const result = await matDialogRef.afterClosed().toPromise();
             if (result == null) {
                 return;
@@ -290,7 +277,10 @@ export class ClankPlayerInfoComponent implements OnInit {
                     btnClass: 'btn-primary',
                     canUse: () => true,
                     callback: async () => {
-                        this.clankHelpService.openCardList(player.board, 'Список разыгранных на этом ходу карт');
+                        this.gameDialogsService.openCardListComponent({
+                            title: 'Список разыгранных на этом ходу карт',
+                            cards: player.board,
+                        });
                     },
                 }],
             };
@@ -314,7 +304,10 @@ export class ClankPlayerInfoComponent implements OnInit {
                     btnClass: 'btn-primary',
                     canUse: () => true,
                     callback: async () => {
-                        this.clankHelpService.openCardList(player.discard, 'Список сброшеных карт');
+                        this.gameDialogsService.openCardListComponent({
+                            title: 'Список сброшеных карт',
+                            cards: player.discard,
+                        });
                     },
                 }],
             };

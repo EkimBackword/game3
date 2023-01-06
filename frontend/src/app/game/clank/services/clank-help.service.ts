@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 
 import * as moment from 'moment';
-import { cardWidth } from 'src/app/shared/components/clank-card/clank-card.types';
 import {
     checkCost,
     CheckCostResult,
@@ -31,10 +29,7 @@ import {
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 import { ToastSeverityEnum } from '@shared/toast.types';
 
-import {
-    CardListComponent,
-    CardListComponentResult,
-} from '../dialogs/card-list/card-list.component';
+import { GameDialogsService } from './game-dialogs.service';
 import { GameInfoQuery } from './game-info.query';
 
 @Injectable()
@@ -44,7 +39,7 @@ export class ClankHelpService {
         private gameInfoQuery: GameInfoQuery,
         private toastService: ToastService,
         private soundService: SoundService,
-        private matDialog: MatDialog,
+        private gameDialogsService: GameDialogsService,
     ) { }
 
     updateBenefitInfo(data: {
@@ -208,22 +203,12 @@ export class ClankHelpService {
                 success: true,
             };
         }
-        const matDialogRef = this.matDialog.open<
-            CardListComponent,
-            CardListComponent['data'],
-            CardListComponentResult
-        >(
-            CardListComponent,
-            {
-                data: {
-                    cards: data.cards,
-                    title: data.title,
-                    actionText: data.actionText,
-                    count: data.count,
-                },
-                width: `${cardWidth * 5}px`,
-            },
-        );
+        const matDialogRef = this.gameDialogsService.openCardListComponent({
+            cards: data.cards,
+            title: data.title,
+            actionText: data.actionText,
+            count: data.count,
+        });
         const result = await matDialogRef.afterClosed().toPromise();
         if (result == null) {
             return {
@@ -234,23 +219,6 @@ export class ClankHelpService {
             success: true,
             data: result,
         };
-    }
-
-    openCardList(cards: ClankCardConfig[], title: string) {
-        this.matDialog.open<
-            CardListComponent,
-            CardListComponent['data'],
-            CardListComponentResult
-        >(
-            CardListComponent,
-            {
-                data: {
-                    cards,
-                    title,
-                },
-                width: `${cardWidth * 5}px`,
-            },
-        );
     }
 
     takeToken(

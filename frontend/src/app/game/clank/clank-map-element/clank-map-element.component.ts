@@ -29,10 +29,7 @@ import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
-import {
-    ClankCostInfo,
-    ClankSecretTypes,
-} from '@shared/clank/clank-info.types';
+import { ClankSecretTypes } from '@shared/clank/clank-info.types';
 import {
     ClankMapElementConfig,
     ClankMapElementLink,
@@ -40,8 +37,8 @@ import {
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
-import { UseSwordsOrHealthComponent } from '../dialogs/use-swords-or-health/use-swords-or-health.component';
 import { ClankHelpService } from '../services/clank-help.service';
+import { GameDialogsService } from '../services/game-dialogs.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
 
@@ -153,6 +150,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         private clankHelpService: ClankHelpService,
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
+        private gameDialogsService: GameDialogsService,
         private matDialog: MatDialog,
     ) { }
 
@@ -318,21 +316,10 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     }
 
     private async openDialogAboutSwords(link: ClankMapElementLink, player: ClankPlayerConfig) {
-        const matDialogRef =  this.matDialog.open<
-            UseSwordsOrHealthComponent,
-            UseSwordsOrHealthComponent['data'],
-            ClankCostInfo
-        >(
-            UseSwordsOrHealthComponent,
-            {
-                data: {
-                    player,
-                    cost: link.cost,
-                },
-                disableClose: false,
-                width: '400px',
-            },
-        );
+        const matDialogRef =  this.gameDialogsService.openUseSwordsOrHealthComponent({
+            player,
+            cost: link.cost,
+        });
         return await matDialogRef.afterClosed().toPromise();
     }
 

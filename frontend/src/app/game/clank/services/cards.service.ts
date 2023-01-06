@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 
 import { cloneDeep } from 'lodash';
 import { ClankHelpService } from 'src/app/game/clank/services/clank-help.service';
@@ -32,11 +31,8 @@ import {
     GamePlayerColorIdEnum,
 } from '@shared/clank/clank-player.types';
 
-import {
-    ChooseCardEventComponent,
-    ChooseCardEventComponentData,
-    ChooseCardEventComponentItem,
-} from '../../../shared/modals/choose-card-event/choose-card-event.component';
+import { ChooseCardEventComponentData } from '../dialogs/choose-card-event/choose-card-event.component';
+import { GameDialogsService } from './game-dialogs.service';
 
 @Injectable()
 export class CardsService {
@@ -108,7 +104,7 @@ export class CardsService {
 
     constructor(
         private clankHelpService: ClankHelpService,
-        private matDialog: MatDialog,
+        private gameDialogsService: GameDialogsService,
     ) {
         preloadImage(Object.values(ClankElementTypeMap).map(p => p.url));
     }
@@ -1930,7 +1926,7 @@ export class CardsService {
                     },
                     onUse: {
                         async callback(state, player) {
-                            return self.openDialogChooseCardEvent({
+                            return await self.openDialogChooseCardEvent({
                                 count: 1,
                                 list: [
                                     {
@@ -2025,7 +2021,7 @@ export class CardsService {
                     },
                     onUse: {
                         async callback(state, player) {
-                            return self.openDialogChooseCardEvent({
+                            return await self.openDialogChooseCardEvent({
                                 count: 1,
                                 list: [
                                     {
@@ -2465,17 +2461,7 @@ export class CardsService {
     }
 
     private async openDialogChooseCardEvent(data: ChooseCardEventComponentData) {
-        const dialog = this.matDialog.open<
-            ChooseCardEventComponent,
-            ChooseCardEventComponentData,
-            ChooseCardEventComponentItem[]
-        >(
-            ChooseCardEventComponent,
-            {
-                data,
-                width: '500px',
-            },
-        );
+        const dialog = this.gameDialogsService.openChooseCardEventComponent(data);
         const list = await dialog.afterClosed().toPromise();
         return list?.every(p => p.event()) ?? false;
     }
