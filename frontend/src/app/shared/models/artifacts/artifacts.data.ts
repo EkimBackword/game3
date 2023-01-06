@@ -9,7 +9,7 @@ export const getArtifacts = (playerCount: number) => {
     let list: ClankArtifactShortConfig[] = [
         {
             name: 'Золотое кольцо',
-            url: '/5.jpg',
+            url: '/5.png',
             value: 5,
             points: {
                 value: 5,
@@ -17,7 +17,7 @@ export const getArtifacts = (playerCount: number) => {
         },
         {
             name: 'Золотой анх',
-            url: '/7.jpg',
+            url: '/7.png',
             value: 7,
             points: {
                 value: 7,
@@ -25,7 +25,7 @@ export const getArtifacts = (playerCount: number) => {
         },
         {
             name: 'Золотой сосуд',
-            url: '/10.jpg',
+            url: '/10.png',
             value: 10,
             points: {
                 value: 10,
@@ -33,7 +33,7 @@ export const getArtifacts = (playerCount: number) => {
         },
         {
             name: 'Золотые бананы',
-            url: '/15.jpg',
+            url: '/15.png',
             value: 15,
             points: {
                 value: 15,
@@ -41,7 +41,7 @@ export const getArtifacts = (playerCount: number) => {
         },
         {
             name: 'Золотой шит',
-            url: '/20.jpg',
+            url: '/20.png',
             value: 20,
             points: {
                 value: 20,
@@ -49,7 +49,7 @@ export const getArtifacts = (playerCount: number) => {
         },
         {
             name: 'Золотой доспех',
-            url: '/25.jpg',
+            url: '/25.png',
             value: 25,
             points: {
                 value: 25,
@@ -57,7 +57,7 @@ export const getArtifacts = (playerCount: number) => {
         },
         {
             name: 'Золотое кадило',
-            url: '/30.jpg',
+            url: '/30.png',
             value: 30,
             points: {
                 value: 30,

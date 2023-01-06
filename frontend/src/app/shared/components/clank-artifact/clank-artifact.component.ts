@@ -26,7 +26,7 @@ export class ClankArtifactComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
-        this.background = `#ccc url(${this.data.url}) no-repeat center center`;
+        this.background = `url(${this.data.url}) no-repeat center center`;
     }
 
 }

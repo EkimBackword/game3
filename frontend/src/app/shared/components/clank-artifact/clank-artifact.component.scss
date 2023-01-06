@@ -1,31 +1,14 @@
 .hexagon {
+    cursor: pointer;
     position: relative;
     margin: 10px auto;
     width: var(--artifact_height, 200px);
     height: var(--artifact_height, 200px);
-    background: #000;
-}
-
-.hexagon:before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    right: 2px;
-    bottom: 2px;
     background: var(--artifact_background);
     background-size: cover;
-}
-
-.hexagon,
-.hexagon:before {
-    clip-path: polygon(75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%, 25% 0);
-    transition: 300ms;
     opacity: 0.9;
-    cursor: pointer;
-}
 
-.hexagon:hover,
-.hexagon:hover:before {
-    opacity: 1;
+    &:hover {
+        opacity: 1;
+    }
 }
