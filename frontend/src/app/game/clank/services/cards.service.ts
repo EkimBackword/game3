@@ -172,6 +172,17 @@ export class CardsService {
                 if (!isCurrentUpdate && !isOtherUpdate) {
                     continue;
                 }
+                let cost = cloneDeep(eventInfo.cost);
+                if (data.eventName === 'onAcquire'
+                    && cardInfo?.type === ClankCardType.gem
+                    && player.benefitInfo.gem_cost_less != null
+                    && cost != null) {
+                    const skill = (cost.skill ?? 0) - player.benefitInfo.gem_cost_less;
+                    cost = {
+                        ...cost,
+                        skill: skill >= 0 ? skill : 0,
+                    };
+                }
                 const isPlayerUpdate = this.clankHelpService.updateBenefitInfo({
                     player,
                     cost: eventInfo.cost,
@@ -966,40 +977,38 @@ export class CardsService {
                 },
                 count: 1,
             },
-            // Вернуть карту после реализации gem_cost_less
-            // {
-            //     row: 2,
-            //     column: 4,
-            //     name: 'Сборщик драгоценностей',
-            //     description: 'Получите 2 очка навыка. Уберите 2 бдзынь. В этот ход драгоценности стоят на 2 меньше',
-            //     type: ClankCardType.companion,
-            //     events: {
-            //         onAcquire: {
-            //             cost: {
-            //                 skill: 4,
-            //             },
-            //         },
-            //         onUse: {
-            //             benefit: {
-            //                 skill: 2,
-            //                 // TODO: Уменьшить gem стоимоть на 2
-            //                 gem_cost_less: 2,
-            //             },
-            //             async callback(state, player) {
-            //                 self.clankHelpService.addClank({
-            //                     state,
-            //                     player,
-            //                     count: -2,
-            //                 });
-            //                 return true;
-            //             },
-            //         },
-            //         getPoints(state, player) {
-            //             return 2;
-            //         },
-            //     },
-            //     count: 1,
-            // },
+            {
+                row: 2,
+                column: 4,
+                name: 'Сборщик драгоценностей',
+                description: 'Получите 2 очка навыка. Уберите 2 бдзынь. В этот ход драгоценности стоят на 2 меньше',
+                type: ClankCardType.companion,
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 4,
+                        },
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 2,
+                            gem_cost_less: 2,
+                        },
+                        async callback(state, player) {
+                            self.clankHelpService.addClank({
+                                state,
+                                player,
+                                count: -2,
+                            });
+                            return true;
+                        },
+                    },
+                    getPoints(state, player) {
+                        return 2;
+                    },
+                },
+                count: 1,
+            },
             {
                 row: 2,
                 column: 5,
