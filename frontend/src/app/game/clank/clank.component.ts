@@ -23,6 +23,7 @@ import { CardsService } from 'src/app/game/clank/services/cards.service';
 import { cardWidth } from 'src/app/shared/components/clank-card/clank-card.types';
 import { PlayerPointsResult } from 'src/app/shared/models/players/player.types';
 
+import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import { GamePlayerColorList } from '@shared/clank/clank-player.types';
 
@@ -130,6 +131,10 @@ export class ClankComponent implements OnInit {
         }),
     );
     GameInfoStatusIdEnum = GameInfoStatusIdEnum;
+
+    icons = {
+        link: faExternalLinkAlt,
+    };
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,

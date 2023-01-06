@@ -63,6 +63,8 @@
                             <th>
                                 <div>Итог</div>
                             </th>
+                            <th>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -85,6 +87,11 @@
                             <td class="to_right">{{player.cards.points}}</td>
                             <td class="to_right">{{player.master}}</td>
                             <td class="to_right total">{{player.total}}</td>
+                            <td class="to_right total">
+                                <button class="btn btn-sm btn-primary" title="Открыть детальную информацтию">
+                                    <fa-icon [icon]="icons.link"></fa-icon>
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                     <tfoot>
@@ -92,7 +99,7 @@
                             <td class="to_right total" colspan="1">
                                 Выиграл:
                             </td>
-                            <td class="total" colspan="5">
+                            <td class="total" colspan="6">
                                 <div class="winner_name"
                                     [style.color]="result.winner?.colorInfo?.color">
                                     {{result.winner?.name}}
