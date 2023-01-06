@@ -976,7 +976,7 @@ export const getClankMapFirst = () => {
                 ],
                 items: {
                     monkey_idol: {
-                        count: 2,
+                        count: 3,
                         value: 5,
                     },
                 },
