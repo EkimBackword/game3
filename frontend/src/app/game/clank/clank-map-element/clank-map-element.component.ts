@@ -12,7 +12,6 @@ import {
     OnDestroy,
     OnInit,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 
 import {
     combineLatest,
@@ -24,9 +23,9 @@ import {
     tap,
 } from 'rxjs/operators';
 import { ClankCostInfoDirection } from 'src/app/shared/components/clank-cost-info/clank-cost-info.types';
-import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
 import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
+import { DialogService } from 'src/app/shared/services/dialog.service';
 
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
 import { ClankSecretTypes } from '@shared/clank/clank-info.types';
@@ -151,7 +150,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
         private gameDialogsService: GameDialogsService,
-        private matDialog: MatDialog,
+        private dialogService: DialogService,
     ) { }
 
     ngOnInit(): void {
@@ -255,19 +254,10 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (!this.canTakeArtifact(this.activePlayer)) {
             return false;
         }
-        const matDialogRef = this.matDialog.open<
-            ConfirmModalComponent,
-            ConfirmModalComponent['data'],
-            boolean
-        >(
-            ConfirmModalComponent,
-            {
-                data: {
-                    title: 'Хотите ли взять артефакт?',
-                    textList: [`В ячейке есть артефакт (Значимость: ${artifact.value})`],
-                },
-            },
-        );
+        const matDialogRef = this.dialogService.openConfirm({
+            title: 'Хотите ли взять артефакт?',
+            textList: [`В ячейке есть артефакт (Значимость: ${artifact.value})`],
+        });
         const result = await matDialogRef.afterClosed().toPromise();
         if (!result) {
             return false;

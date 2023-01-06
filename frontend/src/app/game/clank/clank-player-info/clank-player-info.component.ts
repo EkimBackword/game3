@@ -6,7 +6,6 @@ import {
     OnInit,
 } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatDialog } from '@angular/material/dialog';
 
 import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -18,12 +17,12 @@ import {
     ISelectedPlayerCardInfo,
 } from 'src/app/shared/components/clank-card/clank-card.types';
 import { ClankCostInfoDirection } from 'src/app/shared/components/clank-cost-info/clank-cost-info.types';
-import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
 import {
     ClankCostInfoType,
     ClankElementTypeMap,
 } from 'src/app/shared/models/clank-element-types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
+import { DialogService } from 'src/app/shared/services/dialog.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import {
@@ -121,7 +120,7 @@ export class ClankPlayerInfoComponent implements OnInit {
         private gameInfoService: GameInfoService,
         private gameDialogsService: GameDialogsService,
         private matBottomSheet: MatBottomSheet,
-        private matDialog: MatDialog,
+        private dialogService: DialogService,
         private toastService: ToastService,
     ) { }
 
@@ -226,15 +225,10 @@ export class ClankPlayerInfoComponent implements OnInit {
     }
 
     private async openConfirmDialog(title: string, textList: string[]) {
-        const matDialogRef = this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
-            ConfirmModalComponent,
-            {
-                data: {
-                    title,
-                    textList,
-                },
-            },
-        );
+        const matDialogRef = this.dialogService.openConfirm({
+            title,
+            textList,
+        });
         return await matDialogRef.afterClosed().toPromise();
     }
 

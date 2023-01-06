@@ -2,12 +2,11 @@ import {
     Component,
     OnInit,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 import { GameRouteEnum } from 'src/app/game.routing.enum';
 import { SessionStore } from 'src/app/session/session.store';
-import { ConfirmModalComponent } from 'src/app/shared/modals/confirm-modal/confirm-modal.component';
+import { DialogService } from 'src/app/shared/services/dialog.service';
 
 import {
     faDice,
@@ -59,7 +58,7 @@ export class MenuComponent implements OnInit {
 
     constructor(
         private sessionStore: SessionStore,
-        private matDialog: MatDialog,
+        private dialogService: DialogService,
         private router: Router,
     ) {}
 
@@ -67,14 +66,9 @@ export class MenuComponent implements OnInit {
     }
 
     async logout() {
-        const matDialogRef =  this.matDialog.open<ConfirmModalComponent, ConfirmModalComponent['data']>(
-            ConfirmModalComponent,
-            {
-                data: {
-                    textList: ['Вы уверены что хотите выйти?'],
-                },
-            },
-        );
+        const matDialogRef =  this.dialogService.openConfirm({
+            textList: ['Вы уверены что хотите выйти?'],
+        });
         const result = await matDialogRef.afterClosed().toPromise();
         if (!result) {
             return;
