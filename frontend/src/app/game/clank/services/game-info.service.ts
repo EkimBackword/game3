@@ -209,8 +209,9 @@ export class GameInfoService implements OnDestroy {
         if (newState == null) {
             return;
         }
+        const canCancel = card?.events?.[eventName]?.canCancel ?? true;
         this.gameInfoStore.update(newState);
-        this.updateSocketState({ canCancel: true });
+        this.updateSocketState({ canCancel });
     }
 
     takeArtifact({

@@ -1839,6 +1839,7 @@ export class CardsService {
                         },
                     },
                     onUse: {
+                        canCancel: false,
                         benefit: {
                             skill: 2,
                             sword: 2,
