@@ -98,6 +98,7 @@ export class ClankDungeonRowComponent implements OnInit {
                     classes: [],
                     actions: [{
                         name: this.data.cardsService.getCardActionName(card, 'onAcquire'),
+                        eventName: 'onAcquire',
                         btnClass: 'btn-primary',
                         canUse: () => this.activePlayer?.id === this.currentPlayer?.id,
                         callback: () => this.buyCard(card),
@@ -121,6 +122,7 @@ export class ClankDungeonRowComponent implements OnInit {
                     classes: [],
                     actions: [{
                         name: this.data.cardsService.getCardActionName(card, 'onAcquire'),
+                        eventName: 'onAcquire',
                         btnClass: 'btn-primary',
                         canUse: () => this.activePlayer?.id === this.currentPlayer?.id,
                         callback: () => this.buyCard(card),

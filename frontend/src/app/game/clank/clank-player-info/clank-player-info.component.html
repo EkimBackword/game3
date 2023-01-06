@@ -106,6 +106,12 @@
                         [style.height.px]="cardsWrapInfo.headerHeight">
                         <span class="text-uppercase text-muted deck_header_text">Карты на руке</span>
                         <span class="badge bg-secondary">{{player.hand.length}}</span>
+                        <button
+                            type="button"
+                            class="btn btn-xs btn-primary deck_header_btn"
+                            (click)="useAll()"
+                            [disabled]="currentPlayer?.id !== activePlayer.id || currentPlayer?.id !== player.id"
+                        >Сыграть все карты</button>
                     </div>
 
                     <app-clank-card class="position-absolute"

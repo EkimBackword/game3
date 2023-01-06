@@ -167,6 +167,19 @@ export class ClankPlayerInfoComponent implements OnInit {
         );
     }
 
+    async useAll() {
+        const list = this.selectedPlayerCardsSubject.getValue();
+        const hand = list.filter(p => p.handIndex != null)
+            .sort((a, b) => (a.handIndex ?? 0) - (b.handIndex ?? 0));
+        for (const item of hand) {
+            const action = item.actions.find(p => p.eventName === 'onUse');
+            if (action == null || !action.canUse()) {
+                continue;
+            }
+            await action.callback();
+        }
+    }
+
     async finishTurn(activePlayer: ClankPlayerConfig ) {
         if (activePlayer.hand.length > 0) {
             this.toastService.showWarn(`Остались неиспользованные карты (${activePlayer.hand.length} шт.)`);
@@ -273,6 +286,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 classes: [],
                 actions: [{
                     name: 'Посмотреть карты',
+                    eventName: null,
                     btnClass: 'btn-primary',
                     canUse: () => true,
                     callback: async () => {
@@ -296,6 +310,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 classes: [],
                 actions: [{
                     name: 'Посмотреть карты',
+                    eventName: null,
                     btnClass: 'btn-primary',
                     canUse: () => true,
                     callback: async () => {
@@ -319,20 +334,20 @@ export class ClankPlayerInfoComponent implements OnInit {
                     zIndex: `${index}`,
                 },
                 isOpen: true,
+                handIndex: index,
                 classes: [`card_container__hand`],
-                actions: [
-                    {
-                        name: this.cardsService.getCardActionName(card, 'onUse'),
-                        btnClass: 'btn-primary',
-                        canUse: () => this.activePlayer != null
-                            && player.id === this.activePlayer.id
-                            && this.activePlayer.id === this.currentPlayer?.id,
-                        callback: async () => {
-                            await this.gameInfoService.useCard(card, 'onUse');
-                            this.changeDetectorRef.detectChanges();
-                        },
+                actions: [{
+                    name: this.cardsService.getCardActionName(card, 'onUse'),
+                    eventName: 'onUse',
+                    btnClass: 'btn-primary',
+                    canUse: () => this.activePlayer != null
+                        && player.id === this.activePlayer.id
+                        && this.activePlayer.id === this.currentPlayer?.id,
+                    callback: async () => {
+                        await this.gameInfoService.useCard(card, 'onUse');
+                        this.changeDetectorRef.detectChanges();
                     },
-                ],
+                }],
             };
             return data;
         });

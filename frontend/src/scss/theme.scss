@@ -14,3 +14,10 @@ $theme-colors: (
 );
 
 @import '../../node_modules/bootstrap/scss/bootstrap.scss';
+
+.btn-xs {
+    --bs-btn-padding-y: 1px;
+    --bs-btn-padding-x: 4px;
+    --bs-btn-font-size: 14px;
+    --bs-btn-border-radius: 0.25rem;
+}

@@ -165,7 +165,6 @@ export class GameInfoQuery extends Query<GameInfoState> {
         map(([lastLogs, logs]) => {
             let showToast = false;
             let newLogs: GameInfoActionLog[] = logs;
-            console.log(lastLogs, logs);
             if (lastLogs.length === 0 || lastLogs.length > logs.length) {
                 this.logsMap = new Map<string, GameInfoActionLogFrontend[]>();
             } else {

@@ -1,4 +1,7 @@
-import { ClankCardConfig } from '@shared/clank/clank-card.types';
+import {
+    ClankCardBaseConfigEvents,
+    ClankCardConfig,
+} from '@shared/clank/clank-card.types';
 
 export interface ISelectedPlayerCardInfo {
     id: string;
@@ -7,12 +10,14 @@ export interface ISelectedPlayerCardInfo {
     classes: string[];
     actions: ISelectedPlayerCardAction[];
     isOpen?: boolean;
+    handIndex?: number;
     disablePopover?: boolean;
     openByHover?: boolean;
 }
 
 export interface ISelectedPlayerCardAction {
     name: string;
+    eventName: keyof ClankCardBaseConfigEvents | null;
     btnClass: string;
     canUse: () => boolean;
     callback: () => void;
