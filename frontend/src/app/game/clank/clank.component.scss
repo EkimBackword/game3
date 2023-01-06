@@ -83,6 +83,13 @@ $clank_info_width: 200px;
         margin: 0.8rem 0;
     }
 
+    .player_row {
+        cursor: pointer;
+        &:hover {
+            background-color: #ccc;
+        }
+    }
+
     .clank_aria_player_img {
         height: 25px;
         margin-right: 0.4rem;

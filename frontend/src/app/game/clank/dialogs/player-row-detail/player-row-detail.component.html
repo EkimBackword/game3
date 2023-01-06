@@ -1,0 +1,60 @@
+<h1 mat-dialog-title>
+    <ng-container *ngIf="data.config.isEscaped">
+        {{data.name}} выбрался (+ 20 Победных очков)
+    </ng-container>
+    <ng-container *ngIf="!data.config.isEscaped && data.config.isRescued">
+        {{data.name}} потерял сознание, но был спасён
+    </ng-container>
+    <ng-container *ngIf="!data.config.isEscaped && !data.config.isRescued">
+        {{data.name}} потерял сознание в глубинах и он не участвует в подсчёте
+    </ng-container>
+</h1>
+<div mat-dialog-content class="d-flex flex-column">
+    <label>
+        <strong>Жетоны:</strong> {{data.tokens.points}}
+    </label>
+    <div class="element-list">
+        <p *ngIf="!data.tokens.list.length">Жетонов нет</p>
+        <app-clank-token
+            class="element-item token"
+            *ngFor="let item of data.tokens.list"
+            [isOpen]="true"
+            [token]="item"
+            [size]="50"
+        ></app-clank-token>
+    </div>
+
+    <label>
+        <strong>Артефакты:</strong> {{data.artifacts.points}}
+    </label>
+    <div class="element-list">
+        <p *ngIf="!data.artifacts.list.length">Игрок без артефактов не участвует в подсчёте</p>
+        <app-clank-artifact
+            class="element-item"
+            *ngFor="let item of data.artifacts.list"
+            [data]="item"
+            [height]="50"
+        ></app-clank-artifact>
+    </div>
+
+    <label>
+        <strong>Карты:</strong> {{data.cards.points}}
+    </label>
+    <div class="element-list">
+        <p *ngIf="!list.length">Карт нет</p>
+        <app-clank-card
+            class="element-item"
+            *ngFor="let item of list"
+            [width]="cardsWrapInfo.cardWidth"
+            [height]="cardsWrapInfo.cardHeight"
+            [data]="item.data"
+        ></app-clank-card>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end">
+    <button class="btn btn-primary m-1"
+        type="submit"
+        (click)="close()">
+        Закрыть
+    </button>
+</div>

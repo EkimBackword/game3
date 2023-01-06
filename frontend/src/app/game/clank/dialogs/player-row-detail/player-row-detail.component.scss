@@ -1,0 +1,15 @@
+.element-list {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+}
+
+.element-item {
+    margin: 0.4rem;
+}
+
+.token {
+    width: auto;
+}

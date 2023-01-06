@@ -4,6 +4,7 @@ import {
     Component,
     OnInit,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
     ActivatedRoute,
     Router,
@@ -19,11 +20,13 @@ import {
     takeUntil,
 } from 'rxjs/operators';
 import { CardsService } from 'src/app/game/clank/services/cards.service';
+import { cardWidth } from 'src/app/shared/components/clank-card/clank-card.types';
 import { PlayerPointsResult } from 'src/app/shared/models/players/player.types';
 
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import { GamePlayerColorList } from '@shared/clank/clank-player.types';
 
+import { PlayerRowDetailComponent } from './dialogs/player-row-detail/player-row-detail.component';
 import { ClankHelpService } from './services/clank-help.service';
 import { GameInfoQuery } from './services/game-info.query';
 import { GameInfoService } from './services/game-info.service';
@@ -56,37 +59,65 @@ export class ClankComponent implements OnInit {
                     name: player.name,
                     colorInfo: GamePlayerColorList[player.colorId],
                     coins: 0,
-                    tokens: 0,
-                    artifacts: 0,
+                    tokens: {
+                        points: 0,
+                        list: [],
+                    },
+                    artifacts: {
+                        points: 0,
+                        list: [],
+                    },
+                    cards: {
+                        points: 0,
+                        list: [],
+                    },
                     master: 0,
-                    cards: 0,
                     total: 0,
                 };
-                if (!player.isEscaped && !player.isRescued) {
+                if ((!player.isEscaped && !player.isRescued) || (player.artifacts.length === 0)) {
                     return result;
                 }
                 result.coins = player.benefitInfo.coin ?? 0;
                 result.master = player.isEscaped ? 20 : 0;
-                result.tokens = player.tokens.reduce((acc, token) => acc + (token.points?.value ?? 0), 0);
-                result.artifacts = player.artifacts.reduce((acc, artefact) => acc + (artefact.points?.value ?? 0), 0);
+                result.tokens = player.tokens.reduce((acc, token) => {
+                    const points = token.points?.value ?? 0;
+                    if (points > 0) {
+                        acc.points += points;
+                        acc.list.push(token);
+                    }
+                    return acc;
+                }, result.tokens);
+                result.artifacts = player.artifacts.reduce((acc, artefact) => {
+                    const points = artefact.points?.value ?? 0;
+                    if (points > 0) {
+                        acc.points += points;
+                        acc.list.push(artefact);
+                    }
+                    return acc;
+                }, result.artifacts);
                 const cardList = [
                     ...player.deck,
                     ...player.board,
                     ...player.discard,
                     ...player.hand,
                 ];
-                for (const card of cardList) {
-                    result.cards += this.cardsService.getPoints({
+                result.cards = cardList.reduce((acc, card) => {
+                    const points = this.cardsService.getPoints({
                         state,
                         player,
                         card,
                     });
-                }
+                    if (points > 0) {
+                        acc.points += points;
+                        acc.list.push(card);
+                    }
+                    return acc;
+                }, result.cards);
                 result.total = result.coins
-                    + result.tokens
-                    + result.artifacts
-                    + result.master
-                    + result.cards;
+                    + result.tokens.points
+                    + result.artifacts.points
+                    + result.cards.points
+                    + result.master;
                 if (winner == null || winner.total < result.total) {
                     winner = result;
                 }
@@ -107,6 +138,7 @@ export class ClankComponent implements OnInit {
         private gameInfoService: GameInfoService,
         private gameInfoQuery: GameInfoQuery,
         private cardsService: CardsService,
+        private matDialog: MatDialog,
     ) { }
 
     ngOnInit(): void {
@@ -138,6 +170,16 @@ export class ClankComponent implements OnInit {
 
     exitGame() {
         this.router.navigate(['/']);
+    }
+
+    openPlayerRowDetail(player: PlayerPointsResult) {
+        this.matDialog.open(
+            PlayerRowDetailComponent,
+            {
+                data: player,
+                width: `${cardWidth * 5}px`,
+            },
+        );
     }
 
 }

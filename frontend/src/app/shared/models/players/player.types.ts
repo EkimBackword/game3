@@ -1,3 +1,5 @@
+import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
+import { ClankCardConfig } from '@shared/clank/clank-card.types';
 import {
     ClankCostInfo,
     ClankElementByMarket,
@@ -8,16 +10,26 @@ import {
     ClankPlayerConfig,
     GamePlayerColorInfo,
 } from '@shared/clank/clank-player.types';
+import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
 export interface PlayerPointsResult {
     name: string;
     config: ClankPlayerConfig;
     colorInfo: GamePlayerColorInfo;
     coins: number;
-    tokens: number;
-    artifacts: number;
+    tokens: {
+        points: number;
+        list: ClankTokenConfig[];
+    };
+    artifacts: {
+        points: number;
+        list: ClankArtifactConfig[];
+    };
+    cards: {
+        points: number;
+        list: ClankCardConfig[];
+    };
     master: number;
-    cards: number;
     total: number;
 }
 

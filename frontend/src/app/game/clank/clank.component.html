@@ -35,15 +35,6 @@
                             </th>
                             <th>
                                 <img class="clank_table_head_img"
-                                    ngSrc="/assets/images/tokens/bonus/master.png"
-                                    [height]="50"
-                                    [width]="50"
-                                    alt="Жетон мастерства"
-                                    matTooltip="Жетон мастерства"
-                                    matTooltipPosition="above">
-                            </th>
-                            <th>
-                                <img class="clank_table_head_img"
                                     ngSrc="/assets/images/artefact.png"
                                     [height]="50"
                                     [width]="50"
@@ -61,12 +52,23 @@
                                     matTooltipPosition="above">
                             </th>
                             <th>
+                                <img class="clank_table_head_img"
+                                    ngSrc="/assets/images/tokens/bonus/master.png"
+                                    [height]="50"
+                                    [width]="50"
+                                    alt="Жетон мастерства"
+                                    matTooltip="Жетон мастерства"
+                                    matTooltipPosition="above">
+                            </th>
+                            <th>
                                 <div>Итог</div>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let player of result.rows">
+                        <tr *ngFor="let player of result.rows"
+                            class="player_row"
+                            (click)="openPlayerRowDetail(player)">
                             <td class="player_name_cell">
                                 <div class="player_name_cell_element">
                                     <img class="clank_aria_player_img"
@@ -78,10 +80,10 @@
                                 </div>
                             </td>
                             <td class="to_right">{{player.coins}}</td>
-                            <td class="to_right">{{player.tokens}}</td>
+                            <td class="to_right">{{player.tokens.points}}</td>
+                            <td class="to_right">{{player.artifacts.points}}</td>
+                            <td class="to_right">{{player.cards.points}}</td>
                             <td class="to_right">{{player.master}}</td>
-                            <td class="to_right">{{player.artifacts}}</td>
-                            <td class="to_right">{{player.cards}}</td>
                             <td class="to_right total">{{player.total}}</td>
                         </tr>
                     </tbody>
