@@ -59,20 +59,23 @@ export class CardListComponent implements OnInit {
         this.list = this.data.cards.map((card) => {
             const item = new CardListItem(card);
             item.value = this.totalCount === 0;
-            item.data.actions.push({
-                name: 'Выбрать карту',
-                eventName: null,
-                btnClass: 'btn-primary',
-                canUse: () => !item.value && this.selectedCount < this.totalCount,
-                callback: () => this.onSelect(item),
-            });
-            item.data.actions.push({
-                name: 'Снять выбор',
-                eventName: null,
-                btnClass: 'btn-danger',
-                canUse: () => item.value && this.totalCount > 0,
-                callback: () => this.onSelect(item),
-            });
+            if (!item.value) {
+                item.data.action = {
+                    name: 'Выбрать карту',
+                    eventName: null,
+                    btnClass: 'btn-primary',
+                    canUse: () => this.selectedCount < this.totalCount,
+                    callback: () => this.onSelect(item),
+                };
+            } else {
+                item.data.action = {
+                    name: 'Снять выбор',
+                    eventName: null,
+                    btnClass: 'btn-danger',
+                    canUse: () => this.totalCount > 0,
+                    callback: () => this.onSelect(item),
+                };
+            }
             return item;
         });
     }

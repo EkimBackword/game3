@@ -101,7 +101,6 @@ export class TrashCardsComponent implements OnInit {
                         card,
                         classes: [],
                         isOpen: true,
-                        actions: [],
                         style: {},
                     },
                     value: false,

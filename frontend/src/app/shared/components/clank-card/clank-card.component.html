@@ -6,6 +6,7 @@
 </ng-template>
 
 <div class="card_container" *ngIf="data"
+    (click)="useCard()"
     [ngClass]="data.classes"
     [class.card_container__by_hover]="openByHover"
     [ngbPopover]="popContent"
@@ -29,13 +30,10 @@
             </div>
         </div>
     </div>
-    <div class="card_actions" *ngIf="actions.length > 0">
-        <ng-container *ngFor="let action of actions">
-            <button class="btn btn-sm"
-                [ngClass]="action.btnClass"
-                (click)="action.callback()">
-                {{action.name}}
-            </button>
-        </ng-container>
+    <div class="card_actions" *ngIf="canUse && data.action">
+        <button class="btn btn-sm"
+            [ngClass]="data.action.btnClass">
+            {{data.action.name}}
+        </button>
     </div>
 </div>

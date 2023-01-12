@@ -83,7 +83,6 @@ export class ClankDungeonRowComponent implements OnInit {
                     },
                     isOpen: false,
                     classes: [],
-                    actions: [],
                 }]
                 : [];
             const dungeonRow: ISelectedPlayerCardInfo[] = dungeonRowCards.map((card, index) => {
@@ -96,13 +95,13 @@ export class ClankDungeonRowComponent implements OnInit {
                     },
                     isOpen: true,
                     classes: [],
-                    actions: [{
+                    action: {
                         name: this.data.cardsService.getCardActionName(card, 'onAcquire'),
                         eventName: 'onAcquire',
                         btnClass: 'btn-primary',
                         canUse: () => this.activePlayer?.id === this.currentPlayer?.id,
                         callback: () => this.buyCard(card),
-                    }],
+                    },
                 };
                 return data;
             });
@@ -120,13 +119,13 @@ export class ClankDungeonRowComponent implements OnInit {
                     },
                     isOpen: true,
                     classes: [],
-                    actions: [{
+                    action: {
                         name: this.data.cardsService.getCardActionName(card, 'onAcquire'),
                         eventName: 'onAcquire',
                         btnClass: 'btn-primary',
                         canUse: () => this.activePlayer?.id === this.currentPlayer?.id,
                         callback: () => this.buyCard(card),
-                    }],
+                    },
                 };
                 return data;
             });

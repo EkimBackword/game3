@@ -168,11 +168,10 @@ export class ClankPlayerInfoComponent implements OnInit {
         const hand = list.filter(p => p.handIndex != null)
             .sort((a, b) => (a.handIndex ?? 0) - (b.handIndex ?? 0));
         for (const item of hand) {
-            const action = item.actions.find(p => p.eventName === 'onUse');
-            if (action == null || !action.canUse()) {
+            if (item.action == null || item.action.eventName !== 'onUse' || !item.action.canUse()) {
                 continue;
             }
-            await action.callback();
+            await item.action.callback();
         }
     }
 
@@ -249,7 +248,6 @@ export class ClankPlayerInfoComponent implements OnInit {
                 isOpen: false,
                 disablePopover: true,
                 classes: [],
-                actions: [],
             };
             return data;
         });
@@ -265,7 +263,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 isOpen: true,
                 disablePopover: true,
                 classes: [],
-                actions: [{
+                action: {
                     name: 'Посмотреть карты',
                     eventName: null,
                     btnClass: 'btn-primary',
@@ -276,7 +274,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                             cards: player.board,
                         });
                     },
-                }],
+                },
             };
             return data;
         });
@@ -292,7 +290,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 isOpen: true,
                 disablePopover: true,
                 classes: [],
-                actions: [{
+                action: {
                     name: 'Посмотреть карты',
                     eventName: null,
                     btnClass: 'btn-primary',
@@ -303,7 +301,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                             cards: player.discard,
                         });
                     },
-                }],
+                },
             };
             return data;
         });
@@ -323,7 +321,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 isOpen: true,
                 handIndex: index,
                 classes: [`card_container__hand`],
-                actions: [{
+                action: {
                     name: this.cardsService.getCardActionName(card, 'onUse'),
                     eventName: 'onUse',
                     btnClass: 'btn-primary',
@@ -334,7 +332,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                         await this.gameInfoService.useCard(card, 'onUse');
                         this.changeDetectorRef.detectChanges();
                     },
-                }],
+                },
             };
             return data;
         });

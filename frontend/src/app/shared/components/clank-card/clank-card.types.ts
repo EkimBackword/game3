@@ -8,7 +8,7 @@ export interface ISelectedPlayerCardInfo {
     card: ClankCardConfig;
     style: Partial<CSSStyleDeclaration>;
     classes: string[];
-    actions: ISelectedPlayerCardAction[];
+    action?: ISelectedPlayerCardAction;
     isOpen?: boolean;
     handIndex?: number;
     disablePopover?: boolean;
@@ -37,7 +37,6 @@ export class CardListItem {
             openByHover: false,
             style: {},
             classes: [],
-            actions: [],
         };
     }
 

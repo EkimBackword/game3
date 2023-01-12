@@ -19,10 +19,7 @@ import {
     ClankCardWidth,
 } from '@shared/clank/clank-card.types';
 
-import {
-    ISelectedPlayerCardAction,
-    ISelectedPlayerCardInfo,
-} from './clank-card.types';
+import { ISelectedPlayerCardInfo } from './clank-card.types';
 
 @Component({
     selector: 'app-clank-card',
@@ -39,7 +36,7 @@ export class ClankCardComponent implements OnInit, OnChanges, OnDestroy {
     @Input() onChangeSubject: Subject<boolean> | undefined;
     card: ClankCardConfig | undefined;
     style: Partial<CSSStyleDeclaration> = {};
-    actions: ISelectedPlayerCardAction[] = [];
+    canUse = false;
 
     @HostBinding('style.--card_width') card_width = `${this.width}px`;
     @HostBinding('style.--card_height') card_height = `${this.height}px`;
@@ -79,6 +76,13 @@ export class ClankCardComponent implements OnInit, OnChanges, OnDestroy {
         this.style = this.getStyle();
     }
 
+    useCard() {
+        if (!this.data?.action?.canUse()) {
+            return;
+        }
+        this.data?.action?.callback();
+    }
+
     private init() {
         this.updateCardInfo();
         this.updateStyle();
@@ -87,7 +91,7 @@ export class ClankCardComponent implements OnInit, OnChanges, OnDestroy {
 
     private updateCardInfo() {
         this.card = this.data?.card;
-        this.actions = this.data?.actions.filter(p => p.canUse()) ?? [];
+        this.canUse = this.data?.action?.canUse() ?? false;
     }
 
     private getStyle() {
