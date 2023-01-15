@@ -121,6 +121,10 @@ export class ClankGameInfoComponent implements OnInit {
         this.router.navigate(['/']);
     }
 
+    kickUser(userId: string) {
+        this.gameInfoService.kickUser(userId);
+    }
+
     trackById(index: number, item: { id: any }) {
         return item.id;
     }

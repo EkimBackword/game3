@@ -10,6 +10,7 @@ import {
     Subject,
 } from 'rxjs';
 import { CardsService } from 'src/app/game/clank/services/cards.service';
+import { SessionQuery } from 'src/app/session/session.query';
 import { ClankOneTurnInfo } from 'src/app/shared/models/clank-element-types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { ArtifactsService } from 'src/app/shared/services/artifacts.service';
@@ -71,6 +72,7 @@ export class GameInfoService implements OnDestroy {
         private toastService: ToastService,
         private tokensService: TokensService,
         private soundService: SoundService,
+        private sessionQuery: SessionQuery,
         private router: Router,
     ) {
     }
@@ -109,6 +111,13 @@ export class GameInfoService implements OnDestroy {
             this.gameInfoStore.update(state);
         });
 
+        this.socket.on('userKicked', (userId) => {
+            if (userId !== this.sessionQuery.id) {
+                return;
+            }
+            this.router.navigate(['/']);
+        });
+
         this.socket.on('error', (message, type) => {
             this.toastService.showError(message);
             if (type === SocketErrorTypeEnum.gameNotFound) {
@@ -142,6 +151,10 @@ export class GameInfoService implements OnDestroy {
             this.isMapElementIdShowSubject.next(value);
             this.useManualFunctionSubject.next();
         };
+    }
+
+    kickUser(userId: string) {
+        this.socket?.emit('kickUser', userId);
     }
 
     changeMap(mapInfo: ClankMapConfig) {

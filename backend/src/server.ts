@@ -242,6 +242,14 @@ io.of(gameRegExp).on('connection', (socket) => {
         clankNamespace.emit('gameUpdated', state);
     });
 
+    socket.on('kickUser', (userId: string) => {
+        const userSocket = [...socket.nsp.sockets.values()].find(p => p.handshake.auth.id === userId);
+        if (userSocket == null) {
+            return;
+        }
+        userSocket.emit('userKicked', userId);
+    });
+
     socket.on('disconnect', () => {
         onDisconnect();
         console.log(`${user?.name} disconnected from ${clankNamespace.name}`);

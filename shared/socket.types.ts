@@ -9,6 +9,8 @@ export interface ServerToClientEvents {
     gameListChanged: (list: GameInfoState[]) => void
     /** game room */
     gameUpdated: (state: GameInfoState) => void;
+    /** game room */
+    userKicked: (userId: string) => void;
     error: (message: string, type: SocketErrorTypeEnum) => void;
 }
 
@@ -16,6 +18,7 @@ export interface ClientToServerEvents {
     addGame: (game: GameInfoState) => void;
     updateGame: (state: GameInfoState) => void;
     cancelState: (state: GameInfoState) => void;
+    kickUser: (userId: string) => void;
 }
 
 export interface InterServerEvents {
