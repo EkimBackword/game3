@@ -99,3 +99,9 @@ body {
     padding: 0 !important;
     background: transparent !important
 }
+
+.my-mat-bottom-sheet-container {
+    .mat-bottom-sheet-container {
+        max-height: 100vh;
+    }
+}

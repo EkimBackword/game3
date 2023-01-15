@@ -159,6 +159,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                     clankHelpService: this.clankHelpService,
                     cardsService: this.cardsService,
                 },
+                panelClass: 'my-mat-bottom-sheet-container',
             },
         );
     }
