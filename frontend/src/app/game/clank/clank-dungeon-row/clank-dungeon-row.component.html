@@ -27,6 +27,7 @@
     <div class="position-relative">
         <app-clank-card class="position-absolute"
             *ngFor="let cardInfo of (cardsSubject | async); trackBy: trackById"
+            [@inOutAnimation]
             [width]="cardsWrapInfo.cardWidth"
             [height]="cardsWrapInfo.cardHeight"
             [data]="cardInfo"

@@ -1,4 +1,10 @@
 import {
+    animate,
+    style,
+    transition,
+    trigger,
+} from '@angular/animations';
+import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
@@ -41,6 +47,20 @@ import { GameInfoService } from '../services/game-info.service';
     templateUrl: './clank-dungeon-row.component.html',
     styleUrls: ['./clank-dungeon-row.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    animations: [
+        trigger(
+            'inOutAnimation',
+            [
+                transition(
+                    ':leave',
+                    [
+                        style({ marginTop: 0, opacity: 1 }),
+                        animate('300ms ease-in', style({ marginTop: -100, opacity: 0 })),
+                    ],
+                ),
+            ],
+        ),
+    ],
 })
 export class ClankDungeonRowComponent implements OnInit {
 
@@ -111,7 +131,9 @@ export class ClankDungeonRowComponent implements OnInit {
                 const index = reserveRowGroups.get(find_string) ?? reserveRowGroups.size;
                 reserveRowGroups.set(find_string, index);
                 const data: ISelectedPlayerCardInfo = {
-                    id: card.id,
+                    id: card.count > 0
+                        ? card.id
+                        : `${card.id}-${this.buyEndlessCount}`,
                     card,
                     style: {
                         left: `${(cardWidth + cardsWrapPadding) * index}px`,
@@ -161,6 +183,8 @@ export class ClankDungeonRowComponent implements OnInit {
     activePlayer: ClankPlayerConfig | undefined;
     currentPlayer: ClankPlayerConfig | undefined;
 
+    private buyEndlessCount = 0;
+
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private toastService: ToastService,
@@ -195,6 +219,7 @@ export class ClankDungeonRowComponent implements OnInit {
             this.toastService.showWarn(`Можно купить только в Кристальной пещере`);
             return;
         }
+        this.buyEndlessCount += card.count >= 0 ? 0 : 1;
         this.data.gameInfoService.useCard(card, 'onAcquire');
         this.changeDetectorRef.detectChanges();
     }
