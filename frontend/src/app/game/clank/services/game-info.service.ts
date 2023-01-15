@@ -34,7 +34,10 @@ import {
     GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
 import { ClankCostInfo } from '@shared/clank/clank-info.types';
-import { ClankMapElementConfig } from '@shared/clank/clank-map.types';
+import {
+    ClankMapConfig,
+    ClankMapElementConfig,
+} from '@shared/clank/clank-map.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorIdEnum,
@@ -139,6 +142,14 @@ export class GameInfoService implements OnDestroy {
             this.isMapElementIdShowSubject.next(value);
             this.useManualFunctionSubject.next();
         };
+    }
+
+    changeMap(mapInfo: ClankMapConfig) {
+        this.gameInfoStore.update(() => ({
+            mapId: mapInfo.id,
+            mapDlcId: mapInfo.dlc_id,
+        }));
+        this.updateSocketState({ canCancel: false });
     }
 
     updatePlayer(id: string, player: Partial<ClankPlayerConfig>) {
@@ -274,6 +285,37 @@ export class GameInfoService implements OnDestroy {
         if (skipSocketUpdate) {
             return;
         }
+        this.updateSocketState({ canCancel: false });
+    }
+
+    async resetGame() {
+        this.gameInfoStore.update((state) => {
+            return {
+                statusId: GameInfoStatusIdEnum.Created,
+                activePlayerIndex: 0,
+                activePlayerId: '',
+                players: state.players.map(p => {
+                    return {
+                        ...p,
+                        benefitInfo: {
+                            heal: 10,
+                            coin: 0,
+                        },
+                        deck: [],
+                        hand: [],
+                        board: [],
+                        discard: [],
+                        trash: [],
+                        tokens: [],
+                        artifacts: [],
+                        isRescued: false,
+                        isEscaped: false,
+                        isFinish: false,
+                    };
+                }),
+                actionLogs: [],
+            };
+        });
         this.updateSocketState({ canCancel: false });
     }
 

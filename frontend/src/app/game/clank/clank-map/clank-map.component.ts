@@ -46,6 +46,7 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
                 ? `url(${mapInfo.url})`
                 : null;
             this.onResize();
+            this.changeDetectorRef.detectChanges();
         }),
     );
 

@@ -168,8 +168,8 @@ export class ClankComponent implements OnInit {
         this.ngUnsubscribe.complete();
     }
 
-    startGame() {
-        this.gameInfoService.startGame();
+    resetGame() {
+        this.gameInfoService.resetGame();
     }
 
     exitGame() {

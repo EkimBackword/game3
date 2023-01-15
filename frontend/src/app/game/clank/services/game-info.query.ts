@@ -30,6 +30,7 @@ import {
     GameInfoActionLog,
     GameInfoActionLogType,
     GameInfoState,
+    GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
 import {
     GamePlayerColorIdEnum,
@@ -145,8 +146,11 @@ export class GameInfoQuery extends Query<GameInfoState> {
 
     onReserveRowChangeSubject = this.select('reserveRow');
 
-    onActivePlayerChangeSubject = this.select(['activePlayerId', 'players']).pipe(
-        map(state => state.players.find(p => p.id === state.activePlayerId)),
+    onActivePlayerChangeSubject = this.select(['activePlayerId', 'players', 'statusId']).pipe(
+        map(state => state.statusId !== GameInfoStatusIdEnum.Created
+            ? state.players.find(p => p.id === state.activePlayerId)
+            : undefined,
+        ),
         shareReplay(1),
     );
 

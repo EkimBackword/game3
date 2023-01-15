@@ -143,6 +143,9 @@ export class ClankHelpService {
         player: ClankPlayerConfig;
         count: number;
     }) {
+        if (player.isFinish) {
+            return;
+        }
         if (state != null) {
             this.addActionLogs({
                 state,

@@ -181,7 +181,7 @@ export const getClankMapMin2 = () => {
         },
         elements: [
             {
-                id: 0,
+                id: 1,
                 position: {
                     x: 82,
                     y: 99,
@@ -190,7 +190,7 @@ export const getClankMapMin2 = () => {
                 },
                 links: [
                     {
-                        element_id: 1,
+                        element_id: 0,
                         cost: {
                             boot: 1,
                         },
@@ -199,7 +199,7 @@ export const getClankMapMin2 = () => {
                 isStart: true,
             },
             {
-                id: 1,
+                id: 0,
                 position: {
                     x: 734,
                     y: 310,
@@ -208,7 +208,7 @@ export const getClankMapMin2 = () => {
                 },
                 links: [
                     {
-                        element_id: 0,
+                        element_id: 1,
                         cost: {
                             boot: 1,
                         },
@@ -237,7 +237,7 @@ export const getClankMapMin2 = () => {
                 },
                 links: [
                     {
-                        element_id: 1,
+                        element_id: 0,
                         cost: {
                             teleport: 1,
                         },
@@ -251,7 +251,7 @@ export const getClankMapMin2 = () => {
                     {
                         element_id: 8,
                         cost: {
-                            teleport: 1,
+                            boot: 1,
                         },
                     },
                 ],
@@ -401,7 +401,7 @@ export const getClankMapMin2 = () => {
                 },
                 links: [
                     {
-                        element_id: 1,
+                        element_id: 0,
                         cost: {
                             boot: 1,
                         },
