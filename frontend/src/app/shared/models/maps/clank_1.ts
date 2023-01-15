@@ -14,7 +14,6 @@ export const getClankMapFirst = () => {
         height: 3000,
         dragonInfo: {
             url: '/assets/images/dragon.png',
-            maxRage: 6,
             clankAria: {
                 x: 2340,
                 y: 500,

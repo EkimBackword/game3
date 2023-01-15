@@ -279,6 +279,7 @@ export class GameInfoService implements OnDestroy {
 
     async startGame() {
         let subtext = '';
+        const mapInfo = this.gameInfoQuery.mapInfo;
         const state = lodash.cloneDeep(this.gameInfoQuery.getValue());
         state.statusId = GameInfoStatusIdEnum.Started;
         const playerCount = state.players.length;
@@ -286,6 +287,7 @@ export class GameInfoService implements OnDestroy {
         const activePlayer = state.players[state.activePlayerIndex];
         subtext += `Первым ход будет делать ${activePlayer.name}\r\n`;
         state.activePlayerId = activePlayer.id;
+        const startElement = mapInfo?.elements.find(p => p.isStart);
         state.players = state.players.map(player => {
             const deck = this.cardsService.getStartDeckCards(
                 state.mapDlcId,
@@ -293,7 +295,7 @@ export class GameInfoService implements OnDestroy {
             );
             const config: ClankPlayerConfig = {
                 ...player,
-                elementId: 1,
+                elementId: startElement?.id ?? 1,
                 benefitInfo: {
                     heal: 10,
                     coin: 0,
@@ -316,7 +318,7 @@ export class GameInfoService implements OnDestroy {
             });
             return config;
         });
-        const dragonTrackInfo = this.gameInfoQuery.mapInfo?.dragonInfo.track.find(p => p.startUserCount === playerCount);
+        const dragonTrackInfo = mapInfo?.dragonInfo.track.find(p => p.startUserCount === playerCount);
         state.dragonInfo = initDragonInfo(dragonTrackInfo?.rage, playerCount);
         state.players.forEach((player, index) => {
             const clankIndex = index < state.activePlayerIndex

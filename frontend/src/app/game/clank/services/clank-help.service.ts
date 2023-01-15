@@ -281,8 +281,9 @@ export class ClankHelpService {
     }
 
     increaseDragonRage(state: GameInfoState) {
-        const maxRage = this.gameInfoQuery.mapInfo?.dragonInfo.maxRage ?? 0;
-        if (state.dragonInfo.rage === maxRage) {
+        const track = this.gameInfoQuery.mapInfo?.dragonInfo.track ?? [];
+        const lastTrackElement = track[track.length - 1];
+        if (state.dragonInfo.rage === lastTrackElement.rage) {
             return;
         }
         state.dragonInfo.rage++;

@@ -5,18 +5,18 @@ import {
 } from './clank-info.types';
 
 export enum ClankMapConfigIds {
-    clank_1,
-    clank_2,
-    clank_sunken_treasures_1,
-    clank_sunken_treasures_2,
-    clank_proklyatie_mumii_1,
-    clank_proklyatie_mumii_2,
-    clank_expeditions_goldand_silk_1,
-    clank_expeditions_goldand_silk_2,
-    clank_temple_of_the_ape_lords_1,
-    clank_temple_of_the_ape_lords_2,
-    clank_adventuring_party_1,
-    clank_adventuring_party_2,
+    clank_1 = 1,
+    clank_2 = 2,
+    clank_sunken_treasures_1 = 3,
+    clank_sunken_treasures_2 = 4,
+    clank_proklyatie_mumii_1 = 5,
+    clank_proklyatie_mumii_2 = 6,
+    clank_expeditions_goldand_silk_1 = 7,
+    clank_expeditions_goldand_silk_2 = 8,
+    clank_temple_of_the_ape_lords_1 = 9,
+    clank_temple_of_the_ape_lords_2 = 1,
+    clank_adventuring_party_1 = 11,
+    clank_adventuring_party_2 = 12,
 }
 
 export interface ClankMapConfig {
@@ -32,7 +32,6 @@ export interface ClankMapConfig {
 
 export interface ClankMapDragonInfo {
     url: string;
-    maxRage: number;
     clankAria: ClankMapPositionInfo;
     track: ClankMapDragonTrackItem[];
     endGameTrack: ClankMapDragonEndGameTrackItem[];

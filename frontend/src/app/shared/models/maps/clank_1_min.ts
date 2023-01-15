@@ -8,13 +8,12 @@ export const getClankMapMinFirst = () => {
     const map: ClankMapConfig = {
         id: ClankMapConfigIds.clank_1,
         dlc_id: ClankDlcEnum.clank,
-        name: 'Кланк! Подземное приключение',
+        name: 'Кланк! Базовая сторона',
         url: '/assets/images/maps/clank_1_min.png',
         width: 3000,
         height: 2675,
         dragonInfo: {
             url: '/assets/images/dragon.png',
-            maxRage: 6,
             clankAria: {
                 x: 2340,
                 y: 500,
