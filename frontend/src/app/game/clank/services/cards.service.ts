@@ -181,7 +181,7 @@ export class CardsService {
                 }
                 const isPlayerUpdate = this.clankHelpService.updateBenefitInfo({
                     player,
-                    cost: eventInfo.cost,
+                    cost,
                     benefit: eventInfo.benefit,
                 });
                 if (!isPlayerUpdate) {
