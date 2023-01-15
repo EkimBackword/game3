@@ -107,6 +107,9 @@ export class ClankHelpService {
         player: ClankPlayerConfig;
         count: number;
     }) {
+        if (player.isFinish) {
+            return;
+        }
         const isAdd = count > 0;
         const text = isAdd
             ? 'получил'
