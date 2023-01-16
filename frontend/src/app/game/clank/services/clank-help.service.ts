@@ -316,18 +316,27 @@ export class ClankHelpService {
         state.dragonInfo.clankBag = this.simpleShuffle(state.dragonInfo.clankBag);
         const attackResult = state.players.reduce((acc, player) => {
             acc[player.colorId] = {
+                isDragon: false,
                 name: player.name,
                 value: 0,
+                initHeal: player.benefitInfo.heal ?? 0,
+                heal: player.benefitInfo.heal ?? 0,
             };
             return acc;
         }, {
             [GamePlayerColorIdEnum.Black]: {
+                isDragon: true,
                 name: 'Дракон',
                 value: 0,
+                initHeal: 0,
+                heal: 0,
             },
         } as Record<GamePlayerColorIdEnum, {
+            isDragon: boolean;
             name: string;
             value: number;
+            initHeal: number;
+            heal: number;
         }>);
         const dangerRage = state.dungeonRow.reduce((acc, card) => acc + (card.danger ?? 0), 0);
         const mapInfo = this.gameInfoQuery.mapInfo;
@@ -350,6 +359,7 @@ export class ClankHelpService {
                     heal: -1,
                 },
             });
+            attackResult[colorId].heal = player.benefitInfo.heal ?? 0;
         }
         // TODO: Добавить кубики для отображения атаки дракона
         this.addActionLogs({
@@ -357,7 +367,10 @@ export class ClankHelpService {
             type: GameInfoActionLogType.Dragon,
             data: {
                 text: `Дракон атакует`,
-                subtext: Object.values(attackResult).map(p => `${p.name}: ${p.value} урона`).join('\r\n'),
+                subtext: Object.values(attackResult).map(p => p.isDragon
+                    ? `${p.name}: ${p.value} мимо`
+                    : `${p.name}: ${p.value} урона (${p.initHeal} -> ${p.heal})`,
+                ).join('\r\n'),
                 isDragon: true,
                 soundUrl: '/assets/sounds/DragonAttack.mp3',
             },
