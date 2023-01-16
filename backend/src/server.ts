@@ -11,6 +11,7 @@ import {
     GameInfoStatusIdEnum,
 } from '../../shared/clank/clank-game.types';
 import { ClankDlcEnum } from '../../shared/clank/clank-info.types';
+import { ClankMapConfigIds } from '../../shared/clank/clank-map.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorIds,
@@ -57,7 +58,7 @@ class GamesInfo {
             id: 'test',
             name: 'Test',
             statusId: GameInfoStatusIdEnum.Created,
-            mapId: 0,
+            mapId: ClankMapConfigIds.clank_1,
             mapDlcId: ClankDlcEnum.clank,
             dungeonDeck: [],
             dungeonRow: [],
