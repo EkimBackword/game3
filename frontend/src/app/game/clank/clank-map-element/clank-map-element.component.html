@@ -1,30 +1,35 @@
-<ng-container *ngIf="dataSubject | async">
+<ng-container *ngIf="{
+    data: dataSubject | async,
+    artifact: onArtifactsChangeSubject | async,
+    tokens: onTokensChangeSubject | async,
+    takenToken: onTakeTokenSubject | async
+} as asyncData">
     <ng-container *ngIf="mapElement != null">
         <div class="actions_layer"
             [class.crystal_cave]="mapElement.isCrystalCave">
             <div class="clank-artifact"
-                (click)="takeArtifact(artifact)"
-                *ngIf="(onArtifactsChangeSubject | async) as artifact"
+                (click)="takeArtifact(asyncData.artifact)"
+                *ngIf="asyncData.artifact"
                 [@inOutAnimation]>
                 <app-clank-artifact
-                    [data]="artifact"
+                    [data]="asyncData.artifact"
                 ></app-clank-artifact>
             </div>
-            <ng-container *ngIf="(onTokensChangeSubject | async) as tokens">
-                <div class="clank-artifact" *ngIf="tokens.length > 0 && visibleTokens.length > 0">
+            <ng-container *ngIf="asyncData.tokens">
+                <div class="clank-artifact" *ngIf="asyncData.tokens.length > 0 && visibleTokens.length > 0">
                     <app-clank-token
                         *ngFor="let token of visibleTokens"
                         [token]="token"
                     ></app-clank-token>
                 </div>
             </ng-container>
-            <ng-container *ngIf="(onTakeTokenSubject | async) as takenToken">
-                <div class="clank-artifact" *ngIf="takenToken != null">
+            <ng-container *ngIf="asyncData.takenToken">
+                <div class="clank-artifact" *ngIf="asyncData.takenToken != null">
                     <app-clank-token
-                        [class.used-token]="takenToken.isUsable && takenToken.isImmediatelyBenefit"
-                        [class.taken-token-usable]="takenToken.isUsable && !takenToken.isImmediatelyBenefit"
-                        [class.taken-token-nousable]="!takenToken.isUsable"
-                        [token]="takenToken"
+                        [class.used-token]="asyncData.takenToken.isUsable && asyncData.takenToken.isImmediatelyBenefit"
+                        [class.taken-token-usable]="asyncData.takenToken.isUsable && !asyncData.takenToken.isImmediatelyBenefit"
+                        [class.taken-token-nousable]="!asyncData.takenToken.isUsable"
+                        [token]="asyncData.takenToken"
                         [isOpen]="true"
                     ></app-clank-token>
                 </div>

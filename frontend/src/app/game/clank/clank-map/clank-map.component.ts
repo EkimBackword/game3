@@ -50,11 +50,11 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
     );
 
-    players = this.gameInfoQuery.onPlayersChangeSubject;
+    playersSubject = this.gameInfoQuery.onPlayersChangeSubject;
 
-    playersPosition = this.gameInfoQuery.onPlayersPositionChangeSubject;
+    playersPositionSubject = this.gameInfoQuery.onPlayersPositionChangeSubject;
 
-    dragonPosition = this.gameInfoQuery.onDragonPositionChangeSubject;
+    dragonPositionSubject = this.gameInfoQuery.onDragonPositionChangeSubject;
 
     GamePlayerColorList = GamePlayerColorList;
 

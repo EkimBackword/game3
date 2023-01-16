@@ -19,8 +19,32 @@
     padding: 0.25rem 0.25rem 0;
 }
 
-.nav-item {
+.clank-nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.clank-nav-item {
     cursor: pointer;
+    flex-shrink: 0;
+    max-width: 30%;
+}
+
+.clank-nav-link {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0.4rem;
+
+    .player_icon {
+        flex-shrink: 0;
+    }
 }
 
 .body {
@@ -37,13 +61,6 @@
 
 .footer {
     border-top: 1px solid var(--bs-black);
-}
-
-.player_name {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
 }
 
 .cards_wrap_header {

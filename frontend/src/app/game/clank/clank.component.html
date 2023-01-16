@@ -1,13 +1,16 @@
 <app-clank-player-info class="clank_player_info shadow-lg"></app-clank-player-info>
 <app-clank-map class="clank_map_info"></app-clank-map>
 <app-clank-game-info class="clank_game_info shadow-lg"></app-clank-game-info>
-<ng-container *ngIf="(statusSubject | async) as status">
-    <div class="clank_map_finish_info" *ngIf="status === GameInfoStatusIdEnum.Finished">
+<ng-container *ngIf="{
+    status: statusSubject | async,
+    result: playersSubject | async
+} as asyncData">
+    <div class="clank_map_finish_info" *ngIf="asyncData.status === GameInfoStatusIdEnum.Finished">
         <div class="clank_map_finish_info_block shadow">
             <h3 class="message p-2">
                 Игра закончена
             </h3>
-            <ng-container *ngIf="(playersSubject | async) as result">
+            <ng-container *ngIf="asyncData.result">
                 <table class="w-100 clank_table">
                     <thead>
                         <tr>
@@ -68,7 +71,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let player of result.rows"
+                        <tr *ngFor="let player of asyncData.result.rows"
                             class="player_row"
                             (click)="openPlayerRowDetail(player)">
                             <td class="player_name_cell">
@@ -101,8 +104,8 @@
                             </td>
                             <td class="total" colspan="6">
                                 <div class="winner_name"
-                                    [style.color]="result.winner?.colorInfo?.color">
-                                    {{result.winner?.name}}
+                                    [style.color]="asyncData.result.winner?.colorInfo?.color">
+                                    {{asyncData.result.winner?.name}}
                                 </div>
                             </td>
                         </tr>

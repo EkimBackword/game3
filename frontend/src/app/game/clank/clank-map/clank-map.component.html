@@ -1,4 +1,9 @@
-<ng-container *ngIf="mapSubject | async">
+<ng-container *ngIf="{
+    mapInfo: mapSubject | async,
+    players: playersSubject | async,
+    playersPosition: playersPositionSubject | async,
+    dragonPosition: dragonPositionSubject | async
+} as asyncData">
     <div class="clank_map_container"
         *ngIf="mapInfo != null"
         #clankMapContainer
@@ -12,14 +17,14 @@
             <app-clank-meeple
                 class="clank_map_player"
                 [class.clank_map_player__active]="item.isActive"
-                *ngFor="let item of (playersPosition | async); trackBy: trackById;"
+                *ngFor="let item of asyncData.playersPosition; trackBy: trackById;"
                 [player]="item.player"
                 [ngStyle]="item.style"
                 [size]="item.size"
             ></app-clank-meeple>
-            <ng-container *ngIf="(dragonPosition | async) as dragon">
+            <ng-container *ngIf="asyncData.dragonPosition">
                 <div class="clank_map_clank_aria position-absolute"
-                    [ngStyle]="dragon.clankAriaStyle">
+                    [ngStyle]="asyncData.dragonPosition.clankAriaStyle">
                     <div class="clank_aria_table w-100">
                         <div class="clank_aria_header">
                             <div class="clank_aria_row">
@@ -29,7 +34,7 @@
                         </div>
                         <div class="clank_aria_body">
                             <div class="clank_aria_row"
-                                *ngFor="let player of (players | async)">
+                                *ngFor="let player of asyncData.players">
                                 <div class="clank_aria_player">
                                     <img class="clank_aria_player_img"
                                         [ngSrc]="GamePlayerColorList[player.colorId].url"
@@ -41,15 +46,15 @@
                                     </div>
                                 </div>
                                 <div class="clank_aria_value">
-                                    {{dragon.dragonInfo.clankAria[player.colorId]}}
+                                    {{asyncData.dragonPosition.dragonInfo.clankAria[player.colorId]}}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="clank_map_dragon position-absolute"
-                    [ngStyle]="dragon.style"
-                    [matTooltip]="dragon.tooltip"
+                    [ngStyle]="asyncData.dragonPosition.style"
+                    [matTooltip]="asyncData.dragonPosition.tooltip"
                     matTooltipPosition="left">
                 </div>
             </ng-container>

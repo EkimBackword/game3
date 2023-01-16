@@ -1,192 +1,202 @@
-<ng-container *ngIf="(activePlayerSubject | async) && activePlayer != null">
-    <div class="header">
-        <ul class="nav nav-tabs">
-            <li class="nav-item" *ngFor="let player of (playersSubject | async); trackBy: trackById;"
-                (click)="onSelectPlayer(player)">
-                <div class="nav-link player_name"
-                    [class.active]="player.id === selectedPlayer?.id">
-                    <mat-icon
-                        [class.spin-lg]="player.id === activePlayer.id"
-                        aria-label="User icon">
-                        {{player.id === activePlayer.id ? 'update' : 'person'}}
-                    </mat-icon>
-                    {{player.name}}
-                </div>
-                <mat-progress-bar *ngIf="player.id === activePlayer.id" mode="buffer"></mat-progress-bar>
-            </li>
-        </ul>
-    </div>
-    <ng-container *ngIf="(selectedPlayerSubject | async) as player">
-        <div class="body" appScalableContainer>
-            <div class="cards_wrap_header">
-                <ng-container *ngIf="player.id === currentPlayer?.id;else otherPlayerAlert">
-                    <ngb-alert
-                        *ngIf="!player.isFinish && player.id == activePlayer.id"
-                        [dismissible]="false"
-                        [type]="'success'"
-                    >Ваш ход</ngb-alert>
-
-                    <ngb-alert
-                        *ngIf="!player.isFinish && player.id !== activePlayer.id"
-                        [dismissible]="false"
-                        [type]="'danger'"
-                    >Ход игрока <strong class="player_name">{{activePlayer.name}}</strong></ngb-alert>
-
-                    <ngb-alert
-                        *ngIf="player.isFinish && player.id !== activePlayer.id"
-                        [dismissible]="false"
-                        [type]="'secondary'"
-                    >Игра закончена (ожидайте других игроков)</ngb-alert>
-                </ng-container>
-                <ng-template #otherPlayerAlert>
-                    <ngb-alert
-                        [dismissible]="false"
-                        [type]="'info'"
-                    >Вы смотрите на экран <strong class="player_name">{{player.name}}</strong></ngb-alert>
-                </ng-template>
-            </div>
-            <div class="player_area p-1"
-                *ngIf="(selectedPlayerAreaSubject | async) as playerArea"
-                appScalable
-                [style.width.px]="playerArea.width"
-                [style.height.px]="playerArea.height">
-                <div class="d-flex flex-column flex-grow-1 position-relative card_container">
-                    <div class="position-absolute deck_header"
-                        [style.top.px]="0"
-                        [style.left]="cardsWrapInfo.deckLeft"
-                        [style.width.px]="cardsWrapInfo.cardWidth"
-                        [style.height.px]="cardsWrapInfo.headerHeight">
-                        <span class="text-uppercase text-muted deck_header_text">Колода</span>
-                        <span class="badge bg-secondary">{{player.deck.length}}</span>
+<ng-container *ngIf="{
+    activePlayer: activePlayerSubject | async,
+    players: playersSubject | async,
+    player: selectedPlayerSubject | async,
+    cards: selectedPlayerCardsSubject | async,
+    playerArea: selectedPlayerAreaSubject | async,
+    canCancel: canCancelSubject | async
+} as asyncData">
+    <ng-container *ngIf="asyncData.activePlayer">
+        <div class="header">
+            <ul class="nav nav-tabs clank-nav">
+                <li class="nav-item clank-nav-item" *ngFor="let player of asyncData.players; trackBy: trackById;"
+                    (click)="onSelectPlayer(player)">
+                    <div class="nav-link clank-nav-link"
+                        [class.active]="player.id === selectedPlayer?.id">
+                        <mat-icon
+                            class="player_icon"
+                            [class.spin-lg]="player.id === asyncData.activePlayer.id"
+                            aria-label="User icon">
+                            {{player.id === asyncData.activePlayer.id ? 'update' : 'person'}}
+                        </mat-icon>
+                        <div class="player_name text-ellipsis">{{player.name}}</div>
                     </div>
-                    <div class="position-absolute deck_position"
-                        [style.top.px]="cardsWrapInfo.deckTop"
-                        [style.left]="cardsWrapInfo.deckLeft"
-                        [style.width.px]="cardsWrapInfo.cardWidth"
-                        [style.height.px]="cardsWrapInfo.cardHeight">
-                        <small class="text-uppercase text-muted">Колода</small>
-                    </div>
-
-                    <div class="position-absolute deck_header"
-                        [style.top.px]="0"
-                        [style.left]="cardsWrapInfo.boardLeft"
-                        [style.width.px]="cardsWrapInfo.cardWidth"
-                        [style.height.px]="cardsWrapInfo.headerHeight">
-                        <span class="text-uppercase text-muted deck_header_text">Игровая зона</span>
-                        <span class="badge bg-secondary">{{player.board.length}}</span>
-                    </div>
-                    <div class="position-absolute deck_position"
-                        [style.top.px]="cardsWrapInfo.deckTop"
-                        [style.left]="cardsWrapInfo.boardLeft"
-                        [style.width.px]="cardsWrapInfo.cardWidth"
-                        [style.height.px]="cardsWrapInfo.cardHeight">
-                        <small class="text-uppercase text-muted">Игровая зона</small>
-                    </div>
-
-                    <div class="position-absolute deck_header"
-                        [style.top.px]="0"
-                        [style.left]="cardsWrapInfo.discardLeft"
-                        [style.width.px]="cardsWrapInfo.cardWidth"
-                        [style.height.px]="cardsWrapInfo.headerHeight">
-                        <span class="text-uppercase text-muted deck_header_text">Сброс</span>
-                        <span class="badge bg-secondary">{{player.discard.length}}</span>
-                    </div>
-                    <div class="position-absolute deck_position"
-                        [style.top.px]="cardsWrapInfo.deckTop"
-                        [style.left]="cardsWrapInfo.discardLeft"
-                        [style.width.px]="cardsWrapInfo.cardWidth"
-                        [style.height.px]="cardsWrapInfo.cardHeight">
-                        <small class="text-uppercase text-muted">Сброс</small>
-                    </div>
-
-                    <div class="position-absolute deck_header deck_header__hand"
-                        [style.top.px]="cardsWrapInfo.handHeaderTop"
-                        [style.left]="cardsWrapInfo.deckLeft"
-                        [style.width.%]="90"
-                        [style.height.px]="cardsWrapInfo.headerHeight">
-                        <span class="text-uppercase text-muted deck_header_text">Карты на руке</span>
-                        <span class="badge bg-secondary">{{player.hand.length}}</span>
-                        <button
-                            type="button"
-                            class="btn btn-xs btn-primary deck_header_btn"
-                            (click)="useAll()"
-                            [disabled]="currentPlayer?.id !== activePlayer.id || currentPlayer?.id !== player.id"
-                        >Сыграть все карты</button>
-                    </div>
-
-                    <app-clank-card class="position-absolute"
-                        *ngFor="let cardInfo of (selectedPlayerCardsSubject | async); trackBy: trackById;"
-                        [width]="cardsWrapInfo.cardWidth"
-                        [height]="cardsWrapInfo.cardHeight"
-                        [data]="cardInfo"
-                        [ngStyle]="cardInfo.style"
-                    ></app-clank-card>
-                </div>
-            </div>
+                    <mat-progress-bar *ngIf="player.id === asyncData.activePlayer.id" mode="buffer"></mat-progress-bar>
+                </li>
+            </ul>
         </div>
-        <div class="footer p-1" *ngIf="currentPlayer != null">
-            <p>Доступные жетоны:</p>
-            <div class="clank-tokens">
-                <ng-container *ngFor="let token of player.tokens; trackBy: trackById">
-                    <div class="clank-tokens-group" *ngIf="token.isUsable">
-                        <app-clank-token
-                            [isOpen]="true"
-                            [token]="token"
-                            [size]="cardsWrapInfo.tokenSize"
-                            (click)="currentPlayer.id === activePlayer.id && currentPlayer.id === player.id ? useToken(token, player.id) : null"
-                        ></app-clank-token>
-                    </div>
-                </ng-container>
-            </div>
-            <div class="d-flex justify-content-center">
-                <app-clank-cost-info
-                    [data]="player.benefitInfo"
-                    [type]="ClankCostInfoType.turnInfo"
-                ></app-clank-cost-info>
-            </div>
-            <button class="mb-1 btn btn-sm btn-primary"
-                (click)="openDungeonRow(currentPlayer)"
-            >Показать рынок</button>
-            <ng-template #cancelStatePopoverTitle>
-                Отменить последнее действие?
-            </ng-template>
-            <ng-template #cancelStatePopoverContent>
-                <div class="d-flex flex-column">
-                    <div class="btn-group" role="group" aria-label="Popover actions"
-                        *ngIf="(canCancelSubject | async);else cancelStatePopoverContentNotAllowed">
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-primary"
-                            (click)="cancelState()"
-                        >Да</button>
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            (click)="cancelStatePopover.close()"
-                        >Нет</button>
-                    </div>
-                    <ng-template #cancelStatePopoverContentNotAllowed>
-                        Последнее действие нельзя отменить
+        <ng-container *ngIf="asyncData.player">
+            <div class="body" appScalableContainer>
+                <div class="cards_wrap_header">
+                    <ng-container *ngIf="asyncData.player.id === currentPlayer?.id;else otherPlayerAlert">
+                        <ngb-alert
+                            *ngIf="!asyncData.player.isFinish && asyncData.player.id == asyncData.activePlayer.id"
+                            [dismissible]="false"
+                            [type]="'success'"
+                        >Ваш ход</ngb-alert>
+
+                        <ngb-alert
+                            *ngIf="!asyncData.player.isFinish && asyncData.player.id !== asyncData.activePlayer.id"
+                            [dismissible]="false"
+                            [type]="'danger'"
+                        >Ход игрока <strong class="player_name">{{asyncData.activePlayer.name}}</strong></ngb-alert>
+
+                        <ngb-alert
+                            *ngIf="asyncData.player.isFinish && asyncData.player.id !== asyncData.activePlayer.id"
+                            [dismissible]="false"
+                            [type]="'secondary'"
+                        >Игра закончена (ожидайте других игроков)</ngb-alert>
+                    </ng-container>
+                    <ng-template #otherPlayerAlert>
+                        <ngb-alert
+                            [dismissible]="false"
+                            [type]="'info'"
+                        >Вы смотрите на экран <strong class="player_name">{{asyncData.player.name}}</strong></ngb-alert>
                     </ng-template>
                 </div>
-            </ng-template>
-            <button
-                class="mb-1 btn btn-sm btn-secondary"
-                [disabled]="currentPlayer.id !== activePlayer.id || currentPlayer.id !== player.id"
-                [ngbPopover]="cancelStatePopoverContent"
-                [popoverTitle]="cancelStatePopoverTitle"
-                #cancelStatePopover="ngbPopover"
-            >Отменить действие</button>
+                <div class="player_area p-1"
+                    *ngIf="asyncData.playerArea"
+                    appScalable
+                    [style.width.px]="asyncData.playerArea.width"
+                    [style.height.px]="asyncData.playerArea.height">
+                    <div class="d-flex flex-column flex-grow-1 position-relative card_container">
+                        <div class="position-absolute deck_header"
+                            [style.top.px]="0"
+                            [style.left]="cardsWrapInfo.deckLeft"
+                            [style.width.px]="cardsWrapInfo.cardWidth"
+                            [style.height.px]="cardsWrapInfo.headerHeight">
+                            <span class="text-uppercase text-muted deck_header_text">Колода</span>
+                            <span class="badge bg-secondary">{{asyncData.player.deck.length}}</span>
+                        </div>
+                        <div class="position-absolute deck_position"
+                            [style.top.px]="cardsWrapInfo.deckTop"
+                            [style.left]="cardsWrapInfo.deckLeft"
+                            [style.width.px]="cardsWrapInfo.cardWidth"
+                            [style.height.px]="cardsWrapInfo.cardHeight">
+                            <small class="text-uppercase text-muted">Колода</small>
+                        </div>
 
-            <button class="btn btn-sm btn-danger"
-                (click)="finishTurn(activePlayer)"
-                [disabled]="currentPlayer.id !== activePlayer.id || currentPlayer.id !== player.id"
-                ngbTooltip="Нужно разыграть все карты"
-                [disableTooltip]="player.hand.length === 0"
-                placement="top"
-                container="body"
-                [class.not-allowed]="player.hand.length > 0"
-            >Закончить ход <ng-container *ngIf="activePlayer.needTrashCards.length > 0">+ Избавиться от карты</ng-container></button>
-        </div>
+                        <div class="position-absolute deck_header"
+                            [style.top.px]="0"
+                            [style.left]="cardsWrapInfo.boardLeft"
+                            [style.width.px]="cardsWrapInfo.cardWidth"
+                            [style.height.px]="cardsWrapInfo.headerHeight">
+                            <span class="text-uppercase text-muted deck_header_text">Игровая зона</span>
+                            <span class="badge bg-secondary">{{asyncData.player.board.length}}</span>
+                        </div>
+                        <div class="position-absolute deck_position"
+                            [style.top.px]="cardsWrapInfo.deckTop"
+                            [style.left]="cardsWrapInfo.boardLeft"
+                            [style.width.px]="cardsWrapInfo.cardWidth"
+                            [style.height.px]="cardsWrapInfo.cardHeight">
+                            <small class="text-uppercase text-muted">Игровая зона</small>
+                        </div>
+
+                        <div class="position-absolute deck_header"
+                            [style.top.px]="0"
+                            [style.left]="cardsWrapInfo.discardLeft"
+                            [style.width.px]="cardsWrapInfo.cardWidth"
+                            [style.height.px]="cardsWrapInfo.headerHeight">
+                            <span class="text-uppercase text-muted deck_header_text">Сброс</span>
+                            <span class="badge bg-secondary">{{asyncData.player.discard.length}}</span>
+                        </div>
+                        <div class="position-absolute deck_position"
+                            [style.top.px]="cardsWrapInfo.deckTop"
+                            [style.left]="cardsWrapInfo.discardLeft"
+                            [style.width.px]="cardsWrapInfo.cardWidth"
+                            [style.height.px]="cardsWrapInfo.cardHeight">
+                            <small class="text-uppercase text-muted">Сброс</small>
+                        </div>
+
+                        <div class="position-absolute deck_header deck_header__hand"
+                            [style.top.px]="cardsWrapInfo.handHeaderTop"
+                            [style.left]="cardsWrapInfo.deckLeft"
+                            [style.width.%]="90"
+                            [style.height.px]="cardsWrapInfo.headerHeight">
+                            <span class="text-uppercase text-muted deck_header_text">Карты на руке</span>
+                            <span class="badge bg-secondary">{{asyncData.player.hand.length}}</span>
+                            <button
+                                type="button"
+                                class="btn btn-xs btn-primary deck_header_btn"
+                                (click)="useAll()"
+                                [disabled]="currentPlayer?.id !== asyncData.activePlayer.id || currentPlayer?.id !== asyncData.player.id"
+                            >Сыграть все карты</button>
+                        </div>
+
+                        <app-clank-card class="position-absolute"
+                            *ngFor="let cardInfo of asyncData.cards; trackBy: trackById;"
+                            [width]="cardsWrapInfo.cardWidth"
+                            [height]="cardsWrapInfo.cardHeight"
+                            [data]="cardInfo"
+                            [ngStyle]="cardInfo.style"
+                        ></app-clank-card>
+                    </div>
+                </div>
+            </div>
+            <div class="footer p-1" *ngIf="currentPlayer != null">
+                <p>Доступные жетоны:</p>
+                <div class="clank-tokens">
+                    <ng-container *ngFor="let token of asyncData.player.tokens; trackBy: trackById">
+                        <div class="clank-tokens-group" *ngIf="token.isUsable">
+                            <app-clank-token
+                                [isOpen]="true"
+                                [token]="token"
+                                [size]="cardsWrapInfo.tokenSize"
+                                (click)="currentPlayer.id === asyncData.activePlayer.id && currentPlayer.id === asyncData.player.id ? useToken(token, asyncData.player.id) : null"
+                            ></app-clank-token>
+                        </div>
+                    </ng-container>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <app-clank-cost-info
+                        [data]="asyncData.player.benefitInfo"
+                        [type]="ClankCostInfoType.turnInfo"
+                    ></app-clank-cost-info>
+                </div>
+                <button class="mb-1 btn btn-sm btn-primary"
+                    (click)="openDungeonRow(currentPlayer)"
+                >Показать рынок</button>
+                <ng-template #cancelStatePopoverTitle>
+                    Отменить последнее действие?
+                </ng-template>
+                <ng-template #cancelStatePopoverContent>
+                    <div class="d-flex flex-column">
+                        <div class="btn-group" role="group" aria-label="Popover actions"
+                            *ngIf="asyncData.canCancel; else cancelStatePopoverContentNotAllowed">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-primary"
+                                (click)="cancelState()"
+                            >Да</button>
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-danger"
+                                (click)="cancelStatePopover.close()"
+                            >Нет</button>
+                        </div>
+                        <ng-template #cancelStatePopoverContentNotAllowed>
+                            Последнее действие нельзя отменить
+                        </ng-template>
+                    </div>
+                </ng-template>
+                <button
+                    class="mb-1 btn btn-sm btn-secondary"
+                    [disabled]="currentPlayer.id !== asyncData.activePlayer.id || currentPlayer.id !== asyncData.player.id"
+                    [ngbPopover]="cancelStatePopoverContent"
+                    [popoverTitle]="cancelStatePopoverTitle"
+                    #cancelStatePopover="ngbPopover"
+                >Отменить действие</button>
+
+                <button class="btn btn-sm btn-danger"
+                    (click)="finishTurn(asyncData.activePlayer)"
+                    [disabled]="currentPlayer.id !== asyncData.activePlayer.id || currentPlayer.id !== asyncData.player.id"
+                    ngbTooltip="Нужно разыграть все карты"
+                    [disableTooltip]="asyncData.player.hand.length === 0"
+                    placement="top"
+                    container="body"
+                    [class.not-allowed]="asyncData.player.hand.length > 0"
+                >Закончить ход <ng-container *ngIf="asyncData.activePlayer.needTrashCards.length > 0">+ Избавиться от карты</ng-container></button>
+            </div>
+        </ng-container>
     </ng-container>
 </ng-container>
