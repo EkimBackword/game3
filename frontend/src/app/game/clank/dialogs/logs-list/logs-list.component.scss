@@ -1,0 +1,45 @@
+.log-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.log-body {
+    height: 600px;
+}
+
+.game_action_logs__group_name {
+    position: sticky;
+    top: 0;
+    font-weight: 700;
+    z-index: 1;
+    background-color: #fff;
+}
+
+.alert-custom {
+    padding: 4px;
+    margin: 4px;
+    margin-bottom: 8px;
+    border-color: var(--bs-black);
+    box-shadow: 0 0 2px var(--bs-secondary);
+    background-color: var(--bs-white);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+
+    &.alert-custom--Red {
+        border-color: #EF4E5A;
+    }
+
+    &.alert-custom--Yellow {
+        border-color: #FFDB46;
+    }
+
+    &.alert-custom--Green {
+        border-color: #339643;
+    }
+
+    &.alert-custom--Blue {
+        border-color: #376EB6;
+    }
+}

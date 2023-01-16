@@ -40,15 +40,17 @@ export interface GameInfoConfig {
 }
 
 export enum GameInfoActionLogType {
-    Game,
-    Turn,
-    Clank,
-    Card,
-    Token,
-    Dragon,
-    Move,
-    ManualFunction,
+    Game = 'Game',
+    Turn = 'Turn',
+    Clank = 'Clank',
+    Card = 'Card',
+    Token = 'Token',
+    Dragon = 'Dragon',
+    Move = 'Move',
+    ManualFunction = 'ManualFunction',
 }
+
+export const GameInfoActionLogTypeList = Object.values(GameInfoActionLogType);
 
 export interface GameInfoActionLog {
     index: number;

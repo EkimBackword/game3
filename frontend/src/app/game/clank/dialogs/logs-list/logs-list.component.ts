@@ -1,0 +1,55 @@
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Inject,
+    OnInit,
+} from '@angular/core';
+import {
+    MAT_DIALOG_DATA,
+    MatDialogRef,
+} from '@angular/material/dialog';
+
+import { cloneDeep } from 'lodash';
+import { GameInfoActionLogGroup } from 'src/app/shared/models/game.types';
+
+import { GameInfoActionLogTypeList } from '@shared/clank/clank-game.types';
+
+@Component({
+    selector: 'app-logs-list',
+    templateUrl: './logs-list.component.html',
+    styleUrls: ['./logs-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class LogsListComponent implements OnInit {
+
+    list = GameInfoActionLogTypeList.map(type => ({
+        type,
+        value: true,
+    }));
+    groups: GameInfoActionLogGroup[] = [];
+
+    constructor(
+        public changeDetectorRef: ChangeDetectorRef,
+        public dialogRef: MatDialogRef<LogsListComponent, void>,
+        @Inject(MAT_DIALOG_DATA) public data: {
+            groups: GameInfoActionLogGroup[],
+        },
+    ) { }
+
+    ngOnInit(): void {
+        this.filterGroups();
+    }
+
+    filterGroups() {
+        this.groups = cloneDeep(this.data.groups).map(group => {
+            return {
+                ...group,
+                list: group.list.filter(log => this.list.some(p => p.type === log.type && p.value)),
+            };
+        }).filter(group => group.list.length > 0);
+        console.log(this.list, this.groups);
+        this.changeDetectorRef.detectChanges();
+    }
+
+}

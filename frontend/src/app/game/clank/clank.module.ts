@@ -13,6 +13,7 @@ import { ChooseCardEventComponent } from './dialogs/choose-card-event/choose-car
 import { PlayerRowDetailComponent } from './dialogs/player-row-detail/player-row-detail.component';
 import { TrashCardsComponent } from './dialogs/trash-cards/trash-cards.component';
 import { UseSwordsOrHealthComponent } from './dialogs/use-swords-or-health/use-swords-or-health.component';
+import { LogsListComponent } from './dialogs/logs-list/logs-list.component';
 
 @NgModule({
     declarations: [
@@ -27,6 +28,7 @@ import { UseSwordsOrHealthComponent } from './dialogs/use-swords-or-health/use-s
         CardListComponent,
         ChooseCardEventComponent,
         PlayerRowDetailComponent,
+        LogsListComponent,
     ],
     imports: [
         SharedModule,

@@ -14,6 +14,7 @@ import {
     CardListComponent,
     CardListComponentResult,
 } from '../dialogs/card-list/card-list.component';
+import { LogsListComponent } from '../dialogs/logs-list/logs-list.component';
 import { PlayerRowDetailComponent } from '../dialogs/player-row-detail/player-row-detail.component';
 import {
     TrashCardsComponent,
@@ -89,6 +90,19 @@ export class GameDialogsService {
             CardListComponentResult
         >(
             CardListComponent,
+            {
+                data,
+                width: `${cardWidth * 5}px`,
+            },
+        );
+    }
+
+    openLogsList(data: LogsListComponent['data']) {
+        return this.matDialog.open<
+            LogsListComponent,
+            LogsListComponent['data']
+        >(
+            LogsListComponent,
             {
                 data,
                 width: `${cardWidth * 5}px`,

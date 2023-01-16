@@ -115,9 +115,22 @@
         </div>
     </div>
     <div class="footer">
-        <div class="game_action_logs p-1">
+        <div class="game_action_logs">
+            <div class="game_action_logs_title p-1"
+                (click)="openLogsList(asyncData.logGroups)"
+                ngbTooltip="Открыть журнал"
+                placement="top"
+                container="body"
+            >
+                <div class="game_action_logs__group_name">Журнал событий</div>
+                <fa-icon
+                    class="pointer"
+                    [style.width.px]="20"
+                    [icon]="icons.logs"
+                ></fa-icon>
+            </div>
             <ng-container *ngFor="let group of asyncData.logGroups">
-                <div class="game_action_logs__group">
+                <div class="game_action_logs__group p-1">
                     <div class="game_action_logs__group_name">{{group.name}}</div>
                     <ngb-alert
                         *ngFor="let log of group.list"

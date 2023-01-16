@@ -1,0 +1,45 @@
+<div mat-dialog-title class="log-title">
+    <h1>Журнал событий</h1>
+    <div ngbDropdown container="body" class="d-inline-block">
+        <button type="button"
+            class="btn btn-outline-primary"
+            id="dropdownBasic1"
+            ngbDropdownToggle>
+            Фильтры
+        </button>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+            <div class="form-check form-switch" *ngFor="let item of list; let i = index">
+                <input class="form-check-input"
+                    type="checkbox"
+                    [id]="'filter' + i"
+                    [(ngModel)]="item.value"
+                    (ngModelChange)="filterGroups()"
+                >
+                <label class="form-check-label" [for]="'filter' + i">
+                    {{item.type}}
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<div mat-dialog-content class="log-body">
+    <ng-container *ngFor="let group of groups">
+        <div class="game_action_logs__group">
+            <div class="game_action_logs__group_name">{{group.name}}</div>
+            <ngb-alert
+                *ngFor="let log of group.list"
+                [dismissible]="false"
+                type="custom"
+                class="alert-custom--{{log.data.colorId}}">
+                {{log.data.text}}
+                <div class="alert-subtext" *ngIf="log.data.subtext">{{log.data.subtext}}</div>
+            </ngb-alert>
+        </div>
+    </ng-container>
+</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end">
+    <button class="btn btn-primary m-1"
+        (click)="dialogRef.close()">
+        Закрыть
+    </button>
+</div>

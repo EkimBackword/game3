@@ -180,4 +180,10 @@ export class ClankComponent implements OnInit {
         this.gameDialogsService.openPlayerRowDetail(player);
     }
 
+    openLogsList() {
+        this.gameDialogsService.openLogsList({
+            groups: this.gameInfoQuery.logGroups,
+        });
+    }
+
 }

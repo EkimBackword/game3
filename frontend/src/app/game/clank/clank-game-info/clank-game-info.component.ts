@@ -12,10 +12,12 @@ import {
     tap,
 } from 'rxjs/operators';
 import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
+import { GameInfoActionLogGroup } from 'src/app/shared/models/game.types';
 import { MapsService } from 'src/app/shared/services/maps.service';
 import { SoundService } from 'src/app/shared/services/sound.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
+import { faTasks } from '@fortawesome/free-solid-svg-icons';
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import {
     ClankMapConfig,
@@ -30,6 +32,7 @@ import {
 } from '@shared/clank/clank-player.types';
 import { ClankTokenTypeEnum } from '@shared/clank/clank-token.types';
 
+import { GameDialogsService } from '../services/game-dialogs.service';
 import { GameInfoQuery } from '../services/game-info.query';
 import { GameInfoService } from '../services/game-info.service';
 
@@ -45,6 +48,9 @@ export class ClankGameInfoComponent implements OnInit {
     ClankTokenTypeEnum = ClankTokenTypeEnum;
     isStarted = false;
     isFinished = false;
+    icons = {
+        logs: faTasks,
+    };
 
     statusSubject = this.gameInfoQuery.onStatusChangeSubject.pipe(
         tap((statusId) => {
@@ -97,6 +103,7 @@ export class ClankGameInfoComponent implements OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private gameInfoQuery: GameInfoQuery,
         private gameInfoService: GameInfoService,
+        private gameDialogsService: GameDialogsService,
         private mapsService: MapsService,
         private toastService: ToastService,
         public soundService: SoundService,
@@ -145,6 +152,15 @@ export class ClankGameInfoComponent implements OnInit {
                 colorId,
             },
         );
+    }
+
+    openLogsList(groups: GameInfoActionLogGroup[] | null) {
+        if (groups == null) {
+            return;
+        }
+        this.gameDialogsService.openLogsList({
+            groups,
+        });
     }
 
 }

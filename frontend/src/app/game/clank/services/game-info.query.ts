@@ -211,20 +211,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
                 }
                 this.soundNotificationByLog(log);
             }
-            return [...this.logsMap.entries()].map(([name, list]) => {
-                const result: GameInfoActionLogGroup = {
-                    name,
-                    dateForOrder: list[0].createdAtMoment,
-                    list: list.sort((a, b) => {
-                        const momentDiff = b.createdAtMoment.diff(a.createdAtMoment);
-                        if (momentDiff === 0) {
-                            return b.index - a.index;
-                        }
-                        return momentDiff;
-                    }),
-                };
-                return result;
-            }).sort((a, b) => b.dateForOrder.diff(a.dateForOrder));
+            return this.logGroups;
         }),
         shareReplay(1),
     );
@@ -243,6 +230,23 @@ export class GameInfoQuery extends Query<GameInfoState> {
     get mapInfo() {
         const gameState = this.getValue();
         return this.mapsService.getMapById(gameState.mapId);
+    }
+
+    get logGroups() {
+        return [...this.logsMap.entries()].map(([name, list]) => {
+            const result: GameInfoActionLogGroup = {
+                name,
+                dateForOrder: list[0].createdAtMoment,
+                list: list.sort((a, b) => {
+                    const momentDiff = b.createdAtMoment.diff(a.createdAtMoment);
+                    if (momentDiff === 0) {
+                        return b.index - a.index;
+                    }
+                    return momentDiff;
+                }),
+            };
+            return result;
+        }).sort((a, b) => b.dateForOrder.diff(a.dateForOrder));
     }
 
     constructor(

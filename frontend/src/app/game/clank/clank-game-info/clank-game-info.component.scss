@@ -62,6 +62,26 @@
     background-color: #eee;
     border-top: 2px dashed var(--bs-secondary);
     border-bottom: 2px dashed var(--bs-secondary);
+    position: relative;
+
+    .game_action_logs_title {
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #fafaf0;
+        }
+    }
 
     .game_action_logs__group_name {
         font-size: 12px;
