@@ -6,7 +6,11 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { tap } from 'rxjs/operators';
+import { cloneDeep } from 'lodash';
+import {
+    map,
+    tap,
+} from 'rxjs/operators';
 import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { MapsService } from 'src/app/shared/services/maps.service';
 import { SoundService } from 'src/app/shared/services/sound.service';
@@ -58,6 +62,11 @@ export class ClankGameInfoComponent implements OnInit {
     validColorList = false;
     invalidColorText = 'Цвета игроков должны отличатся';
     playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(
+        map((players) => cloneDeep(players).sort((a, b) => {
+            const aKoef = a.id === this.currentPlayer?.id ? 1 : 0;
+            const bKoef = b.id === this.currentPlayer?.id ? 1 : 0;
+            return bKoef - aKoef;
+        })),
         tap((players) => {
             this.validColorList = !GamePlayerColorIds.some((id) => {
                 const playerCount = players.filter(p => p.colorId === id).length;

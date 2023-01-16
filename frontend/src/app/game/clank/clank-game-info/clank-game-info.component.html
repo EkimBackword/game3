@@ -22,7 +22,9 @@
     <div class="body p-1">
         <div class="players_list">
             <label class="game-label">Список игроков:</label>
-            <div class="card w-100 mb-2" *ngFor="let player of asyncData.players; trackBy: trackById; let i = index">
+            <div class="card w-100 mb-2"
+                [class.current_player]="currentPlayer?.id === player.id"
+                *ngFor="let player of asyncData.players; trackBy: trackById; let i = index">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="m-0 text-ellipsis">{{player.name}}</h6>
