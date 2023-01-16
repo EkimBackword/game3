@@ -317,6 +317,7 @@ export class ClankHelpService {
         const attackResult = state.players.reduce((acc, player) => {
             acc[player.colorId] = {
                 isDragon: false,
+                isFinish: player.isFinish,
                 name: player.name,
                 value: 0,
                 initHeal: player.benefitInfo.heal ?? 0,
@@ -333,6 +334,7 @@ export class ClankHelpService {
             },
         } as Record<GamePlayerColorIdEnum, {
             isDragon: boolean;
+            isFinish: boolean;
             name: string;
             value: number;
             initHeal: number;
@@ -367,10 +369,12 @@ export class ClankHelpService {
             type: GameInfoActionLogType.Dragon,
             data: {
                 text: `Дракон атакует`,
-                subtext: Object.values(attackResult).map(p => p.isDragon
-                    ? `${p.name}: ${p.value} мимо`
-                    : `${p.name}: ${p.value} урона (${p.initHeal} -> ${p.heal})`,
-                ).join('\r\n'),
+                subtext: Object.values(attackResult).map(p => {
+                    if (p.isDragon || p.isFinish) {
+                        return `${p.name}: ${p.value} мимо`;
+                    }
+                    return `${p.name}: ${p.value} урона (${p.initHeal} → ${p.heal})`;
+                }).join('\r\n'),
                 isDragon: true,
                 soundUrl: '/assets/sounds/DragonAttack.mp3',
             },
