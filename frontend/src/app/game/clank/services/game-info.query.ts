@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 
 import * as moment from 'moment';
+import { Subject } from 'rxjs';
 import {
     filter,
     map,
     pairwise,
     shareReplay,
     startWith,
+    tap,
 } from 'rxjs/operators';
 import { SessionQuery } from 'src/app/session/session.query';
 import {
@@ -218,6 +220,17 @@ export class GameInfoQuery extends Query<GameInfoState> {
         shareReplay(1),
     );
 
+    private onSearchPlayerIdSubject = new Subject<string | null>();
+    searchPlayerIdStream = this.onSearchPlayerIdSubject.pipe(
+        tap((token) => {
+            if (token != null) {
+                setTimeout(() => {
+                    this.onSearchPlayerIdSubject.next(null);
+                }, 1000);
+            }
+        }),
+    );
+
     get currentPlayer() {
         const userState = this.sessionQuery.getValue();
         const gameState = this.getValue();
@@ -277,6 +290,10 @@ export class GameInfoQuery extends Query<GameInfoState> {
                 return;
             }
         }
+    }
+
+    searchPlayer(playerId: string) {
+        this.onSearchPlayerIdSubject.next(playerId);
     }
 
 }

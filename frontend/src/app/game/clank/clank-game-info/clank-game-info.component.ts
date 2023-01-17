@@ -163,4 +163,8 @@ export class ClankGameInfoComponent implements OnInit {
         });
     }
 
+    searchPlayer(playerId: string) {
+        this.gameInfoQuery.searchPlayer(playerId);
+    }
+
 }

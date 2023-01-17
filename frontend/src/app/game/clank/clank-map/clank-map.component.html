@@ -2,6 +2,7 @@
     mapInfo: mapSubject | async,
     players: playersSubject | async,
     playersPosition: playersPositionSubject | async,
+    searchPlayerId: searchPlayerIdStream | async,
     dragonPosition: dragonPositionSubject | async
 } as asyncData">
     <div class="clank_map_container"
@@ -17,6 +18,7 @@
             <app-clank-meeple
                 class="clank_map_player"
                 [class.clank_map_player__active]="item.isActive"
+                [class.clank_map_player__search]="item.player.id == asyncData.searchPlayerId"
                 *ngFor="let item of asyncData.playersPosition; trackBy: trackById;"
                 [player]="item.player"
                 [ngStyle]="item.style"

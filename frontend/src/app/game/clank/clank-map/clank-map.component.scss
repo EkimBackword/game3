@@ -38,6 +38,11 @@
     filter: brightness(100%);
 }
 
+.clank_map_player__search {
+    z-index: 1000;
+    transform: scale(2.5, 2.5);
+}
+
 .clank_map_dragon {
     transition: all ease-in-out 300ms;
 
