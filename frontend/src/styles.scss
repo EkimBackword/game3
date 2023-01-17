@@ -78,17 +78,22 @@ body {
     cursor: pointer;
 }
 
-.spin {
-    animation: spin 2s infinite linear;
+.spin-time {
+    animation: spinTime 2s infinite linear;
 }
 
-.spin-lg {
-    animation: spin 4s infinite linear;
-}
-
-@keyframes spin {
+@keyframes spinTime {
     0% {
         transform: rotate(0deg);
+    }
+    40% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+    90% {
+        transform: rotate(180deg);
     }
     100% {
         transform: rotate(359deg);

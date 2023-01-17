@@ -36,11 +36,10 @@
                             <div class="clank_aria_row"
                                 *ngFor="let player of asyncData.players">
                                 <div class="clank_aria_player">
-                                    <img class="clank_aria_player_img"
-                                        [ngSrc]="GamePlayerColorList[player.colorId].url"
-                                        [height]="50"
-                                        [width]="50"
-                                        [alt]="player.colorId">
+                                    <div
+                                        class="clank_aria_player_img"
+                                        [style.background-color]="GamePlayerColorList[player.colorId].color"
+                                    ></div>
                                     <div class="clank_aria_player_name text-ellipsis">
                                         {{player.name}}
                                     </div>

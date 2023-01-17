@@ -76,11 +76,10 @@
                             (click)="openPlayerRowDetail(player)">
                             <td class="player_name_cell">
                                 <div class="player_name_cell_element">
-                                    <img class="clank_aria_player_img"
-                                        [ngSrc]="player.colorInfo.url"
-                                        [height]="25"
-                                        [width]="25"
-                                        [alt]="player.config.colorId">
+                                    <div
+                                        class="clank_aria_player_color"
+                                        [style.background-color]="player.colorInfo.color"
+                                    ></div>
                                     <div class="text-ellipsis">{{player.name}}</div>
                                 </div>
                             </td>

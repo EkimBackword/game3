@@ -65,7 +65,9 @@ export class GameInfoQuery extends Query<GameInfoState> {
             if (mapInfo == null) {
                 return [];
             }
-            const rowCount = 2;
+            const rowCount = players.length > 2
+                ? players.length / 2
+                : players.length;
             const size = 100;
             const countByElementId = new Map<number, number>();
             return players.map(player => {

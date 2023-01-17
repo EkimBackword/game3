@@ -69,7 +69,7 @@ export class ClankMeepleComponent implements OnInit, OnChanges {
             height: `${this.size}px`,
             backgroundImage: `url(/assets/images/meeples.png)`,
             backgroundPosition: `-${positionX}px 0px`,
-            backgroundSize: '400% 100%',
+            backgroundSize: '600% 100%',
         };
         return style;
     }

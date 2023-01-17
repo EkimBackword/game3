@@ -13,14 +13,20 @@
                     (click)="onSelectPlayer(player)">
                     <div class="nav-link clank-nav-link"
                         [class.active]="player.id === selectedPlayer?.id">
-                        <mat-icon
+                        <fa-icon
                             class="player_icon"
-                            [class.spin-lg]="player.id === asyncData.activePlayer.id"
-                            aria-label="User icon">
-                            {{player.id === asyncData.activePlayer.id ? 'update' : 'person'}}
-                        </mat-icon>
+                            [icon]="player.id === asyncData.activePlayer.id ? icons.active : icons.user"
+                            [class.spin-time]="player.id === asyncData.activePlayer.id"
+                            [style.color]="GamePlayerColorList[player.colorId].color"
+                            aria-label="User icon"
+                        ></fa-icon>
                         <div class="player_name text-ellipsis">{{player.name}}</div>
                     </div>
+                    <div
+                        class="player_current"
+                        *ngIf="player.id === currentPlayer?.id"
+                        [style.background-color]="GamePlayerColorList[player.colorId].color"
+                    ></div>
                     <mat-progress-bar *ngIf="player.id === asyncData.activePlayer.id" mode="buffer"></mat-progress-bar>
                 </li>
             </ul>

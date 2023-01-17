@@ -29,7 +29,7 @@
     position: absolute;
     transform-origin: center center;
     transform: scale(0.9, 0.9);
-    filter: brightness(70%) grayscale(30%);
+    filter: brightness(80%) grayscale(20%);
     transition: all ease-in-out 300ms;
 }
 
@@ -89,12 +89,17 @@
             width: calc(100% - var(--clank_aria_value));
             height: 60px;
 
-            --clank_aria_player_img_width: 50px;
+            --clank_aria_player_img_width: 40px;
             --clank_aria_player_img_margin: 10px;
+            --clank_aria_player_border_radius: 5px;
 
             .clank_aria_player_img {
+                height: var(--clank_aria_player_img_width);
                 width: var(--clank_aria_player_img_width);
-                margin: var(--clank_aria_player_img_margin);
+                margin-right: var(--clank_aria_player_img_margin);
+                border-radius: var(--clank_aria_player_border_radius);
+                flex-shrink: 0;
+                filter: drop-shadow(1px 1px 2px var(--bs-black));
             }
 
             .clank_aria_player_name {

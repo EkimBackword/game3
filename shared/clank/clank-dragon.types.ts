@@ -32,6 +32,8 @@ export const initDragonInfo = (rage = 0, playerCount = 4) => {
             Green: 0,
             Red: 0,
             Yellow: 0,
+            Purple: 0,
+            Orange: 0,
             Black: 0,
         },
         endGameCounter: {

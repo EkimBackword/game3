@@ -26,10 +26,17 @@ import { DialogService } from 'src/app/shared/services/dialog.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 import {
+    faHourglassStart,
+    faUser,
+} from '@fortawesome/free-solid-svg-icons';
+import {
     ClankElementByTurn,
     ClankElementByTurnList,
 } from '@shared/clank/clank-info.types';
-import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
+import {
+    ClankPlayerConfig,
+    GamePlayerColorList,
+} from '@shared/clank/clank-player.types';
 import {
     ClankTokenConfig,
     ClankTokenTypeEnum,
@@ -50,6 +57,11 @@ import { GameInfoService } from '../services/game-info.service';
 })
 export class ClankPlayerInfoComponent implements OnInit {
 
+    GamePlayerColorList = GamePlayerColorList;
+    icons = {
+        user: faUser,
+        active: faHourglassStart,
+    };
     ClankCostInfoType = ClankCostInfoType;
     ClankCostInfoDirection = ClankCostInfoDirection;
     ClankTokenTypeEnum = ClankTokenTypeEnum;

@@ -55,6 +55,8 @@ export enum GamePlayerColorIdEnum {
     Yellow = 'Yellow',
     Green = 'Green',
     Blue = 'Blue',
+    Purple = 'Purple',
+    Orange = 'Orange',
     Black = 'Black',
 }
 
@@ -94,6 +96,20 @@ export const GamePlayerColorList: Record<GamePlayerColorIdEnum, GamePlayerColorI
         column: 3,
         name: 'Синий',
         color: '#376EB6',
+        url: '/assets/images/cubes/blue.png',
+        forPlayer: true,
+    },
+    [GamePlayerColorIdEnum.Purple]: {
+        column: 4,
+        name: 'Фиолетовый',
+        color: '#CC4786',
+        url: '/assets/images/cubes/blue.png',
+        forPlayer: true,
+    },
+    [GamePlayerColorIdEnum.Orange]: {
+        column: 5,
+        name: 'Оранжевый',
+        color: '#F47C34',
         url: '/assets/images/cubes/blue.png',
         forPlayer: true,
     },
