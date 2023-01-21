@@ -28,7 +28,10 @@ import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { DialogService } from 'src/app/shared/services/dialog.service';
 
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
-import { ClankSecretTypes } from '@shared/clank/clank-info.types';
+import {
+    ClankElementTypeEnum,
+    ClankSecretTypes,
+} from '@shared/clank/clank-info.types';
 import {
     ClankMapElementConfig,
     ClankMapElementLink,
@@ -179,7 +182,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         })) {
             return;
         }
-        const isIgnoreMonster = (this.activePlayer.benefitInfo.ignore_monster ?? 0) > 0;
+        const isIgnoreMonster = this.clankHelpService.hasBenefit(this.activePlayer, ClankElementTypeEnum.ignore_monster);
         if (isIgnoreMonster) {
             link = {
                 ...link,

@@ -13,7 +13,6 @@ import {
     ClankElementTypeEnum,
     ClankElementTypeList,
 } from '@shared/clank/clank-info.types';
-import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 
 export interface ClankElementTypeInfo {
     name: string;
@@ -181,39 +180,3 @@ export interface CheckCostResult {
     success: boolean;
     message: string | null;
 }
-
-export const checkCost = (data: {
-    cost: Partial<Record<ClankElementType, number>>;
-    player: ClankPlayerConfig;
-    isMove?: boolean;
-}): CheckCostResult => {
-    for (const key in data.cost) {
-        if (Object.prototype.hasOwnProperty.call(data.cost, key)) {
-            const type = key as ClankElementType;
-            const costInfo = ClankElementTypeMap[type];
-            const costPoints = data.cost[type] ?? 0;
-            const userPoints = data.player.benefitInfo[type] ?? 0;
-            const healthPoints = data.player.benefitInfo.heal ?? 0;
-            const isIgnoreMonster = (data.player.benefitInfo.ignore_monster ?? 0) > 0;
-            if (data.isMove && key === ClankElementByTurn.sword) {
-                if (!isIgnoreMonster && (userPoints + healthPoints) < costPoints) {
-                    return {
-                        success: false,
-                        message: `Требуется ${costInfo.name}: ${costPoints} (У вас есть ${costInfo.name}: ${userPoints} | Здоровя: ${healthPoints})`,
-                    };
-                }
-                continue;
-            }
-            if (userPoints < costPoints) {
-                return {
-                    success: false,
-                    message: `Требуется ${costInfo.name}: ${costPoints} (У вас есть ${costInfo.name}: ${userPoints})`,
-                };
-            }
-        }
-    }
-    return {
-        success: true,
-        message: null,
-    };
-};

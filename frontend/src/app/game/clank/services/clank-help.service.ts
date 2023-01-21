@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 import * as moment from 'moment';
 import {
-    checkCost,
     CheckCostResult,
+    ClankElementTypeMap,
 } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
@@ -22,6 +22,8 @@ import {
 } from '@shared/clank/clank-game.types';
 import {
     ClankCostInfo,
+    ClankEffect,
+    ClankElementByTurn,
     ClankElementType,
 } from '@shared/clank/clank-info.types';
 import {
@@ -430,7 +432,7 @@ export class ClankHelpService {
         if (data.cost == null) {
             return true;
         }
-        const result = checkCost({
+        const result = this.checkCost({
             cost: data.cost,
             player: data.player,
             isMove: data.isMove,
@@ -442,6 +444,43 @@ export class ClankHelpService {
     hasBenefit(player: ClankPlayerConfig, key: ClankElementType) {
         return (player.benefitInfo[key] ?? 0) > 0 || player.tokens.some(p => !p.isUsable && (p.benefit?.[key] ?? 0) > 0);
     }
+
+    private checkCost(data: {
+        cost: Partial<Record<ClankElementType, number>>;
+        player: ClankPlayerConfig;
+        isMove?: boolean;
+    }): CheckCostResult {
+        for (const key in data.cost) {
+            if (Object.prototype.hasOwnProperty.call(data.cost, key)) {
+                const type = key as ClankElementType;
+                const costInfo = ClankElementTypeMap[type];
+                const costPoints = data.cost[type] ?? 0;
+                const userPoints = data.player.benefitInfo[type] ?? 0;
+                const healthPoints = data.player.benefitInfo.heal ?? 0;
+                const isIgnoreMonster = this.hasBenefit(data.player, ClankEffect.ignore_monster);
+                if (data.isMove && key === ClankElementByTurn.sword) {
+                    if (!isIgnoreMonster && (userPoints + healthPoints) < costPoints) {
+                        return {
+                            success: false,
+                            message: `Требуется ${costInfo.name}: ${costPoints} (У вас есть ${costInfo.name}: ${userPoints} | Здоровя: ${healthPoints})`,
+                        };
+                    }
+                    continue;
+                }
+                if (userPoints < costPoints) {
+                    return {
+                        success: false,
+                        message: `Требуется ${costInfo.name}: ${costPoints} (У вас есть ${costInfo.name}: ${userPoints})`,
+                    };
+                }
+            }
+        }
+        return {
+            success: true,
+            message: null,
+        };
+    };
+
     private showToast(result: CheckCostResult) {
         if (!result.message) {
             return;

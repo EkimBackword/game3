@@ -1,6 +1,7 @@
 import { ClankCardName } from '@shared/clank/clank-card.types';
 import {
     ClankDlcEnum,
+    ClankEffect,
     ClankElementByGame,
     ClankElementByMarket,
     ClankElementByToken,
@@ -263,6 +264,21 @@ export const getMarketTokens = (playerCount: number, withCopy: boolean) => {
                 value: 5,
             },
             element_type: ClankElementByMarket.key_token,
+        },
+        {
+            count: Math.ceil(playerCount / 2),
+            name: 'Плащ-невидимка',
+            url: '/assets/images/tokens/market/clank_adventuring_party/token_1.png',
+            benefit: {
+                [ClankEffect.ignore_monster]: 1,
+            },
+            cost: {
+                coin: 7,
+            },
+            points: {
+                value: 5,
+            },
+            element_type: ClankEffect.ignore_monster,
         },
     ];
     if (playerCount > 3) {
