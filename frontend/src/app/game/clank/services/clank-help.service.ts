@@ -20,7 +20,10 @@ import {
     GameInfoActionLogType,
     GameInfoState,
 } from '@shared/clank/clank-game.types';
-import { ClankCostInfo } from '@shared/clank/clank-info.types';
+import {
+    ClankCostInfo,
+    ClankElementType,
+} from '@shared/clank/clank-info.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorIdEnum,
@@ -436,6 +439,9 @@ export class ClankHelpService {
         return result.success;
     }
 
+    hasBenefit(player: ClankPlayerConfig, key: ClankElementType) {
+        return (player.benefitInfo[key] ?? 0) > 0 || player.tokens.some(p => !p.isUsable && (p.benefit?.[key] ?? 0) > 0);
+    }
     private showToast(result: CheckCostResult) {
         if (!result.message) {
             return;

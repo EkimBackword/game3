@@ -524,7 +524,7 @@ export class CardsService {
                 row: 1,
                 column: 0,
                 name: 'Археолог',
-                description: 'Возьмите 1 карту. Если у вас есть обезьяна-идол, колучите 2 очка навыка',
+                description: 'Возьмите 1 карту. Если у вас есть обезьяна-идол, получите 2 очка навыка',
                 type: ClankCardType.companion,
                 events: {
                     onAcquire: {
@@ -539,7 +539,7 @@ export class CardsService {
                                 player,
                                 count: 1,
                             });
-                            if (!player.benefitInfo.monkey_idol) {
+                            if (!self.clankHelpService.hasBenefit(player, ClankElementByToken.monkey_idol)) {
                                 return true;
                             }
                             return self.clankHelpService.updateBenefitInfo({
@@ -797,7 +797,7 @@ export class CardsService {
                             ClankElementByToken.monkey_idol,
                         ];
                         const count = list.reduce((acc, key) => {
-                            if ((player.benefitInfo[key] ?? 0) > 0) {
+                            if (self.clankHelpService.hasBenefit(player, key)) {
                                 return acc + 1;
                             }
                             return acc;
