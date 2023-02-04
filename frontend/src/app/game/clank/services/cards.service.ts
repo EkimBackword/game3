@@ -1176,7 +1176,7 @@ export class CardsService {
                         },
                     },
                     getPoints(state, player) {
-                        return 2;
+                        return 1;
                     },
                 },
                 count: 1,
