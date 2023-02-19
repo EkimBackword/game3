@@ -1518,7 +1518,7 @@ export const getClankMapMinMumiiFirst = () => {
                         },
                     },
                     {
-                        element_id: 28,
+                        element_id: 38,
                         cost: {
                             boot: 2,
                             curse: 1,
