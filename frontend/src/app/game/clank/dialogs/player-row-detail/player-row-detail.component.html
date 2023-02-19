@@ -17,9 +17,9 @@
         <p *ngIf="!data.tokens.list.length">Жетонов нет</p>
         <app-clank-token
             class="element-item token"
-            *ngFor="let item of data.tokens.list"
+            *ngFor="let token of data.tokens.list"
             [isOpen]="true"
-            [token]="item"
+            [token]="token.item"
             [size]="50"
         ></app-clank-token>
     </div>
@@ -31,8 +31,8 @@
         <p *ngIf="!data.artifacts.list.length">Игрок без артефактов не участвует в подсчёте</p>
         <app-clank-artifact
             class="element-item"
-            *ngFor="let item of data.artifacts.list"
-            [data]="item"
+            *ngFor="let artifact of data.artifacts.list"
+            [data]="artifact.item"
             [height]="50"
         ></app-clank-artifact>
     </div>
@@ -42,13 +42,17 @@
     </label>
     <div class="element-list">
         <p *ngIf="!list.length">Карт нет</p>
-        <app-clank-card
-            class="element-item"
-            *ngFor="let item of list"
-            [width]="cardsWrapInfo.cardWidth"
-            [height]="cardsWrapInfo.cardHeight"
-            [data]="item.data"
-        ></app-clank-card>
+        <div class="element-item" *ngFor="let card of list">
+            <div class="element-item-points">
+                <small>Очки:</small>
+                <strong>{{card.points}}</strong>
+            </div>
+            <app-clank-card
+                [width]="cardsWrapInfo.cardWidth"
+                [height]="cardsWrapInfo.cardHeight"
+                [data]="card.item.data"
+            ></app-clank-card>
+        </div>
     </div>
 </div>
 <div mat-dialog-actions class="d-flex flex-row justify-content-end">

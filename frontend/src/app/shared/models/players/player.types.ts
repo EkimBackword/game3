@@ -19,15 +19,24 @@ export interface PlayerPointsResult {
     coins: number;
     tokens: {
         points: number;
-        list: ClankTokenConfig[];
+        list: {
+            points: number;
+            item: ClankTokenConfig;
+        }[];
     };
     artifacts: {
         points: number;
-        list: ClankArtifactConfig[];
+        list: {
+            points: number;
+            item: ClankArtifactConfig;
+        }[];
     };
     cards: {
         points: number;
-        list: ClankCardConfig[];
+        list: {
+            points: number;
+            item: ClankCardConfig;
+        }[];
     };
     master: number;
     total: number;

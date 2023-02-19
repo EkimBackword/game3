@@ -81,18 +81,20 @@ export class ClankComponent implements OnInit {
                 result.master = player.isEscaped ? 20 : 0;
                 result.tokens = player.tokens.reduce((acc, token) => {
                     const points = token.points?.value ?? 0;
-                    if (points > 0) {
-                        acc.points += points;
-                        acc.list.push(token);
-                    }
+                    acc.points += points;
+                    acc.list.push({
+                        points,
+                        item: token,
+                    });
                     return acc;
                 }, result.tokens);
                 result.artifacts = player.artifacts.reduce((acc, artefact) => {
                     const points = artefact.points?.value ?? 0;
-                    if (points > 0) {
-                        acc.points += points;
-                        acc.list.push(artefact);
-                    }
+                    acc.points += points;
+                    acc.list.push({
+                        points,
+                        item: artefact,
+                    });
                     return acc;
                 }, result.artifacts);
                 const cardList = [
@@ -107,10 +109,11 @@ export class ClankComponent implements OnInit {
                         player,
                         card,
                     });
-                    if (points > 0) {
-                        acc.points += points;
-                        acc.list.push(card);
-                    }
+                    acc.points += points;
+                    acc.list.push({
+                        points,
+                        item: card,
+                    });
                     return acc;
                 }, result.cards);
                 result.total = result.coins

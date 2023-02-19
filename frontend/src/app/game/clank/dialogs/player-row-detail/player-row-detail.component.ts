@@ -24,7 +24,10 @@ import { PlayerPointsResult } from 'src/app/shared/models/players/player.types';
 })
 export class PlayerRowDetailComponent implements OnInit {
 
-    list: CardListItem[] = [];
+    list: {
+        points: number;
+        item: CardListItem;
+    }[] = [];
 
     cardsWrapInfo = {
         cardWidth,
@@ -37,7 +40,12 @@ export class PlayerRowDetailComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.list = this.data.cards.list.map((card) => new CardListItem(card));
+        this.list = this.data.cards.list.map((card) => {
+            return {
+                points: card.points,
+                item: new CardListItem(card.item),
+            };
+        }).sort((a, b) => b.points - a.points);
     }
 
     close() {
