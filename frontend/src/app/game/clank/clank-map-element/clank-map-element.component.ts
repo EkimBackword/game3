@@ -118,7 +118,9 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         map((tokens) => tokens.filter(token => token?.element_type != null && this.mapElement?.items?.[token.element_type])),
         tap((tokens) => {
             const secrets = tokens.filter(token => ClankSecretTypes.includes(token.element_type));
-            const nosecrets = tokens.filter(token => !ClankSecretTypes.includes(token.element_type));
+            const nosecrets = tokens.filter(token => !ClankSecretTypes.includes(token.element_type)
+                && this.mapElement?.items?.[token.element_type]?.value === token.points?.value,
+            );
             this.visibleTokens = secrets.length > 0
                 ? [
                     secrets[0],

@@ -222,6 +222,20 @@ export const getMapTokens = (withCopy: boolean) => {
             },
             element_type: ClankElementByToken.monkey_idol,
         },
+        {
+            count: 1,
+            name: 'Большой идол',
+            url: '/clank_proklyatie_mumii/idol_10_1.jpg',
+            isImmediatelyBenefit: false,
+            isUsable: false,
+            benefit: {
+                monkey_idol: 1,
+            },
+            points: {
+                value: 10,
+            },
+            element_type: ClankElementByToken.monkey_idol,
+        },
     ];
 
     const group: ClankTokenGroup = {
