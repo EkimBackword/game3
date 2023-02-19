@@ -67,6 +67,13 @@ export interface ClankMapDragonTrackEffect {
 export enum ClankMapDragonTrackEffectValue {
 }
 
+export enum ClankMapMumiaZoneTypeEnum {
+    Sun = 'sun',
+    Axe = 'axe',
+    Chair = 'chair',
+    Snake = 'snake',
+}
+
 export interface ClankMapElementConfig {
     /** Идентификатор */
     id: number;
@@ -84,6 +91,8 @@ export interface ClankMapElementConfig {
     isCrystalCave?: boolean;
     /** */
     isMarket?: boolean;
+    /** */
+    mumiaZoneType?: ClankMapMumiaZoneTypeEnum;
     /** */
     items?: Partial<Record<ClankElementType, ClankMapElementItem>>;
 }

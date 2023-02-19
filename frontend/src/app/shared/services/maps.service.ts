@@ -7,6 +7,7 @@ import {
 
 import { getClankMapMinFirst } from '../models/maps/clank_1_min';
 import { getClankMapMin2 } from '../models/maps/clank_2_min';
+import { getClankMapMinMumiiFirst } from '../models/maps/clank_mumii_1';
 
 @Injectable({
     providedIn: 'root',
@@ -16,6 +17,7 @@ export class MapsService {
     maps: ClankMapConfig[] = [
         getClankMapMinFirst(),
         getClankMapMin2(),
+        getClankMapMinMumiiFirst(),
     ];
 
     constructor() { }
