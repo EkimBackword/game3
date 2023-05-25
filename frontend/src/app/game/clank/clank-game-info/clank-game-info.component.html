@@ -145,7 +145,7 @@
                     [icon]="icons.logs"
                 ></fa-icon>
             </div>
-            <ng-container *ngFor="let group of asyncData.logGroups">
+            <ng-container *ngFor="let group of asyncData.logGroups | slice:0:1 + (asyncData.players?.length ?? 0)">
                 <div class="game_action_logs__group p-1">
                     <div class="game_action_logs__group_name">{{group.name}}</div>
                     <ngb-alert
