@@ -48,7 +48,6 @@ export class LogsListComponent implements OnInit {
                 list: group.list.filter(log => this.list.some(p => p.type === log.type && p.value)),
             };
         }).filter(group => group.list.length > 0);
-        console.log(this.list, this.groups);
         this.changeDetectorRef.detectChanges();
     }
 
