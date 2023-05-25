@@ -14,6 +14,7 @@ import { PlayerRowDetailComponent } from './dialogs/player-row-detail/player-row
 import { TrashCardsComponent } from './dialogs/trash-cards/trash-cards.component';
 import { UseSwordsOrHealthComponent } from './dialogs/use-swords-or-health/use-swords-or-health.component';
 import { LogsListComponent } from './dialogs/logs-list/logs-list.component';
+import { DragonInfoLogComponent } from './dialogs/dragon-info-log/dragon-info-log.component';
 
 @NgModule({
     declarations: [
@@ -29,6 +30,7 @@ import { LogsListComponent } from './dialogs/logs-list/logs-list.component';
         ChooseCardEventComponent,
         PlayerRowDetailComponent,
         LogsListComponent,
+        DragonInfoLogComponent,
     ],
     imports: [
         SharedModule,

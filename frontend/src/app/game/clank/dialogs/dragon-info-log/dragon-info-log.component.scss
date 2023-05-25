@@ -1,0 +1,29 @@
+.player_row {
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ccc;
+    }
+}
+
+.clank_aria_player_color {
+    height: 25px;
+    width: 25px;
+    margin-right: 0.4rem;
+    border-radius: 0.2rem;
+    flex-shrink: 0;
+    filter: drop-shadow(1px 1px 2px var(--bs-black));
+}
+
+.player_name_cell {
+    width: 200px;
+
+    .player_name_cell_element {
+        display: flex;
+        flex-shrink: 0;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        width: 200px;
+    }
+}

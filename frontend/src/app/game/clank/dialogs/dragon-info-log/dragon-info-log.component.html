@@ -1,0 +1,54 @@
+<div mat-dialog-title class="log-title">
+    <h1>История бдзыней</h1>
+</div>
+<div mat-dialog-content class="log-body">
+    <p>Количесто урона при атаке дракона: {{dragonPosition?.clank}} бдзыней</p>
+    <table class="w-100 clank_table">
+        <thead>
+            <tr>
+                <th><div>Игрок</div></th>
+                <th><div>В области "CLANK"</div></th>
+                <th *ngIf="showClankInBag"><div>Сейчас в мешке</div></th>
+                <th><div>Было в мешке</div></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="player_row" *ngFor="let player of players">
+                <td class="player_name_cell">
+                    <div class="player_name_cell_element">
+                        <div
+                            class="clank_aria_player_color"
+                            [style.background-color]="player.colorInfo.color"
+                        ></div>
+                        <div class="text-ellipsis">{{player.name}}</div>
+                    </div>
+                </td>
+                <td class="to_right">{{player.clankAria}}</td>
+                <td class="to_right" *ngIf="showClankInBag">{{player.clankInBag}}</td>
+                <td class="to_right">{{player.clankToBagTotalCount}}</td>
+            </tr>
+        </tbody>
+        <tfoot *ngIf="dragonInfo && showClankInBag">
+            <tr class="player_row">
+                <td class="player_name_cell">
+                    <div class="player_name_cell_element">
+                        <div
+                            class="clank_aria_player_color"
+                            [style.background-color]="dragonInfo.colorInfo.color"
+                        ></div>
+                        <div class="text-ellipsis">{{dragonInfo.name}}</div>
+                    </div>
+                </td>
+                <td class="to_right">-</td>
+                <td class="to_right">{{dragonInfo.clankInBag}}</td>
+                <td class="to_right">-</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end">
+    <button class="btn btn-primary m-1"
+        (click)="dialogRef.close()">
+        Закрыть
+    </button>
+</div>

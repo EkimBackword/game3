@@ -50,6 +50,14 @@
                                     {{asyncData.dragonPosition.dragonInfo.clankAria[player.colorId]}}
                                 </div>
                             </div>
+                            <button class="btn btn-lg btn-secondary clank_aria_btn"
+                                (click)="openDragonInfoLog(
+                                    mapInfo.dragonInfo,
+                                    asyncData.dragonPosition.dragonInfo,
+                                    asyncData.players ?? []
+                                )">
+                                История бдзыней
+                            </button>
                         </div>
                     </div>
                 </div>

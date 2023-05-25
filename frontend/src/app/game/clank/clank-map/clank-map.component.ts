@@ -19,14 +19,18 @@ import {
     tap,
 } from 'rxjs/operators';
 
-import { ClankMapConfig } from '@shared/clank/clank-map.types';
+import { ClankDragonInfo } from '@shared/clank/clank-dragon.types';
+import {
+    ClankMapConfig,
+    ClankMapDragonInfo,
+} from '@shared/clank/clank-map.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorList,
 } from '@shared/clank/clank-player.types';
 
+import { GameDialogsService } from '../services/game-dialogs.service';
 import { GameInfoQuery } from '../services/game-info.query';
-import { GameInfoService } from '../services/game-info.service';
 
 @Component({
     selector: 'app-clank-map',
@@ -70,7 +74,7 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
-        private gameInfoService: GameInfoService,
+        private gameDialogsService: GameDialogsService,
         private gameInfoQuery: GameInfoQuery,
         private elementRef: ElementRef<HTMLElement>,
     ) { }
@@ -134,6 +138,18 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     trackById(index: number, item: { player: ClankPlayerConfig; }) {
         return item.player.id;
+    }
+
+    openDragonInfoLog(
+        mapDragonInfo: ClankMapDragonInfo,
+        dragonInfo: ClankDragonInfo,
+        players: ClankPlayerConfig[],
+    ) {
+        this.gameDialogsService.openDragonInfoLog({
+            mapDragonInfo,
+            dragonInfo,
+            players,
+        });
     }
 
     private onResize() {

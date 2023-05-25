@@ -315,6 +315,7 @@ export class ClankHelpService {
                     ...state.dragonInfo.clankBag,
                     ...Array(count).fill(colorId),
                 ];
+                state.dragonInfo.clankToBagTotalCount[colorId] += count;
             }
             state.dragonInfo.clankAria[colorId] = 0;
         });

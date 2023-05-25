@@ -14,6 +14,7 @@ import {
     CardListComponent,
     CardListComponentResult,
 } from '../dialogs/card-list/card-list.component';
+import { DragonInfoLogComponent } from '../dialogs/dragon-info-log/dragon-info-log.component';
 import { LogsListComponent } from '../dialogs/logs-list/logs-list.component';
 import { PlayerRowDetailComponent } from '../dialogs/player-row-detail/player-row-detail.component';
 import {
@@ -106,6 +107,19 @@ export class GameDialogsService {
             {
                 data,
                 width: `${cardWidth * 5}px`,
+            },
+        );
+    }
+
+    openDragonInfoLog(data: DragonInfoLogComponent['data']) {
+        return this.matDialog.open<
+            DragonInfoLogComponent,
+            DragonInfoLogComponent['data']
+        >(
+            DragonInfoLogComponent,
+            {
+                data,
+                width: `${cardWidth * 6}px`,
             },
         );
     }
