@@ -38,6 +38,7 @@ export interface PlayerPointsResult {
             item: ClankCardConfig;
         }[];
     };
+    isNotCalculated: boolean;
     master: number;
     total: number;
 }

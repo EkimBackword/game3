@@ -85,8 +85,23 @@ $clank_info_width: 200px;
 
     .player_row {
         cursor: pointer;
+
         &:hover {
             background-color: #ccc;
+        }
+
+        &.player_row__not_calculated {
+            opacity: 0.4;
+            background-color: #E5CECE;
+
+            &:hover {
+                opacity: 0.6;
+                background-color: #BFB1B1;
+            }
+
+            .total {
+                font-weight: normal;
+            }
         }
     }
 

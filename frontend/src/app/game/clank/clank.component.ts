@@ -15,6 +15,7 @@ import {
 } from 'rxjs';
 import {
     catchError,
+    debounceTime,
     map,
     takeUntil,
 } from 'rxjs/operators';
@@ -50,6 +51,7 @@ export class ClankComponent implements OnInit {
 
     statusSubject = this.gameInfoQuery.onStatusChangeSubject;
     playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(
+        debounceTime(0),
         map((players) => {
             const state = this.gameInfoQuery.getValue();
             let winner: PlayerPointsResult | undefined;
@@ -71,12 +73,10 @@ export class ClankComponent implements OnInit {
                         points: 0,
                         list: [],
                     },
+                    isNotCalculated: (!player.isEscaped && !player.isRescued) || (player.artifacts.length === 0),
                     master: 0,
                     total: 0,
                 };
-                if ((!player.isEscaped && !player.isRescued) || (player.artifacts.length === 0)) {
-                    return result;
-                }
                 result.coins = player.benefitInfo.coin ?? 0;
                 result.master = player.isEscaped ? 20 : 0;
                 result.tokens = player.tokens.reduce((acc, token) => {
@@ -121,13 +121,17 @@ export class ClankComponent implements OnInit {
                     + result.artifacts.points
                     + result.cards.points
                     + result.master;
-                if (winner == null || winner.total < result.total) {
+                if (!result.isNotCalculated && (winner == null || winner.total < result.total)) {
                     winner = result;
                 }
                 return result;
             });
             return {
-                rows: rows.sort((a, b) => b.total - a.total),
+                rows: rows.sort((previos, current) => {
+                    const orderPrevios = previos.total * (previos.isNotCalculated ? 1 : 10000);
+                    const orderCurrent = current.total * (current.isNotCalculated ? 1 : 10000);
+                    return orderCurrent - orderPrevios;
+                }),
                 winner,
             };
         }),
