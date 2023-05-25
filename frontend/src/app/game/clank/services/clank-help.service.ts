@@ -479,7 +479,7 @@ export class ClankHelpService {
             success: true,
             message: null,
         };
-    };
+    }
 
     private showToast(result: CheckCostResult) {
         if (!result.message) {
