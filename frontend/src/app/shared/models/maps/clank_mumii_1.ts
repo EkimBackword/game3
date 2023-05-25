@@ -614,7 +614,13 @@ export const getClankMapMinMumiiFirst = () => {
                         },
                     },
                     {
-                        element_id: 13,
+                        element_id: 12,
+                        cost: {
+                            boot: 1,
+                        },
+                    },
+                    {
+                        element_id: 14,
                         cost: {
                             boot: 1,
                             key_token: 1,
@@ -1244,6 +1250,7 @@ export const getClankMapMinMumiiFirst = () => {
                 id: 28,
                 mumiaZoneType: ClankMapMumiaZoneTypeEnum.Snake,
                 isDungeon: true,
+                isMarket: true,
                 position: {
                     x: 2502,
                     y: 2148,
