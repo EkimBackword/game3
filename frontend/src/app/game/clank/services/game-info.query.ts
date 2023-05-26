@@ -111,11 +111,28 @@ export class GameInfoQuery extends Query<GameInfoState> {
                 style: {},
                 clankAriaStyle: {},
                 tooltip: `Уровень ярости дакона: ${dragonInfo.rage}`,
+                disableDragonRage: [],
             };
             const mapInfo = this.mapsService.getMapById(mapId);
             if (mapInfo == null) {
                 return data;
             }
+            data.disableDragonRage = mapInfo.dragonInfo.track.filter(p => {
+                return p.canIncreaseRageByUserCount != null
+                    && p.canIncreaseRageByUserCount > this.playerCount;
+            }).map((p) => {
+                return {
+                    tooltip: `Используется если количство игроков больше ${p.canIncreaseRageByUserCount}`,
+                    style: {
+                        top: `${(p.position.y ?? 0)}px`,
+                        left: `${(p.position.x ?? 0)}px`,
+                        width: `${p.position.width}px`,
+                        height: `${p.position.height}px`,
+                        backgroundImage: `url(/assets/images/blocked.png)`,
+                        backgroundSize: '100% 100%',
+                    },
+                };
+            });
             const dragonPosition = mapInfo.dragonInfo.track.find(p => p.rage === dragonInfo.rage);
             if (dragonPosition == null) {
                 return data;
@@ -235,6 +252,11 @@ export class GameInfoQuery extends Query<GameInfoState> {
         const userState = this.sessionQuery.getValue();
         const gameState = this.getValue();
         return gameState.players.find(p => p.id === userState.id);
+    }
+
+    get playerCount() {
+        const gameState = this.getValue();
+        return gameState.players.length;
     }
 
     get activePlayer() {

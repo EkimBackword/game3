@@ -41,6 +41,7 @@ export interface ClankMapDragonTrackItem {
     rage: number;
     position: ClankMapPositionInfo;
     startUserCount: number;
+    canIncreaseRageByUserCount?: number;
     clank: number;
     effect?: ClankMapDragonTrackEffect;
 }

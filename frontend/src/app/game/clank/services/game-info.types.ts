@@ -44,4 +44,8 @@ export interface DragonPositionInfo {
     style: Partial<CSSStyleDeclaration>;
     clankAriaStyle: Partial<CSSStyleDeclaration>;
     tooltip: string;
+    disableDragonRage: {
+        style: Partial<CSSStyleDeclaration>;
+        tooltip: string;
+    }[];
 }

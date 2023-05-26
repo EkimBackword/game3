@@ -109,6 +109,7 @@ export const getClankMapMinMumiiFirst = () => {
                     },
                     clank: 5,
                     startUserCount: 0,
+                    canIncreaseRageByUserCount: 5,
                 },
                 {
                     rage: 8,
@@ -120,6 +121,7 @@ export const getClankMapMinMumiiFirst = () => {
                     },
                     clank: 6,
                     startUserCount: 0,
+                    canIncreaseRageByUserCount: 5,
                 },
             ],
             endGameTrack: [

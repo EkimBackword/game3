@@ -62,6 +62,12 @@
                     </div>
                 </div>
                 <div class="clank_map_dragon position-absolute"
+                    *ngFor="let rage of asyncData.dragonPosition.disableDragonRage"
+                    [ngStyle]="rage.style"
+                    [matTooltip]="rage.tooltip"
+                    matTooltipPosition="left">
+                </div>
+                <div class="clank_map_dragon position-absolute"
                     [ngStyle]="asyncData.dragonPosition.style"
                     [matTooltip]="asyncData.dragonPosition.tooltip"
                     matTooltipPosition="left">

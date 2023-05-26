@@ -293,8 +293,12 @@ export class ClankHelpService {
 
     increaseDragonRage(state: GameInfoState) {
         const track = this.gameInfoQuery.mapInfo?.dragonInfo.track ?? [];
+        const nextDragonPosition = track.find(p => p.rage === (state.dragonInfo.rage + 1));
+        const playersCount = state.players.length;
+        const canIncreaseRageByUserCount = nextDragonPosition?.canIncreaseRageByUserCount == null
+            || playersCount >= nextDragonPosition.canIncreaseRageByUserCount;
         const lastTrackElement = track[track.length - 1];
-        if (state.dragonInfo.rage === lastTrackElement.rage) {
+        if (!canIncreaseRageByUserCount || state.dragonInfo.rage === lastTrackElement.rage) {
             return;
         }
         state.dragonInfo.rage++;

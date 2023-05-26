@@ -108,6 +108,7 @@ export const getClankMapMinFirst = () => {
                     },
                     clank: 5,
                     startUserCount: 0,
+                    canIncreaseRageByUserCount: 5,
                 },
                 {
                     rage: 8,
@@ -119,6 +120,7 @@ export const getClankMapMinFirst = () => {
                     },
                     clank: 6,
                     startUserCount: 0,
+                    canIncreaseRageByUserCount: 5,
                 },
             ],
             endGameTrack: [
