@@ -249,106 +249,146 @@ export class ClankPlayerInfoComponent implements OnInit {
             this.selectedPlayerCardsSubject.next([]);
             return;
         }
-        const deck = (player?.deck ?? []).map((card, index) => {
-            const data: ISelectedPlayerCardInfo = {
-                id: card.id,
-                card,
-                style: {
-                    left: this.cardsWrapInfo.deckLeft,
-                    top: `${this.cardsWrapInfo.deckTop}px`,
-                    zIndex: `${index}`,
-                },
-                isOpen: false,
-                disablePopover: true,
-                classes: [],
-            };
-            return data;
-        });
-        const board = (player?.board ?? []).map((card, index) => {
-            const data: ISelectedPlayerCardInfo = {
-                id: card.id,
-                card,
-                style: {
-                    left: this.cardsWrapInfo.boardLeft,
-                    top: `${this.cardsWrapInfo.deckTop}px`,
-                    zIndex: `${index}`,
-                },
-                isOpen: true,
-                disablePopover: true,
-                classes: [],
-                action: {
-                    name: 'Посмотреть карты',
-                    eventName: null,
-                    btnClass: 'btn-primary',
-                    canUse: () => true,
-                    callback: async () => {
-                        this.gameDialogsService.openCardListComponent({
-                            title: 'Список разыгранных на этом ходу карт',
-                            cards: player.board,
-                        });
+        let deck: ISelectedPlayerCardInfo[] = [];
+        let board: ISelectedPlayerCardInfo[] = [];
+        let discard: ISelectedPlayerCardInfo[] = [];
+        let hand: ISelectedPlayerCardInfo[] = [];
+        if (player.isFinish) {
+            const allCards = [
+                ...player.deck ?? [],
+                ...player.board ?? [],
+                ...player.discard ?? [],
+                ...player.hand ?? [],
+            ];
+            discard = allCards.map((card, index) => {
+                const data: ISelectedPlayerCardInfo = {
+                    id: card.id,
+                    card,
+                    style: {
+                        left: this.cardsWrapInfo.discardLeft,
+                        top: `${this.cardsWrapInfo.deckTop}px`,
+                        zIndex: `${index}`,
                     },
-                },
-            };
-            return data;
-        });
-        const discard = (player?.discard ?? []).map((card, index) => {
-            const data: ISelectedPlayerCardInfo = {
-                id: card.id,
-                card,
-                style: {
-                    left: this.cardsWrapInfo.discardLeft,
-                    top: `${this.cardsWrapInfo.deckTop}px`,
-                    zIndex: `${index}`,
-                },
-                isOpen: true,
-                disablePopover: true,
-                classes: [],
-                action: {
-                    name: 'Посмотреть карты',
-                    eventName: null,
-                    btnClass: 'btn-primary',
-                    canUse: () => true,
-                    callback: async () => {
-                        this.gameDialogsService.openCardListComponent({
-                            title: 'Список сброшеных карт',
-                            cards: player.discard,
-                        });
+                    isOpen: true,
+                    disablePopover: true,
+                    classes: [],
+                    action: {
+                        name: 'Посмотреть карты',
+                        eventName: null,
+                        btnClass: 'btn-primary',
+                        canUse: () => true,
+                        callback: async () => {
+                            this.gameDialogsService.openCardListComponent({
+                                title: `Колода игрока ${player.name}`,
+                                cards: allCards,
+                            });
+                        },
                     },
-                },
-            };
-            return data;
-        });
-        const hand = (player?.hand ?? []).map((card, index) => {
-            const leftIndex = (index % this.cardsWrapInfo.cardsInRow);
-            const topIndex = Math.floor(index / this.cardsWrapInfo.cardsInRow);
-            const left = leftIndex * this.cardsWrapInfo.cardWidth * this.cardsWrapInfo.cardWidthKoef;
-            const top = topIndex * this.cardsWrapInfo.cardHeight * this.cardsWrapInfo.cardWidthKoef + this.cardsWrapInfo.handTop;
-            const data: ISelectedPlayerCardInfo = {
-                id: card.id,
-                card,
-                style: {
-                    left: `${left}px`,
-                    top: `${top}px`,
-                    zIndex: `${index}`,
-                },
-                isOpen: true,
-                handIndex: index,
-                classes: [`card_container__hand`],
-                action: {
-                    name: this.cardsService.getCardActionName(card, 'onUse'),
-                    eventName: 'onUse',
-                    btnClass: 'btn-primary',
-                    canUse: () => this.activePlayer != null
-                        && player.id === this.activePlayer.id
-                        && this.activePlayer.id === this.currentPlayer?.id,
-                    callback: async () => {
-                        await this.gameInfoService.useCard(card, 'onUse');
-                        this.changeDetectorRef.detectChanges();
+                };
+                return data;
+            });
+        } else {
+            deck = (player?.deck ?? []).map((card, index) => {
+                const data: ISelectedPlayerCardInfo = {
+                    id: card.id,
+                    card,
+                    style: {
+                        left: this.cardsWrapInfo.deckLeft,
+                        top: `${this.cardsWrapInfo.deckTop}px`,
+                        zIndex: `${index}`,
                     },
-                },
-            };
-            return data;
-        });
+                    isOpen: false,
+                    disablePopover: true,
+                    classes: [],
+                };
+                return data;
+            });
+            board = (player?.board ?? []).map((card, index) => {
+                const data: ISelectedPlayerCardInfo = {
+                    id: card.id,
+                    card,
+                    style: {
+                        left: this.cardsWrapInfo.boardLeft,
+                        top: `${this.cardsWrapInfo.deckTop}px`,
+                        zIndex: `${index}`,
+                    },
+                    isOpen: true,
+                    disablePopover: true,
+                    classes: [],
+                    action: {
+                        name: 'Посмотреть карты',
+                        eventName: null,
+                        btnClass: 'btn-primary',
+                        canUse: () => true,
+                        callback: async () => {
+                            this.gameDialogsService.openCardListComponent({
+                                title: 'Список разыгранных на этом ходу карт',
+                                cards: player.board,
+                            });
+                        },
+                    },
+                };
+                return data;
+            });
+            discard = (player?.discard ?? []).map((card, index) => {
+                const data: ISelectedPlayerCardInfo = {
+                    id: card.id,
+                    card,
+                    style: {
+                        left: this.cardsWrapInfo.discardLeft,
+                        top: `${this.cardsWrapInfo.deckTop}px`,
+                        zIndex: `${index}`,
+                    },
+                    isOpen: true,
+                    disablePopover: true,
+                    classes: [],
+                    action: {
+                        name: 'Посмотреть карты',
+                        eventName: null,
+                        btnClass: 'btn-primary',
+                        canUse: () => true,
+                        callback: async () => {
+                            this.gameDialogsService.openCardListComponent({
+                                title: 'Список сброшеных карт',
+                                cards: player.discard,
+                            });
+                        },
+                    },
+                };
+                return data;
+            });
+            hand = (player?.hand ?? []).map((card, index) => {
+                const leftIndex = (index % this.cardsWrapInfo.cardsInRow);
+                const topIndex = Math.floor(index / this.cardsWrapInfo.cardsInRow);
+                const left = leftIndex * this.cardsWrapInfo.cardWidth * this.cardsWrapInfo.cardWidthKoef;
+                const top = topIndex * this.cardsWrapInfo.cardHeight * this.cardsWrapInfo.cardWidthKoef + this.cardsWrapInfo.handTop;
+                const data: ISelectedPlayerCardInfo = {
+                    id: card.id,
+                    card,
+                    style: {
+                        left: `${left}px`,
+                        top: `${top}px`,
+                        zIndex: `${index}`,
+                    },
+                    isOpen: true,
+                    handIndex: index,
+                    classes: [`card_container__hand`],
+                    action: {
+                        name: this.cardsService.getCardActionName(card, 'onUse'),
+                        eventName: 'onUse',
+                        btnClass: 'btn-primary',
+                        canUse: () => this.activePlayer != null
+                            && player.id === this.activePlayer.id
+                            && this.activePlayer.id === this.currentPlayer?.id,
+                        callback: async () => {
+                            await this.gameInfoService.useCard(card, 'onUse');
+                            this.changeDetectorRef.detectChanges();
+                        },
+                    },
+                };
+                return data;
+            });
+        }
         const cards = [
             ...deck,
             ...board,
