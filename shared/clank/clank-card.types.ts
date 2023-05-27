@@ -106,6 +106,8 @@ export const ClankCardBaseConfigEventInfoByType: Record<keyof ClankCardBaseConfi
 };
 
 export interface ClankCardBaseConfig {
+    /** Уникальная строка для поиска карты */
+    uniq_find_string?: string;
     /** Строка для поиска картинки */
     row: number;
     /** Колонка для поиска картинки */

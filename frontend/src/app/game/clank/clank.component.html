@@ -29,6 +29,15 @@
                             </th>
                             <th>
                                 <img class="clank_table_head_img"
+                                    ngSrc="/assets/images/tokens/map_tokens/clank_proklyatie_mumii/curse.jpg"
+                                    [height]="50"
+                                    [width]="50"
+                                    alt="Жетоны проклятия"
+                                    matTooltip="Жетоны проклятия"
+                                    matTooltipPosition="above">
+                            </th>
+                            <th>
+                                <img class="clank_table_head_img"
                                     ngSrc="/assets/images/tokens/tokens.png"
                                     [height]="50"
                                     [width]="50"
@@ -85,6 +94,7 @@
                                 </div>
                             </td>
                             <td class="to_right">{{player.coins}}</td>
+                            <td class="to_right">{{player.curse.points}}</td>
                             <td class="to_right">{{player.tokens.points}}</td>
                             <td class="to_right">{{player.artifacts.points}}</td>
                             <td class="to_right">{{player.cards.points}}</td>

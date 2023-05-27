@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash';
 import { ClankHelpService } from 'src/app/game/clank/services/clank-help.service';
 import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
 import { preloadImage } from 'src/app/shared/models/game.types';
+import { mumiaCardUniqFindString } from 'src/app/shared/models/maps/clank_mumii_1';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 
 import {
@@ -46,27 +47,27 @@ export class CardsService {
             backgroundSize: '1000% 700%',
         },
         [ClankDlcEnum.clank_sunken_treasures]: {
-            dlc_name: ClankDlcEnum.clank,
+            dlc_name: ClankDlcEnum.clank_sunken_treasures,
             url: '/assets/images/cards/clank_sunken_treasures.jpg',
             backgroundSize: '1000% 700%',
         },
         [ClankDlcEnum.clank_proklyatie_mumii]: {
-            dlc_name: ClankDlcEnum.clank,
+            dlc_name: ClankDlcEnum.clank_proklyatie_mumii,
             url: '/assets/images/cards/clank_the_mummys_curse.jpg',
             backgroundSize: '1000% 700%',
         },
         [ClankDlcEnum.clank_expeditions_goldand_silk]: {
-            dlc_name: ClankDlcEnum.clank,
+            dlc_name: ClankDlcEnum.clank_expeditions_goldand_silk,
             url: '/assets/images/cards/clank.jpg',
             backgroundSize: '1000% 700%',
         },
         [ClankDlcEnum.clank_temple_of_the_ape_lords]: {
-            dlc_name: ClankDlcEnum.clank,
+            dlc_name: ClankDlcEnum.clank_temple_of_the_ape_lords,
             url: '/assets/images/cards/clank.jpg',
             backgroundSize: '1000% 700%',
         },
         [ClankDlcEnum.clank_adventuring_party]: {
-            dlc_name: ClankDlcEnum.clank,
+            dlc_name: ClankDlcEnum.clank_adventuring_party,
             url: '/assets/images/cards/clank.jpg',
             backgroundSize: '1000% 700%',
         },
@@ -74,6 +75,7 @@ export class CardsService {
 
     private store = [
         ...this.initClankReserveCards(1, false),
+        ...this.initClankMumiaReserveCards(false),
         ...this.initClankStartCards('', false),
         ...this.initClankDeckCards(false),
     ];
@@ -194,16 +196,19 @@ export class CardsService {
             }
         }
         const currentPlayer = state.players[state.activePlayerIndex];
+        const eventText = data.eventName === 'onAcquire' && cardInfo?.type === ClankCardType.monster
+            ? 'победил'
+            : ClankCardBaseConfigEventInfoByType[data.eventName].text;
         this.clankHelpService.addActionLogs({
             state,
             type: GameInfoActionLogType.Card,
             data: {
-                text: data.eventName !== 'onArrive' ?
-                    `${currentPlayer.name} ${ClankCardBaseConfigEventInfoByType[data.eventName].text} ${data.card.name}` :
-                    `${ClankCardBaseConfigEventInfoByType[data.eventName].text} ${data.card.name}`,
-                colorId: data.eventName !== 'onArrive' ?
-                    currentPlayer.colorId :
-                    GamePlayerColorIdEnum.Black,
+                text: data.eventName !== 'onArrive'
+                    ? `${currentPlayer.name} ${eventText} ${data.card.name} | (Здоровье: ${currentPlayer.benefitInfo.heal ?? 0})`
+                    : `${eventText} ${data.card.name}`,
+                colorId: data.eventName !== 'onArrive'
+                    ? currentPlayer.colorId
+                    : GamePlayerColorIdEnum.Black,
                 hideToast: true,
             },
         });
@@ -247,6 +252,10 @@ export class CardsService {
 
     private getCardInfo(card: ClankCardConfig) {
         const [find_string] = card.id.split('__');
+        return this.getCardByFindString(find_string);
+    }
+
+    getCardByFindString(find_string: string) {
         return this.store.find(p => p.find_string === find_string);
     }
 
@@ -421,6 +430,73 @@ export class CardsService {
             player_id: playerId,
         };
         return this.mappingDeckCards(playerDeckConfig, withCopy);
+    }
+
+    private initClankMumiaReserveCards(withCopy: boolean) {
+        const self = this;
+        const cards: ClankCardBaseConfig[] = [
+            {
+                uniq_find_string: mumiaCardUniqFindString,
+                row: 3,
+                column: 0,
+                name: 'Мумия',
+                description: 'Движение: Каждый игрок в зоне мумии получает 1 проклятие',
+                type: ClankCardType.monster,
+                events: {
+                    onAcquire: {
+                        async callback(state, player, card) {
+                            const result = await self.openDialogChooseCardEvent({
+                                count: 1,
+                                list: [
+                                    {
+                                        description: 'За 2 меча | Получите 4 монеты и 1 проклятие',
+                                        event: () => {
+                                            return self.clankHelpService.updateBenefitInfo({
+                                                player,
+                                                cost: {
+                                                    sword: 2,
+                                                },
+                                                benefit: {
+                                                    coin: 4,
+                                                    curse: 1,
+                                                },
+                                            });
+                                        },
+                                    },
+                                    {
+                                        description: 'За 3 меча | Снимите половину проклятий (округляя вверх)',
+                                        event: () => {
+                                            const curse = player.benefitInfo.curse ?? 0;
+                                            return self.clankHelpService.updateBenefitInfo({
+                                                player,
+                                                cost: {
+                                                    sword: 3,
+                                                },
+                                                benefit: {
+                                                    curse: -Math.ceil(curse / 2),
+                                                },
+                                            });
+                                        },
+                                    },
+                                ],
+                            });
+                            if (!result) {
+                                return result;
+                            }
+                            self.clankHelpService.changeMumiaPosition(state);
+                            return true;
+                        },
+                    },
+                },
+                count: -1,
+            },
+        ];
+        const reserveMumiaDeckConfig: ClankDeckConfig = {
+            ...this.spriteInfo.clank_proklyatie_mumii,
+            cards,
+            position: ClankCardPositionEnum.reserveRow,
+        };
+        return this.mappingDeckCards(reserveMumiaDeckConfig, withCopy);
     }
 
     private initClankDeckCards(withCopy: boolean) {
@@ -2475,7 +2551,9 @@ export class CardsService {
                 if (this.lastIndex > 1000000) {
                     this.lastIndex = 0;
                 }
-                const find_string = `${config.dlc_name}_${index}_${config.position}`;
+                const find_string = card.uniq_find_string != null
+                    ? card.uniq_find_string
+                    : `${config.dlc_name}_${index}_${config.position}`;
                 const cardConfig: ClankCardConfig = {
                     ...card,
                     ...config,

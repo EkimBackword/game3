@@ -56,11 +56,16 @@ export class ClankComponent implements OnInit {
             const state = this.gameInfoQuery.getValue();
             let winner: PlayerPointsResult | undefined;
             const rows = players.map((player) => {
+                const curseCount = player.benefitInfo.curse ?? 0;
                 const result: PlayerPointsResult = {
                     config: player,
                     name: player.name,
                     colorInfo: GamePlayerColorList[player.colorId],
                     coins: 0,
+                    curse: {
+                        points: -(curseCount * 2),
+                        count: curseCount,
+                    },
                     tokens: {
                         points: 0,
                         list: [],
@@ -117,6 +122,7 @@ export class ClankComponent implements OnInit {
                     return acc;
                 }, result.cards);
                 result.total = result.coins
+                    + result.curse.points
                     + result.tokens.points
                     + result.artifacts.points
                     + result.cards.points

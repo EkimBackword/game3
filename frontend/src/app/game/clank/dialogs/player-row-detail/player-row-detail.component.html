@@ -11,6 +11,14 @@
 </h1>
 <div mat-dialog-content class="d-flex flex-column">
     <label>
+        <strong>Монеты:</strong> {{data.coins}}
+    </label>
+
+    <label>
+        <strong>Проклятия:</strong> {{data.curse.points}} ({{data.curse.count}} шт.)
+    </label>
+
+    <label>
         <strong>Жетоны:</strong> {{data.tokens.points}}
     </label>
     <div class="element-list">

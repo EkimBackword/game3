@@ -2,8 +2,10 @@ import { ClankDlcEnum } from '@shared/clank/clank-info.types';
 import {
     ClankMapConfig,
     ClankMapConfigIds,
-    ClankMapMumiaZoneTypeEnum,
 } from '@shared/clank/clank-map.types';
+import { ClankMapMumiaZoneTypeEnum } from '@shared/clank/clank-mumia.types';
+
+export const mumiaCardUniqFindString = `uniq_mumia_card_${ClankMapConfigIds.clank_proklyatie_mumii_1}`;
 
 export const getClankMapMinMumiiFirst = () => {
     const map: ClankMapConfig = {
@@ -1735,6 +1737,48 @@ export const getClankMapMinMumiiFirst = () => {
                 },
             },
         ],
+        mumiaInfo: {
+            url: '/assets/images/mumia.png',
+            card_find_string: mumiaCardUniqFindString,
+            zones: [
+                {
+                    zone: ClankMapMumiaZoneTypeEnum.Sun,
+                    position: {
+                        height: 198,
+                        width: 198,
+                        x: 1579,
+                        y: 976,
+                    },
+                },
+                {
+                    zone: ClankMapMumiaZoneTypeEnum.Axe,
+                    position: {
+                        height: 198,
+                        width: 198,
+                        x: 621,
+                        y: 1987,
+                    },
+                },
+                {
+                    zone: ClankMapMumiaZoneTypeEnum.Chair,
+                    position: {
+                        height: 198,
+                        width: 198,
+                        x: 1523,
+                        y: 2376,
+                    },
+                },
+                {
+                    zone: ClankMapMumiaZoneTypeEnum.Snake,
+                    position: {
+                        height: 198,
+                        width: 198,
+                        x: 2289,
+                        y: 2033,
+                    },
+                },
+            ],
+        },
     };
     return map;
 };

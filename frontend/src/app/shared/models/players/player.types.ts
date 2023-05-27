@@ -17,6 +17,10 @@ export interface PlayerPointsResult {
     config: ClankPlayerConfig;
     colorInfo: GamePlayerColorInfo;
     coins: number;
+    curse: {
+        points: number;
+        count: number;
+    };
     tokens: {
         points: number;
         list: {

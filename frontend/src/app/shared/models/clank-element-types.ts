@@ -112,7 +112,7 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     },
     [ClankElementByGame.curse]: {
         name: 'Проклятие',
-        url: '/assets/images/tokens/map_tokens/clank_proklyatie_mumii/token.jpg',
+        url: '/assets/images/tokens/map_tokens/clank_proklyatie_mumii/curse.jpg',
     },
     [ClankElementByGame.coin]: {
         name: 'Монета',

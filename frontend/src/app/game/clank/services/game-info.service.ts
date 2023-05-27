@@ -39,6 +39,7 @@ import {
     ClankMapConfig,
     ClankMapElementConfig,
 } from '@shared/clank/clank-map.types';
+import { initClankMumiaInfo } from '@shared/clank/clank-mumia.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorIdEnum,
@@ -207,7 +208,7 @@ export class GameInfoService implements OnDestroy {
                 state,
                 type: GameInfoActionLogType.Move,
                 data: {
-                    text: `${player.name} переместился`,
+                    text: `${player.name} переместился | (Здоровье: ${player.benefitInfo.heal ?? 0})`,
                     colorId: player.colorId,
                     hideToast: true,
                 },
@@ -375,6 +376,7 @@ export class GameInfoService implements OnDestroy {
         });
         const dragonTrackInfo = mapInfo?.dragonInfo.track.find(p => p.startUserCount === playerCount);
         state.dragonInfo = initDragonInfo(dragonTrackInfo?.rage, playerCount);
+        state.mumiaInfo = initClankMumiaInfo();
         state.players.forEach((player, index) => {
             const clankIndex = index < state.activePlayerIndex
                 ? index + state.players.length
@@ -444,7 +446,7 @@ export class GameInfoService implements OnDestroy {
             state,
             type: GameInfoActionLogType.Turn,
             data: {
-                text: `${currentPlayer.name} закончил свой ход`,
+                text: `${currentPlayer.name} закончил свой ход | (Здоровье: ${currentPlayer.benefitInfo.heal ?? 0})`,
                 colorId: currentPlayer.colorId,
                 hideToast: newActivPlayer != null,
             },
@@ -454,7 +456,7 @@ export class GameInfoService implements OnDestroy {
                 state,
                 type: GameInfoActionLogType.Turn,
                 data: {
-                    text: `Ход переходит к игроку ${newActivPlayer.name}`,
+                    text: `Ход переходит к игроку ${newActivPlayer.name} | (Здоровье: ${newActivPlayer.benefitInfo.heal ?? 0})`,
                     colorId: newActivPlayer.colorId,
                     soundUrl: '/assets/sounds/StartTurn.mp3',
                 },

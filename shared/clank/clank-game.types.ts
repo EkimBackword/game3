@@ -4,6 +4,7 @@ import { ClankCardConfig } from './clank-card.types';
 import { ClankDragonInfo } from './clank-dragon.types';
 import { ClankDlcEnum } from './clank-info.types';
 import { ClankMapConfigIds } from './clank-map.types';
+import { ClankMumiaInfo } from './clank-mumia.types';
 import {
   ClankPlayerConfig,
   GamePlayerColorIdEnum,
@@ -46,6 +47,7 @@ export enum GameInfoActionLogType {
     Card = 'Card',
     Token = 'Token',
     Dragon = 'Dragon',
+    Mumia = 'Mumia',
     Move = 'Move',
     ManualFunction = 'ManualFunction',
 }
@@ -83,6 +85,8 @@ export interface GameInfoState extends GameInfoConfig {
     players: ClankPlayerConfig[];
     /** Информация о драконе */
     dragonInfo: ClankDragonInfo;
+    /** Информация о мумии */
+    mumiaInfo: ClankMumiaInfo;
     /** Колода подземелья */
     dungeonDeck: ClankCardConfig[];
     /** Подземный ряд */

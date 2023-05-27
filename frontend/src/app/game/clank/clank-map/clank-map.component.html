@@ -3,7 +3,8 @@
     players: playersSubject | async,
     playersPosition: playersPositionSubject | async,
     searchPlayerId: searchPlayerIdStream | async,
-    dragonPosition: dragonPositionSubject | async
+    dragonPosition: dragonPositionSubject | async,
+    mumiaPosition: mumiaPositionChangeSubject | async
 } as asyncData">
     <div class="clank_map_container"
         *ngIf="mapInfo != null"
@@ -24,6 +25,15 @@
                 [ngStyle]="item.style"
                 [size]="item.size"
             ></app-clank-meeple>
+            <ng-container *ngIf="asyncData.mumiaPosition">
+                <div class="clank_map_dragon clank_map_mumia position-absolute"
+                    [class.clank_map_mumia__can_use]="asyncData.mumiaPosition.canUse"
+                    [ngStyle]="asyncData.mumiaPosition.style"
+                    [matTooltip]="asyncData.mumiaPosition.tooltip"
+                    matTooltipPosition="left"
+                    (click)="openMumiaDialogEvents(asyncData.mumiaPosition)"
+                ></div>
+            </ng-container>
             <ng-container *ngIf="asyncData.dragonPosition">
                 <div class="clank_map_clank_aria position-absolute"
                     [ngStyle]="asyncData.dragonPosition.clankAriaStyle">

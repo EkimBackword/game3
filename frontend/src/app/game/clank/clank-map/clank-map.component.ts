@@ -24,13 +24,16 @@ import {
     ClankMapConfig,
     ClankMapDragonInfo,
 } from '@shared/clank/clank-map.types';
+import { ClankMumiaPositionInfo } from '@shared/clank/clank-mumia.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorList,
 } from '@shared/clank/clank-player.types';
 
+import { CardsService } from '../services/cards.service';
 import { GameDialogsService } from '../services/game-dialogs.service';
 import { GameInfoQuery } from '../services/game-info.query';
+import { GameInfoService } from '../services/game-info.service';
 
 @Component({
     selector: 'app-clank-map',
@@ -62,6 +65,8 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     dragonPositionSubject = this.gameInfoQuery.onDragonPositionChangeSubject;
 
+    mumiaPositionChangeSubject = this.gameInfoQuery.onMumiaPositionChangeSubject;
+
     GamePlayerColorList = GamePlayerColorList;
 
     @ViewChild('clankMapContainer', { read: ElementRef }) clankMapContainer: ElementRef<HTMLElement> | undefined;
@@ -74,6 +79,8 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
+        private gameInfoService: GameInfoService,
+        private cardsService: CardsService,
         private gameDialogsService: GameDialogsService,
         private gameInfoQuery: GameInfoQuery,
         private elementRef: ElementRef<HTMLElement>,
@@ -150,6 +157,19 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
             dragonInfo,
             players,
         });
+    }
+
+    async openMumiaDialogEvents(mumiaPosition: ClankMumiaPositionInfo) {
+        const currentPlayer = this.gameInfoQuery.currentPlayer;
+        if (!mumiaPosition.canUse || mumiaPosition.mapMumiaInfo == null || currentPlayer == null) {
+            return;
+        }
+        const mumia = this.cardsService.getCardByFindString(mumiaPosition.mapMumiaInfo.card_find_string);
+        if (mumia == null) {
+            return;
+        }
+        await this.gameInfoService.useCard(mumia, 'onAcquire');
+        this.changeDetectorRef.detectChanges();
     }
 
     private onResize() {

@@ -3,6 +3,7 @@ import {
   ClankDlcEnum,
   ClankElementType,
 } from './clank-info.types';
+import { ClankMapMumiaZoneTypeEnum } from './clank-mumia.types';
 
 export enum ClankMapConfigIds {
     clank_1 = 1,
@@ -28,6 +29,7 @@ export interface ClankMapConfig {
     height: number;
     dragonInfo: ClankMapDragonInfo;
     elements: ClankMapElementConfig[];
+    mumiaInfo?: ClankMapMumiaInfo;
 }
 
 export interface ClankMapDragonInfo {
@@ -35,6 +37,26 @@ export interface ClankMapDragonInfo {
     clankAria: ClankMapPositionInfo;
     track: ClankMapDragonTrackItem[];
     endGameTrack: ClankMapDragonEndGameTrackItem[];
+}
+
+export interface ClankMapMumiaInfo {
+    url: string;
+    card_find_string: string;
+    zones: ClankMumiaMapZone[];
+}
+
+export interface ClankMumiaMapZone {
+    /** Идентификатор зоны */
+    zone: ClankMapMumiaZoneTypeEnum;
+    /** Расположение */
+    position: ClankMapPositionInfo;
+}
+
+export interface ClankMumiaEvents {
+    description: string;
+    cost?: ClankCostInfo;
+    benefit?: ClankCostInfo;
+    removeHalfOfTheCurse: boolean;
 }
 
 export interface ClankMapDragonTrackItem {
@@ -66,13 +88,6 @@ export interface ClankMapDragonTrackEffect {
 }
 
 export enum ClankMapDragonTrackEffectValue {
-}
-
-export enum ClankMapMumiaZoneTypeEnum {
-    Sun = 'sun',
-    Axe = 'axe',
-    Chair = 'chair',
-    Snake = 'snake',
 }
 
 export interface ClankMapElementConfig {

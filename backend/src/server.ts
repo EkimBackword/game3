@@ -12,6 +12,7 @@ import {
 } from '../../shared/clank/clank-game.types';
 import { ClankDlcEnum } from '../../shared/clank/clank-info.types';
 import { ClankMapConfigIds } from '../../shared/clank/clank-map.types';
+import { initClankMumiaInfo } from '../../shared/clank/clank-mumia.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorIds,
@@ -68,6 +69,7 @@ class GamesInfo {
             artifacts: [],
             players: [],
             dragonInfo: initDragonInfo(),
+            mumiaInfo: initClankMumiaInfo(),
             actionLogs: [],
             turnIndex: 0,
             activePlayerIndex: 0,

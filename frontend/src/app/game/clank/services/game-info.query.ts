@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 
+import * as lodash from 'lodash';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import {
+    distinctUntilChanged,
     filter,
     map,
     pairwise,
@@ -34,6 +36,7 @@ import {
     GameInfoState,
     GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
+import { ClankMumiaPositionInfo } from '@shared/clank/clank-mumia.types';
 import {
     GamePlayerColorIdEnum,
     GamePlayerColorList,
@@ -100,6 +103,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
                 return data;
             });
         }),
+        distinctUntilChanged((prev, curr) => lodash.isEqual(prev, curr)),
         shareReplay(1),
     );
 
@@ -156,6 +160,42 @@ export class GameInfoQuery extends Query<GameInfoState> {
             };
             return data;
         }),
+        distinctUntilChanged((prev, curr) => lodash.isEqual(prev, curr)),
+        shareReplay(1),
+    );
+
+    onMumiaPositionChangeSubject = this.select(['mapId', 'mumiaInfo', 'activePlayerId']).pipe(
+        map(({mapId, mumiaInfo, activePlayerId}): ClankMumiaPositionInfo | null => {
+            const mapInfo = this.mapsService.getMapById(mapId);
+            if (mapInfo == null || mapInfo.mumiaInfo == null) {
+                return null;
+            }
+            const mumiaPosition = mapInfo.mumiaInfo.zones?.find(p => p.zone === mumiaInfo.zone);
+            if (mumiaPosition == null) {
+                return null;
+            }
+            const currentPlayerPosition = this.currentPlayer?.id === activePlayerId
+                ? mapInfo.elements.find(p => p.id === this.currentPlayer?.elementId)
+                : void 0;
+            const data: ClankMumiaPositionInfo = {
+                mumiaInfo,
+                mapMumiaInfo: mapInfo.mumiaInfo,
+                tooltip: 'Мумия',
+                canUse: currentPlayerPosition != null
+                    ? currentPlayerPosition?.mumiaZoneType === mumiaInfo.zone
+                    : false,
+                style: {
+                    top: `${(mumiaPosition.position.y ?? 0)}px`,
+                    left: `${(mumiaPosition.position.x ?? 0)}px`,
+                    width: `${mumiaPosition.position.width}px`,
+                    height: `${mumiaPosition.position.height}px`,
+                    backgroundImage: `url(${mapInfo.mumiaInfo.url})`,
+                    backgroundSize: '100% 100%',
+                },
+            };
+            return data;
+        }),
+        distinctUntilChanged((prev, curr) => lodash.isEqual(prev, curr)),
         shareReplay(1),
     );
 
@@ -234,6 +274,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
             }
             return this.logGroups;
         }),
+        distinctUntilChanged((prev, curr) => lodash.isEqual(prev, curr)),
         shareReplay(1),
     );
 

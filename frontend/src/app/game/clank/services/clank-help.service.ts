@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+import * as lodash from 'lodash';
 import * as moment from 'moment';
 import {
     CheckCostResult,
@@ -26,6 +27,7 @@ import {
     ClankElementByTurn,
     ClankElementType,
 } from '@shared/clank/clank-info.types';
+import { clankMapMumiaZoneTypes } from '@shared/clank/clank-mumia.types';
 import {
     ClankPlayerConfig,
     GamePlayerColorIdEnum,
@@ -123,7 +125,7 @@ export class ClankHelpService {
             state,
             type: GameInfoActionLogType.Clank,
             data: {
-                text: `${player.name} ${text} ${Math.abs(count)} бдзынь`,
+                text: `${player.name} ${text} ${Math.abs(count)} бдзынь | (Здоровье: ${player.benefitInfo.heal ?? 0})`,
                 colorId: player.colorId,
                 soundUrl: '/assets/sounds/Clank.mp3',
             },
@@ -159,7 +161,7 @@ export class ClankHelpService {
                 state,
                 type: GameInfoActionLogType.Card,
                 data: {
-                    text: `${player.name} добрал карты (${count})`,
+                    text: `${player.name} добрал карты (${count}) | (Здоровье: ${player.benefitInfo.heal ?? 0})`,
                     colorId: player.colorId,
                 },
             });
@@ -284,7 +286,7 @@ export class ClankHelpService {
             state,
             type: GameInfoActionLogType.Token,
             data: {
-                text: `${player.name} ${UseTokenInfoByType[type].text} ${tokenInfo.name}`,
+                text: `${player.name} ${UseTokenInfoByType[type].text} ${tokenInfo.name} | (Здоровье: ${player.benefitInfo.heal ?? 0})`,
                 colorId: player.colorId,
             },
         });
@@ -448,6 +450,51 @@ export class ClankHelpService {
 
     hasBenefit(player: ClankPlayerConfig, key: ClankElementType) {
         return (player.benefitInfo[key] ?? 0) > 0 || player.tokens.some(p => !p.isUsable && (p.benefit?.[key] ?? 0) > 0);
+    }
+
+    changeMumiaPosition(state: GameInfoState) {
+        const mapInfo = this.gameInfoQuery.mapInfo;
+        const mumiaInfo = mapInfo?.mumiaInfo;
+        if (mapInfo == null || mumiaInfo == null) {
+            return;
+        }
+        const newZoneIndex = lodash.random(mumiaInfo.zones.length - 1);
+        const mapZoneInfo = mumiaInfo.zones[newZoneIndex];
+        const zoneType = clankMapMumiaZoneTypes[mapZoneInfo.zone];
+        if (state.mumiaInfo.zone === mapZoneInfo.zone) {
+            this.addActionLogs({
+                state,
+                type: GameInfoActionLogType.Mumia,
+                data: {
+                    text: `Мумия осталась в той же зоне`,
+                },
+            });
+            return;
+        }
+        const cursedPlayers: string[] = [];
+        state.players.forEach(player => {
+            const mapElement = mapInfo.elements.find(p => p.id === player.elementId);
+            if (mapElement?.mumiaZoneType === mapZoneInfo.zone) {
+                this.updateBenefitInfo({
+                    player,
+                    benefit: {
+                        curse: 1,
+                    },
+                });
+                cursedPlayers.push(player.name);
+            }
+        });
+        state.mumiaInfo.zone = mapZoneInfo.zone;
+        this.addActionLogs({
+            state,
+            type: GameInfoActionLogType.Mumia,
+            data: {
+                text: `Мумия переместилась в зону "${zoneType.name}"`,
+                subtext: cursedPlayers.length > 0
+                    ? 'Игроки получившие проклятие:\r\n' + cursedPlayers.join('\r\n')
+                    : `В зоне "${zoneType.name}" нет игроков`,
+            },
+        });
     }
 
     private checkCost(data: {

@@ -8,6 +8,7 @@ import {
     GameInfoState,
     GameInfoStatusIdEnum,
 } from '@shared/clank/clank-game.types';
+import { initClankMumiaInfo } from '@shared/clank/clank-mumia.types';
 import { ClankPlayerConfig } from '@shared/clank/clank-player.types';
 
 export function createInitialGameInfoState(config: GameInfoConfig): GameInfoState {
@@ -17,6 +18,7 @@ export function createInitialGameInfoState(config: GameInfoConfig): GameInfoStat
         statusId: GameInfoStatusIdEnum.Created,
         players: [],
         dragonInfo: initDragonInfo(),
+        mumiaInfo: initClankMumiaInfo(),
         dungeonDeck: [],
         dungeonRow: [],
         reserveRow: [],
