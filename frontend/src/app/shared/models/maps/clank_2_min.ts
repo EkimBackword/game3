@@ -1409,9 +1409,6 @@ export const getClankMapMin2 = () => {
                         cost: {
                             boot: 1,
                         },
-                        benefit: {
-                            heal: 1,
-                        },
                     },
                 ],
                 items: {
@@ -1585,9 +1582,6 @@ export const getClankMapMin2 = () => {
                             boot: 1,
                             sword: 1,
                         },
-                        benefit: {
-                            heal: 1,
-                        },
                     },
                 ],
                 items: {
@@ -1621,6 +1615,9 @@ export const getClankMapMin2 = () => {
                         },
                     },
                 ],
+                benefit: {
+                    heal: 1,
+                },
             },
             {
                 id: 43,

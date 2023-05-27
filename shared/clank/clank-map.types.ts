@@ -110,6 +110,8 @@ export interface ClankMapElementConfig {
     /** */
     mumiaZoneType?: ClankMapMumiaZoneTypeEnum;
     /** */
+    benefit?: ClankCostInfo;
+    /** */
     items?: Partial<Record<ClankElementType, ClankMapElementItem>>;
 }
 

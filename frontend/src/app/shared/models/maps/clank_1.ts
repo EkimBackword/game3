@@ -360,9 +360,6 @@ export const getClankMapFirst = () => {
                             boot: 1,
                             sword: 1,
                         },
-                        benefit: {
-                            heal: 1,
-                        },
                     },
                 ],
                 isCrystalCave: true,
@@ -529,11 +526,8 @@ export const getClankMapFirst = () => {
                         },
                     },
                 ],
-                items: {
-                    heal: {
-                        count: -1,
-                        value: 1,
-                    },
+                benefit: {
+                    heal: 1,
                 },
             },
             {
@@ -701,9 +695,6 @@ export const getClankMapFirst = () => {
                         element_id: 12,
                         cost: {
                             boot: 2,
-                        },
-                        benefit: {
-                            heal: 1,
                         },
                     },
                     {
@@ -1153,9 +1144,6 @@ export const getClankMapFirst = () => {
                         cost: {
                             teleport: 1,
                         },
-                        benefit: {
-                            heal: 1,
-                        },
                     },
                 ],
                 isCrystalCave: true,
@@ -1287,9 +1275,6 @@ export const getClankMapFirst = () => {
                         cost: {
                             boot: 2,
                         },
-                        benefit: {
-                            heal: 1,
-                        },
                     },
                 ],
                 items: {
@@ -1361,18 +1346,12 @@ export const getClankMapFirst = () => {
                             boot: 2,
                             sword: 1,
                         },
-                        benefit: {
-                            heal: 1,
-                        },
                     },
                     {
                         element_id: 38,
                         cost: {
                             boot: 1,
                             sword: 2,
-                        },
-                        benefit: {
-                            heal: 1,
                         },
                     },
                     {
@@ -1413,11 +1392,8 @@ export const getClankMapFirst = () => {
                         },
                     },
                 ],
-                items: {
-                    heal: {
-                        count: -1,
-                        value: 1,
-                    },
+                benefit: {
+                    heal: 1,
                 },
             },
             {
@@ -1538,11 +1514,8 @@ export const getClankMapFirst = () => {
                         },
                     },
                 ],
-                items: {
-                    heal: {
-                        count: -1,
-                        value: 1,
-                    },
+                benefit: {
+                    heal: 1,
                 },
             },
             {
@@ -1566,9 +1539,6 @@ export const getClankMapFirst = () => {
                         cost: {
                             boot: 2,
                             sword: 1,
-                        },
-                        benefit: {
-                            heal: 1,
                         },
                     },
                 ],

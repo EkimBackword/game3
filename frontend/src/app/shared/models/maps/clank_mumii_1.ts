@@ -861,9 +861,6 @@ export const getClankMapMinMumiiFirst = () => {
                         cost: {
                             boot: 2,
                         },
-                        benefit: {
-                            heal: 1,
-                        },
                     },
                     {
                         element_id: 26,
@@ -913,6 +910,9 @@ export const getClankMapMinMumiiFirst = () => {
                         },
                     },
                 ],
+                benefit: {
+                    heal: 1,
+                },
             },
             {
                 id: 21,
@@ -1220,7 +1220,6 @@ export const getClankMapMinMumiiFirst = () => {
                         },
                         benefit: {
                             curse: 1,
-                            heal: 1,
                         },
                     },
                     {

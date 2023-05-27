@@ -204,13 +204,22 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                 cost,
             };
         }
+        if ((link.cost?.teleport ?? 0) > 0) {
+            link = {
+                ...link,
+                benefit: {},
+            };
+        }
         const isCrystalCave = this.mapElement.isCrystalCave ?? false;
         const isIgnoreCrystalCave = (this.activePlayer?.benefitInfo.ignore_crystal_cave ?? 0) > 0;
 
         const success = this.clankHelpService.updateBenefitInfo({
             player: this.activePlayer,
             cost: link.cost,
-            benefit: link.benefit,
+            benefit: {
+                ...link.benefit,
+                ...this.mapElement.benefit ?? {},
+            },
             skipCheckCanUse: true,
         });
         if (!success) {
