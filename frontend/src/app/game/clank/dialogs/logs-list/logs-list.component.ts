@@ -28,6 +28,7 @@ export class LogsListComponent implements OnInit {
         value: true,
     }));
     groups: GameInfoActionLogGroup[] = [];
+    searchString = '';
 
     constructor(
         public changeDetectorRef: ChangeDetectorRef,
@@ -42,10 +43,17 @@ export class LogsListComponent implements OnInit {
     }
 
     filterGroups() {
+        const searchString = this.searchString.toLowerCase();
         this.groups = cloneDeep(this.data.groups).map(group => {
             return {
                 ...group,
-                list: group.list.filter(log => this.list.some(p => p.type === log.type && p.value)),
+                list: group.list.filter(log => {
+                    const filterByType = this.list.some(p => p.type === log.type && p.value);
+                    const filterByText = this.searchString.length < 0
+                        || log.data.text.toLowerCase().includes(searchString)
+                        || log.data.subtext?.toLowerCase()?.includes(searchString);
+                    return filterByType && filterByText;
+                }),
             };
         }).filter(group => group.list.length > 0);
         this.changeDetectorRef.detectChanges();

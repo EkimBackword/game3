@@ -23,6 +23,18 @@
     </div>
 </div>
 <div mat-dialog-content class="log-body">
+    <div class="row">
+        <label for="login" class="col-sm-4 col-form-label">Поиск</label>
+        <div class="col-sm-8">
+          <input
+              type="text"
+              class="form-control"
+              id="login"
+              placeholder="-- поисковая строка --"
+              [(ngModel)]="searchString"
+              (ngModelChange)="filterGroups()">
+        </div>
+    </div>
     <ng-container *ngFor="let group of groups">
         <div class="game_action_logs__group">
             <div class="game_action_logs__group_name">{{group.name}}</div>
