@@ -20,13 +20,13 @@
     <button class="btn btn-primary m-1"
         type="submit"
         (click)="close()"
-        *ngIf="totalCount > 0"
+        *ngIf="totalCount > 0 || data.showActionButton"
         [disabled]="selectedCount < totalCount">
         {{data.actionText ?? 'Сохранить'}}
     </button>
     <button class="btn btn-primary m-1"
         type="submit"
         (click)="cancel()">
-        Закрыть
+        {{data.cancelText ?? 'Закрыть'}}
     </button>
 </div>

@@ -22,6 +22,7 @@ import {
     GameInfoState,
 } from '@shared/clank/clank-game.types';
 import {
+    ClankCardType,
     ClankCostInfo,
     ClankEffect,
     ClankElementByTurn,
@@ -168,16 +169,74 @@ export class ClankHelpService {
         }
         this.soundService.play('/assets/sounds/DrawCard.mp3');
         while (count > 0) {
-            if (player.deck.length === 0) {
-                player.deck = this.shuffle(player.discard);
-                player.discard = [];
-            }
+            this.checkDeckLength(player);
             const card = player.deck.pop();
             if (card != null) {
                 player.hand.push(card);
             }
             count--;
         }
+    }
+
+    checkDeckLength(player: ClankPlayerConfig) {
+        if (player.deck.length === 0) {
+            player.deck = this.shuffle(player.discard);
+            player.discard = [];
+        }
+    }
+
+    async showTopDeckCard(player: ClankPlayerConfig) {
+        this.checkDeckLength(player);
+        const card = player.deck.pop();
+        if (card == null) {
+            return;
+        }
+        const matDialogRef = this.gameDialogsService.openCardListComponent({
+            title: 'Куда полоить карту?',
+            showActionButton: true,
+            actionText: 'На верх колоды',
+            cancelText: 'Под низ колоды',
+            cards: [card],
+        });
+        const result = await matDialogRef.afterClosed().toPromise();
+        this.soundService.play('/assets/sounds/DrawCard.mp3');
+        if (result == null) {
+            player.deck.unshift(card);
+            return;
+        }
+        player.deck.push(card);
+        return;
+    }
+
+    async bayCardByType(data: {
+        state: GameInfoState;
+        player: ClankPlayerConfig;
+        type: ClankCardType;
+        count: number;
+    }) {
+        const dungeonCards = data.state.dungeonRow.filter(p => p.type === data.type);
+        const reserveCards = data.state.reserveRow.filter(p => p.type === data.type);
+        const result = await this.chooseCards({
+            cards: [
+                ...dungeonCards,
+                ...reserveCards,
+            ],
+            count: data.count,
+            errorText: 'Нет карт данного типа',
+            title: 'Выберите карты для покупки',
+            actionText: 'Купить выбранные карты',
+        });
+        if (result.data) {
+            result.data.selected.forEach((card) => {
+                data.state.dungeonRow = data.state.dungeonRow.filter(p => p.id !== card.id);
+                data.state.reserveRow = data.state.reserveRow.filter(p => p.id !== card.id);
+            });
+            data.player.discard = [
+                ...data.player.discard,
+                ...result.data.selected,
+            ];
+        }
+        return result;
     }
 
     async discard(data: {

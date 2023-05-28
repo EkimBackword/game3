@@ -50,6 +50,8 @@ export class CardListComponent implements OnInit {
             title: string;
             cards: ClankCardConfig[];
             actionText?: string;
+            showActionButton?: boolean;
+            cancelText?: string;
             count?: number;
         },
     ) { }
@@ -59,23 +61,7 @@ export class CardListComponent implements OnInit {
         this.list = this.data.cards.map((card) => {
             const item = new CardListItem(card);
             item.value = this.totalCount === 0;
-            if (!item.value) {
-                item.data.action = {
-                    name: 'Выбрать карту',
-                    eventName: null,
-                    btnClass: 'btn-primary',
-                    canUse: () => this.selectedCount < this.totalCount,
-                    callback: () => this.onSelect(item),
-                };
-            } else {
-                item.data.action = {
-                    name: 'Снять выбор',
-                    eventName: null,
-                    btnClass: 'btn-danger',
-                    canUse: () => this.totalCount > 0,
-                    callback: () => this.onSelect(item),
-                };
-            }
+            item.data.action = this.getAction(item);
             return item;
         });
     }
@@ -102,9 +88,29 @@ export class CardListComponent implements OnInit {
 
     private onSelect(item: CardListItem) {
         item.value = !item.value;
+        item.data.action = this.getAction(item);
         this.selectedCount += item.value ? 1 : -1;
         this.onChangeSubject.next(true);
         this.changeDetectorRef.detectChanges();
+    }
+
+    private getAction(item: CardListItem) {
+        if (!item.value) {
+            return {
+                name: 'Выбрать карту',
+                eventName: null,
+                btnClass: 'btn-primary',
+                canUse: () => this.selectedCount < this.totalCount,
+                callback: () => this.onSelect(item),
+            };
+        }
+        return {
+            name: 'Снять выбор',
+            eventName: null,
+            btnClass: 'btn-danger',
+            canUse: () => this.totalCount > 0,
+            callback: () => this.onSelect(item),
+        };
     }
 
 }
