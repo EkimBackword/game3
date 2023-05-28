@@ -416,7 +416,7 @@ export class GameInfoService implements OnDestroy {
         let state = lodash.cloneDeep(this.gameInfoQuery.getValue());
 
         /** Конец хода игрока */
-        const currentPlayer = state.players[state.activePlayerIndex];
+        let currentPlayer = state.players[state.activePlayerIndex];
         this.clearTurnInfo(currentPlayer.benefitInfo);
         currentPlayer.discard = result.discard;
         currentPlayer.board = [];
@@ -441,6 +441,7 @@ export class GameInfoService implements OnDestroy {
         state = await this.drawDungeonRow(state, {});
 
         /** Переход хода */
+        currentPlayer = state.players[state.activePlayerIndex];
         const newActivPlayer = this.getNextPlayer(state);
         this.clankHelpService.addActionLogs({
             state,
