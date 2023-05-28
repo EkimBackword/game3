@@ -2854,29 +2854,44 @@ export class CardsService {
                 },
                 count: 1,
             },
-            // TODO: Реализовать карту Стол закусок
-            // {
-            //     row: 7,
-            //     column: 8,
-            //     name: 'Стол закусок',
-            //     description: 'Восстановить 1 очко здоровья. Другие игроки могут заплатить вам 1 моентку за восстановление 1 очка здоровья',
-            //     type: ClankCardType.device,
-            //     events: {
-            //         onAcquire: {
-            //             cost: {
-            //                 skill: 2,
-            //             },
-            //         },
-            //         onUse: {
-            //             async callback(state, player, card) {
-            //                 // TODO: Восстановить 1 очко здоровья.
-            //                 // TODO: Другие игроки могут заплатить вам 1 моентку за восстановление 1 очка здоровья
-            //                 return true;
-            //             },
-            //         },
-            //     },
-            //     count: 1,
-            // },
+            {
+                row: 7,
+                column: 8,
+                name: 'Жезл времени',
+                description: 'Получить 2 навыка. Возьмите на руку карту из своей стопки сброса. Если ваша стопка сброса пустая, вместо этого возьмите две карты.',
+                type: ClankCardType.basiс,
+                events: {
+                    onAcquire: {
+                        cost: {
+                            skill: 6,
+                        },
+                    },
+                    onUse: {
+                        benefit: {
+                            skill: 2,
+                        },
+                        async callback(state, player, card) {
+                            if (player.discard.length > 0) {
+                                const result = await self.clankHelpService.returnFromDiscard({
+                                    player,
+                                    count: 1,
+                                });
+                                return result.success;
+                            }
+                            self.clankHelpService.drawCards({
+                                state,
+                                player,
+                                count: 2,
+                            });
+                            return true;
+                        },
+                    },
+                    getPoints(state, player) {
+                        return 2;
+                    },
+                },
+                count: 1,
+            },
             {
                 row: 7,
                 column: 9,

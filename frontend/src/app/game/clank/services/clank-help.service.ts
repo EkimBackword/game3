@@ -239,6 +239,27 @@ export class ClankHelpService {
         return result;
     }
 
+    async returnFromDiscard(data: {
+        player: ClankPlayerConfig;
+        count: number;
+    }) {
+        const result = await this.chooseCards({
+            cards: data.player.discard,
+            count: data.count,
+            errorText: 'Нет карт в стопке сброса',
+            title: 'Выберите карты для сброса',
+            actionText: 'Сбросить карту',
+        });
+        if (result.data) {
+            data.player.discard = result.data.other;
+            data.player.hand = [
+                ...data.player.hand,
+                ...result.data.selected,
+            ];
+        }
+        return result;
+    }
+
     async discard(data: {
         player: ClankPlayerConfig;
         card: ClankCardConfig;
