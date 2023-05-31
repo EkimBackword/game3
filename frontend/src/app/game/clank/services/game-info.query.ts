@@ -228,12 +228,14 @@ export class GameInfoQuery extends Query<GameInfoState> {
         startWith([] as GameInfoActionLog[]),
         pairwise(),
         map(([lastLogs, logs]) => {
+            let withSound = false;
             let showToast = false;
             let newLogs: GameInfoActionLog[] = logs;
             if (lastLogs.length === 0 || lastLogs.length > logs.length) {
                 this.logsMap = new Map<string, GameInfoActionLogFrontend[]>();
             } else {
                 showToast = true;
+                withSound = true;
                 newLogs = logs.slice(lastLogs.length);
             }
             for (const log of newLogs) {
@@ -270,7 +272,9 @@ export class GameInfoQuery extends Query<GameInfoState> {
                         options,
                     );
                 }
-                this.soundNotificationByLog(log);
+                if (withSound) {
+                    this.soundNotificationByLog(log);
+                }
             }
             return this.logGroups;
         }),

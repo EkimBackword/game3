@@ -79,7 +79,7 @@ export class GameDialogsService {
             ChooseCardEventComponent,
             {
                 data,
-                width: '500px',
+                width: '600px',
             },
         );
     }

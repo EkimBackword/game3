@@ -11,6 +11,7 @@ import {
 } from '@angular/material/dialog';
 
 export interface ChooseCardEventComponentData {
+    subtitle?: string;
     count: number;
     list: ChooseCardEventComponentItem[];
 }

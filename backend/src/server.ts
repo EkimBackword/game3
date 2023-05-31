@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express, {
     Request,
     Response,
@@ -29,6 +30,7 @@ import {
 const app = express();
 const httpServer = http.createServer(app);
 
+app.use(cors());
 app.get('/', (req: Request, res: Response) => {
     res.json({
         data: 'hello world',

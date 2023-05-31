@@ -4,7 +4,6 @@ import {
     ClankEffect,
     ClankEffectList,
     ClankElementByGame,
-    ClankElementByGameList,
     ClankElementByMarket,
     ClankElementByToken,
     ClankElementByTurn,
@@ -12,6 +11,8 @@ import {
     ClankElementType,
     ClankElementTypeEnum,
     ClankElementTypeList,
+    ClankPlayerGameInfoElementList,
+    ClankSecretTypes,
 } from '@shared/clank/clank-info.types';
 
 export interface ClankElementTypeInfo {
@@ -31,7 +32,7 @@ export enum ClankCostInfoType {
 
 export const ClankCostInfoKeysByType: Record<ClankCostInfoType, ClankElementType[][]> = {
     all: [ClankElementTypeList],
-    gameInfo: [ClankElementByGameList],
+    gameInfo: [ClankPlayerGameInfoElementList],
     turnInfo: [ClankElementByTurnList],
     marketInfo: [
         [
@@ -56,6 +57,7 @@ export const ClankOneTurnInfo = [
     ...ClankElementByTurnList,
     ...ClankCardTypeList,
     ...ClankEffectList,
+    ...ClankSecretTypes,
 ];
 
 export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
@@ -111,7 +113,7 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         url: '/assets/images/heal.png',
     },
     [ClankElementByGame.curse]: {
-        name: 'Проклятие',
+        name: 'Проклятие (-2 очка)',
         url: '/assets/images/tokens/map_tokens/clank_proklyatie_mumii/curse.jpg',
     },
     [ClankElementByGame.coin]: {
@@ -169,9 +171,17 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
         name: 'Игнорирование монстров',
         url: '/assets/images/clank.png',
     },
+    [ClankEffect.ignore_symbols_on_tunnel]: {
+        name: 'Игнорирование тунелях',
+        url: '/assets/images/clank.png',
+    },
     [ClankEffect.gem_cost_less]: {
         name: 'Самоцветы стоят дешевле',
         url: '/assets/images/clank.png',
+    },
+    [ClankEffect.ignore_curse]: {
+        name: 'Вы не получаете проклятий в этот ход',
+        url: '/assets/images/tokens/map_tokens/clank_proklyatie_mumii/ignore_curse.jpg',
     },
 
 };

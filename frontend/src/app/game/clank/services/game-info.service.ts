@@ -355,6 +355,7 @@ export class GameInfoService implements OnDestroy {
                 benefitInfo: {
                     heal: 10,
                     coin: 0,
+                    curse: 0,
                 },
                 deck: this.clankHelpService.shuffle(deck),
                 hand: [],
@@ -367,7 +368,7 @@ export class GameInfoService implements OnDestroy {
                 isEscaped: false,
                 isFinish: false,
             };
-            this.clearTurnInfo(config.benefitInfo);
+            this.clearTurnInfo(config);
             this.clankHelpService.drawCards({
                 player: config,
                 count: 5,
@@ -417,7 +418,7 @@ export class GameInfoService implements OnDestroy {
 
         /** Конец хода игрока */
         let currentPlayer = state.players[state.activePlayerIndex];
-        this.clearTurnInfo(currentPlayer.benefitInfo);
+        this.clearTurnInfo(currentPlayer);
         currentPlayer.discard = result.discard;
         currentPlayer.board = [];
         currentPlayer.hand = [];
@@ -425,7 +426,6 @@ export class GameInfoService implements OnDestroy {
             ...currentPlayer.trash,
             ...result.trash,
         ];
-        currentPlayer.needTrashCards = [];
         this.clankHelpService.drawCards({
             player: currentPlayer,
             count: 5,
@@ -611,10 +611,11 @@ export class GameInfoService implements OnDestroy {
         return state;
     }
 
-    private clearTurnInfo(benefitInfo: ClankCostInfo) {
+    private clearTurnInfo(player: ClankPlayerConfig) {
         ClankOneTurnInfo.forEach(key => {
-            benefitInfo[key] = 0;
+            player.benefitInfo[key] = 0;
         });
+        player.needTrashCards = [];
     }
 
 }

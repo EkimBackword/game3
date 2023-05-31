@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>
-    Выберите события ({{count}} шт.)
+    Выберите события ({{count}} шт.) <small *ngIf="data.subtitle">{{data.subtitle}}</small>
 </h1>
 <div mat-dialog-content>
     <mat-list>
@@ -21,6 +21,7 @@
     <button class="btn btn-primary m-1"
         type="submit"
         [disabled]="!canSubmit"
+        *ngIf="count > 0"
         (click)="submit()">
         Использовать
     </button>

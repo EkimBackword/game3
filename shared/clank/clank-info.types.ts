@@ -31,6 +31,13 @@ export enum ClankElementByGame {
 
 export const ClankElementByGameList = Object.values(ClankElementByGame);
 
+export const ClankPlayerGameInfoElementList: ClankElementType[] = [
+    ClankElementByGame.heal,
+    ClankElementByGame.coin,
+    ClankElementByGame.curse,
+    ClankElementByGame.mastery_token,
+];
+
 export const ClankSecretTypes: ClankElementType[] = [
     ClankElementByGame.minor_secret,
     ClankElementByGame.major_secret,
@@ -56,6 +63,8 @@ export enum ClankEffect {
     enter_crystal_cave = 'enter_crystal_cave',
     ignore_crystal_cave = 'ignore_crystal_cave',
     ignore_monster = 'ignore_monster',
+    ignore_symbols_on_tunnel = 'ignore_symbols_on_tunnel',
+    ignore_curse = 'ignore_curse',
     gem_cost_less = 'gem_cost_less',
     additional_coin = 'additional_coin',
 }

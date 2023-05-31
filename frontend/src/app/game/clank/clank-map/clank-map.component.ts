@@ -160,8 +160,7 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     async openMumiaDialogEvents(mumiaPosition: ClankMumiaPositionInfo) {
-        const currentPlayer = this.gameInfoQuery.currentPlayer;
-        if (!mumiaPosition.canUse || mumiaPosition.mapMumiaInfo == null || currentPlayer == null) {
+        if (mumiaPosition.mapMumiaInfo == null) {
             return;
         }
         const mumia = this.cardsService.getCardByFindString(mumiaPosition.mapMumiaInfo.card_find_string);

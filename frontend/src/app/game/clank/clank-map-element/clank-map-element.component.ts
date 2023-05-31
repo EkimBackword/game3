@@ -85,7 +85,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             const link = isActivePlayer && (hasTeleport || isIgnoreCrystalCave || !isEnterCrystalCave)
                 ? activePlayerPosition?.links.find(p => p.element_id === this.mapElement?.id)
                 : void 0;
-            if (!link) {
+            if (!link || (!activePlayer?.artifacts.length && this.mapElement?.isStart)) {
                 this.link = void 0;
                 return;
             }
@@ -177,12 +177,18 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         if (this.mapElement == null || !this.canDoByPlayer(this.activePlayer)) {
             return;
         }
-        if (!this.clankHelpService.canUse({
-            cost: link.cost,
-            player: this.activePlayer,
-            isMove: true,
-        })) {
-            return;
+        const isIgnoreSymbolsOnTunnel = this.clankHelpService.hasBenefit(this.activePlayer, ClankElementTypeEnum.ignore_symbols_on_tunnel);
+        if (isIgnoreSymbolsOnTunnel) {
+            link = {
+                ...link,
+                cost: (link.cost?.teleport ?? 0) > 0
+                    ? {
+                        teleport: 1,
+                    }
+                    : {
+                        boot: 1,
+                    },
+            };
         }
         const isIgnoreMonster = this.clankHelpService.hasBenefit(this.activePlayer, ClankElementTypeEnum.ignore_monster);
         if (isIgnoreMonster) {
@@ -193,6 +199,13 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                     sword: 0,
                 },
             };
+        }
+        if (!this.clankHelpService.canUse({
+            cost: link.cost,
+            player: this.activePlayer,
+            isMove: true,
+        })) {
+            return;
         }
         if ((link.cost?.sword ?? 0) > 0) {
             const cost = await this.openDialogAboutSwords(link, this.activePlayer);

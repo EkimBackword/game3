@@ -25,6 +25,7 @@ import {
     ClankCardType,
     ClankCostInfo,
     ClankEffect,
+    ClankElementByGame,
     ClankElementByTurn,
     ClankElementType,
 } from '@shared/clank/clank-info.types';
@@ -76,6 +77,15 @@ export class ClankHelpService {
                     : 0,
             };
         }
+        if ((data.player.benefitInfo.ignore_curse ?? 0) > 0 && (data.benefit?.curse ?? 0) > 0) {
+            const curse = data.benefit?.curse ?? 0;
+            data.benefit = {
+                ...data.benefit ?? {},
+                curse: curse > 0
+                    ? 0
+                    : curse,
+            };
+        }
         data.player.benefitInfo = updateBenefitInfo({
             benefit: data.player.benefitInfo,
             cost: data.benefit ?? {},
@@ -91,6 +101,10 @@ export class ClankHelpService {
             && (player.benefitInfo.ignore_crystal_cave ?? 0) === 0
         ) {
             player.benefitInfo.boot = 0;
+        }
+
+        if ((player.benefitInfo.curse ?? 0) < 0) {
+            player.benefitInfo.curse = 0;
         }
 
         if (player.benefitInfo.heal != null) {
@@ -360,6 +374,20 @@ export class ClankHelpService {
             player.tokens = player.tokens.filter(p => p.id !== tokenInfo.id);
         }
 
+        if (type === UseTokenType.take) {
+            this.updateBenefitInfo({
+                player,
+                benefit: {
+                    minor_secret: tokenInfo.element_type === ClankElementByGame.minor_secret
+                        ? 1
+                        : 0,
+                    major_secret: tokenInfo.element_type === ClankElementByGame.major_secret
+                        ? 1
+                        : 0,
+                },
+            });
+        }
+
         state.mapTokens = state.mapTokens.filter(p => p.id !== tokenInfo.id);
         state.marketTokens = state.marketTokens.filter(p => p.id !== tokenInfo.id);
         this.addActionLogs({
@@ -530,6 +558,70 @@ export class ClankHelpService {
 
     hasBenefit(player: ClankPlayerConfig, key: ClankElementType) {
         return (player.benefitInfo[key] ?? 0) > 0 || player.tokens.some(p => !p.isUsable && (p.benefit?.[key] ?? 0) > 0);
+    }
+
+    // TODO: Добавить два интерфеса
+    hasTokensNear(data: {
+        state: GameInfoState;
+        player: ClankPlayerConfig;
+        types: {
+            text: string;
+            type: ClankElementType;
+            value?: number;
+        }[]
+    }): {
+        tokens: ClankTokenConfig[];
+        text: string;
+        type: ClankElementType;
+        value?: number | undefined;
+    }[] {
+        const mapInfo = this.gameInfoQuery.mapInfo;
+        if (mapInfo == null) {
+            return [];
+        }
+        const playerPosition = mapInfo.elements.find(p => p.id === data.player.elementId);
+        if (playerPosition == null) {
+            return [];
+        }
+        const list = data.types.filter((item) => {
+            return playerPosition.links.some((link) => {
+                const element = mapInfo.elements.find(p => p.id === link.element_id);
+                const elementItem = element?.items?.[item.type];
+                return elementItem != null && elementItem.value === item.value;
+            });
+        });
+        const result = list.map((item) => {
+            const mappedItem: {
+                tokens: ClankTokenConfig[];
+                text: string;
+                type: ClankElementType;
+                value?: number | undefined;
+            } = {
+                ...item,
+                tokens: data.state.mapTokens.filter(p => p.element_type === item.type
+                    && (item.value == null || p.points?.value === item.value)),
+            };
+            return mappedItem;
+        });
+        return result;
+    }
+
+    canUseMumiaCard(data: {
+        state: GameInfoState,
+        player: ClankPlayerConfig;
+    }) {
+        const mumiaInfo = data.state.mumiaInfo;
+        const mumiaPosition = this.gameInfoQuery.mapInfo?.mumiaInfo?.zones?.find(p => p.zone === mumiaInfo.zone);
+        if (mumiaPosition == null) {
+            return null;
+        }
+        const currentPlayerPosition = data.player.id === data.state.activePlayerId
+            ? this.gameInfoQuery.mapInfo?.elements.find(p => p.id === data.player.elementId)
+            : null;
+        const canUse = currentPlayerPosition != null
+            ? currentPlayerPosition?.mumiaZoneType === mumiaInfo.zone
+            : false;
+        return canUse;
     }
 
     changeMumiaPosition(state: GameInfoState) {
