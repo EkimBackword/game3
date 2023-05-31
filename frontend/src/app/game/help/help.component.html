@@ -1,4 +1,21 @@
 <div class="container container--page shadow d-flex flex-row flex-wrap justify-content-start align-items-start">
-    <div class="col-6 mb-3 d-flex flex-row justify-content-start align-items-start" *ngFor="let card of cards">
+    <div class="col-12 mb-3 d-flex flex-row justify-content-start align-items-start">
+        <button
+            *ngFor="let rulebook of rulebooks"
+            class="m-1 btn"
+            [class.btn-primary]="rulebook.id === id"
+            [class.btn-secondary]="rulebook.id !== id"
+            (click)="setUrl(rulebook)">
+            {{rulebook.name}}
+        </button>
+    </div>
+    <div class="col-12 mb-3 d-flex flex-row justify-content-start align-items-start pdf_viewer_container" *ngIf="url">
+        <iframe class="pdf_viewer" [src]="url"></iframe>
+    </div>
+    <div class="col-12 mb-3 d-flex flex-row justify-content-start align-items-start">
+        <button class="m-1 btn btn-danger"
+            (click)="exit()">
+            Вернутся в меню
+        </button>
     </div>
 </div>

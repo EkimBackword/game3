@@ -52,7 +52,7 @@ export class MenuComponent implements OnInit {
             url: `/${GameRouteEnum.Help}`,
             name: 'Помощь',
             icon: faInfo,
-            disabled: true,
+            disabled: false,
         },
     ];
 
