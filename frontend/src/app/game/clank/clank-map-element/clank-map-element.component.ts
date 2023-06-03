@@ -13,6 +13,7 @@ import {
     OnInit,
 } from '@angular/core';
 
+import * as lodash from 'lodash';
 import {
     combineLatest,
     Subject,
@@ -104,12 +105,18 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         }),
     );
 
-    private artifact: ClankArtifactConfig | undefined;
+    artifact: ClankArtifactConfig | undefined;
     onArtifactsChangeSubject = this.gameInfoQuery.onArtifactsChangeSubject.pipe(
         map((artifacts) => {
-            const artifact = artifacts.find(p => this.mapElement?.items?.artefact?.value === p.value);
+            const artifactsByValue = artifacts.filter(p => this.mapElement?.items?.artefact?.value === p.value);
+            const artifact = lodash.maxBy(artifactsByValue, (p) => p.quality.value);
+            if (!lodash.isEqual(this.artifact, artifact)) {
+                this.artifact = void 0;
+                this.changeDetectorRef.detectChanges();
+            }
             this.artifact = artifact;
-            return artifact;
+            this.changeDetectorRef.detectChanges();
+            return artifactsByValue;
         }),
     );
 
@@ -117,6 +124,10 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     onTokensChangeSubject = this.gameInfoQuery.onMapTokensChangeSubject.pipe(
         map((tokens) => tokens.filter(token => token?.element_type != null && this.mapElement?.items?.[token.element_type])),
         tap((tokens) => {
+            if (!tokens.length) {
+                this.visibleTokens = [];
+                return;
+            }
             const secrets = tokens.filter(token => ClankSecretTypes.includes(token.element_type));
             const nosecrets = tokens.filter(token => !ClankSecretTypes.includes(token.element_type)
                 && this.mapElement?.items?.[token.element_type]?.value === token.points?.value,
@@ -283,7 +294,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         }
         const matDialogRef = this.dialogService.openConfirm({
             title: 'Хотите ли взять артефакт?',
-            textList: [`В ячейке есть артефакт (Значимость: ${artifact.value})`],
+            textList: [`В ячейке есть артефакт ${artifact.name} (Значимость: ${artifact.value})`],
         });
         const result = await matDialogRef.afterClosed().toPromise();
         if (!result) {

@@ -9,6 +9,7 @@ import {
     Router,
 } from '@angular/router';
 
+import * as lodash from 'lodash';
 import {
     EMPTY,
     Subject,
@@ -54,7 +55,6 @@ export class ClankComponent implements OnInit {
         debounceTime(0),
         map((players) => {
             const state = this.gameInfoQuery.getValue();
-            let winner: PlayerPointsResult | undefined;
             const rows = players.map((player) => {
                 const curseCount = player.benefitInfo.curse ?? 0;
                 const result: PlayerPointsResult = {
@@ -127,18 +127,28 @@ export class ClankComponent implements OnInit {
                     + result.artifacts.points
                     + result.cards.points
                     + result.master;
-                if (!result.isNotCalculated && (winner == null || winner.total < result.total)) {
-                    winner = result;
-                }
                 return result;
+            }).sort((previous, current) => {
+                const orderPrevious = previous.total * (previous.isNotCalculated ? 1 : 10000);
+                const orderCurrent = current.total * (current.isNotCalculated ? 1 : 10000);
+                if (orderCurrent !== orderPrevious) {
+                    return orderCurrent - orderPrevious;
+                }
+
+                const maxArtifactPrevious = lodash.maxBy(previous.artifacts.list, (p) => p.points);
+                const maxArtifactCurrent = lodash.maxBy(current.artifacts.list, (p) => p.points);
+                if (maxArtifactCurrent?.points !== maxArtifactPrevious?.points) {
+                    return (maxArtifactCurrent?.points ?? 0) - (maxArtifactPrevious?.points ?? 0);
+                }
+
+                return (maxArtifactCurrent?.item.quality.value ?? 0) - (maxArtifactPrevious?.item.quality.value ?? 0);
             });
+            const firstPlayer = rows[0];
             return {
-                rows: rows.sort((previos, current) => {
-                    const orderPrevios = previos.total * (previos.isNotCalculated ? 1 : 10000);
-                    const orderCurrent = current.total * (current.isNotCalculated ? 1 : 10000);
-                    return orderCurrent - orderPrevios;
-                }),
-                winner,
+                rows,
+                winner: !firstPlayer?.isNotCalculated
+                    ? firstPlayer
+                    : null,
             };
         }),
     );

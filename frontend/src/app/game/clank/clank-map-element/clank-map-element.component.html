@@ -1,20 +1,22 @@
 <ng-container *ngIf="{
     data: dataSubject | async,
-    artifact: onArtifactsChangeSubject | async,
+    artifacts: onArtifactsChangeSubject | async,
     tokens: onTokensChangeSubject | async,
     takenToken: onTakeTokenSubject | async
 } as asyncData">
     <ng-container *ngIf="mapElement != null">
         <div class="actions_layer"
             [class.crystal_cave]="mapElement.isCrystalCave">
-            <div class="clank-artifact"
-                (click)="takeArtifact(asyncData.artifact)"
-                *ngIf="asyncData.artifact"
-                [@inOutAnimation]>
-                <app-clank-artifact
-                    [data]="asyncData.artifact"
-                ></app-clank-artifact>
-            </div>
+            <ng-container *ngIf="asyncData.artifacts">
+                <div class="clank-artifact"
+                    (click)="takeArtifact(artifact)"
+                    *ngIf="asyncData.artifacts.length > 0 && artifact"
+                    [@inOutAnimation]>
+                    <app-clank-artifact
+                        [data]="artifact"
+                    ></app-clank-artifact>
+                </div>
+            </ng-container>
             <ng-container *ngIf="asyncData.tokens">
                 <div class="clank-artifact" *ngIf="asyncData.tokens.length > 0 && visibleTokens.length > 0">
                     <app-clank-token

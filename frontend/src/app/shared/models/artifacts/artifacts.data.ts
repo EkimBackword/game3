@@ -1,14 +1,19 @@
 import * as lodash from 'lodash';
 
-import { ClankArtifactShortConfig } from '@shared/clank/clank-artifact.types';
+import {
+    ClankArtifactQualityMap,
+    ClankArtifactQualityTypeEnum,
+    ClankArtifactShortConfig,
+    ClankArtifactShortConfigWithoutQuality,
+} from '@shared/clank/clank-artifact.types';
 import { ClankDlcEnum } from '@shared/clank/clank-info.types';
 
 import { mappingArtifacts } from './artifacts.types';
 
 export const getArtifacts = (playerCount: number) => {
-    let list: ClankArtifactShortConfig[] = [
+    const initList: ClankArtifactShortConfigWithoutQuality[] = [
         {
-            name: 'Золотое кольцо',
+            name: 'кольцо',
             url: '/5.png',
             value: 5,
             points: {
@@ -16,7 +21,7 @@ export const getArtifacts = (playerCount: number) => {
             },
         },
         {
-            name: 'Золотой анх',
+            name: 'анх',
             url: '/7.png',
             value: 7,
             points: {
@@ -24,7 +29,7 @@ export const getArtifacts = (playerCount: number) => {
             },
         },
         {
-            name: 'Золотой сосуд',
+            name: 'сосуд',
             url: '/10.png',
             value: 10,
             points: {
@@ -32,7 +37,7 @@ export const getArtifacts = (playerCount: number) => {
             },
         },
         {
-            name: 'Золотые бананы',
+            name: 'бананы',
             url: '/15.png',
             value: 15,
             points: {
@@ -40,7 +45,7 @@ export const getArtifacts = (playerCount: number) => {
             },
         },
         {
-            name: 'Золотой шит',
+            name: 'шит',
             url: '/20.png',
             value: 20,
             points: {
@@ -48,7 +53,7 @@ export const getArtifacts = (playerCount: number) => {
             },
         },
         {
-            name: 'Золотой доспех',
+            name: 'доспех',
             url: '/25.png',
             value: 25,
             points: {
@@ -56,7 +61,7 @@ export const getArtifacts = (playerCount: number) => {
             },
         },
         {
-            name: 'Золотое кадило',
+            name: 'кадило',
             url: '/30.png',
             value: 30,
             points: {
@@ -64,8 +69,32 @@ export const getArtifacts = (playerCount: number) => {
             },
         },
     ];
+    const goldQuality = ClankArtifactQualityMap[ClankArtifactQualityTypeEnum.gold];
+    let list: ClankArtifactShortConfig[] = initList.map(p => {
+        const artifact: ClankArtifactShortConfig = {
+            name: `${goldQuality.name} ${p.name}`,
+            url: `${goldQuality.url}${p.url}`,
+            value: p.value,
+            points: p.points,
+            quality: goldQuality,
+        };
+        return artifact;
+    });
     if (playerCount > 4) {
-        // TODO: Добавить серебреные артефакты
+        const silverQuality = ClankArtifactQualityMap[ClankArtifactQualityTypeEnum.silver];
+        list = [
+            ...list,
+            ...initList.filter(p => ![5, 7].includes(p.value)).map(p => {
+                const artifact: ClankArtifactShortConfig = {
+                    name: `${silverQuality.name} ${p.name}`,
+                    url: `${silverQuality.url}${p.url}`,
+                    value: p.value,
+                    points: p.points,
+                    quality: silverQuality,
+                };
+                return artifact;
+            }),
+        ];
     }
     if (playerCount < 4) {
         list = list.filter(p => p.value !== 5);

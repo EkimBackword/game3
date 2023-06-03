@@ -9,7 +9,7 @@ export const mappingArtifacts = (list: ClankArtifactShortConfig[], group: ClankA
     return list.flatMap((artifact) => {
         const cardConfig: ClankArtifactConfig = {
             ...artifact,
-            id: `${dlc_name}__${artifact.value}`,
+            id: `${dlc_name}__${artifact.value}__${artifact.quality.type}`,
             dlc_name: group.dlc_name,
             url: `${group.url}${artifact.url}`,
         };
