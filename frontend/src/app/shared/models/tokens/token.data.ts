@@ -294,6 +294,21 @@ export const getMarketTokens = (playerCount: number, withCopy: boolean) => {
             },
             element_type: ClankEffect.ignore_monster,
         },
+        {
+            count: Math.ceil(playerCount / 2),
+            name: 'Анх',
+            url: '/assets/images/tokens/market/clank_proklyatie_mumii/token_1.png',
+            benefit: {
+                heal: 1,
+            },
+            cost: {
+                coin: 7,
+            },
+            points: {
+                value: 7,
+            },
+            element_type: ClankElementByMarket.ankh,
+        },
     ];
     if (playerCount > 3) {
         tokens.push({

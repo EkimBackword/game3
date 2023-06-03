@@ -52,6 +52,7 @@ export enum ClankElementByToken {
 export const ClankElementByTokenList = Object.values(ClankElementByToken);
 
 export enum ClankElementByMarket {
+    ankh = 'ankh', // Количество отмычек
     key_token = 'key_token', // Количество отмычек
     backpack = 'backpack', // Количество рюкзоков
     crown = 'crown', // Количество корон
