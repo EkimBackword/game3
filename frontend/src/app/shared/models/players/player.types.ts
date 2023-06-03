@@ -14,6 +14,7 @@ import { ClankTokenConfig } from '@shared/clank/clank-token.types';
 
 export interface PlayerPointsResult {
     name: string;
+    isCurrentPlayer: boolean;
     config: ClankPlayerConfig;
     colorInfo: GamePlayerColorInfo;
     coins: number;

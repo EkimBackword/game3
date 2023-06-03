@@ -55,10 +55,12 @@ export class ClankComponent implements OnInit {
         debounceTime(0),
         map((players) => {
             const state = this.gameInfoQuery.getValue();
-            const rows = players.map((player) => {
+            const currentPlayer = this.gameInfoQuery.currentPlayer;
+            const rows = players.map((player, index) => {
                 const curseCount = player.benefitInfo.curse ?? 0;
                 const result: PlayerPointsResult = {
                     config: player,
+                    isCurrentPlayer: player.id === currentPlayer?.id,
                     name: player.name,
                     colorInfo: GamePlayerColorList[player.colorId],
                     coins: 0,
@@ -78,7 +80,7 @@ export class ClankComponent implements OnInit {
                         points: 0,
                         list: [],
                     },
-                    isNotCalculated: (!player.isEscaped && !player.isRescued) || (player.artifacts.length === 0),
+                    isNotCalculated: index === 0 || (!player.isEscaped && !player.isRescued) || (player.artifacts.length === 0),
                     master: 0,
                     total: 0,
                 };

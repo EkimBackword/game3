@@ -86,6 +86,10 @@ $clank_info_width: 200px;
     .player_row {
         cursor: pointer;
 
+        &.player_row__is_current {
+            text-decoration: underline;
+        }
+
         &:hover {
             background-color: #ccc;
         }
@@ -95,7 +99,7 @@ $clank_info_width: 200px;
             background-color: #E5CECE;
 
             &:hover {
-                opacity: 0.6;
+                opacity: 0.8;
                 background-color: #BFB1B1;
             }
 
@@ -103,6 +107,8 @@ $clank_info_width: 200px;
                 font-weight: normal;
             }
         }
+
+
     }
 
     .clank_aria_player_color {

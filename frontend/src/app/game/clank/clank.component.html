@@ -83,6 +83,7 @@
                         <tr *ngFor="let player of asyncData.result.rows"
                             class="player_row"
                             [class.player_row__not_calculated]="player.isNotCalculated"
+                            [class.player_row__is_current]="player.isCurrentPlayer"
                             (click)="openPlayerRowDetail(player)">
                             <td class="player_name_cell">
                                 <div class="player_name_cell_element">
