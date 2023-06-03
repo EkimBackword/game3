@@ -181,7 +181,7 @@ export const ClankElementTypeMap: Record<string, ClankElementTypeInfo> = {
     },
     [ClankEffect.ignore_curse]: {
         name: 'Вы не получаете проклятий в этот ход',
-        url: '/assets/images/tokens/map_tokens/clank_proklyatie_mumii/ignore_curse.jpg',
+        url: '/assets/images/tokens/map_tokens/clank_proklyatie_mumii/ignore_curse.png',
     },
 
 };
