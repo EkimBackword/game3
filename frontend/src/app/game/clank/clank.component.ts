@@ -80,7 +80,7 @@ export class ClankComponent implements OnInit {
                         points: 0,
                         list: [],
                     },
-                    isNotCalculated: index === 0 || (!player.isEscaped && !player.isRescued) || (player.artifacts.length === 0),
+                    isNotCalculated: (!player.isEscaped && !player.isRescued) || (player.artifacts.length === 0),
                     master: 0,
                     total: 0,
                 };

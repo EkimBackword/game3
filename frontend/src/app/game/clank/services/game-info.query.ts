@@ -126,7 +126,7 @@ export class GameInfoQuery extends Query<GameInfoState> {
                     && p.canIncreaseRageByUserCount > this.playerCount;
             }).map((p) => {
                 return {
-                    tooltip: `Используется если количство игроков больше ${p.canIncreaseRageByUserCount}`,
+                    tooltip: `Используется если количство игроков больше ${(p.canIncreaseRageByUserCount ?? 1) - 1}`,
                     style: {
                         top: `${(p.position.y ?? 0)}px`,
                         left: `${(p.position.x ?? 0)}px`,

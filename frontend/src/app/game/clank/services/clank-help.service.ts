@@ -206,7 +206,7 @@ export class ClankHelpService {
             return;
         }
         const matDialogRef = this.gameDialogsService.openCardListComponent({
-            title: 'Куда полоить карту?',
+            title: 'Куда положить карту?',
             showActionButton: true,
             actionText: 'На верх колоды',
             cancelText: 'Под низ колоды',
@@ -261,8 +261,8 @@ export class ClankHelpService {
             cards: data.player.discard,
             count: data.count,
             errorText: 'Нет карт в стопке сброса',
-            title: 'Выберите карты для сброса',
-            actionText: 'Сбросить карту',
+            title: 'Выберите карты',
+            actionText: 'Взять в руку',
         });
         if (result.data) {
             data.player.discard = result.data.other;
@@ -606,17 +606,15 @@ export class ClankHelpService {
         return result;
     }
 
-    canUseMumiaCard(data: {
-        state: GameInfoState,
-        player: ClankPlayerConfig;
-    }) {
-        const mumiaInfo = data.state.mumiaInfo;
+    canUseMumiaCard(state: GameInfoState) {
+        const mumiaInfo = state.mumiaInfo;
         const mumiaPosition = this.gameInfoQuery.mapInfo?.mumiaInfo?.zones?.find(p => p.zone === mumiaInfo.zone);
-        if (mumiaPosition == null) {
+        const currentPlayer = this.gameInfoQuery.currentPlayer;
+        if (mumiaPosition == null || currentPlayer == null) {
             return null;
         }
-        const currentPlayerPosition = data.player.id === data.state.activePlayerId
-            ? this.gameInfoQuery.mapInfo?.elements.find(p => p.id === data.player.elementId)
+        const currentPlayerPosition = currentPlayer.id === state.activePlayerId
+            ? this.gameInfoQuery.mapInfo?.elements.find(p => p.id === currentPlayer.elementId)
             : null;
         const canUse = currentPlayerPosition != null
             ? currentPlayerPosition?.mumiaZoneType === mumiaInfo.zone

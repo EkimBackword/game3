@@ -454,10 +454,7 @@ export class CardsService {
                 events: {
                     onAcquire: {
                         async callback(state, player, card) {
-                            const canUse = self.clankHelpService.canUseMumiaCard({
-                                state,
-                                player,
-                            });
+                            const canUse = self.clankHelpService.canUseMumiaCard(state);
                             const result = await self.openDialogChooseCardEvent({
                                 count: canUse ? 1 : 0,
                                 list: [
@@ -2466,7 +2463,7 @@ export class CardsService {
             {
                 row: 3,
                 column: 0,
-                name: 'Робомартышка 3000',
+                name: 'Робомакака 3000',
                 description: 'Получите 3 бдзынь. Возьмите 3 карты.',
                 type: ClankCardType.companion,
                 events: {
