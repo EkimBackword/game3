@@ -1,16 +1,12 @@
 import { Injectable } from '@angular/core';
-import {
-    CanActivate,
-    Router,
-    UrlTree,
-} from '@angular/router';
+import { Router, UrlTree } from '@angular/router';
 
 import { SessionQuery } from '../session.query';
 
 @Injectable({
     providedIn: 'root',
 })
-export class LoginGuard implements CanActivate {
+export class LoginGuard  {
 
     constructor(
         private sessionQuery: SessionQuery,
