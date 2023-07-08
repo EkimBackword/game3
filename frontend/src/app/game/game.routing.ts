@@ -4,7 +4,10 @@ import {
 } from '@angular/router';
 
 import { GameRouteEnum } from '../game.routing.enum';
-import { SessionGuard } from '../session/session.guard';
+import {
+    canActivate,
+    canActivateChild,
+} from '../session/session.guard';
 import { ClankComponent } from './clank/clank.component';
 import { FindGameComponent } from './find-game/find-game.component';
 import { GameComponent } from './game.component';
@@ -17,8 +20,8 @@ const routes: Routes = [
     {
         path: '',
         component: GameComponent,
-        canActivate: [SessionGuard],
-        canActivateChild: [SessionGuard],
+        canActivate: [canActivate],
+        canActivateChild: [canActivateChild],
         children: [
             {
                 path: GameRouteEnum.Menu,
