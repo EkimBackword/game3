@@ -48,7 +48,7 @@ import { GameInfoStore } from './services/game-info.store';
 })
 export class ClankComponent implements OnInit {
 
-    private ngUnsubscribe = new Subject();
+    private ngUnsubscribe = new Subject<void>();
 
     statusSubject = this.gameInfoQuery.onStatusChangeSubject;
     playersSubject = this.gameInfoQuery.onPlayersChangeSubject.pipe(

@@ -56,7 +56,7 @@ import { GameInfoStore } from './game-info.store';
 @Injectable()
 export class GameInfoService implements OnDestroy {
 
-    useManualFunctionSubject = new Subject();
+    useManualFunctionSubject = new Subject<void>();
     isMapElementIdShowSubject = new BehaviorSubject(false);
 
     private gameId: string | undefined;

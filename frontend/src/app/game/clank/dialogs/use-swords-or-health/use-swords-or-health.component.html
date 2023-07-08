@@ -6,17 +6,16 @@
         </label>
         <mat-slider
             class="w-100 slider"
-            [vertical]="false"
-            [invert]="false"
             [max]="maxSword"
             [min]="0"
             [step]="1"
-            [thumbLabel]="true"
-            [tickInterval]="1"
+            [discrete]="true"
+            [step]="1"
             [disabled]="playerSword == 0"
-            [(ngModel)]="formValue.sword"
-            (ngModelChange)="onSwordChange($event)"
             aria-labelledby="example-name-label">
+            <input matSliderThumb
+                [(ngModel)]="formValue.sword"
+                (ngModelChange)="onSwordChange($event)">
         </mat-slider>
         <div class="w-100">
             <app-clank-cost-info
