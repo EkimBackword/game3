@@ -1,3 +1,2 @@
 # game3
-Сюжетная ролевая игра по мотивам игры Шакал
 docker-compose up --force-recreate --build -d
