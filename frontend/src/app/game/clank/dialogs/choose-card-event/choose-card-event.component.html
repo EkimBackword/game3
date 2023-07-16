@@ -9,6 +9,7 @@
                     [(ngModel)]="item.checked"
                     (ngModelChange)="onSelect()"
                     [disabled]="!item.checked && !canSelect"
+                    [disableRipple]="true"
                 >
                     {{item.description}}
                 </mat-slide-toggle>

@@ -1,29 +1,28 @@
 <h1 mat-dialog-title>Нужно распределить урон ({{totalValue}} шт.)</h1>
-<div mat-dialog-content>
-    <div class="mb-3">
-        <label for="sword" class="form-label mb-3">
-            Мечей в наличии: {{playerSword}}
-        </label>
-        <mat-slider
-            class="w-100 slider"
-            [max]="maxSword"
-            [min]="0"
-            [step]="1"
-            [discrete]="true"
-            [step]="1"
-            [disabled]="playerSword == 0"
-            aria-labelledby="example-name-label">
-            <input matSliderThumb
-                [(ngModel)]="formValue.sword"
-                (ngModelChange)="onSwordChange($event)">
-        </mat-slider>
-        <div class="w-100">
-            <app-clank-cost-info
-                [data]="formValue"
-                [type]="ClankCostInfoType.swordOrHealth"
-                [justifyContent]="'space-between'"
-            ></app-clank-cost-info>
-        </div>
+<div class="use-swords-or-health-content" mat-dialog-content>
+    <label for="sword" class="form-label mb-3">
+        Мечей в наличии: {{playerSword}}
+    </label>
+    <mat-slider
+        class="slider"
+        [max]="maxSword"
+        [min]="0"
+        [step]="1"
+        [discrete]="true"
+        [showTickMarks]="true"
+        [step]="1"
+        [disabled]="playerSword == 0"
+        aria-labelledby="example-name-label">
+        <input matSliderThumb
+            [(ngModel)]="formValue.sword"
+            (ngModelChange)="onSwordChange($event)">
+    </mat-slider>
+    <div class="w-100">
+        <app-clank-cost-info
+            [data]="formValue"
+            [type]="ClankCostInfoType.swordOrHealth"
+            [justifyContent]="'space-between'"
+        ></app-clank-cost-info>
     </div>
 </div>
 <div mat-dialog-actions class="d-flex flex-row justify-content-end">
