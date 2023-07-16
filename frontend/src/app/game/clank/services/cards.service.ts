@@ -3429,7 +3429,7 @@ export class CardsService {
                 row: 5,
                 column: 9,
                 name: 'Святилище',
-                description: 'Получите одну манетку или восстановите 1 очко здоровья',
+                description: 'Получите одну монетку или восстановите 1 очко здоровья',
                 type: ClankCardType.device,
                 events: {
                     onArrive: {
