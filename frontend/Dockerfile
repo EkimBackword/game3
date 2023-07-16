@@ -2,7 +2,7 @@ FROM node:gallium-alpine as build
 WORKDIR /usr/src/app
 COPY ./shared ./shared
 COPY ./frontend ./frontend
-RUN cd ./frontend/ && npm install && npm run build
+RUN cd ./frontend/ && yarn && yarn run build
 
 FROM nginx:stable-alpine
 COPY ./frontend/nginx.conf /etc/nginx/nginx.conf
