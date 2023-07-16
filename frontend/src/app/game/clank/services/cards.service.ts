@@ -3288,7 +3288,7 @@ export class CardsService {
                 row: 5,
                 column: 5,
                 name: 'Жезл ветра',
-                description: 'Телепортируйтесь в соседнюю комнату или получите случайный маленький секрет',
+                description: 'Телепортируйтесь в соседнюю комнату или заберите сектер с соседней комнаты',
                 type: ClankCardType.basiс,
                 events: {
                     onAcquire: {
@@ -3298,6 +3298,20 @@ export class CardsService {
                     },
                     onUse: {
                         async callback(state, player) {
+                            const result = self.clankHelpService.hasTokensNear({
+                                state,
+                                player,
+                                types: [
+                                    {
+                                        text: 'Получить большой секрет',
+                                        type: ClankElementByGame.major_secret,
+                                    },
+                                    {
+                                        text: 'Получить маленький секрет',
+                                        type: ClankElementByGame.minor_secret,
+                                    },
+                                ],
+                            });
                             return await self.openDialogChooseCardEvent({
                                 count: 1,
                                 list: [
@@ -3312,21 +3326,25 @@ export class CardsService {
                                             });
                                         },
                                     },
-                                    {
-                                        description: 'Получите случайный маленький секрет',
-                                        event: () => {
-                                            const tokenInfo = state.mapTokens.pop();
-                                            if (!tokenInfo) {
-                                                return true;
-                                            }
-                                            return self.clankHelpService.takeToken(
-                                                state,
-                                                player,
-                                                tokenInfo,
-                                                UseTokenType.take,
-                                            );
-                                        },
-                                    },
+                                    ...result.map((typeInfo) => {
+                                        const item: ChooseCardEventComponentItem = {
+                                            description: typeInfo.text,
+                                            event: () => {
+                                                const tokenInfo = typeInfo.tokens.pop();
+                                                if (!tokenInfo) {
+                                                    return true;
+                                                }
+                                                state.mapTokens = state.mapTokens.filter(p => p.id !== tokenInfo.id);
+                                                return self.clankHelpService.takeToken(
+                                                    state,
+                                                    player,
+                                                    tokenInfo,
+                                                    UseTokenType.take,
+                                                );
+                                            },
+                                        };
+                                        return item;
+                                    }),
                                 ],
                             });
                         },
