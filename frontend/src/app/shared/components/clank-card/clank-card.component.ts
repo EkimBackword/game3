@@ -41,7 +41,7 @@ export class ClankCardComponent implements OnInit, OnChanges, OnDestroy {
     @HostBinding('style.--card_width') card_width = `${this.width}px`;
     @HostBinding('style.--card_height') card_height = `${this.height}px`;
 
-    private ngUnsubscribe = new Subject();
+    private ngUnsubscribe = new Subject<void>();
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,

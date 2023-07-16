@@ -1,4 +1,4 @@
-FROM node:fermium-alpine as build
+FROM node:gallium-alpine as build
 RUN npm install -g nodemon
 WORKDIR /app
 COPY ./shared ./shared

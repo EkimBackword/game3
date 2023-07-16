@@ -75,7 +75,7 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
     private userTranslateX = 0;
     private userTranslateY = 0;
     private autoScale = 1;
-    private ngUnsubscribe = new Subject();
+    private ngUnsubscribe = new Subject<void>();
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,

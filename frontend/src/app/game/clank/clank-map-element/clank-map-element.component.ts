@@ -158,7 +158,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         return this.gameInfoQuery.currentPlayer;
     }
 
-    private ngUnsubscribe = new Subject();
+    private ngUnsubscribe = new Subject<void>();
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,

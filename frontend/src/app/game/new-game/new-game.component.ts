@@ -67,7 +67,7 @@ export class NewGameComponent implements OnInit, OnDestroy {
     };
     form = new FormGroup(this.formFields);
 
-    private ngUnsubscribe = new Subject();
+    private ngUnsubscribe = new Subject<void>();
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,

@@ -1,8 +1,11 @@
-import { Injectable } from '@angular/core';
+import {
+    inject,
+    Injectable,
+} from '@angular/core';
 import {
     ActivatedRouteSnapshot,
-    CanActivate,
-    CanActivateChild,
+    CanActivateChildFn,
+    CanActivateFn,
     Router,
     RouterStateSnapshot,
     UrlTree,
@@ -13,7 +16,7 @@ import { SessionQuery } from './session.query';
 @Injectable({
     providedIn: 'root',
 })
-export class SessionGuard implements CanActivate, CanActivateChild {
+export class SessionGuard {
 
     constructor(
         private sessionQuery: SessionQuery,
@@ -21,22 +24,7 @@ export class SessionGuard implements CanActivate, CanActivateChild {
     ) {
     }
 
-    canActivate(
-        route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot,
-    ) {
-        const url: string = state.url;
-        return this.checkLogin(url);
-    }
-
-    canActivateChild(
-        route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot,
-    ) {
-        return this.canActivate(route, state);
-    }
-
-    private checkLogin(url: string): true|UrlTree {
+    checkLogin(url: string): true|UrlTree {
         if (this.sessionQuery.isLoggedIn) {
             return true;
         }
@@ -49,3 +37,15 @@ export class SessionGuard implements CanActivate, CanActivateChild {
       }
 
 }
+
+export const canActivate: CanActivateFn = (
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ) => {
+    const sessionGuard = inject(SessionGuard);
+
+    const url: string = state.url;
+    return sessionGuard.checkLogin(url);
+  };
+
+  export const canActivateChild: CanActivateChildFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => canActivate(route, state);

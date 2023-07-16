@@ -41,7 +41,7 @@ export class UseSwordsOrHealthComponent implements OnInit, OnDestroy {
     playerHeal = 0;
     ClankCostInfoType = ClankCostInfoType;
 
-    private ngUnsubscribe = new Subject();
+    private ngUnsubscribe = new Subject<void>();
 
     constructor(
         public dialogRef: MatDialogRef<UseSwordsOrHealthComponent, ClankCostInfo | null>,
