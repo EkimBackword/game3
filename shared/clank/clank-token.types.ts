@@ -36,6 +36,8 @@ export interface ClankTokenShortConfig {
     count: number
     /** Имя */
     name: string;
+    /** Описание */
+    description: string;
     /** Тип элемента */
     element_type: ClankElementType;
     /** Имя */

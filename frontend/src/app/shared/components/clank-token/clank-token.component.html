@@ -1,3 +1,19 @@
-<div class="clank_token" *ngIf="token">
-    <div [ngStyle]="style"></div>
-</div>
+<ng-container *ngIf="token">
+    <ng-template #popTitle>
+        {{token.name}}
+    </ng-template>
+    <ng-template #popContent>
+        {{token.description}}
+    </ng-template>
+
+    <div class="clank_token"
+        [ngbPopover]="popContent"
+        [popoverTitle]="popTitle"
+        [disablePopover]="!isOpen"
+        [openDelay]="500"
+        container="body"
+        triggers="mouseenter:mouseleave">
+        <div [ngStyle]="style"></div>
+    </div>
+</ng-container>
+
