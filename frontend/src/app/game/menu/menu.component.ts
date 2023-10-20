@@ -42,9 +42,8 @@ export class MenuComponent implements OnInit {
         {
             callback: () => {
                 const userState = this.sessionQuery.getValue();
-                const random = Math.random() * 1000
                 const gameId = this.gamesService.addSimiloTable({
-                    name: `Similo ${userState.name} ${random.toFixed(0)}`,
+                    name: `Similo ${userState.name}`,
                 });
                 this.router.navigate([GameRouteEnum.Similo, gameId]);
             },

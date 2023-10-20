@@ -1,5 +1,6 @@
 export enum SimiloDlcEnum {
-    WildAnimals,
+    WildAnimals = 'WildAnimals',
+    HarryPotter = 'HarryPotter',
 }
 
 export enum SimiloCardPosition {

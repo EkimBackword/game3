@@ -3,7 +3,11 @@
         [style.width.px]="scene.headers.board.width"
         [style.top.px]="scene.headers.board.top"
         [style.left.px]="scene.headers.board.left">
-        {{scene.headers.board.name}}
+        <h2>
+            <strong *ngIf="isMasterTurn">Очевидец делает подсказку</strong>
+            <strong *ngIf="!isMasterTurn">Нужно закрыть: {{countCardsForClose}} шт</strong>
+        </h2>
+        <span>{{scene.headers.board.name}}</span>
     </div>
     <div class="position-absolute similo_header similo_header__top_border"
         [style.width.px]="scene.headers.deck.width"

@@ -7,6 +7,7 @@ import {
     OnDestroy,
     Output,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 import * as lodash from 'lodash';
@@ -39,6 +40,7 @@ import {
     SimiloDlcDeckList,
 } from '../models/similo-dlc';
 import { SimiloGameInfoQuery } from '../services/similo-game-info.query';
+import { SimiloRulesComponent } from '../similo-rules/similo-rules.component';
 
 @Component({
     selector: 'app-similo-table-info',
@@ -76,7 +78,7 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
             value: false,
             name: 'Угадывающий'
         },
-    ]
+    ];
 
     get currentPlayer() {
         return this.similoGameInfoQuery.currentPlayer;
@@ -87,6 +89,7 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private similoGameInfoQuery: SimiloGameInfoQuery,
+        private matDialog: MatDialog,
         // private gameDialogsService: GameDialogsService,
         // private mapsService: MapsService,
         // private toastService: ToastService,
@@ -126,6 +129,9 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
         state.mainDeck = this.getInitedMainDeck(main);
         state.helpDeck = this.getInitedHelpDeck(help);
         state.statusId = GameInfoStatusIdEnum.Started;
+        state.isMasterTurn = true;
+        state.countCardsForClose = 0;
+        state.turnIndex = 1;
         this.updateSocketState.emit(state)
     }
 
@@ -178,6 +184,15 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
 
     trackById(index: number, item: { id: any }) {
         return item.id;
+    }
+
+    openSimiloRules() {
+        return this.matDialog.open<SimiloRulesComponent>(
+            SimiloRulesComponent,
+            {
+                width: `${SimiloCardWrapInfo.cardWidth * 2}px`,
+            },
+        );
     }
 
     private getInitedMainDeck(cards: SimiloCardConfig[]) {

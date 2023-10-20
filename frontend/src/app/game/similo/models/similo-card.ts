@@ -9,6 +9,7 @@ const cardWidth = 296;
 const cardHeight = 449;
 const cardSpan = 30;
 const totalMargin = 10;
+const headerTextHeight = 40;
 
 export interface SimiloCardsBox {
     getLeft: (width: number) => number;
@@ -37,7 +38,7 @@ const boardBox: SimiloCardsBox = {
         const rowCount = Math.ceil(cardsCount / cardsInRow);
         return (height + cardSpan) * rowCount - cardSpan
     },
-    padding: cardSpan,
+    padding: cardSpan + headerTextHeight,
 };
 
 const deckBox: SimiloCardsBox = {

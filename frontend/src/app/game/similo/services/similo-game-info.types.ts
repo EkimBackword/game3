@@ -17,6 +17,8 @@ export function createInitialSimiloGameInfoState(config: SimiloGameInfoConfig): 
         mainDeck: [],
         helpDeck: [],
         masterPlayerId: '',
+        isMasterTurn: true,
+        countCardsForClose: 0,
         turnIndex: 0,
     };
 }

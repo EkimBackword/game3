@@ -18,6 +18,8 @@ export interface SimiloGameInfoState extends SimiloGameInfoConfig {
     mainDeck: SimiloCardConfig[];
     helpDeck: SimiloCardConfig[];
     masterPlayerId: string;
+    isMasterTurn: boolean;
+    countCardsForClose: number;
     turnIndex: number;
 }
 

@@ -60,6 +60,8 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
     board: SimiloCard[] = [];
     deck: SimiloCard[] = [];
     isMaster = true;
+    isMasterTurn = true;
+    countCardsForClose = 0;
 
     SimiloRules = SimiloRules;
     SimiloCardPosition = SimiloCardPosition;
@@ -118,11 +120,8 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                 index,
             ));
             this.isMaster = this.similoGameInfoQuery.isMaster;
-            console.log({
-                state,
-                board: this.board,
-                deck: this.deck,
-            })
+            this.isMasterTurn = state.isMasterTurn;
+            this.countCardsForClose = state.countCardsForClose;
             this.changeDetectorRef.markForCheck();
         })
     }
@@ -149,12 +148,15 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
     openCard(card: SimiloCard, isBoard: boolean) {
         switch (card.state.position) {
             case SimiloCardPosition.Board: {
+                const canCloseCard = !this.isMaster && !this.isMasterTurn
                 this.openCardDialog({
-                    title: 'Убирать персонажа?',
+                    title: canCloseCard
+                        ? 'Убирать персонажа?'
+                        : 'Посмотреть',
                     card,
                     isBoard,
                     isMaster: this.isMaster,
-                    actions: !this.isMaster
+                    actions: canCloseCard
                         ? [{
                             text: 'Убирать',
                             value: true,
@@ -177,17 +179,21 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                     return;
                 }
                 this.openCardDialog({
-                    title: 'Добавть подсказку',
+                    title: this.isMasterTurn
+                        ? 'Добавить подсказку'
+                        : 'Посмотреть',
                     card,
                     isBoard,
                     isMaster: this.isMaster,
-                    actions: [{
-                        text: 'Похожий',
-                        value: true,
-                    },{
-                        text: 'Отличается',
-                        value: false,
-                    }],
+                    actions: this.isMasterTurn
+                        ? [{
+                            text: 'Похожий',
+                            value: true,
+                        },{
+                            text: 'Отличается',
+                            value: false,
+                        }]
+                        : [],
                     cancelText: 'Закрыть',
                 }).afterClosed().pipe(
                     filter(result => result != null),
@@ -221,6 +227,10 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateCardPosition(card: SimiloCard, position: SimiloCardPosition) {
         const state = this.similoGameInfoQuery.getValue();
 
+        if (!state.isMasterTurn) {
+            return;
+        }
+
         state.helpDeck[card.deckIndex] = {
             ...card.state,
             position,
@@ -236,15 +246,27 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
             };
         }
 
+        state.isMasterTurn = false;
+        state.countCardsForClose = state.turnIndex;
         this.updateSocketState(state);
     }
 
     private updateCardOpenState(card: SimiloCard, isOpen: boolean) {
         const state = this.similoGameInfoQuery.getValue();
-        state.helpDeck[card.deckIndex] = {
+
+        if (state.isMasterTurn) {
+            return;
+        }
+
+        state.mainDeck[card.deckIndex] = {
             ...card.state,
             isOpen,
         };
+        state.countCardsForClose = state.countCardsForClose - 1;
+        if (state.countCardsForClose === 0) {
+            state.isMasterTurn = true;
+            state.turnIndex = state.turnIndex + 1;
+        }
         this.updateSocketState(state);
     }
 
