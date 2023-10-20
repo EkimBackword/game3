@@ -15,6 +15,7 @@ import {
 import {
     catchError,
     combineLatest,
+    debounceTime,
     EMPTY,
     filter,
     fromEvent,
@@ -107,6 +108,7 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                 tap(() => this.onResize())
             ),
         ]).pipe(
+            debounceTime(0),
             takeUntil(this.ngUnsubscribe),
         ).subscribe(([state]) => {
             this.board = state.mainDeck.map((card, index) => new SimiloCard(

@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 
 import * as lodash from 'lodash';
 import {
+    debounceTime,
     Subject,
     takeUntil,
 } from 'rxjs';
@@ -98,6 +99,7 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.similoGameInfoQuery.onAnyChangeSubject.pipe(
+            debounceTime(0),
             takeUntil(this.ngUnsubscribe),
         ).subscribe((state) => {
             this.players = lodash.cloneDeep(state.players).sort((a, b) => {
