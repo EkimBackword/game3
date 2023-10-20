@@ -8,6 +8,20 @@ import {
 
 export const SimiloDlcDeckList: SimiloDlcDeck[] = [
     {
+        name: 'Гарри Поттер',
+        dlc_name: SimiloDlcEnum.HarryPotter,
+        url: '/assets/similo/similo-harry-potter.png',
+        url_back: '/assets/similo/similo-harry-potter-back.png',
+        backgroundSize: '400% 1000%',
+        cards: new Array(39).fill(0).map((_, i) => {
+            const card: SimiloCardBaseConfig = {
+                row: Math.floor(i / 4),
+                column: i % 4
+            };
+            return card;
+        })
+    },
+    {
         name: 'Дикие животные',
         dlc_name: SimiloDlcEnum.WildAnimals,
         url: '/assets/similo/similo-wild-animals.png',
@@ -21,20 +35,6 @@ export const SimiloDlcDeckList: SimiloDlcDeck[] = [
             return card;
         })
     },
-    {
-        name: 'Гарри Поттер',
-        dlc_name: SimiloDlcEnum.HarryPotter,
-        url: '/assets/similo/similo-harry-potter.png',
-        url_back: '/assets/similo/similo-harry-potter-back.png',
-        backgroundSize: '400% 1000%',
-        cards: new Array(39).fill(0).map((_, i) => {
-            const card: SimiloCardBaseConfig = {
-                row: Math.floor(i / 4),
-                column: i % 4
-            };
-            return card;
-        })
-    }
 ]
 
 export const getCardsByDlcDeck = (dlс: SimiloDlcEnum, position: SimiloCardPosition) => {
