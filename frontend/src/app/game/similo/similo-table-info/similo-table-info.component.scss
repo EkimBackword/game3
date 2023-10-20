@@ -1,0 +1,50 @@
+:host {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.header,
+.footer,
+.game_action_buttons {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-shrink: 0;
+}
+
+.header {
+    border-bottom: 1px solid var(--bs-black);
+}
+
+.body {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.online_state_icon {
+    font-size: 10px;
+}
+
+.card {
+    .card-header,
+    .card-body,
+    .card-footer {
+        padding: 0.25rem 0.5rem;
+    }
+
+    &.current_player {
+        outline: 1px solid var(--bs-secondary);
+    }
+}
+
+.game-label {
+    font-size: 12px;
+    font-weight: 700;
+}

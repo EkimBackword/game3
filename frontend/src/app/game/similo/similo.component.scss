@@ -1,0 +1,38 @@
+$similo_table_info_width: 300px;
+
+:host {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-content: stretch;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.similo-card-wrapper {
+    background-color: #fff;
+    width: calc(100% - #{$similo_table_info_width});
+    height: 100%;
+    display: flex;
+    overflow: auto;
+    position: relative;
+    z-index: 50;
+}
+
+.similo_header__top_border {
+    border-top: 2px dashed black;
+}
+
+.similo_header__left_border {
+    border-left: 2px dashed black;
+}
+
+.similo-table-info {
+    flex-shrink: 0;
+    z-index: 100;
+    background-color: var(--bs-light);
+    width: $similo_table_info_width;
+    border-left: 1px solid var(--bs-black);
+}

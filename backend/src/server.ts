@@ -4,7 +4,10 @@ import express, {
     Response,
 } from 'express';
 import * as http from 'http';
-import { Server } from 'socket.io';
+import {
+    Namespace,
+    Server,
+} from 'socket.io';
 
 import { initDragonInfo } from '../../shared/clank/clank-dragon.types';
 import {
@@ -19,9 +22,17 @@ import {
     GamePlayerColorIds,
 } from '../../shared/clank/clank-player.types';
 import {
+    SimiloGameInfoState,
+    SimiloPlayerConfig,
+} from '../../shared/similo/similo-game.types';
+import {
+    ClankClientToServerEvents,
+    ClankServerToClientEvents,
     ClientToServerEvents,
     InterServerEvents,
     ServerToClientEvents,
+    SimiloClientToServerEvents,
+    SimiloServerToClientEvents,
     SocketData,
     SocketErrorTypeEnum,
     SocketUser,
@@ -116,7 +127,34 @@ class GamesInfo {
 
 }
 
-const games = new GamesInfo();
+class SimiloTablesInfo {
+    gamesList = new Map<string, SimiloGameInfoState>();
+
+    constructor() {}
+
+    addState(state: SimiloGameInfoState) {
+        this.gamesList.set(state.id, state);
+    }
+
+    updateState(state: SimiloGameInfoState) {
+        this.gamesList.set(state.id, state);
+    }
+
+    hasStateById(id: string) {
+        return this.gamesList.has(id);
+    }
+
+    getStateById(id: string) {
+        return id ? this.gamesList.get(id) : null;
+    }
+
+    getList() {
+        return [...this.gamesList.values()];
+    }
+}
+
+const clankGames = new GamesInfo();
+const similoTables = new SimiloTablesInfo();
 
 io.on('connection', (socket) => {
 
@@ -124,18 +162,34 @@ io.on('connection', (socket) => {
     });
 
     socket.on('addGame', (game) => {
-        if (games.hasStateById(game.id)) {
+        if (clankGames.hasStateById(game.id)) {
             return;
         }
-        games.addState(game);
-        socket.broadcast.emit('gameListChanged', games.getList());
+        clankGames.addState(game);
+        socket.broadcast.emit('gameListChanged', clankGames.getList());
     });
 
-    socket.emit('gameListChanged', games.getList());
+    socket.emit('gameListChanged', clankGames.getList());
+
+    socket.on('addSimiloTable', (game) => {
+        if (clankGames.hasStateById(game.id)) {
+            return;
+        }
+        similoTables.addState(game);
+        socket.broadcast.emit('similoTablesChanged', similoTables.getList());
+    });
+
+    socket.emit('similoTablesChanged', similoTables.getList());
 });
 
 const gameRegExp = /^\/clank-(.+)$/;
-io.of(gameRegExp).on('connection', (socket) => {
+const clankNamespaceOf = io.of(gameRegExp) as Namespace<
+    ClankClientToServerEvents,
+    ClankServerToClientEvents,
+    InterServerEvents,
+    SocketData
+>;
+clankNamespaceOf.on('connection', (socket) => {
     const clankNamespace = socket.nsp;
     const user: SocketUser = {
         id: socket.handshake.auth.id,
@@ -145,7 +199,7 @@ io.of(gameRegExp).on('connection', (socket) => {
     const getGameInfo = () => {
         const match = gameRegExp.exec(clankNamespace.name);
         const gameId = match?.[1];
-        const gameInfo = games.getStateById(gameId);
+        const gameInfo = clankGames.getStateById(gameId);
 
         if (gameInfo == null) {
             socket.emit(
@@ -234,7 +288,7 @@ io.of(gameRegExp).on('connection', (socket) => {
         if (gameInfo == null) {
             return;
         }
-        games.updateState(state);
+        clankGames.updateState(state);
         socket.broadcast.emit('gameUpdated', state);
     });
 
@@ -243,7 +297,7 @@ io.of(gameRegExp).on('connection', (socket) => {
         if (gameInfo == null) {
             return;
         }
-        const state = games.cancelState(oldState);
+        const state = clankGames.cancelState(oldState);
         clankNamespace.emit('gameUpdated', state);
     });
 
@@ -258,6 +312,114 @@ io.of(gameRegExp).on('connection', (socket) => {
     socket.on('disconnect', () => {
         onDisconnect();
         console.log(`${user?.name} disconnected from ${clankNamespace.name}`);
+    });
+});
+
+const similoRegExp = /^\/similo-(.+)$/;
+const similoNamespaceOf = io.of(similoRegExp) as Namespace<
+    SimiloClientToServerEvents,
+    SimiloServerToClientEvents,
+    InterServerEvents,
+    SocketData
+>;
+similoNamespaceOf.on('connection', (socket) => {
+    const similoNamespace = socket.nsp;
+    const user: SocketUser = {
+        id: socket.handshake.auth.id,
+        name: socket.handshake.auth.name,
+    };
+
+    const getSimiloTableInfo = () => {
+        const match = similoRegExp.exec(similoNamespace.name);
+        const gameId = match?.[1];
+        const gameInfo = similoTables.getStateById(gameId);
+
+        if (gameInfo == null) {
+            socket.emit(
+                'error',
+                `Игра #${gameId} не найдена`,
+                SocketErrorTypeEnum.gameNotFound,
+            );
+            return null;
+        }
+        return gameInfo;
+    };
+
+    const onConnect = () => {
+        const gameInfo = getSimiloTableInfo();
+        if (gameInfo == null) {
+            return;
+        }
+
+        // Если игрок вернулся, то ему надо восстановить статус
+        const player = gameInfo.players.find(p => p.id === user.id);
+        if (player) {
+            player.isOnline = true;
+            similoNamespace.emit('gameUpdated', gameInfo);
+            return;
+        }
+
+        // Если игра не начата, то к ней можно присоединится при налиичии свободных мест
+        const colorId = GamePlayerColorIds.find(id => !gameInfo.players.some(p => p.colorId === id));
+        if (gameInfo.statusId === GameInfoStatusIdEnum.Created && colorId != null) {
+            const playerConfig: SimiloPlayerConfig = {
+                ...user,
+                colorId,
+                isOnline: true,
+                isAdmin: gameInfo.players.length === 0,
+            };
+            gameInfo.players.push(playerConfig);
+            similoNamespace.emit('gameUpdated', gameInfo);
+            return;
+        }
+
+        // Если игра начата, а игрок не найден, то он зритель
+    };
+
+    const onDisconnect = () => {
+        const gameInfo = getSimiloTableInfo();
+        if (gameInfo == null) {
+            return;
+        }
+
+        const player = gameInfo.players.find(p => p.id === user.id);
+        if (player == null) {
+            return;
+        }
+
+        if (gameInfo.statusId !== GameInfoStatusIdEnum.Created || player.isAdmin) {
+            player.isOnline = false;
+            similoNamespace.emit('gameUpdated', gameInfo);
+            return;
+        }
+
+        gameInfo.players = gameInfo.players.filter(p => p.id !== user.id);
+        similoNamespace.emit('gameUpdated', gameInfo);
+    };
+
+    onConnect();
+    console.log(`${user?.name} connected from ${similoNamespace.name}`);
+
+    socket.on('updateGame', (state) => {
+        const gameInfo = getSimiloTableInfo();
+        if (gameInfo == null) {
+            return;
+        }
+        similoTables.updateState(state);
+        socket.broadcast.emit('gameUpdated', state);
+    });
+
+    socket.on('kickUser', (userId: string) => {
+        const userSocket = [...socket.nsp.sockets.values()].find(p => p.handshake.auth.id === userId);
+        if (userSocket == null) {
+            return;
+        }
+        userSocket.emit('userKicked', userId);
+    });
+
+    socket.on('disconnect', () => {
+        onDisconnect();
+        console.log(`${user?.name} disconnected from ${similoNamespace.name}`);
     });
 });
 

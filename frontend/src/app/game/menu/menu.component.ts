@@ -5,8 +5,10 @@ import {
 import { Router } from '@angular/router';
 
 import { GameRouteEnum } from 'src/app/game.routing.enum';
+import { SessionQuery } from 'src/app/session/session.query';
 import { SessionStore } from 'src/app/session/session.store';
 import { DialogService } from 'src/app/shared/services/dialog.service';
+import { GamesService } from 'src/app/shared/services/games.service';
 
 import {
     faDice,
@@ -14,6 +16,7 @@ import {
     faGears,
     faInfo,
     faMagnifyingGlass,
+    IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -23,11 +26,31 @@ import {
 })
 export class MenuComponent implements OnInit {
 
-    menuList = [
+    menuList: {
+        url?: string;
+        callback?: () => void;
+        name: string;
+        icon: IconDefinition;
+        disabled: boolean;
+    }[] = [
         {
             url: `/${GameRouteEnum.NewGame}`,
-            name: 'Создать игру',
+            name: 'Создать стол для Clank',
             icon: faDice,
+            disabled: false,
+        },
+        {
+            callback: () => {
+                const userState = this.sessionQuery.getValue();
+                const random = Math.random() * 1000
+                const gameId = this.gamesService.addSimiloTable({
+                    name: `Similo ${userState.name} ${random.toFixed(0)}`,
+                });
+                this.router.navigate([GameRouteEnum.Similo, gameId]);
+            },
+
+            name: 'Создать стол для Similo',
+            icon: faGamepad,
             disabled: false,
         },
         {
@@ -57,8 +80,10 @@ export class MenuComponent implements OnInit {
     ];
 
     constructor(
+        private sessionQuery: SessionQuery,
         private sessionStore: SessionStore,
         private dialogService: DialogService,
+        private gamesService: GamesService,
         private router: Router,
     ) {}
 

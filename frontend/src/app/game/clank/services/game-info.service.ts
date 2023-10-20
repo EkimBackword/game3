@@ -15,7 +15,7 @@ import { ClankOneTurnInfo } from 'src/app/shared/models/clank-element-types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { ArtifactsService } from 'src/app/shared/services/artifacts.service';
 import {
-    GameSocket,
+    ClankGameSocket,
     SocketService,
 } from 'src/app/shared/services/socket.service';
 import { SoundService } from 'src/app/shared/services/sound.service';
@@ -61,7 +61,7 @@ export class GameInfoService implements OnDestroy {
 
     private gameId: string | undefined;
 
-    private socket: GameSocket | undefined;
+    private socket: ClankGameSocket | undefined;
 
     constructor(
         private artifactsService: ArtifactsService,

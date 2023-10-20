@@ -5,15 +5,23 @@
     <div class="card-body">
         <ul class="list-group list-group-flush">
             <li class="list-group-item" *ngFor="let item of menuList">
-                <a  class="game_menu_item"
-                    *ngIf="!item.disabled;else disabledTemplateLink"
-                    [class.disabled]="item.disabled"
-                    [routerLink]="item.url"
-                    routerLinkActive="active"
-                    ariaCurrentWhenActive="page">
-                    <fa-icon [icon]="item.icon"></fa-icon>
-                    <span class="game_menu_item_text">{{item.name}}</span>
-                </a>
+                <ng-container *ngIf="!item.disabled; else disabledTemplateLink">
+                    <a  class="game_menu_item"
+                        *ngIf="item.url != null; else callbackTemplateLink"
+                        [routerLink]="item.url"
+                        routerLinkActive="active"
+                        ariaCurrentWhenActive="page">
+                        <fa-icon [icon]="item.icon"></fa-icon>
+                        <span class="game_menu_item_text">{{item.name}}</span>
+                    </a>
+                    <ng-template #callbackTemplateLink>
+                        <a  class="game_menu_item active pointer"
+                            (click)="item?.callback?.()">
+                            <fa-icon [icon]="item.icon"></fa-icon>
+                            <span class="game_menu_item_text">{{item.name}}</span>
+                        </a>
+                    </ng-template>
+                </ng-container>
                 <ng-template #disabledTemplateLink>
                     <a  class="game_menu_item disabled">
                         <fa-icon [icon]="item.icon"></fa-icon>

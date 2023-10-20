@@ -5,4 +5,5 @@ export enum GameRouteEnum {
     Clank = 'clank',
     Settings = 'settings',
     Help = 'help',
+    Similo = 'similo',
 }

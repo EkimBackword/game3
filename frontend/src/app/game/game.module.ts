@@ -9,6 +9,7 @@ import { HelpComponent } from './help/help.component';
 import { MenuComponent } from './menu/menu.component';
 import { NewGameComponent } from './new-game/new-game.component';
 import { SettingsComponent } from './settings/settings.component';
+import { SimiloModule } from './similo/similo.module';
 
 @NgModule({
     declarations: [
@@ -22,6 +23,7 @@ import { SettingsComponent } from './settings/settings.component';
     imports: [
         SharedModule,
         ClankModule,
+        SimiloModule,
         GameRoutes,
     ],
 })

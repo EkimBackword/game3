@@ -15,6 +15,7 @@ import { HelpComponent } from './help/help.component';
 import { MenuComponent } from './menu/menu.component';
 import { NewGameComponent } from './new-game/new-game.component';
 import { SettingsComponent } from './settings/settings.component';
+import { SimiloComponent } from './similo/similo.component';
 
 const routes: Routes = [
     {
@@ -38,6 +39,10 @@ const routes: Routes = [
             {
                 path: `${GameRouteEnum.Clank}/:id`,
                 component: ClankComponent,
+            },
+            {
+                path: `${GameRouteEnum.Similo}/:id`,
+                component: SimiloComponent,
             },
             {
                 path: GameRouteEnum.Settings,

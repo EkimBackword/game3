@@ -8,7 +8,10 @@ import {
 } from '@angular/core';
 import { MatTable } from '@angular/material/table';
 
-import { Subject } from 'rxjs';
+import {
+    combineLatest,
+    Subject,
+} from 'rxjs';
 import {
     takeUntil,
     tap,
@@ -23,6 +26,16 @@ import {
     GameInfoStatus,
 } from '@shared/clank/clank-game.types';
 
+import { SimiloDlcDeckList } from '../similo/models/similo-dlc';
+
+interface FindGameTableItem {
+    id: string;
+    name: string;
+    status: string;
+    mapName?: string;
+    gameUrl: GameRouteEnum;
+}
+
 @Component({
     templateUrl: './find-game.component.html',
     styleUrls: ['./find-game.component.scss'],
@@ -31,10 +44,8 @@ export class FindGameComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild(MatTable) table!: MatTable<GameInfoState>;
 
-    displayedColumns: string[] = ['name', 'statusId', 'mapId'];
-    dataSource: GameInfoState[] = [];
-    clankUrl = GameRouteEnum.Clank;
-
+    displayedColumns: (keyof FindGameTableItem)[] = ['name', 'status', 'mapName'];
+    dataSource: FindGameTableItem[] = [];
     linkIcon = faLink;
     GameInfoStatus = GameInfoStatus;
 
@@ -50,9 +61,33 @@ export class FindGameComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
-        this.gamesService.gamesListSubject.pipe(
-            tap((list) => {
-                this.dataSource = list;
+        combineLatest([
+            this.gamesService.gamesListSubject,
+            this.gamesService.similoTablesSubject,
+        ]).pipe(
+            tap(([clank, similo]) => {
+                this.dataSource = [
+                    ...clank.map((game) => {
+                        const item: FindGameTableItem = {
+                            id: game.id,
+                            name: game.name,
+                            status: GameInfoStatus[game.statusId].name,
+                            mapName: this.mapsService.getMapById(game.mapId)?.name,
+                            gameUrl: GameRouteEnum.Clank,
+                        };
+                        return item;
+                    }),
+                    ...similo.map((game) => {
+                        const item: FindGameTableItem = {
+                            id: game.id,
+                            name: game.name,
+                            status: GameInfoStatus[game.statusId].name,
+                            mapName: SimiloDlcDeckList.find(p => p.dlc_name === game.mainDlc)?.name,
+                            gameUrl: GameRouteEnum.Similo,
+                        };
+                        return item;
+                    }),
+                ];
                 this.table.renderRows();
             }),
             takeUntil(this.ngUnsubscribe),

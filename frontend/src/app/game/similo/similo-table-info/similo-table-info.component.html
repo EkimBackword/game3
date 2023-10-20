@@ -1,0 +1,116 @@
+
+<ng-container *ngIf="state != null">
+    <div class="header p-1">
+        <label
+            for="gameName"
+            class="form-label">
+            Название игры:
+        </label>
+        <input
+            class="form-control"
+            id="gameName"
+            [ngModel]="state.name"
+            (ngModelChange)="changeGameName($event)">
+    </div>
+    <div class="body p-1">
+        <div class="players_list">
+            <label class="game-label">Список игроков:</label>
+            <div class="card w-100 mb-2"
+                [class.current_player]="currentPlayer?.id === player.id"
+                *ngFor="let player of players; trackBy: trackById; let i = index">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 text-ellipsis">{{player.name}}</h6>
+                        <mat-icon class="flex-shrink-0" [color]="player.isOnline ? 'primary' : 'warn'">{{player.isOnline ? 'wifi' : 'wifi_off'}}</mat-icon>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <select class="form-select form-select-sm"
+                        aria-label="Choose help dlc"
+                        id="helpDlc"
+                        [disabled]="player.id === state.masterPlayerId || currentPlayer?.id !== player.id || state.statusId !== GameInfoStatusIdEnum.Created"
+                        [ngModel]="player.id === state.masterPlayerId"
+                        (ngModelChange)="setMasterPlayerId(player)">
+                        <option *ngFor="let type of playerTypes" [value]="type.value">{{type.name}}</option>
+                    </select>
+                </div>
+                <div class="card-footer">
+                    <ng-container *ngIf="currentPlayer != null">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <fa-icon
+                                class="pointer"
+                                [style.width.px]="20"
+                                [style.color]="GamePlayerColorList[player.colorId].color"
+                                [icon]="icons.player"
+                            ></fa-icon>
+                            <select class="form-select form-select-sm w-75"
+                                [ngModel]="player.colorId"
+                                (ngModelChange)="changeColor(player, $event)"
+                                [disabled]="currentPlayer.id != player.id || state.statusId !== GameInfoStatusIdEnum.Created"
+                            >
+                                <ng-container *ngFor="let colorId of GamePlayerColorIds">
+                                    <option
+                                        *ngIf="GamePlayerColorList[colorId].forPlayer"
+                                        [value]="colorId"
+                                    >{{GamePlayerColorList[colorId].name}}</option>
+                                </ng-container>
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center"
+                            *ngIf="currentPlayer.id != player.id && currentPlayer.isAdmin">
+                            <button class="btn btn-sm btn-secondary"
+                                (click)="kickUser.emit(player.id)">
+                                Выкинуть игрока
+                            </button>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="game_action_buttons p-1">
+            <div class="d-flex flex-column">
+                <label for="exampleInputEmail1" class="form-label">Выберете колоду персонажей</label>
+                <select class="form-select form-select-sm"
+                    aria-label="Choose main dlc"
+                    id="mainDlc"
+                    [(ngModel)]="state.mainDlc"
+                    (ngModelChange)="mainDlcChanged($event)">
+                    <option *ngFor="let mainDlc of SimiloDlcDeckList" [value]="mainDlc.dlc_name">{{mainDlc.name}}</option>
+                </select>
+            </div>
+            <div class="d-flex flex-column">
+                <label for="exampleInputEmail1" class="form-label">Выберете колоду подсказок</label>
+                <select class="form-select form-select-sm"
+                    aria-label="Choose help dlc"
+                    id="helpDlc"
+                    [(ngModel)]="state.helpDlc"
+                    (ngModelChange)="helpDlcChanged($event)">
+                    <option *ngFor="let helpDlc of SimiloDlcDeckList" [value]="helpDlc.dlc_name">{{helpDlc.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="game_action_buttons p-1">
+            <button class="btn btn-sm btn-primary mb-1"
+                [class.not-allowed]="!validColorList"
+                (click)="startGame()"
+                *ngIf="currentPlayer?.isAdmin && state.statusId === GameInfoStatusIdEnum.Created"
+                [matTooltip]="invalidColorText"
+                matTooltipPosition="left"
+                [matTooltipDisabled]="validColorList">
+                Начать игру
+            </button>
+            <button class="btn btn-sm btn-primary mb-1"
+                (click)="resetGame()"
+                *ngIf="currentPlayer?.isAdmin && state.statusId !== GameInfoStatusIdEnum.Created">
+                Перезапустить игру
+            </button>
+            <button class="btn btn-sm btn-secondary"
+                (click)="exitGame()">
+                Выйти из игры
+            </button>
+        </div>
+    </div>
+</ng-container>

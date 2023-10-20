@@ -1,0 +1,49 @@
+import {
+    SimiloCardBaseConfig,
+    SimiloCardConfig,
+    SimiloCardPosition,
+    SimiloDlcDeck,
+    SimiloDlcEnum,
+} from '@shared/similo/similo-dlc.types';
+
+export const SimiloDlcDeckList: SimiloDlcDeck[] = [
+    {
+        name: 'Дикие животные',
+        dlc_name: SimiloDlcEnum.WildAnimals,
+        url: '/assets/similo/similo-wild-animals.png',
+        url_back: '/assets/similo/similo-wild-animals-back.png',
+        backgroundSize: '400% 800%',
+        cards: new Array(30).fill(0).map((_, i) => {
+            const card: SimiloCardBaseConfig = {
+                row: Math.floor(i / 4),
+                column: i % 4
+            };
+            return card;
+        })
+    }
+]
+
+export const getCardsByDlcDeck = (dls: SimiloDlcEnum, position: SimiloCardPosition) => {
+    const deck = SimiloDlcDeckList.find(p => p.dlc_name === dls);
+    if (deck == null) {
+        return [];
+    }
+    const { cards, ...info } = deck;
+    const result = cards.map(card => {
+        const config: SimiloCardConfig = {
+            ...card,
+            ...info,
+            id: `${info.dlc_name}_${card.row}_${card.column}`,
+            index: 0,
+            position,
+            isOpen: false,
+            isSearchable: false,
+        };
+        return config;
+    });
+    return simpleShuffle(result);
+}
+
+export const simpleShuffle = <T = any>(list: T[]) => {
+    return list.sort(() => Math.random() - 0.5);
+}
