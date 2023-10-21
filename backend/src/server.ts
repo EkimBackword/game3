@@ -369,6 +369,9 @@ similoNamespaceOf.on('connection', (socket) => {
                 isAdmin: gameInfo.players.length === 0,
             };
             gameInfo.players.push(playerConfig);
+            if (gameInfo.players.length === 1) {
+                gameInfo.masterPlayerId = gameInfo.players[0].id;
+            }
             similoNamespace.emit('gameUpdated', gameInfo);
             return;
         }
