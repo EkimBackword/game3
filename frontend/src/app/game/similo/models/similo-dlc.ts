@@ -6,6 +6,8 @@ import {
     SimiloDlcEnum,
 } from '@shared/similo/similo-dlc.types';
 
+import { SimiloHarryPotterCards } from './similo-harry-potter';
+
 export const SimiloDlcDeckList: SimiloDlcDeck[] = [
     {
         name: 'Гарри Поттер',
@@ -14,10 +16,10 @@ export const SimiloDlcDeckList: SimiloDlcDeck[] = [
         url: '/assets/similo/similo-harry-potter.png',
         url_back: '/assets/similo/similo-harry-potter-back.png',
         backgroundSize: '400% 1000%',
-        cards: new Array(39).fill(0).map((_, i) => {
+        cards: SimiloHarryPotterCards.map((data, i) => {
             const card: SimiloCardBaseConfig = {
-                name: '',
-                description: '',
+                name: data.name,
+                description: data.description,
                 row: Math.floor(i / 4),
                 column: i % 4
             };
@@ -33,8 +35,8 @@ export const SimiloDlcDeckList: SimiloDlcDeck[] = [
         backgroundSize: '400% 800%',
         cards: new Array(30).fill(0).map((_, i) => {
             const card: SimiloCardBaseConfig = {
-                name: '',
-                description: '',
+                name: 'Персонаж',
+                description: 'Карта из колоды Зоопарк',
                 row: Math.floor(i / 4),
                 column: i % 4
             };
@@ -50,8 +52,8 @@ export const SimiloDlcDeckList: SimiloDlcDeck[] = [
         backgroundSize: '400% 800%',
         cards: new Array(30).fill(0).map((_, i) => {
             const card: SimiloCardBaseConfig = {
-                name: '',
-                description: '',
+                name: 'Персонаж',
+                description: 'Карта из колоды Животные',
                 row: Math.floor(i / 4),
                 column: i % 4
             };
@@ -67,8 +69,8 @@ export const SimiloDlcDeckList: SimiloDlcDeck[] = [
         backgroundSize: '400% 800%',
         cards: new Array(32).fill(0).map((_, i) => {
             const card: SimiloCardBaseConfig = {
-                name: '',
-                description: '',
+                name: 'Персонаж',
+                description: 'Карта из колоды История',
                 row: Math.floor(i / 4),
                 column: i % 4
             };
@@ -84,8 +86,8 @@ export const SimiloDlcDeckList: SimiloDlcDeck[] = [
         backgroundSize: '400% 800%',
         cards: new Array(30).fill(0).map((_, i) => {
             const card: SimiloCardBaseConfig = {
-                name: '',
-                description: '',
+                name: 'Персонаж',
+                description: 'Карта из колоды Мифы',
                 row: Math.floor(i / 4),
                 column: i % 4
             };
@@ -101,8 +103,8 @@ export const SimiloDlcDeckList: SimiloDlcDeck[] = [
         backgroundSize: '400% 800%',
         cards: new Array(30).fill(0).map((_, i) => {
             const card: SimiloCardBaseConfig = {
-                name: '',
-                description: '',
+                name: 'Персонаж',
+                description: 'Карта из колоды Сказки',
                 row: Math.floor(i / 4),
                 column: i % 4
             };
@@ -118,8 +120,8 @@ export const SimiloDlcDeckList: SimiloDlcDeck[] = [
         backgroundSize: '400% 800%',
         cards: new Array(30).fill(0).map((_, i) => {
             const card: SimiloCardBaseConfig = {
-                name: '',
-                description: '',
+                name: 'Персонаж',
+                description: 'Карта из колоды Страшилки',
                 row: Math.floor(i / 4),
                 column: i % 4
             };
@@ -133,7 +135,7 @@ export const getCardsByDlcDeck = (dlс: SimiloDlcEnum, position: SimiloCardPosit
     if (deck == null) {
         return [];
     }
-    const { cards, ...info } = deck;
+    const { cards, name, description, ...info } = deck;
     const result = cards.map(card => {
         const config: SimiloCardConfig = {
             ...card,
@@ -145,11 +147,6 @@ export const getCardsByDlcDeck = (dlс: SimiloDlcEnum, position: SimiloCardPosit
             isSearchable: false,
         };
         return config;
-    });
-    console.log('getCardsByDlcDeck', {
-        dlс,
-        deck,
-        result,
     });
     return simpleShuffle(result);
 }

@@ -26,9 +26,7 @@ export class SimiloCardDialogComponent {
     constructor(
         public dialogRef: MatDialogRef<SimiloCardDialogComponent, boolean>,
         @Inject(MAT_DIALOG_DATA) public data: {
-            title: string;
             card: SimiloCard;
-            isBoard: boolean;
             isMaster: boolean;
             actions: {
                 text: string;

@@ -160,11 +160,7 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                     && !this.isMaster
                     && !this.isMasterTurn
                 this.openCardDialog({
-                    title: canCloseCard
-                        ? 'Убирать персонажа?'
-                        : 'Посмотреть',
                     card,
-                    isBoard,
                     isMaster: this.isMaster,
                     actions: canCloseCard
                         ? [{
@@ -191,11 +187,7 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                 const canActions = this.state?.statusId != GameInfoStatusIdEnum.Finished
                     && this.isMasterTurn;
                 this.openCardDialog({
-                    title: this.isMasterTurn
-                        ? 'Добавить подсказку'
-                        : 'Посмотреть',
                     card,
-                    isBoard,
                     isMaster: this.isMaster,
                     actions: canActions
                         ? [{
@@ -221,9 +213,7 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
             case SimiloCardPosition.Similar:
             case SimiloCardPosition.NotSimilar: {
                 this.openCardDialog({
-                    title: 'Просмотр подсказки',
                     card,
-                    isBoard,
                     isMaster: this.isMaster,
                     actions: [],
                     cancelText: 'Закрыть',
