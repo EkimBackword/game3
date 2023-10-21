@@ -70,9 +70,10 @@
         </div>
     </div>
     <div class="footer">
-        <div class="game_action_buttons p-1">
+        <div class="game_action_buttons p-1" *ngIf="state.statusId === GameInfoStatusIdEnum.Created">
+            <label class="game-label">Выберете колоду</label>
             <div class="d-flex flex-column">
-                <label for="exampleInputEmail1" class="form-label">Выберете колоду персонажей</label>
+                <label for="mainDlc" class="form-label">Персонажей:</label>
                 <select class="form-select form-select-sm"
                     aria-label="Choose main dlc"
                     id="mainDlc"
@@ -82,7 +83,7 @@
                 </select>
             </div>
             <div class="d-flex flex-column">
-                <label for="exampleInputEmail1" class="form-label">Выберете колоду подсказок</label>
+                <label for="helpDlc" class="form-label">Подсказок:</label>
                 <select class="form-select form-select-sm"
                     aria-label="Choose help dlc"
                     id="helpDlc"
