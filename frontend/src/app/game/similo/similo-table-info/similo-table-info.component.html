@@ -46,7 +46,7 @@
                             <select class="form-select form-select-sm w-75"
                                 [ngModel]="player.colorId"
                                 (ngModelChange)="changeColor(player, $event)"
-                                [disabled]="currentPlayer.id != player.id || state.statusId !== GameInfoStatusIdEnum.Created"
+                                [disabled]="state.statusId !== GameInfoStatusIdEnum.Created"
                             >
                                 <ng-container *ngFor="let colorId of GamePlayerColorIds">
                                     <option
@@ -100,7 +100,7 @@
             <button class="btn btn-sm btn-primary mb-1"
                 [class.not-allowed]="!validColorList"
                 (click)="startGame()"
-                *ngIf="currentPlayer?.isAdmin && state.statusId === GameInfoStatusIdEnum.Created"
+                *ngIf="state.statusId === GameInfoStatusIdEnum.Created"
                 [matTooltip]="invalidColorText"
                 matTooltipPosition="left"
                 [matTooltipDisabled]="validColorList">
@@ -108,7 +108,7 @@
             </button>
             <button class="btn btn-sm btn-danger mb-1"
                 (click)="resetGame()"
-                *ngIf="currentPlayer?.isAdmin && state.statusId !== GameInfoStatusIdEnum.Created">
+                *ngIf="state.statusId !== GameInfoStatusIdEnum.Created">
                 Перезапустить игру
             </button>
             <button class="btn btn-sm btn-secondary"
