@@ -32,6 +32,7 @@ import {
 } from 'src/app/shared/services/socket.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
+import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import { SimiloCardPosition } from '@shared/similo/similo-dlc.types';
 import { SimiloGameInfoState } from '@shared/similo/similo-game.types';
 import { SocketErrorTypeEnum } from '@shared/socket.types';
@@ -40,7 +41,6 @@ import {
     SimiloCard,
     SimiloCardWrapInfo,
 } from './models/similo-card';
-import { SimiloRules } from './models/similo-rules';
 import { SimiloScene } from './models/similo-scene';
 import { SimiloGameInfoQuery } from './services/similo-game-info.query';
 import { SimiloGameInfoStore } from './services/similo-game-info.store';
@@ -63,8 +63,9 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
     isMaster = true;
     isMasterTurn = true;
     countCardsForClose = 0;
+    state: SimiloGameInfoState | undefined;
 
-    SimiloRules = SimiloRules;
+    GameInfoStatusIdEnum = GameInfoStatusIdEnum;
     SimiloCardPosition = SimiloCardPosition;
     SimiloCardWrapInfo = SimiloCardWrapInfo;
 
@@ -111,19 +112,24 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
             debounceTime(0),
             takeUntil(this.ngUnsubscribe),
         ).subscribe(([state]) => {
+            this.isMaster = this.similoGameInfoQuery.isMaster;
+            this.isMasterTurn = state.isMasterTurn;
+            this.countCardsForClose = state.countCardsForClose;
             this.board = state.mainDeck.map((card, index) => new SimiloCard(
                 card,
                 this.scene.cardSize,
                 index,
+                this.isMaster,
+                state
             ));
             this.deck = state.helpDeck.map((card, index) => new SimiloCard(
                 card,
                 this.scene.cardSize,
                 index,
+                this.isMaster,
+                state
             ));
-            this.isMaster = this.similoGameInfoQuery.isMaster;
-            this.isMasterTurn = state.isMasterTurn;
-            this.countCardsForClose = state.countCardsForClose;
+            this.state = state;
             this.changeDetectorRef.markForCheck();
         })
     }
@@ -150,7 +156,9 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
     openCard(card: SimiloCard, isBoard: boolean) {
         switch (card.state.position) {
             case SimiloCardPosition.Board: {
-                const canCloseCard = !this.isMaster && !this.isMasterTurn
+                const canCloseCard = this.state?.statusId != GameInfoStatusIdEnum.Finished
+                    && !this.isMaster
+                    && !this.isMasterTurn
                 this.openCardDialog({
                     title: canCloseCard
                         ? 'Убирать персонажа?'
@@ -180,6 +188,8 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (!this.isMaster) {
                     return;
                 }
+                const canActions = this.state?.statusId != GameInfoStatusIdEnum.Finished
+                    && this.isMasterTurn;
                 this.openCardDialog({
                     title: this.isMasterTurn
                         ? 'Добавить подсказку'
@@ -187,7 +197,7 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                     card,
                     isBoard,
                     isMaster: this.isMaster,
-                    actions: this.isMasterTurn
+                    actions: canActions
                         ? [{
                             text: 'Похожий',
                             value: true,
@@ -249,7 +259,9 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         state.isMasterTurn = false;
-        state.countCardsForClose = state.turnIndex;
+        state.countCardsForClose = state.turnIndex < 5
+            ? state.turnIndex
+            : 1;
         this.updateSocketState(state);
     }
 
@@ -268,6 +280,14 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
         if (state.countCardsForClose === 0) {
             state.isMasterTurn = true;
             state.turnIndex = state.turnIndex + 1;
+        }
+        const searchableCard = state.mainDeck.find(p => p.isSearchable);
+        if (!searchableCard?.isOpen) {
+            state.isWin = false;
+            state.statusId = GameInfoStatusIdEnum.Finished;
+        } else if (state.turnIndex > 5) {
+            state.isWin = true;
+            state.statusId = GameInfoStatusIdEnum.Finished;
         }
         this.updateSocketState(state);
     }

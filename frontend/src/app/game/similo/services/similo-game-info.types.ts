@@ -20,5 +20,6 @@ export function createInitialSimiloGameInfoState(config: SimiloGameInfoConfig): 
         isMasterTurn: true,
         countCardsForClose: 0,
         turnIndex: 0,
+        isWin: false,
     };
 }

@@ -79,6 +79,9 @@ export class SimiloCardComponent implements OnChanges, OnDestroy {
         if (this.card == null) {
             return false;
         }
+        if (this.card.state.isSearchable) {
+            return true;
+        }
         switch (this.card.state.position) {
             case SimiloCardPosition.Board: {
                 return this.card.state.isOpen;

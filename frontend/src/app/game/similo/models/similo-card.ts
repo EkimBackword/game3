@@ -1,7 +1,9 @@
+import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import {
     SimiloCardConfig,
     SimiloCardPosition,
 } from '@shared/similo/similo-dlc.types';
+import { SimiloGameInfoState } from '@shared/similo/similo-game.types';
 
 const cardsInRow = 6;
 const cardsCount = 12;
@@ -104,12 +106,47 @@ export interface SimiloCardSize {
 export class SimiloCard {
 
     style = this.getStyle();
+    withHover = this.getWithHover();
+    filter = this.getFilter();
 
     constructor(
         public state: SimiloCardConfig,
         public size: SimiloCardSize,
         public deckIndex: number,
+        private isMaster: boolean,
+        private tableState: SimiloGameInfoState,
     ) {
+    }
+
+    private getWithHover() {
+        switch (this.state.position) {
+            case SimiloCardPosition.Hand: {
+                return this.isMaster;
+            }
+            case SimiloCardPosition.Board: {
+                return this.state.isOpen;
+            }
+            case SimiloCardPosition.Similar:
+            case SimiloCardPosition.NotSimilar: {
+                return true;
+            }
+            case SimiloCardPosition.Deck:
+            default: {
+                return false
+            }
+        }
+    }
+
+    private getFilter() {
+        if (this.tableState.statusId === GameInfoStatusIdEnum.Finished) {
+            if (!this.state.isSearchable) {
+                return 'grayscale(100%)';
+            }
+            return this.tableState.isWin
+                ? `drop-shadow(5px 5px 5px var(--bs-success)) drop-shadow(-5px -5px 5px var(--bs-success))`
+                : `drop-shadow(5px 5px 5px var(--bs-danger)) drop-shadow(-5px -5px 5px var(--bs-danger))`;
+        }
+        return;
     }
 
     private getStyle() {

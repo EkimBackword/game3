@@ -21,6 +21,7 @@ export interface SimiloGameInfoState extends SimiloGameInfoConfig {
     isMasterTurn: boolean;
     countCardsForClose: number;
     turnIndex: number;
+    isWin: boolean;
 }
 
 export interface SimiloPlayerConfig {

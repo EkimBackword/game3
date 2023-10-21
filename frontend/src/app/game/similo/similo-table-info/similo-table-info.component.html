@@ -28,10 +28,10 @@
                     <select class="form-select form-select-sm"
                         aria-label="Choose help dlc"
                         id="helpDlc"
-                        [disabled]="player.id === state.masterPlayerId || currentPlayer?.id !== player.id || state.statusId !== GameInfoStatusIdEnum.Created"
+                        [disabled]="player.id === state.masterPlayerId || state.statusId !== GameInfoStatusIdEnum.Created"
                         [ngModel]="player.id === state.masterPlayerId"
                         (ngModelChange)="setMasterPlayerId(player)">
-                        <option *ngFor="let type of playerTypes" [value]="type.value">{{type.name}}</option>
+                        <option *ngFor="let type of SimiloPlayerTypes" [value]="type.value">{{type.name}}</option>
                     </select>
                 </div>
                 <div class="card-footer">
@@ -46,7 +46,7 @@
                             <select class="form-select form-select-sm w-75"
                                 [ngModel]="player.colorId"
                                 (ngModelChange)="changeColor(player, $event)"
-                                [disabled]="state.statusId !== GameInfoStatusIdEnum.Created"
+                                [disabled]="currentPlayer.id != player.id || state.statusId !== GameInfoStatusIdEnum.Created"
                             >
                                 <ng-container *ngFor="let colorId of GamePlayerColorIds">
                                     <option

@@ -1,19 +1,28 @@
-<div class="similo-card-wrapper">
+<div class="similo-card-wrapper" *ngIf="state != null">
     <div class="position-absolute similo_header"
         [style.width.px]="scene.headers.board.width"
         [style.top.px]="scene.headers.board.top"
         [style.left.px]="scene.headers.board.left">
-        <h2>
-            <strong *ngIf="isMasterTurn">Очевидец делает подсказку</strong>
-            <strong *ngIf="!isMasterTurn">Нужно закрыть: {{countCardsForClose}} шт</strong>
-        </h2>
-        <span>{{scene.headers.board.name}}</span>
+        <ng-container [ngSwitch]="state.statusId">
+            <h2 *ngSwitchCase="GameInfoStatusIdEnum.Started">
+                <strong *ngIf="isMasterTurn">Очевидец делает подсказку</strong>
+                <strong *ngIf="!isMasterTurn">Нужно закрыть: {{countCardsForClose}} шт</strong>
+            </h2>
+            <h2 *ngSwitchCase="GameInfoStatusIdEnum.Finished">
+                <strong class="text-success" *ngIf="state.isWin">Победа</strong>
+                <strong class="text-danger" *ngIf="!state.isWin">Поражение</strong>
+            </h2>
+            <h2 *ngSwitchDefault>
+                <strong>Выберите колоду и нажмите "Начать игру"</strong>
+            </h2>
+        </ng-container>
+        <span [class.fw-bold]="!isMasterTurn">{{scene.headers.board.name}}</span>
     </div>
     <div class="position-absolute similo_header similo_header__top_border"
         [style.width.px]="scene.headers.deck.width"
         [style.top.px]="scene.headers.deck.top"
         [style.left.px]="scene.headers.deck.left">
-        {{scene.headers.deck.name}}
+        <span [class.fw-bold]="isMasterTurn">{{scene.headers.deck.name}}</span>
     </div>
     <div class="position-absolute similo_header similo_header__left_border"
         [style.width.px]="scene.headers.similar.width"
@@ -37,9 +46,10 @@
         *ngFor="let card of board; trackBy: trackById"
         [card]="card"
         [isMaster]="isMaster"
-        [withHover]="true"
+        [withHover]="card.withHover"
         [isBoard]="true"
         [ngStyle]="card.style"
+        [style.filter]="card.filter"
         (openCard)="openCard(card, true)"
     ></app-similo-card>
     <app-similo-card
@@ -47,8 +57,9 @@
         *ngFor="let card of deck; trackBy: trackById"
         [card]="card"
         [isMaster]="isMaster"
-        [withHover]="card.state.position != SimiloCardPosition.Deck"
+        [withHover]="card.withHover"
         [ngStyle]="card.style"
+        [style.filter]="card.filter"
         (openCard)="openCard(card, false)"
     ></app-similo-card>
 </div>

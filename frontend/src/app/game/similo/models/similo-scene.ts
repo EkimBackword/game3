@@ -12,7 +12,7 @@ export class SimiloScene {
     }
     headers = {
         board: {
-            name: 'Персонажи (должен остаться только загаданый)',
+            name: 'Персонажи',
             top: 0,
             left: 0,
             width: 0,
@@ -20,7 +20,7 @@ export class SimiloScene {
             padding: 0,
         },
         deck: {
-            name: 'Колода ведущего',
+            name: 'Колода очевидеца',
             top: 0,
             left: 0,
             width: 0,

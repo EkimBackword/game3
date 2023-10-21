@@ -40,6 +40,7 @@ import {
     getCardsByDlcDeck,
     SimiloDlcDeckList,
 } from '../models/similo-dlc';
+import { SimiloPlayerTypes } from '../models/similo-rules';
 import { SimiloGameInfoQuery } from '../services/similo-game-info.query';
 import { SimiloRulesComponent } from '../similo-rules/similo-rules.component';
 
@@ -69,17 +70,7 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
     GamePlayerStatusIdEnum = GamePlayerStatusIdEnum;
     GameInfoStatusIdEnum = GameInfoStatusIdEnum;
     SimiloDlcDeckList = SimiloDlcDeckList;
-
-    playerTypes = [
-        {
-            value: true,
-            name: 'Очевидец'
-        },
-        {
-            value: false,
-            name: 'Угадывающий'
-        },
-    ];
+    SimiloPlayerTypes = SimiloPlayerTypes;
 
     get currentPlayer() {
         return this.similoGameInfoQuery.currentPlayer;
@@ -134,6 +125,7 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
         state.isMasterTurn = true;
         state.countCardsForClose = 0;
         state.turnIndex = 1;
+        state.isWin = false;
         this.updateSocketState.emit(state)
     }
 
@@ -142,6 +134,7 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
         state.mainDeck = [];
         state.helpDeck = [];
         state.statusId = GameInfoStatusIdEnum.Created;
+        state.isWin = false;
         this.updateSocketState.emit(state)
     }
 
@@ -158,6 +151,7 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
     mainDlcChanged(mainDlc: SimiloDlcEnum) {
         const state = this.similoGameInfoQuery.getValue();
         state.mainDlc = mainDlc;
+        state.helpDlc = mainDlc;
         this.updateSocketState.emit(state);
     }
 
