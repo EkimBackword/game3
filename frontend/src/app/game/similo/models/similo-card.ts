@@ -5,103 +5,121 @@ import {
 } from '@shared/similo/similo-dlc.types';
 import { SimiloGameInfoState } from '@shared/similo/similo-game.types';
 
-const cardsInRow = 6;
-const cardsCount = 12;
-const cardWidth = 296;
-const cardHeight = 449;
-const cardSpan = 30;
-const totalMargin = 10;
-const headerTextHeight = 40;
+export interface SimiloSizeSettingsBase {
+    cardWidth: number;
+    cardHeight: number;
+    cardZoom: number;
+    cardsCount: number;
+    cardsInRow: number;
+    cardSpan: number;
+    totalMargin: number;
+    headerTitleHeight: number;
+    headerTextHeight: number;
+}
+
+export interface SimiloCardSizeSettings {
+    width: number;
+    height: number;
+    span: number;
+    margin: number;
+}
+
+export const SimiloSizeSettings: SimiloSizeSettingsBase = {
+    cardWidth: 296,
+    cardHeight: 449,
+    cardZoom: 0.55,
+    cardsCount: 12,
+    cardsInRow: 6,
+    cardSpan: 30,
+    totalMargin: 10,
+    headerTitleHeight: 40,
+    headerTextHeight: 20,
+}
 
 export interface SimiloCardsBox {
-    getLeft: (width: number) => number;
-    getTop: (height: number) => number;
-    getWidth: (width: number) => number;
-    getHeight: (height: number) => number;
-    padding: number
+    getLeft: (settings: SimiloCardSizeSettings) => number;
+    getTop: (settings: SimiloCardSizeSettings) => number;
+    getWidth: (settings: SimiloCardSizeSettings) => number;
+    getHeight: (settings: SimiloCardSizeSettings) => number;
+    paddingTop: (settings: SimiloCardSizeSettings) => number;
+    paddingLeft: (settings: SimiloCardSizeSettings) => number;
 }
 
 export interface SimiloSceneBoxItem {
     name: string;
     left: number;
     top: number;
-    padding: number;
+    paddingTop: number;
+    paddingLeft: number;
     width: number;
     height: number;
 }
 
 const boardBox: SimiloCardsBox = {
-    getLeft: (width: number) => totalMargin,
-    getTop: (height: number) => totalMargin,
-    getWidth: (width: number) => {
-        return (width + cardSpan) * cardsInRow - cardSpan
+    getLeft: (settings) => settings.margin,
+    getTop: (settings) => settings.margin,
+    getWidth: (settings) => {
+        return (settings.width + settings.span) * SimiloSizeSettings.cardsInRow - settings.span;
     },
-    getHeight: (height: number) => {
-        const rowCount = Math.ceil(cardsCount / cardsInRow);
-        return (height + cardSpan) * rowCount - cardSpan
+    getHeight: (settings) => {
+        const rowCount = Math.ceil(SimiloSizeSettings.cardsCount / SimiloSizeSettings.cardsInRow);
+        return (settings.height + settings.span) * rowCount - settings.span
     },
-    padding: cardSpan + headerTextHeight,
+    paddingTop: (settings) => settings.span + SimiloSizeSettings.headerTextHeight,
+    paddingLeft: () => 0,
 };
 
 const deckBox: SimiloCardsBox = {
-    getLeft: (width: number) => totalMargin,
-    getTop: (height: number) => boardBox.getHeight(height) + totalMargin + cardSpan + SimiloCardWrapInfo.boardBox.padding,
-    getWidth: (width: number) => {
+    getLeft: (settings) => settings.margin,
+    getTop: (settings) => boardBox.getHeight(settings) + settings.margin + settings.span + SimiloCardWrapInfo.boardBox.paddingTop(settings),
+    getWidth: (settings) => {
         const cardCount = 1 + 5; // 1 колода + 5 карты на руке
-        return (width + cardSpan) * cardCount - cardSpan
+        return (settings.width + settings.span) * cardCount - settings.span
     },
-    getHeight: (height: number) => {
+    getHeight: (settings) => {
         const rowCount = 1;
-        return (height + cardSpan) * rowCount;
+        return (settings.height + settings.span) * rowCount;
     },
-    padding: cardSpan,
+    paddingTop: (settings) => settings.span + SimiloSizeSettings.headerTextHeight,
+    paddingLeft: () => 0,
 };
 
 const similarBox: SimiloCardsBox = {
-    getLeft: (width: number) => boardBox.getWidth(width) + totalMargin + cardSpan,
-    getTop: (height: number) => totalMargin,
-    getWidth: (width: number) => {
+    getLeft: (settings) => boardBox.getWidth(settings) + settings.margin + settings.span,
+    getTop: (settings) => settings.margin,
+    getWidth: (settings) => {
         const cardCount = 1;
-        return (width + cardSpan) * cardCount + cardSpan;
+        return (settings.width + settings.span) * cardCount + settings.span;
     },
-    getHeight: (height: number) => {
+    getHeight: (settings) => {
         const rowCount = 3;
-        return (height + cardSpan) * rowCount + cardSpan;
+        return (settings.height + settings.span) * rowCount + settings.span;
     },
-    padding: cardSpan,
+    paddingTop: (settings) => boardBox.paddingTop(settings),
+    paddingLeft: (settings) => settings.span,
 };
 
 const notSimilarBox: SimiloCardsBox = {
-    getLeft: (width: number) => boardBox.getWidth(width) + similarBox.getWidth(width) + totalMargin + cardSpan,
-    getTop: (height: number) => totalMargin,
-    getWidth: (width: number) => {
+    getLeft: (settings) => boardBox.getWidth(settings) + similarBox.getWidth(settings) + settings.margin + settings.span,
+    getTop: (settings) => settings.margin,
+    getWidth: (settings) => {
         const cardCount = 1;
-        return (width + cardSpan) * cardCount + cardSpan;
+        return (settings.width + settings.span) * cardCount + settings.span;
     },
-    getHeight: (height: number) => {
+    getHeight: (settings) => {
         const rowCount = 3;
-        return (height + cardSpan) * rowCount + cardSpan;
+        return (settings.height + settings.span) * rowCount + settings.span;
     },
-    padding: cardSpan,
+    paddingTop: (settings) => boardBox.paddingTop(settings),
+    paddingLeft: (settings) => settings.span,
 };
 
 export const SimiloCardWrapInfo = {
-    cardsInRow: cardsInRow,
-    cardsCount: cardsCount,
-    cardWidth,
-    cardHeight,
-    cardSpan,
-    cardZoom: 0.55,
     boardBox,
     deckBox,
     similarBox,
     notSimilarBox,
 };
-
-export interface SimiloCardSize {
-    width: number;
-    height: number;
-}
 
 export class SimiloCard {
 
@@ -111,7 +129,7 @@ export class SimiloCard {
 
     constructor(
         public state: SimiloCardConfig,
-        public size: SimiloCardSize,
+        public size: SimiloCardSizeSettings,
         public deckIndex: number,
         private isMaster: boolean,
         private tableState: SimiloGameInfoState,
@@ -152,57 +170,57 @@ export class SimiloCard {
     private getStyle() {
         switch (this.state.position) {
             case SimiloCardPosition.Board: {
-                const topIndex = Math.floor(this.state.index / SimiloCardWrapInfo.cardsInRow);
-                const leftIndex = (this.state.index % SimiloCardWrapInfo.cardsInRow);
-                const left = leftIndex * (this.size.width + SimiloCardWrapInfo.cardSpan);
-                const top = topIndex * (this.size.height + SimiloCardWrapInfo.cardSpan);
+                const topIndex = Math.floor(this.state.index / SimiloSizeSettings.cardsInRow);
+                const leftIndex = (this.state.index % SimiloSizeSettings.cardsInRow);
+                const left = leftIndex * (this.size.width + this.size.span);
+                const top = topIndex * (this.size.height + this.size.span);
                 const style: Partial<CSSStyleDeclaration> = {
-                    left: `${left + SimiloCardWrapInfo.boardBox.getLeft(this.size.width)}px`,
-                    top: `${top + SimiloCardWrapInfo.boardBox.getTop(this.size.height) + SimiloCardWrapInfo.boardBox.padding}px`,
+                    left: `${left + SimiloCardWrapInfo.boardBox.getLeft(this.size)}px`,
+                    top: `${top + SimiloCardWrapInfo.boardBox.getTop(this.size) + SimiloCardWrapInfo.boardBox.paddingTop(this.size)}px`,
                 };
                 return style;
             }
             case SimiloCardPosition.Similar: {
                 const topIndex = this.state.index;
                 const leftIndex = 0;
-                const left = leftIndex * (this.size.width + SimiloCardWrapInfo.cardSpan);
-                const top = topIndex * (this.size.height + SimiloCardWrapInfo.cardSpan);
+                const left = leftIndex * (this.size.width + this.size.span);
+                const top = topIndex * (this.size.height + this.size.span);
                 const style: Partial<CSSStyleDeclaration> = {
-                    left: `${left + SimiloCardWrapInfo.similarBox.getLeft(this.size.width) + SimiloCardWrapInfo.notSimilarBox.padding}px`,
-                    top: `${top + SimiloCardWrapInfo.similarBox.getTop(this.size.height) + SimiloCardWrapInfo.similarBox.padding}px`,
+                    left: `${left + SimiloCardWrapInfo.similarBox.getLeft(this.size) + SimiloCardWrapInfo.notSimilarBox.paddingLeft(this.size)}px`,
+                    top: `${top + SimiloCardWrapInfo.similarBox.getTop(this.size) + SimiloCardWrapInfo.similarBox.paddingTop(this.size)}px`,
                 };
                 return style;
             }
             case SimiloCardPosition.NotSimilar: {
                 const topIndex = this.state.index;
                 const leftIndex = 0;
-                const left = leftIndex * (this.size.width + SimiloCardWrapInfo.cardSpan);
-                const top = topIndex * (this.size.height + SimiloCardWrapInfo.cardSpan);
+                const left = leftIndex * (this.size.width + this.size.span);
+                const top = topIndex * (this.size.height + this.size.span);
                 const style: Partial<CSSStyleDeclaration> = {
-                    left: `${left + SimiloCardWrapInfo.notSimilarBox.getLeft(this.size.width) + SimiloCardWrapInfo.notSimilarBox.padding}px`,
-                    top: `${top + SimiloCardWrapInfo.notSimilarBox.getTop(this.size.height) + SimiloCardWrapInfo.notSimilarBox.padding}px`,
+                    left: `${left + SimiloCardWrapInfo.notSimilarBox.getLeft(this.size) + SimiloCardWrapInfo.notSimilarBox.paddingLeft(this.size)}px`,
+                    top: `${top + SimiloCardWrapInfo.notSimilarBox.getTop(this.size) + SimiloCardWrapInfo.notSimilarBox.paddingTop(this.size)}px`,
                 };
                 return style;
             }
             case SimiloCardPosition.Hand: {
                 const topIndex = 0;
                 const leftIndex = this.state.index + 1;
-                const left = leftIndex * (this.size.width + SimiloCardWrapInfo.cardSpan);
-                const top = topIndex * (this.size.height + SimiloCardWrapInfo.cardSpan);
+                const left = leftIndex * (this.size.width + this.size.span);
+                const top = topIndex * (this.size.height + this.size.span);
                 const style: Partial<CSSStyleDeclaration> = {
-                    left: `${left + SimiloCardWrapInfo.deckBox.getLeft(this.size.width)}px`,
-                    top: `${top + SimiloCardWrapInfo.deckBox.getTop(this.size.height) + SimiloCardWrapInfo.deckBox.padding}px`,
+                    left: `${left + SimiloCardWrapInfo.deckBox.getLeft(this.size)}px`,
+                    top: `${top + SimiloCardWrapInfo.deckBox.getTop(this.size) + SimiloCardWrapInfo.deckBox.paddingTop(this.size)}px`,
                 };
                 return style;
             }
             default: {
                 const topIndex = 0;
                 const leftIndex = 0;
-                const left = leftIndex * (this.size.width + SimiloCardWrapInfo.cardSpan);
-                const top = topIndex * (this.size.height + SimiloCardWrapInfo.cardSpan);
+                const left = leftIndex * (this.size.width + this.size.span);
+                const top = topIndex * (this.size.height + this.size.span);
                 const style: Partial<CSSStyleDeclaration> = {
-                    left: `${left + SimiloCardWrapInfo.deckBox.getLeft(this.size.width)}px`,
-                    top: `${top + SimiloCardWrapInfo.deckBox.getTop(this.size.height) + SimiloCardWrapInfo.deckBox.padding}px`,
+                    left: `${left + SimiloCardWrapInfo.deckBox.getLeft(this.size)}px`,
+                    top: `${top + SimiloCardWrapInfo.deckBox.getTop(this.size) + SimiloCardWrapInfo.deckBox.paddingTop(this.size)}px`,
                 };
                 return style;
             }

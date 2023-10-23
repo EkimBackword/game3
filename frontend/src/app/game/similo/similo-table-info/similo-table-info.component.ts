@@ -35,7 +35,7 @@ import {
     SimiloPlayerConfig,
 } from '@shared/similo/similo-game.types';
 
-import { SimiloCardWrapInfo } from '../models/similo-card';
+import { SimiloSizeSettings } from '../models/similo-card';
 import {
     getCardsByDlcDeck,
     SimiloDlcDeckList,
@@ -115,7 +115,7 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
     startGame() {
         const state = this.similoGameInfoQuery.getValue();
         const cards = getCardsByDlcDeck(state.mainDlc, SimiloCardPosition.Board);
-        const main = cards.splice(0, SimiloCardWrapInfo.cardsCount);
+        const main = cards.splice(0, SimiloSizeSettings.cardsCount);
         const help = state.helpDlc != state.mainDlc
             ? getCardsByDlcDeck(state.helpDlc, SimiloCardPosition.Deck)
             : cards;
@@ -186,13 +186,13 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
         return this.matDialog.open<SimiloRulesComponent>(
             SimiloRulesComponent,
             {
-                width: `${SimiloCardWrapInfo.cardWidth * 2}px`,
+                width: `${SimiloSizeSettings.cardWidth * 2}px`,
             },
         );
     }
 
     private getInitedMainDeck(cards: SimiloCardConfig[]) {
-        const searchableIndex = lodash.random(0, SimiloCardWrapInfo.cardsCount - 1);
+        const searchableIndex = lodash.random(0, SimiloSizeSettings.cardsCount - 1);
         return cards.map((card, index) => {
             card.position = SimiloCardPosition.Board;
             card.index = index;

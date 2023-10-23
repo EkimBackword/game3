@@ -39,7 +39,9 @@ import { SocketErrorTypeEnum } from '@shared/socket.types';
 
 import {
     SimiloCard,
+    SimiloCardSizeSettings,
     SimiloCardWrapInfo,
+    SimiloSizeSettings,
 } from './models/similo-card';
 import { SimiloScene } from './models/similo-scene';
 import { SimiloGameInfoQuery } from './services/similo-game-info.query';
@@ -291,13 +293,22 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
             SimiloCardDialogComponent,
             {
                 data,
-                width: `${SimiloCardWrapInfo.cardWidth * 2}px`,
+                width: `${SimiloSizeSettings.cardWidth * 2}px`,
             },
         );
     }
 
     private onResize() {
-        const height = SimiloCardWrapInfo.cardHeight * 4;
+        const defaultSize: SimiloCardSizeSettings = {
+            width: SimiloSizeSettings.cardWidth,
+            height: SimiloSizeSettings.cardHeight,
+            span: SimiloSizeSettings.cardSpan,
+            margin: SimiloSizeSettings.totalMargin,
+        };
+        const height = SimiloSizeSettings.cardHeight / 2
+            + SimiloCardWrapInfo.deckBox.getTop(defaultSize)
+            + SimiloCardWrapInfo.deckBox.getHeight(defaultSize)
+            + SimiloCardWrapInfo.deckBox.paddingTop(defaultSize);
         const zoom = document.body.clientHeight / height;
         this.scene.setZoom(zoom)
     }

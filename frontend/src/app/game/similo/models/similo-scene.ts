@@ -1,87 +1,72 @@
 import {
-    SimiloCardSize,
+    SimiloCardsBox,
+    SimiloCardSizeSettings,
     SimiloCardWrapInfo,
+    SimiloSceneBoxItem,
+    SimiloSizeSettings,
 } from './similo-card';
+
+export interface SimiloSceneHeaders {
+    board: SimiloSceneBoxItem;
+    deck: SimiloSceneBoxItem;
+    similar: SimiloSceneBoxItem;
+    notSimilar: SimiloSceneBoxItem;
+}
 
 export class SimiloScene {
 
     zoom: number = 1;
-    cardSize: SimiloCardSize = {
-        width: SimiloCardWrapInfo.cardWidth,
-        height: SimiloCardWrapInfo.cardHeight,
+    cardSize: SimiloCardSizeSettings = {
+        width: SimiloSizeSettings.cardWidth,
+        height: SimiloSizeSettings.cardHeight,
+        span: SimiloSizeSettings.cardSpan,
+        margin: SimiloSizeSettings.totalMargin,
     }
-    headers = {
-        board: {
-            name: 'Персонажи',
-            top: 0,
-            left: 0,
-            width: 0,
-            height: 0,
-            padding: 0,
-        },
-        deck: {
-            name: 'Колода очевидеца',
-            top: 0,
-            left: 0,
-            width: 0,
-            height: 0,
-            padding: 0,
-        },
-        similar: {
-            name: 'Похожий на',
-            top: 0,
-            left: 0,
-            width: 0,
-            height: 0,
-            padding: 0,
-        },
-        notSimilar: {
-            name: 'Отличается от',
-            top: 0,
-            left: 0,
-            width: 0,
-            height: 0,
-            padding: 0,
-        },
-    }
+    headers!: SimiloSceneHeaders;
 
     constructor() {
-        this.setZoom(SimiloCardWrapInfo.cardZoom);
+        this.setZoom(SimiloSizeSettings.cardZoom);
     }
 
     setZoom(zoom) {
-        const width = SimiloCardWrapInfo.cardWidth * zoom;
-        const height = SimiloCardWrapInfo.cardHeight * zoom;
-
         this.zoom = zoom;
         this.cardSize = {
-            width,
-            height,
+            width: SimiloSizeSettings.cardWidth * zoom,
+            height: SimiloSizeSettings.cardHeight * zoom,
+            span: SimiloSizeSettings.cardSpan * zoom,
+            margin: SimiloSizeSettings.totalMargin * zoom,
         }
+        this.headers = {
+            board: this.getSizeByBox(
+                'Персонажи',
+                SimiloCardWrapInfo.boardBox,
+            ),
+            deck: this.getSizeByBox(
+                'Колода очевидеца',
+                SimiloCardWrapInfo.deckBox,
+            ),
+            similar: this.getSizeByBox(
+                'Похожий на',
+                SimiloCardWrapInfo.similarBox,
+            ),
+            notSimilar: this.getSizeByBox(
+                'Отличается от',
+                SimiloCardWrapInfo.notSimilarBox,
+            ),
+        };
+    }
 
-        this.headers.board.left = SimiloCardWrapInfo.boardBox.getLeft(width);
-        this.headers.board.top = SimiloCardWrapInfo.boardBox.getTop(height);
-        this.headers.board.width = SimiloCardWrapInfo.boardBox.getWidth(width);
-        this.headers.board.height = SimiloCardWrapInfo.boardBox.getHeight(height);
-        this.headers.board.padding = SimiloCardWrapInfo.boardBox.padding;
-
-        this.headers.deck.left = SimiloCardWrapInfo.deckBox.getLeft(width);
-        this.headers.deck.top = SimiloCardWrapInfo.deckBox.getTop(height);
-        this.headers.deck.width = SimiloCardWrapInfo.deckBox.getWidth(width);
-        this.headers.deck.height = SimiloCardWrapInfo.deckBox.getHeight(height);
-        this.headers.deck.padding = SimiloCardWrapInfo.deckBox.padding;
-
-        this.headers.similar.left = SimiloCardWrapInfo.similarBox.getLeft(width);
-        this.headers.similar.top = SimiloCardWrapInfo.similarBox.getTop(height);
-        this.headers.similar.width = SimiloCardWrapInfo.similarBox.getWidth(width);
-        this.headers.similar.height = SimiloCardWrapInfo.similarBox.getHeight(height);
-        this.headers.similar.padding = SimiloCardWrapInfo.similarBox.padding;
-
-        this.headers.notSimilar.left = SimiloCardWrapInfo.notSimilarBox.getLeft(width);
-        this.headers.notSimilar.top = SimiloCardWrapInfo.notSimilarBox.getTop(height);
-        this.headers.notSimilar.width = SimiloCardWrapInfo.notSimilarBox.getWidth(width);
-        this.headers.notSimilar.height = SimiloCardWrapInfo.notSimilarBox.getHeight(height);
-        this.headers.notSimilar.padding = SimiloCardWrapInfo.notSimilarBox.padding;
+    private getSizeByBox(name: string, box: SimiloCardsBox) {
+        const data: SimiloSceneBoxItem = {
+            name,
+            left: box.getLeft(this.cardSize),
+            top: box.getTop(this.cardSize),
+            width: box.getWidth(this.cardSize),
+            height: box.getHeight(this.cardSize),
+            paddingTop: box.paddingTop(this.cardSize),
+            paddingLeft: box.paddingLeft(this.cardSize),
+        }
+        return data;
     }
 
 }

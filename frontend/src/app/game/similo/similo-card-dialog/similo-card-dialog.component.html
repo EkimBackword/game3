@@ -1,14 +1,16 @@
 <h1 class="title" mat-dialog-title>
     {{data.card.state.name}}
 </h1>
-<div mat-dialog-content>
-    <p>{{data.card.state.description}}</p>
+<div class="body" mat-dialog-content>
     <app-similo-card
         [card]="data.card"
         [isMaster]="data.isMaster"
-        [width]="SimiloCardWrapInfo.cardWidth"
-        [height]="SimiloCardWrapInfo.cardHeight"
+        [width]="cardSize.width"
+        [height]="cardSize.height"
     ></app-similo-card>
+    <div class="description">
+        <p>{{data.card.state.description}}</p>
+    </div>
 </div>
 <div mat-dialog-actions class="d-flex flex-row justify-content-end">
     <button class="btn btn-primary m-1"

@@ -10,7 +10,7 @@ import {
 
 import {
     SimiloCard,
-    SimiloCardWrapInfo,
+    SimiloSizeSettings,
 } from '../models/similo-card';
 
 @Component({
@@ -21,7 +21,13 @@ import {
 })
 export class SimiloCardDialogComponent {
 
-    SimiloCardWrapInfo = SimiloCardWrapInfo
+    cardSize: {
+        width: number;
+        height: number;
+    } = {
+        width: SimiloSizeSettings.cardWidth,
+        height: SimiloSizeSettings.cardHeight,
+    }
 
     constructor(
         public dialogRef: MatDialogRef<SimiloCardDialogComponent, boolean>,
@@ -34,6 +40,12 @@ export class SimiloCardDialogComponent {
             }[]
             cancelText?: string;
         },
-    ) { }
+    ) {
+        const zoom = document.body.clientHeight / (2 * SimiloSizeSettings.cardHeight);
+        this.cardSize = {
+            width: SimiloSizeSettings.cardWidth * zoom,
+            height: SimiloSizeSettings.cardHeight * zoom,
+        };
+    }
 
 }

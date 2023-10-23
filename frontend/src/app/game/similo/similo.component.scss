@@ -11,10 +11,34 @@ $similo_table_info_width: 200px;
     overflow: hidden;
 }
 
-.similo-card-wrapper {
+.similo-game-wrapper {
     background-color: #fff;
     width: calc(100% - #{$similo_table_info_width});
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    position: relative;
+    z-index: 50;
+}
+
+
+$similo_game_header_height: 40px;
+
+.similo-game-header {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-shrink: 0;
+    height: $similo_game_header_height;
+}
+
+.similo-card-wrapper {
+    background-color: #fff;
+    width: 100%;
+    height: calc(100% - #{$similo_game_header_height});
     display: flex;
     overflow: auto;
     position: relative;
