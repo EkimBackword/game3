@@ -166,11 +166,10 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                     isMaster: this.isMaster,
                     actions: canCloseCard
                         ? [{
-                            text: 'Убирать',
+                            text: 'Убрать карту',
                             value: true,
                         }]
                         : [],
-                    cancelText: 'Закрыть',
                 }).afterClosed().pipe(
                     filter(result => result != null),
                     takeUntil(this.ngUnsubscribe),
@@ -200,7 +199,6 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                             value: false,
                         }]
                         : [],
-                    cancelText: 'Закрыть',
                 }).afterClosed().pipe(
                     filter(result => result != null),
                     takeUntil(this.ngUnsubscribe),
@@ -218,7 +216,6 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                     card,
                     isMaster: this.isMaster,
                     actions: [],
-                    cancelText: 'Закрыть',
                 }).afterClosed().pipe(
                     filter(result => result != null),
                     takeUntil(this.ngUnsubscribe),

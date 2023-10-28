@@ -13,15 +13,16 @@
     </div>
 </div>
 <div mat-dialog-actions class="d-flex flex-row justify-content-end">
-    <button class="btn btn-primary m-1"
+    <button class="btn m-1"
         type="submit"
         *ngFor="let action of data.actions"
+        [ngClass]="action.class ?? 'btn-primary'"
         (click)="dialogRef.close(action.value)">
         {{action.text}}
     </button>
-    <button class="btn btn-primary m-1"
+    <button class="btn btn-danger m-1"
         type="submit"
         (click)="dialogRef.close()">
-        {{data.cancelText ?? 'Закрыть'}}
+        {{data.cancelText ?? 'Закрыть окно'}}
     </button>
 </div>

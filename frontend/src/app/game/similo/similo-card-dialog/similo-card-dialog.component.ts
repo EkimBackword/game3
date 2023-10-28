@@ -37,6 +37,7 @@ export class SimiloCardDialogComponent {
             actions: {
                 text: string;
                 value: boolean;
+                class?: string;
             }[]
             cancelText?: string;
         },

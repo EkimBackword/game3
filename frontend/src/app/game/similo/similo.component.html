@@ -6,17 +6,17 @@
         [style.paddingTop.px]="scene.headers.board.top"
         [style.paddingLeft.px]="scene.headers.board.left"
         [ngSwitch]="state.statusId">
-        <h2 *ngSwitchCase="GameInfoStatusIdEnum.Started">
+        <h3 *ngSwitchCase="GameInfoStatusIdEnum.Started">
             <strong *ngIf="isMasterTurn">Очевидец делает подсказку</strong>
-            <strong *ngIf="!isMasterTurn">Нужно закрыть: {{countCardsForClose}} шт</strong>
-        </h2>
-        <h2 *ngSwitchCase="GameInfoStatusIdEnum.Finished">
+            <strong *ngIf="!isMasterTurn">Нужно убрать: {{countCardsForClose}} шт</strong>
+        </h3>
+        <h3 *ngSwitchCase="GameInfoStatusIdEnum.Finished">
             <strong class="text-success" *ngIf="state.isWin">Победа</strong>
             <strong class="text-danger" *ngIf="!state.isWin">Поражение</strong>
-        </h2>
-        <h2 *ngSwitchDefault>
+        </h3>
+        <h3 *ngSwitchDefault>
             <strong>Выберите колоду и нажмите "Начать игру"</strong>
-        </h2>
+        </h3>
     </div>
     <div class="similo-card-wrapper">
         <div class="position-absolute similo_header"
