@@ -27,8 +27,6 @@
             outline: 5px solid var(--bs-info);
         }
     }
-
-
 }
 
 .flip_card {
@@ -45,6 +43,10 @@
 
     &.flip_card__open .flip_card_face__back {
         transform: rotateY(180deg);
+    }
+
+    &.flip_card__on_board_close {
+        filter: brightness(60%);
     }
 }
 

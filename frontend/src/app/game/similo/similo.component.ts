@@ -159,6 +159,7 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
         switch (card.state.position) {
             case SimiloCardPosition.Board: {
                 const canCloseCard = this.state?.statusId != GameInfoStatusIdEnum.Finished
+                    && card.state.isOpen
                     && !this.isMasterTurn
                 this.openCardDialog({
                     card,

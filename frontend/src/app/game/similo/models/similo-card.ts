@@ -141,9 +141,7 @@ export class SimiloCard {
             case SimiloCardPosition.Hand: {
                 return this.isMaster;
             }
-            case SimiloCardPosition.Board: {
-                return this.state.isOpen;
-            }
+            case SimiloCardPosition.Board:
             case SimiloCardPosition.Similar:
             case SimiloCardPosition.NotSimilar: {
                 return true;

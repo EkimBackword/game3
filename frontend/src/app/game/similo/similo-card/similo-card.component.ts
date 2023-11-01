@@ -31,6 +31,7 @@ export class SimiloCardComponent implements OnChanges, OnDestroy {
     @Input() isMaster = false;
     @Input() isBoard = false;
     @Input() withHover = false;
+    @Input() needOpen = false;
     @Output() openCard = new EventEmitter<void>();
     style: Partial<CSSStyleDeclaration> = {};
     isOpen = false;
@@ -60,9 +61,6 @@ export class SimiloCardComponent implements OnChanges, OnDestroy {
     }
 
     onOpenCard() {
-        if (this.isBoard && !this.card.state.isOpen) {
-            return;
-        }
         this.openCard.emit();
     }
 
@@ -79,7 +77,7 @@ export class SimiloCardComponent implements OnChanges, OnDestroy {
         if (this.card == null) {
             return false;
         }
-        if (this.card.state.isSearchable) {
+        if (this.card.state.isSearchable || this.needOpen) {
             return true;
         }
         switch (this.card.state.position) {
