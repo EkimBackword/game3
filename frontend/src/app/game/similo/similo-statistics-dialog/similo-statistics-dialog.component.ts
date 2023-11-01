@@ -28,10 +28,7 @@ interface SimiloStatisticsDialogItem {
 interface SimiloStatisticsWinInfo {
     count: number;
     countByMaster: Record<string, number>;
-    maxInfo: {
-        count: number;
-        name: string;
-    };
+    mastersInfo: string;
 }
 
 const columnsNames: Record<keyof SimiloStatisticsDialogItem, string> = {
@@ -85,10 +82,7 @@ export class SimiloStatisticsDialogComponent {
         const info: SimiloStatisticsWinInfo = {
             count: 0,
             countByMaster: {},
-            maxInfo: {
-                count: 0,
-                name: '',
-            },
+            mastersInfo: '',
         };
         return info;
     }
@@ -111,12 +105,8 @@ export class SimiloStatisticsDialogComponent {
                 count,
             };
         });
-        const max = lodash.maxBy(list, (p) => p.count);
-        const filteredList = list.filter(p => p.count === max?.count);
-        info.maxInfo = {
-            count: max?.count ?? 0,
-            name: filteredList.map(p => p.name).join(', '),
-        }
+        const orderedList = lodash.orderBy(list, (p) => p.count, 'desc');
+        info.mastersInfo = orderedList.map(p => `${p.name} (${p.count})`).join(', ')
     }
 
 }

@@ -11,4 +11,8 @@
         color: var(--bs-white);
         opacity: 1;
     }
+
+    .mdc-data-table__header-row {
+        height: 40px;
+    }
 }

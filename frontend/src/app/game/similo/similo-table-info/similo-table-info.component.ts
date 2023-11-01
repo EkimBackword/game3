@@ -135,7 +135,7 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
         state.statistics.push({
             statusId: state.statusId,
             isWin: state.isWin,
-            masterName: state.players.find(p => p.id === state.masterPlayerId)?.name ?? '',
+            masterName: state.players.find(p => p.id === state.masterPlayerId)?.name ?? 'Not found',
             mainDlc: state.mainDlc,
             helpDlc: state.helpDlc,
             turnIndex: state.turnIndex,
