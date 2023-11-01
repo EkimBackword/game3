@@ -21,5 +21,6 @@ export function createInitialSimiloGameInfoState(config: SimiloGameInfoConfig): 
         countCardsForClose: 0,
         turnIndex: 0,
         isWin: false,
+        statistics: [],
     };
 }

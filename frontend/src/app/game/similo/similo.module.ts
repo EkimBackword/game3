@@ -7,6 +7,7 @@ import { SimiloCardComponent } from './similo-card/similo-card.component';
 import { SimiloRulesComponent } from './similo-rules/similo-rules.component';
 import { SimiloTableInfoComponent } from './similo-table-info/similo-table-info.component';
 import { SimiloComponent } from './similo.component';
+import { SimiloStatisticsDialogComponent } from './similo-statistics-dialog/similo-statistics-dialog.component';
 
 @NgModule({
     declarations: [
@@ -15,6 +16,7 @@ import { SimiloComponent } from './similo.component';
         SimiloCardDialogComponent,
         SimiloRulesComponent,
         SimiloTableInfoComponent,
+        SimiloStatisticsDialogComponent,
     ],
     imports: [
         SharedModule,

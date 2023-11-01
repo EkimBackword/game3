@@ -22,6 +22,7 @@ export interface SimiloGameInfoState extends SimiloGameInfoConfig {
     countCardsForClose: number;
     turnIndex: number;
     isWin: boolean;
+    statistics: SimiloGameInfoStatistics[];
 }
 
 export interface SimiloPlayerConfig {
@@ -35,4 +36,13 @@ export interface SimiloPlayerConfig {
     isOnline: boolean;
     /** Создатель игры */
     isAdmin: boolean;
+}
+
+export interface SimiloGameInfoStatistics {
+    statusId: GameInfoStatusIdEnum;
+    isWin: boolean;
+    masterName: string;
+    mainDlc: SimiloDlcEnum;
+    helpDlc: SimiloDlcEnum;
+    turnIndex: number;
 }

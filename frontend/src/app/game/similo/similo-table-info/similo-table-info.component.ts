@@ -43,6 +43,7 @@ import {
 import { SimiloPlayerTypes } from '../models/similo-rules';
 import { SimiloGameInfoQuery } from '../services/similo-game-info.query';
 import { SimiloRulesComponent } from '../similo-rules/similo-rules.component';
+import { SimiloStatisticsDialogComponent } from '../similo-statistics-dialog/similo-statistics-dialog.component';
 
 @Component({
     selector: 'app-similo-table-info',
@@ -131,6 +132,14 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
 
     resetGame() {
         const state = this.similoGameInfoQuery.getValue();
+        state.statistics.push({
+            statusId: state.statusId,
+            isWin: state.isWin,
+            masterName: state.players.find(p => p.id === state.masterPlayerId)?.name ?? '',
+            mainDlc: state.mainDlc,
+            helpDlc: state.helpDlc,
+            turnIndex: state.turnIndex,
+        });
         state.mainDeck = [];
         state.helpDeck = [];
         state.statusId = GameInfoStatusIdEnum.Created;
@@ -187,6 +196,16 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
             SimiloRulesComponent,
             {
                 width: `${SimiloSizeSettings.cardWidth * 2}px`,
+            },
+        );
+    }
+
+    openSimiloStatistics() {
+        return this.matDialog.open<SimiloStatisticsDialogComponent>(
+            SimiloStatisticsDialogComponent,
+            {
+                width: `${SimiloSizeSettings.cardWidth * 4}px`,
+                data: this.state?.statistics ?? [],
             },
         );
     }

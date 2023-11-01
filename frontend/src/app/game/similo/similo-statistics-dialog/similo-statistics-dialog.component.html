@@ -1,0 +1,35 @@
+<div class="body" mat-dialog-content>
+    <div>
+        <h3>Информация о победах</h3>
+        <p><strong>Количество побед:</strong> {{winInfo.count}}</p>
+        <p><strong>Максимальное количество побед:</strong> {{winInfo.maxInfo.count}}</p>
+        <p>{{winInfo.maxInfo.name}}</p>
+    </div>
+    <div>
+        <h3>Информация о поражениях</h3>
+        <p><strong>Количество поражений:</strong> {{loseInfo.count}}</p>
+        <p><strong>Максимальное количество поражений:</strong> {{loseInfo.maxInfo.count}}</p>
+        <p>{{loseInfo.maxInfo.name}}</p>
+    </div>
+    <div>
+        <h3>Общая информация:</h3>
+        <div class="table-container">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 card-body">
+                <ng-container *ngFor="let columnKey of displayedColumns" [matColumnDef]="columnKey">
+                    <th mat-header-cell *matHeaderCellDef>{{columnsNames[columnKey]}}</th>
+                    <td mat-cell *matCellDef="let element"> {{element[columnKey]}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end">
+    <button class="btn btn-danger m-1"
+        type="submit"
+        (click)="dialogRef.close()">
+        Закрыть окно
+    </button>
+</div>

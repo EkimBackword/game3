@@ -1,0 +1,14 @@
+:host {
+    --mdc-dialog-supporting-text-color: var(--gray-700);
+}
+
+.table-container {
+    height: 200px;
+    overflow: auto;
+
+    .mat-mdc-table-sticky {
+        background: var(--bs-primary);
+        color: var(--bs-white);
+        opacity: 1;
+    }
+}
