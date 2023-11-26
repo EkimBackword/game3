@@ -42,7 +42,7 @@ export class SimiloScene {
                 SimiloCardWrapInfo.boardBox,
             ),
             deck: this.getSizeByBox(
-                'Колода очевидеца',
+                'Колода очевидца',
                 SimiloCardWrapInfo.deckBox,
             ),
             similar: this.getSizeByBox(
