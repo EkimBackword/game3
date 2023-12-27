@@ -7,12 +7,14 @@ import {
 import { Router } from '@angular/router';
 
 import { cloneDeep } from 'lodash';
+import { lastValueFrom } from 'rxjs';
 import {
     map,
     tap,
 } from 'rxjs/operators';
 import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { GameInfoActionLogGroup } from 'src/app/shared/models/game.types';
+import { DialogService } from 'src/app/shared/services/dialog.service';
 import { MapsService } from 'src/app/shared/services/maps.service';
 import { SoundService } from 'src/app/shared/services/sound.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
@@ -105,6 +107,7 @@ export class ClankGameInfoComponent implements OnInit {
         private gameInfoService: GameInfoService,
         private gameDialogsService: GameDialogsService,
         private mapsService: MapsService,
+        private dialogService: DialogService,
         private toastService: ToastService,
         public soundService: SoundService,
         private router: Router,
@@ -129,8 +132,23 @@ export class ClankGameInfoComponent implements OnInit {
         this.gameInfoService.startGame();
     }
 
-    finishGame() {
+    async finishGame() {
+        const result = await this.openConfirm();
+        if (!result) {
+            return;
+        }
         this.gameInfoService.finishGame();
+    }
+
+    private async openConfirm() {
+        if (this.isFinished) {
+            return true;
+        }
+
+        const matDialogRef = this.dialogService.openConfirm({
+            textList: ['Вы уверены что хотите закончить игру?'],
+        });
+        return await lastValueFrom(matDialogRef.afterClosed());
     }
 
     exitGame() {

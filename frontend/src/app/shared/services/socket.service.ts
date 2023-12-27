@@ -11,6 +11,8 @@ import {
     ClankClientToServerEvents,
     ClankServerToClientEvents,
     ClientToServerEvents,
+    LobbyClientToServerEvents,
+    LobbyServerToClientEvents,
     ServerToClientEvents,
     SimiloClientToServerEvents,
     SimiloServerToClientEvents,
@@ -19,6 +21,7 @@ import {
 export type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 export type ClankGameSocket = Socket<ClankServerToClientEvents, ClankClientToServerEvents>;
 export type SimiloGameSocket = Socket<SimiloServerToClientEvents, SimiloClientToServerEvents>;
+export type LobbySocket = Socket<LobbyServerToClientEvents, LobbyClientToServerEvents>;
 
 @Injectable({
     providedIn: 'root',
@@ -40,6 +43,12 @@ export class SocketService {
 
     getSimiloGameSocket(gameId: string): SimiloGameSocket {
         return this.manager.socket(`/similo-${gameId}`, {
+            auth: this.sessionQuery.getValue(),
+        });
+    }
+
+    getLobbySocket(gameId: string): LobbySocket {
+        return this.manager.socket(`/lobby-${gameId}`, {
             auth: this.sessionQuery.getValue(),
         });
     }

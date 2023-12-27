@@ -11,6 +11,9 @@ import {
     UrlTree,
 } from '@angular/router';
 
+import { SocketUser } from '@shared/socket.types';
+
+import { SocketService } from '../shared/services/socket.service';
 import { SessionQuery } from './session.query';
 
 @Injectable({
@@ -20,11 +23,19 @@ export class SessionGuard {
 
     constructor(
         private sessionQuery: SessionQuery,
+        private socketService: SocketService,
         private router: Router,
     ) {
     }
 
-    checkLogin(url: string): true|UrlTree {
+    checkLogin(url: string): true | UrlTree {
+        const sessionUser = this.sessionQuery.getValue();
+        const user: SocketUser = {
+            id: sessionUser.id,
+            name: sessionUser.name,
+        };
+        this.socketService.socket.emit('setUserInfo', user);
+
         if (this.sessionQuery.isLoggedIn) {
             return true;
         }

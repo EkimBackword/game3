@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import * as lodash from 'lodash';
+import { lastValueFrom } from 'rxjs';
 import { ClankHelpService } from 'src/app/game/clank/services/clank-help.service';
 import { ClankElementTypeMap } from 'src/app/shared/models/clank-element-types';
 import { preloadImage } from 'src/app/shared/models/game.types';
@@ -4176,7 +4177,7 @@ export class CardsService {
 
     private async openDialogChooseCardEvent(data: ChooseCardEventComponentData) {
         const dialog = this.gameDialogsService.openChooseCardEventComponent(data);
-        const list = await dialog.afterClosed().toPromise();
+        const list = await lastValueFrom(dialog.afterClosed());
         return list?.every(p => p.event()) ?? false;
     }
 

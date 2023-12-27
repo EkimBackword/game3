@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import * as lodash from 'lodash';
 import * as moment from 'moment';
+import { lastValueFrom } from 'rxjs';
 import {
     CheckCostResult,
     ClankElementTypeMap,
@@ -212,7 +213,7 @@ export class ClankHelpService {
             cancelText: 'Под низ колоды',
             cards: [card],
         });
-        const result = await matDialogRef.afterClosed().toPromise();
+        const result = await lastValueFrom(matDialogRef.afterClosed());
         this.soundService.play('/assets/sounds/DrawCard.mp3');
         if (result == null) {
             player.deck.unshift(card);
@@ -316,7 +317,7 @@ export class ClankHelpService {
             actionText: data.actionText,
             count: data.count,
         });
-        const result = await matDialogRef.afterClosed().toPromise();
+        const result = await lastValueFrom(matDialogRef.afterClosed());
         if (result == null) {
             return {
                 success: false,

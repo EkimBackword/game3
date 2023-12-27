@@ -45,6 +45,7 @@ import {
 } from './directives/scalable.directive';
 import { BsToastComponent } from './modals/bs-toast/bs-toast.component';
 import { ConfirmModalComponent } from './modals/confirm-modal/confirm-modal.component';
+import { SingleInputModalComponent } from './modals/single-input-modal/single-input-modal.component';
 import { SharedComponent } from './shared.component';
 
 const exports = [
@@ -77,6 +78,7 @@ const exportsComponents = [
     ClankMeepleComponent,
     ClankTokenComponent,
     ConfirmModalComponent,
+    SingleInputModalComponent,
     BsToastComponent,
     ScalableDirective,
     ScalableContainerDirective,

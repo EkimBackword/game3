@@ -7,7 +7,10 @@ import {
 } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
-import { BehaviorSubject } from 'rxjs';
+import {
+    BehaviorSubject,
+    lastValueFrom,
+} from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
     cardHeight,
@@ -215,7 +218,7 @@ export class ClankPlayerInfoComponent implements OnInit {
                 ],
                 needTrashCards: activePlayer.needTrashCards,
             });
-            const result = await matDialogRef.afterClosed().toPromise();
+            const result = await lastValueFrom(matDialogRef.afterClosed());
             if (result == null) {
                 return;
             }
@@ -241,7 +244,7 @@ export class ClankPlayerInfoComponent implements OnInit {
             title,
             textList,
         });
-        return await matDialogRef.afterClosed().toPromise();
+        return await lastValueFrom(matDialogRef.afterClosed());
     }
 
     private updatePlayerCards(player: ClankPlayerConfig | undefined) {

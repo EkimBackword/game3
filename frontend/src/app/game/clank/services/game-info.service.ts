@@ -105,6 +105,9 @@ export class GameInfoService implements OnDestroy {
                 this.socket?.connect();
             } else {
                 this.toastService.showWarn('Разрыв соединения');
+                this.socket?.removeAllListeners();
+                this.socket = void 0;
+                this.gameId = void 0;
             }
         });
 

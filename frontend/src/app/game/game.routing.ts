@@ -1,7 +1,4 @@
-import {
-    RouterModule,
-    Routes,
-} from '@angular/router';
+import { Routes } from '@angular/router';
 
 import { GameRouteEnum } from '../game.routing.enum';
 import {
@@ -17,7 +14,7 @@ import { NewGameComponent } from './new-game/new-game.component';
 import { SettingsComponent } from './settings/settings.component';
 import { SimiloComponent } from './similo/similo.component';
 
-const routes: Routes = [
+export const GameRoutes: Routes = [
     {
         path: '',
         component: GameComponent,
@@ -52,8 +49,10 @@ const routes: Routes = [
                 path: GameRouteEnum.Help,
                 component: HelpComponent,
             },
+            {
+                path: GameRouteEnum.Lobby,
+                loadChildren: () => import('./lobby/lobby.module').then(p => p.LobbyModule),
+            },
         ],
     },
 ];
-
-export const GameRoutes = RouterModule.forChild(routes);

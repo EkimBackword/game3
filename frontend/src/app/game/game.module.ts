@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 import { SharedModule } from '../shared/shared.module';
 import { ClankModule } from './clank/clank.module';
@@ -24,7 +25,7 @@ import { SimiloModule } from './similo/similo.module';
         SharedModule,
         ClankModule,
         SimiloModule,
-        GameRoutes,
+        RouterModule.forChild(GameRoutes),
     ],
 })
 export class GameModule { }

@@ -16,6 +16,7 @@ import {
 import * as lodash from 'lodash';
 import {
     combineLatest,
+    lastValueFrom,
     Subject,
 } from 'rxjs';
 import {
@@ -296,7 +297,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             title: 'Хотите ли взять артефакт?',
             textList: [`В ячейке есть артефакт ${artifact.name} (Значимость: ${artifact.value})`],
         });
-        const result = await matDialogRef.afterClosed().toPromise();
+        const result = await lastValueFrom(matDialogRef.afterClosed());
         if (!result) {
             return false;
         }
@@ -348,7 +349,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             player,
             cost: link.cost,
         });
-        return await matDialogRef.afterClosed().toPromise();
+        return await lastValueFrom(matDialogRef.afterClosed());
     }
 
 }

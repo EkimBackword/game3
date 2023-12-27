@@ -325,6 +325,7 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.socket?.connect();
             } else {
                 this.toastService.showWarn('Разрыв соединения');
+                this.socket?.removeAllListeners();
             }
         });
 

@@ -13,9 +13,11 @@ import { Router } from '@angular/router';
 import * as lodash from 'lodash';
 import {
     debounceTime,
+    lastValueFrom,
     Subject,
     takeUntil,
 } from 'rxjs';
+import { DialogService } from 'src/app/shared/services/dialog.service';
 
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
@@ -83,9 +85,7 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
         private changeDetectorRef: ChangeDetectorRef,
         private similoGameInfoQuery: SimiloGameInfoQuery,
         private matDialog: MatDialog,
-        // private gameDialogsService: GameDialogsService,
-        // private mapsService: MapsService,
-        // private toastService: ToastService,
+        private dialogService: DialogService,
         private router: Router,
     ) { }
 
@@ -130,7 +130,12 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
         this.updateSocketState.emit(state)
     }
 
-    resetGame() {
+    async resetGame() {
+        const result = await this.openConfirm()
+        if (!result) {
+            return;
+        }
+
         const state = this.similoGameInfoQuery.getValue();
         state.statistics.push({
             statusId: state.statusId,
@@ -145,6 +150,19 @@ export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
         state.statusId = GameInfoStatusIdEnum.Created;
         state.isWin = false;
         this.updateSocketState.emit(state)
+    }
+
+    private async openConfirm() {
+        const state = this.similoGameInfoQuery.getValue();
+
+        if (state.statusId === GameInfoStatusIdEnum.Finished) {
+            return true;
+        }
+
+        const matDialogRef = this.dialogService.openConfirm({
+            textList: ['Вы уверены что хотите перезапустить игру?'],
+        });
+        return await lastValueFrom(matDialogRef.afterClosed());
     }
 
     exitGame() {

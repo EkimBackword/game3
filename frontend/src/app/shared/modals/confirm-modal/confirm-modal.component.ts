@@ -9,12 +9,7 @@ import {
     MatDialogRef,
 } from '@angular/material/dialog';
 
-export interface ConfirmModalComponentData {
-    title?: string;
-    textList: string[];
-    approveText?: string;
-    cancelText?: string;
-}
+import { ConfirmModalComponentData } from './confirm-modal.model';
 
 @Component({
   selector: 'app-confirm-modal',

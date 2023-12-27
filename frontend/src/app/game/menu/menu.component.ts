@@ -4,6 +4,10 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
+import {
+    firstValueFrom,
+    lastValueFrom,
+} from 'rxjs';
 import { GameRouteEnum } from 'src/app/game.routing.enum';
 import { SessionQuery } from 'src/app/session/session.query';
 import { SessionStore } from 'src/app/session/session.store';
@@ -13,9 +17,8 @@ import { GamesService } from 'src/app/shared/services/games.service';
 import {
     faDice,
     faGamepad,
-    faGears,
-    faInfo,
     faMagnifyingGlass,
+    faTrophy,
     IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -40,14 +43,24 @@ export class MenuComponent implements OnInit {
             disabled: false,
         },
         {
-            callback: () => {
+            callback: async () => {
                 const userState = this.sessionQuery.getValue();
+                const matDialogRef = this.dialogService.openSingleInput({
+                    title: 'Создать стол для Similo',
+                    label: 'Название:',
+                    value: `Similo ${userState.name}`,
+                    applyText: 'Создать'
+                });
+                const result = await lastValueFrom(matDialogRef.afterClosed());
+                if (!result) {
+                    return;
+                }
+
                 const gameId = this.gamesService.addSimiloTable({
-                    name: `Similo ${userState.name}`,
+                    name: result.value,
                 });
                 this.router.navigate([GameRouteEnum.Similo, gameId]);
             },
-
             name: 'Создать стол для Similo',
             icon: faGamepad,
             disabled: false,
@@ -65,17 +78,44 @@ export class MenuComponent implements OnInit {
             disabled: false,
         },
         {
-            url: `/${GameRouteEnum.Settings}`,
-            name: 'Настройки',
-            icon: faGears,
-            disabled: true,
-        },
-        {
-            url: `/${GameRouteEnum.Help}`,
-            name: 'Помощь',
-            icon: faInfo,
+            callback: async () => {
+                const userState = this.sessionQuery.getValue();
+                const matDialogRef = this.dialogService.openSingleInput({
+                    title: 'Создать лобби',
+                    label: 'Название:',
+                    value: `Lobby by ${userState.name}`,
+                    applyText: 'Создать'
+                });
+                const result = await lastValueFrom(matDialogRef.afterClosed());
+                if (!result) {
+                    return;
+                }
+
+                const lobbyId = await firstValueFrom(this.gamesService.addLobby(result.value));
+                this.router.navigate([GameRouteEnum.Lobby, lobbyId]);
+            },
+            name: 'Создать лобби',
+            icon: faTrophy,
             disabled: false,
         },
+        {
+            url: `/${GameRouteEnum.Lobby}/${GameRouteEnum.Search}`,
+            name: 'Поиск лобби',
+            icon: faMagnifyingGlass,
+            disabled: false,
+        },
+        // {
+        //     url: `/${GameRouteEnum.Settings}`,
+        //     name: 'Настройки',
+        //     icon: faGears,
+        //     disabled: true,
+        // },
+        // {
+        //     url: `/${GameRouteEnum.Help}`,
+        //     name: 'Помощь',
+        //     icon: faInfo,
+        //     disabled: false,
+        // },
     ];
 
     constructor(
@@ -90,10 +130,10 @@ export class MenuComponent implements OnInit {
     }
 
     async logout() {
-        const matDialogRef =  this.dialogService.openConfirm({
+        const matDialogRef = this.dialogService.openConfirm({
             textList: ['Вы уверены что хотите выйти?'],
         });
-        const result = await matDialogRef.afterClosed().toPromise();
+        const result = await lastValueFrom(matDialogRef.afterClosed());
         if (!result) {
             return;
         }
