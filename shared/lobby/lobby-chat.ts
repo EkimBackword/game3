@@ -15,4 +15,5 @@ export interface LobbyChatMessage {
 export interface LobbyChatMessagePayload {
     message: string;
     replyId?: LobbyChatMessageId;
+    createdAt: string;
 }

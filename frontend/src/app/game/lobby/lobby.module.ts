@@ -7,6 +7,8 @@ import { LobbySearchComponent } from './lobby-search/lobby-search.component';
 import { LobbySettingsComponent } from './lobby-settings/lobby-settings.component';
 import { LobbyComponent } from './lobby.component';
 import { LobbyRoutes } from './lobby.routing';
+import { LobbyGamesStoreService } from './services/lobby-games-store.service';
+import { LobbyService } from './services/lobby.service';
 
 @NgModule({
     declarations: [
@@ -17,6 +19,10 @@ import { LobbyRoutes } from './lobby.routing';
     imports: [
         SharedModule,
         RouterModule.forChild(LobbyRoutes),
+    ],
+    providers: [
+        LobbyService,
+        LobbyGamesStoreService,
     ]
 })
 export class LobbyModule {}

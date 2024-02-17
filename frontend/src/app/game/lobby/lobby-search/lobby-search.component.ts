@@ -1,16 +1,15 @@
 import {
+    AfterViewInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    DestroyRef,
     ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTable } from '@angular/material/table';
 
-import {
-    Subject,
-    takeUntil,
-    tap,
-} from 'rxjs';
+import { tap } from 'rxjs';
 import { GameRouteEnum } from 'src/app/game.routing.enum';
 import { GamesService } from 'src/app/shared/services/games.service';
 
@@ -29,7 +28,7 @@ interface FindLobbyTableItem {
     styleUrls: ['./lobby-search.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LobbySearchComponent {
+export class LobbySearchComponent implements AfterViewInit {
 
     @ViewChild(MatTable) table!: MatTable<FindLobbyTableItem>;
 
@@ -37,10 +36,9 @@ export class LobbySearchComponent {
     dataSource: FindLobbyTableItem[] = [];
     linkIcon = faLink;
 
-    private ngUnsubscribe = new Subject<void>();
-
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
+        private destroyRef: DestroyRef,
         private gamesService: GamesService,
     ) { }
 
@@ -61,15 +59,10 @@ export class LobbySearchComponent {
                 });
                 this.table.renderRows();
             }),
-            takeUntil(this.ngUnsubscribe),
+            takeUntilDestroyed(this.destroyRef),
         ).subscribe(() => {
             this.changeDetectorRef.detectChanges();
         });
-    }
-
-    ngOnDestroy() {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
     }
 
 }

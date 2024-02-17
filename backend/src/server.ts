@@ -21,6 +21,8 @@ import {
     ClankPlayerConfig,
     GamePlayerColorIds,
 } from '../../shared/clank/clank-player.types';
+import { GameActionsUndo } from '../../shared/game/game-actions';
+import { GamePlayerId } from '../../shared/game/game-constants';
 import { GameState } from '../../shared/game/game-state';
 import {
     Lobby,
@@ -31,7 +33,7 @@ import {
     LobbyChatMessage,
     LobbyChatMessagePayload,
 } from '../../shared/lobby/lobby-chat';
-import { LobbyGame } from '../../shared/lobby/lobby-game';
+import { LobbyGameChangeOptions } from '../../shared/lobby/lobby-game';
 import { LobbyStatistic } from '../../shared/lobby/lobby-statistics';
 import {
     SimiloGameInfoState,
@@ -184,30 +186,57 @@ class LobbyInfo {
             chat: {
                 list: [],
             },
-            game: this.getInitialGame(),
+            game: {
+                id: null,
+                setupData: null,
+                players: {},
+                state: null,
+                log: [],
+            },
             statistics: [],
         };
     }
 
     onConnect(user: SocketUser) {
-        this.data.users.push(user);
-        const needChangeGameState = this.data.game.state.context.activePlayers[user.id] != null;
-        if (needChangeGameState) {
-            this.data.game.state.context.activePlayers[user.id].isOnline = true;
+        if (this.data.users.some(p => p.id === user.id)) {
+            console.log(`Has user ${user.name}`);
+            return {
+                gameChanged: false,
+            };
         }
+
+        this.data.users.push(user);
+        console.log(`Add user ${user.name}`);
+        if (this.data.game.players[user.id] == null) {
+            return {
+                gameChanged: false,
+            };
+        }
+
+        this.data.game.players[user.id] = {
+            ...this.data.game.players[user.id],
+            online: true,
+        };
         return {
-            needChangeGameState,
+            gameChanged: true,
         };
     }
 
     onDisconnect(user: SocketUser) {
         this.data.users = this.data.users.filter(p => p.id !== user.id);
-        const needChangeGameState = this.data.game.state.context.activePlayers[user.id] != null;
-        if (needChangeGameState) {
-            this.data.game.state.context.activePlayers[user.id].isOnline = false;
+        if (this.data.game.players[user.id] == null) {
+            return {
+                gameChanged: false,
+            };
         }
+
+        this.data.game.players[user.id] = {
+            ...this.data.game.players[user.id],
+            online: false,
+        };
+
         return {
-            needChangeGameState,
+            gameChanged: true,
         };
     }
 
@@ -226,52 +255,89 @@ class LobbyInfo {
         this.data.statistics.push(statistic);
     }
 
-    changeGame(game: LobbyGame) {
-        this.data.game = game;
+    startGame(state: GameState) {
+        this.data.game = {
+            ...this.data.game,
+            state: state,
+            log: [],
+        };
         this.history.clear();
-        this.history.set(this.data.game.state.id, this.data.game.state);
+        this.history.set(state.stateId, state);
+        this.data.statusId = LobbyStatusIdEnum.Game;
+    }
+
+    finishGame() {
+        this.data.statusId = LobbyStatusIdEnum.Lobby;
+    }
+
+    changeGame(game: LobbyGameChangeOptions) {
+        this.data.game = {
+            ...this.data.game,
+            id: game.id,
+            setupData: game.setupData,
+        };
+    }
+
+    changeSetupData(setupData) {
+        this.data.game = {
+            ...this.data.game,
+            setupData,
+        };
+    }
+
+    joinToGame(user: SocketUser) {
+        this.data.game = {
+            ...this.data.game,
+            players: {
+                ...this.data.game.players,
+                [user.id]: {
+                    ...user,
+                    online: true,
+                }
+            }
+        };
+    }
+
+    leaveFromGame(userId: string) {
+        if (this.data.game.players[userId] != null) {
+            delete this.data.game.players[userId];
+        }
     }
 
     addState(state: GameState) {
         this.data.game.state = state;
-        this.history.set(state.id, state);
-        return state;
+        this.data.game.log = [
+            ...this.data.game.log,
+            ...state.log,
+        ];
+        this.history.set(state.stateId, state);
     }
 
-    goToStateById(stateId: number) {
+    undoState(playerId: GamePlayerId, createdAt: string) {
         const currentState = this.data.game.state;
-        const oldState = this.history.get(stateId);
+        if (currentState.prevStateId == null
+            || !this.history.has(currentState.prevStateId)) {
+            return false;
+        }
+        const oldState = this.history.get(currentState.prevStateId);
+        const stateId = currentState.stateId + 1;
+
         const state: GameState = {
             ...oldState,
-            id: currentState.id + 1,
+            log: [
+                {
+                    stateId,
+                    action: GameActionsUndo(playerId),
+                    turn: this.data.game.state.context.turn,
+                    phase: this.data.game.state.context.phase,
+                    automatic: true,
+                    createdAt,
+                }
+            ],
+            stateId: stateId,
         };
         this.addState(state);
-        return state;
-    }
-
-    private getInitialGame() {
-        const initial: GameState = {
-            id: 0,
-            game: {},
-            context: {
-                playerCount: 0,
-                playerIdsOrder: [],
-                playerIdsOrderPosition: 0,
-                activePlayers: {},
-                currentPlayerId: null,
-                numMoves: 0,
-                gameover: false,
-                turn: 0,
-                phase: '',
-            },
-        };
-        const game: LobbyGame = {
-            id: null,
-            setupData: null,
-            state: initial,
-            log: [],
-        };
-        return game;
+        return true;
     }
 
 }
@@ -307,6 +373,8 @@ const lobbyStore = new LobbyStore();
 
 io.on('connection', (socket) => {
 
+    const totalNamespace = socket.nsp;
+
     let user: SocketUser = {
         id: '',
         name: '',
@@ -324,7 +392,7 @@ io.on('connection', (socket) => {
             return;
         }
         clankGames.addState(game);
-        socket.emit('gameListChanged', clankGames.getList());
+        totalNamespace.emit('gameListChanged', clankGames.getList());
     });
 
     socket.emit('gameListChanged', clankGames.getList());
@@ -334,7 +402,7 @@ io.on('connection', (socket) => {
             return;
         }
         similoTables.addState(game);
-        socket.emit('similoTablesChanged', similoTables.getList());
+        totalNamespace.emit('similoTablesChanged', similoTables.getList());
     });
 
     socket.emit('similoTablesChanged', similoTables.getList());
@@ -347,7 +415,7 @@ io.on('connection', (socket) => {
             ...config,
             admin: user,
         });
-        socket.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
+        totalNamespace.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
     });
 
     socket.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
@@ -634,12 +702,12 @@ lobbyNamespaceOf.on('connection', (socket) => {
             return;
         }
 
-        const { needChangeGameState } = lobby.onConnect(user);
-        lobbyNamespace.emit('usersChanged', lobby.data.users);
-        if (needChangeGameState) {
-            lobbyNamespace.emit('gameStateChanged', lobby.data.game.state);
+        const result = lobby.onConnect(user);
+        socket.broadcast.emit('usersChanged', lobby.data.users);
+        if (result.gameChanged) {
+            socket.broadcast.emit('gameChanged', lobby.data.game);
         }
-        return;
+        socket.emit('connectToLobby', lobby.data);
     };
 
     const onDisconnect = () => {
@@ -648,10 +716,10 @@ lobbyNamespaceOf.on('connection', (socket) => {
             return;
         }
 
-        const { needChangeGameState } = lobby.onDisconnect(user);
-        lobbyNamespace.emit('usersChanged', lobby.data.users);
-        if (needChangeGameState) {
-            lobbyNamespace.emit('gameStateChanged', lobby.data.game.state);
+        const result = lobby.onDisconnect(user);
+        socket.broadcast.emit('usersChanged', lobby.data.users);
+        if (result.gameChanged) {
+            socket.broadcast.emit('gameChanged', lobby.data.game);
         }
     };
 
@@ -661,22 +729,44 @@ lobbyNamespaceOf.on('connection', (socket) => {
         onDisconnect();
     });
 
-    socket.on('sendMessage', (payload) => {
-        const lobby = getLobby();
-        if (lobby == null) {
-            return;
-        }
-        const message = lobby.sendMessage(user, payload);
-        socket.broadcast.emit('messageSended', message);
-    });
-
     socket.on('addStatistics', (statistic) => {
         const lobby = getLobby();
         if (lobby == null) {
             return;
         }
         lobby.addStatistics(statistic);
-        socket.broadcast.emit('statisticsChanged', lobby.data.statistics);
+        lobbyNamespace.emit('statisticsChanged', lobby.data.statistics);
+    });
+
+    socket.on('sendMessage', (payload) => {
+        const lobby = getLobby();
+        if (lobby == null) {
+            return;
+        }
+        const message = lobby.sendMessage(user, payload);
+        lobbyNamespace.emit('messageSended', message);
+    });
+
+    socket.on('startGame', (state) => {
+        const lobby = getLobby();
+        if (lobby == null) {
+            return;
+        }
+        lobby.startGame(state);
+        lobbyNamespace.emit('gameChanged', lobby.data.game);
+        lobbyNamespace.emit('statusChanged', lobby.data.statusId);
+        io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
+    });
+
+    socket.on('finishGame', () => {
+        const lobby = getLobby();
+        if (lobby == null) {
+            return;
+        }
+        lobby.finishGame();
+        lobbyNamespace.emit('gameChanged', lobby.data.game);
+        lobbyNamespace.emit('statusChanged', lobby.data.statusId);
+        io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
     });
 
     socket.on('changeGame', (game) => {
@@ -685,7 +775,36 @@ lobbyNamespaceOf.on('connection', (socket) => {
             return;
         }
         lobby.changeGame(game);
-        socket.broadcast.emit('gameChanged', game);
+        lobbyNamespace.emit('gameChanged', lobby.data.game);
+        io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
+    });
+
+    socket.on('changeSetupData', (setupData) => {
+        const lobby = getLobby();
+        if (lobby == null) {
+            return;
+        }
+        lobby.changeSetupData(setupData);
+        lobbyNamespace.emit('gameChanged', lobby.data.game);
+        io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
+    });
+
+    socket.on('joinToGame', () => {
+        const lobby = getLobby();
+        if (lobby == null) {
+            return;
+        }
+        lobby.joinToGame(user);
+        lobbyNamespace.emit('gameChanged', lobby.data.game);
+    });
+
+    socket.on('leaveFromGame', () => {
+        const lobby = getLobby();
+        if (lobby == null) {
+            return;
+        }
+        lobby.leaveFromGame(user.id);
+        lobbyNamespace.emit('gameChanged', lobby.data.game);
     });
 
     socket.on('addState', (newState) => {
@@ -693,11 +812,29 @@ lobbyNamespaceOf.on('connection', (socket) => {
         if (lobby == null) {
             return;
         }
-        const state = lobby.addState(newState);
-        socket.broadcast.emit('gameStateChanged', state);
+        lobby.addState(newState);
+        lobbyNamespace.emit('gameChanged', lobby.data.game);
+    });
+
+    socket.on('undoState', (createdAt) => {
+        const lobby = getLobby();
+        if (lobby == null) {
+            return;
+        }
+        const success = lobby.undoState(user.id, createdAt);
+        if (!success) {
+            return null;
+        }
+        lobbyNamespace.emit('gameChanged', lobby.data.game);
     });
 
     socket.on('kickUser', (userId: string) => {
+        const lobby = getLobby();
+        if (lobby == null) {
+            return;
+        }
+
+        lobby.leaveFromGame(user.id);
         const userSocket = [...socket.nsp.sockets.values()].find(p => p.handshake.auth.id === userId);
         if (userSocket == null) {
             return;

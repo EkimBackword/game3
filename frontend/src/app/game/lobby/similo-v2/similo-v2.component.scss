@@ -1,0 +1,213 @@
+:host {
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #fff;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: auto;
+}
+
+.similo-state-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    padding: var(--similo-game-padding);
+
+    width: var(--similo-game-width);
+    opacity: var(--similo-game-opacity, 0);
+    transition: opacity 100ms ease-in-out;
+
+    transform: scale(var(--similo-game-zoom), var(--similo-game-zoom));
+    transform-origin: left top;
+}
+
+.similo-game-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+}
+
+.similo-game-header,
+.similo-game-title {
+    display: flex;
+    padding: 0 var(--similo-game-padding);
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.similo-game-header {
+    height: var(--similo-game-header-height);
+    width: 100%;
+
+    h1,
+    .btn {
+        line-height: var(--similo-game-header-font-size);
+        font-size: var(--similo-game-header-font-size);
+    }
+
+    ::ng-deep {
+        .finish-game-popover {
+            max-width: calc(var(--similo-card-width) * 3);
+        }
+    }
+}
+
+
+.similo-game-title {
+    height: var(--similo-game-title-height);
+    margin: var(--similo-game-padding) 0;
+
+    h2 {
+        line-height: var(--similo-game-title-height);
+        font-size: var(--similo-game-title-font-size);
+        font-weight: normal;
+        margin: 0;
+    }
+
+    .active_icon {
+        font-size: var(--similo-game-title-font-size);
+        opacity: 0;
+    }
+}
+
+.similo-game-body {
+    height: calc(100% - var(--similo-game-header-height) * 2);
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+}
+
+.similo-game-body-column {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+}
+
+.similo-game-body-column--active {
+    .similo-game-title {
+        background-color: var(--bs-success-bg-subtle);
+        // border: solid 2px var(--bs-success-border-subtle);
+        box-shadow: 0 0 4px 2px var(--bs-success-border-subtle);
+        border-radius: 8px;
+
+        h2 {
+            font-weight: bold;
+        }
+
+        .active_icon {
+            opacity: 1;
+        }
+    }
+}
+
+.similo-game-board-cards {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+
+    width: var(--board-width);
+    height: var(--board-height);
+
+    app-similo-v2-card {
+        margin-bottom: var(--similo-game-card-span);
+        margin-right: var(--similo-game-card-span);
+
+        &.card-win {
+            filter:
+                drop-shadow(10px 10px 10px var(--bs-success))
+                drop-shadow(-10px -10px 10px var(--bs-success));
+        }
+
+        &.card-lose {
+            filter:
+                drop-shadow(10px 10px 10px var(--bs-danger))
+                drop-shadow(-10px -10px 10px var(--bs-danger));
+        }
+
+        &.card-finished {
+            filter: grayscale(100%);
+        }
+    }
+}
+
+.similo-game-body-column--master {
+    border-top: 2px dashed black;
+}
+
+.similo-master-cards {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+
+    width: var(--board-width);
+    height: var(--deck-height);
+}
+
+.similo-master-cards-deck {
+    position: relative;
+    width: calc(var(--board-width) - var(--deck-width));
+    height: var(--deck-height);
+
+    app-similo-v2-card {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+}
+
+.similo-master-cards-hand {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+
+    width: var(--deck-width);
+    height: var(--deck-height);
+
+    app-similo-v2-card {
+        margin-bottom: var(--similo-game-card-span);
+        margin-right: var(--similo-game-card-span);
+    }
+}
+
+.similo-game-body-column--similar {
+    margin-left: var(--similo-game-card-span);
+    padding-left: var(--similo-game-card-span);
+    border-left: 2px dashed black;
+    min-height: calc(var(--board-height) + var(--deck-height));
+}
+
+.similo-similar-cards {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+
+    width: var(--similar-width);
+
+    app-similo-v2-card {
+        margin-bottom: var(--similo-game-card-span);
+    }
+}

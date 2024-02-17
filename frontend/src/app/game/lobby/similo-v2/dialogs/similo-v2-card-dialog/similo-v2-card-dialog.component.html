@@ -1,0 +1,27 @@
+<h1 class="title" mat-dialog-title>
+    {{data.card.name}}
+</h1>
+<div class="body" mat-dialog-content>
+    <app-similo-v2-card
+        [card]="data.card"
+        [isMaster]="data.isMaster"
+        [needOpen]="true"
+    ></app-similo-v2-card>
+    <div class="description">
+        <p>{{data.card.description}}</p>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end">
+    <button class="btn m-1"
+        type="submit"
+        *ngFor="let action of data.actions"
+        [ngClass]="action.class ?? 'btn-primary'"
+        (click)="dialogRef.close(action.value)">
+        {{action.text}}
+    </button>
+    <button class="btn btn-danger m-1"
+        type="submit"
+        (click)="dialogRef.close()">
+        {{data.cancelText ?? 'Закрыть окно'}}
+    </button>
+</div>

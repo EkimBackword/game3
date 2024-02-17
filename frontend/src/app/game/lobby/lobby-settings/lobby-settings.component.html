@@ -1,2 +1,75 @@
-<p>lobby-settings works!</p>
-<p>lobby id: {{lobbyService.lobbyId()}}</p>
+<ng-container *ngIf="client != null">
+    <div class="lobby-wrap lobby-wrap--body shadow">
+
+        <div class="lobby-header">
+            <span class="lobby-header-title">{{client.name()}}</span>
+            <a class="btn btn-link" routerLink="/">Вернуться в меню</a>
+        </div>
+
+        <div class="lobby-body">
+            <mat-tab-group>
+                <mat-tab label="Лобби">
+                    <div class="container-fluid">
+                        <div class="col-sm-12">
+                            <div class="mt-2 mb-2 row">
+                                <label for="mainDlc" class="col-sm-2 col-form-label">Выберите игру:</label>
+                                <div class="col-sm-10 d-flex">
+                                    <select
+                                        class="form-select form-select-sm"
+                                        aria-label="Choose main dlc"
+                                        id="mainDlc"
+                                        [ngModel]="client.game.id()"
+                                        (ngModelChange)="onGameChanged($event)">
+                                        <option *ngFor="let game of lobbyGames" [value]="game.config.id">{{game.config.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mb-2">
+                            <ng-template
+                                *ngIf="client.game.setupDataSettings(); let component"
+                                [dynamicComponent]="component"
+                            ></ng-template>
+                        </div>
+                        <button
+                            *ngIf="client.game.id() != null"
+                            class="btn btn-primary col-sm-12 mb-2"
+                            (click)="startGame()">
+                            Начать игру
+                        </button>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Статистика"> Content 2 </mat-tab>
+            </mat-tab-group>
+        </div>
+
+    </div>
+
+    <div class="lobby-wrap lobby-wrap--users shadow">
+
+        <div class="lobby-header">
+            <span class="lobby-header-title">Чат</span>
+
+            <!-- <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form> -->
+        </div>
+
+        <div class="lobby-body">
+            <mat-tab-group>
+                <mat-tab label="Игроки">
+                    <ul>
+                        <li *ngFor="let user of client.users()">
+                            {{user.name}}
+                        </li>
+                    </ul>
+                </mat-tab>
+                <mat-tab label="Чат">
+
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+
+    </div>
+</ng-container>

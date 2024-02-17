@@ -3,31 +3,30 @@
         <div class="card-header">
             <h1>Список лобби</h1>
         </div>
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 card-body">
+        <div class="card-body">
+            <mat-table [dataSource]="dataSource">
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef>Название</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <a  class="game_menu_item"
+                            [routerLink]="element.url"
+                            routerLinkActive="active"
+                            ariaCurrentWhenActive="page">
+                            <fa-icon [icon]="linkIcon"></fa-icon>
+                            <span class="game_menu_item_text">{{element.name}}</span>
+                        </a>
+                    </mat-cell>
+                </ng-container>
 
-            <!-- Name Column -->
-            <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> Название </th>
-                <td mat-cell *matCellDef="let element">
-                    <a  class="game_menu_item"
-                        [routerLink]="element.url"
-                        routerLinkActive="active"
-                        ariaCurrentWhenActive="page">
-                        <fa-icon [icon]="linkIcon"></fa-icon>
-                        <span class="game_menu_item_text">{{element.name}}</span>
-                    </a>
-                </td>
-            </ng-container>
+                <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef> Статус игры </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.status}} </mat-cell>
+                </ng-container>
 
-            <!-- Status Column -->
-            <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef> Статус игры </th>
-                <td mat-cell *matCellDef="let element"> {{element.status}} </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+        </div>
         <div class="card-footer">
             <a class="btn btn-link" routerLink="/">Вернуться в меню</a>
         </div>

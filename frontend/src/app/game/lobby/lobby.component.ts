@@ -1,18 +1,17 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    effect,
     OnDestroy,
-    OnInit,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-
 import {
-    catchError,
-    EMPTY,
-    map,
-    Subject,
-    takeUntil,
-} from 'rxjs';
+    ActivatedRoute,
+    Router,
+} from '@angular/router';
+
+import { GameRouteEnum } from 'src/app/game.routing.enum';
+
+import { LobbyStatusIdEnum } from '@shared/lobby/lobby';
 
 import { LobbyService } from './services/lobby.service';
 
@@ -20,36 +19,44 @@ import { LobbyService } from './services/lobby.service';
     templateUrl: './lobby.component.html',
     styleUrls: ['./lobby.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [
-        LobbyService,
-    ]
 })
-export class LobbyComponent implements OnInit, OnDestroy {
+export class LobbyComponent implements OnDestroy {
 
-    private ngUnsubscribe = new Subject<void>();
+    private inited = false;
 
     constructor(
         private activatedRoute: ActivatedRoute,
+        private router: Router,
         private lobbyService: LobbyService,
     ) {
+        effect(() => {
+            const statusId = this.lobbyService.client.statusId();
+
+            if (!this.inited) {
+                this.inited = true;
+                return;
+            }
+
+            if (statusId === LobbyStatusIdEnum.Lobby) {
+                const path = GameRouteEnum.Settings;
+                this.router.navigate([path], {
+                    relativeTo: this.activatedRoute,
+                });
+                return;
+            }
+
+            if (statusId === LobbyStatusIdEnum.Game) {
+                const path = this.lobbyService.client.game.getPath();
+                this.router.navigate([path], {
+                    relativeTo: this.activatedRoute,
+                });
+                return;
+            }
+        })
     }
 
-    ngOnInit(): void {
-        this.activatedRoute.paramMap.pipe(
-            map((params) => params.get('id') ?? 'EmptyId'),
-            catchError((error) => {
-                console.warn(error);
-                return EMPTY;
-            }),
-            takeUntil(this.ngUnsubscribe),
-        ).subscribe(lobbyId => {
-            this.lobbyService.init(lobbyId);
-        });
-    }
-
-    ngOnDestroy() {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
+    ngOnDestroy(): void {
+        this.lobbyService.disconnect();
     }
 
 }

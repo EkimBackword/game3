@@ -1,0 +1,19 @@
+:host {
+    --mdc-dialog-supporting-text-color: var(--gray-700);
+}
+
+.title {
+    font-size: 2em;
+    padding: 0 12px 9px;
+}
+
+.body {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.description {
+    padding: 10px;
+}

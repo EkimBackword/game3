@@ -8,6 +8,7 @@ import {
 import { ClankComponent } from './clank/clank.component';
 import { FindGameComponent } from './find-game/find-game.component';
 import { GameComponent } from './game.component';
+import { GamesResolver } from './game.resolver';
 import { HelpComponent } from './help/help.component';
 import { MenuComponent } from './menu/menu.component';
 import { NewGameComponent } from './new-game/new-game.component';
@@ -20,6 +21,9 @@ export const GameRoutes: Routes = [
         component: GameComponent,
         canActivate: [canActivate],
         canActivateChild: [canActivateChild],
+        resolve: {
+            inited: GamesResolver,
+        },
         children: [
             {
                 path: GameRouteEnum.Menu,

@@ -1,52 +1,46 @@
-import { GameActions } from './game-actions';
-import {
-  GameId,
-  INVALID_MOVE,
-} from './game-constants';
+import { GameId } from './game-constants';
 import { GameContext } from './game-context';
-import { MoveMap } from './game-move';
-import {
-  GameOptions,
-  GameOptionsWithPlayerId,
-} from './game-options';
-import { PhaseMap } from './game-phase';
-import { GameState } from './game-state';
-import { TurnConfig } from './game-turn';
+import { GameMove } from './game-move';
+import { GameOptions } from './game-options';
+import { GamePhaseConfig } from './game-phase';
 
 export interface GameConfig<
-    GameType = any,
-    SetupData = any
-> {
-    id: GameId;
-    name: string;
-    minPlayers?: number;
-    maxPlayers?: number;
-    disableUndo?: boolean;
-    setup: (context: GameContext, setupData: SetupData) => GameType;
-    validateSetupData?: (setupData: SetupData, numPlayers: number) => string | undefined;
-    moves: MoveMap<GameType>;
-    phases?: PhaseMap<GameType>;
-    turn?: TurnConfig<GameType>;
-    events?: {
-        endGame?: boolean;
-        endPhase?: boolean;
-        endTurn?: boolean;
-        setPhase?: boolean;
-        endStage?: boolean;
-        setStage?: boolean;
-        pass?: boolean;
-        setActivePlayers?: boolean;
-    };
-    endIf?: (options: GameOptions<GameType>) => any;
-    onEnd?: (options: GameOptions<GameType>) => void | GameType;
-    playerView?: (options: GameOptionsWithPlayerId<GameType>) => any;
-    processMove?: (
-        state: GameState<GameType> ,
-        action: GameActions.MakeMove
-    ) => GameState<GameType> | typeof INVALID_MOVE;
+    GameType extends Record<string, any> = Record<string, any>,
+    SetupData extends Record<string, any> = Record<string, any>,
+> extends GameConfigCreatorConfig {
+  minPlayers?: number;
+  maxPlayers?: number;
+  disableUndo?: boolean;
+  moves?: Record<string, GameMove<GameType>>;
+  phases: Record<string, GamePhaseConfig<GameType>>;
+  setup: (context: GameContext, setupData: SetupData) => GameType;
+  validateSetupData?: (setupData: SetupData, numPlayers: number) => string | undefined;
+  onMove?: (options: GameOptions<GameType>) => GameType;
+  endIf?: (options: GameOptions<GameType>) => boolean;
+  onEnd?: (options: GameOptions<GameType>) => GameType;
 }
 
-/**
- * Creates the initial game state.
- */
-// export function InitializeGame({
+export interface GameConfigCreatorConfig {
+  id: GameId;
+  name: string;
+}
+
+export class GameConfigCreator<
+  GameType extends Record<string, any> = Record<string, any>,
+  SetupData extends Record<string, any> = Record<string, any>,
+> {
+
+  constructor(
+    private config: GameConfigCreatorConfig,
+  ) {
+  }
+
+  create(config: Omit<GameConfig<GameType, SetupData>, keyof GameConfigCreatorConfig>) {
+    const result: GameConfig<GameType, SetupData> = {
+      ...this.config,
+      ...config,
+    }
+    return result;
+  }
+
+}

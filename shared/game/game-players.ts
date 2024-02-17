@@ -3,27 +3,37 @@ import {
   GamePlayerId,
   GameStageName,
 } from './game-constants';
+import { GameContext } from './game-context';
 
 export interface GamePlayer extends SocketUser {
-    isOnline: boolean;
-    stage: GameStageName;
+    online: boolean;
 }
 
-export type GameActivePlayers = Record<GamePlayerId, GamePlayer>;
+export interface GamePlayerMovesCounter {
+    numMoves: number;
+    maxMoves?: number;
+    minMoves?: number;
+}
+
+export interface GameActivePlayer extends GamePlayerMovesCounter {
+    stage: GameStageName;
+    isFinished: boolean;
+}
+
+export type GamePlayers = Record<GamePlayerId, GamePlayer>;
+export type GameActivePlayers = Record<GamePlayerId, GameActivePlayer>;
 
 export interface ActivePlayersArg {
     currentPlayer?: StageArg;
     others?: StageArg;
     all?: StageArg;
     value?: Record<string, StageArg>;
-    minMoves?: number;
-    maxMoves?: number;
-    revert?: boolean;
-    next?: ActivePlayersArg;
+    nextIndex?: number;
 };
 
 export interface StageArg {
     stage?: GameStageName;
-    minMoves?: number;
-    maxMoves?: number;
+    isFinished?: boolean;
+    minMoves?: (context: GameContext) => number;
+    maxMoves?: (context: GameContext) => number;
 };

@@ -5,6 +5,11 @@ import { GameRouteEnum } from 'src/app/game.routing.enum';
 import { LobbySearchComponent } from './lobby-search/lobby-search.component';
 import { LobbySettingsComponent } from './lobby-settings/lobby-settings.component';
 import { LobbyComponent } from './lobby.component';
+import {
+    LobbyGameResolver,
+    LobbyResolver,
+    LobbySettingsResolver,
+} from './lobby.resolver';
 
 export const LobbyRoutes: Routes = [
     {
@@ -14,6 +19,9 @@ export const LobbyRoutes: Routes = [
     {
         path: `:id`,
         component: LobbyComponent,
+        resolve: {
+            lobbyResolver: LobbyResolver,
+        },
         children: [
             {
                 path: '',
@@ -23,15 +31,17 @@ export const LobbyRoutes: Routes = [
             {
                 path: GameRouteEnum.Settings,
                 component: LobbySettingsComponent,
+                resolve: {
+                    settingsResolver: LobbySettingsResolver,
+                }
             },
-            // {
-            //     path: GameRouteEnum.Clank,
-            //     component: ClankComponent,
-            // },
-            // {
-            //     path: GameRouteEnum.Similo,
-            //     component: SimiloComponent,
-            // },
+            {
+                path: GameRouteEnum.Similo,
+                loadChildren: () => import('./similo-v2/similo-v2.module').then(p => p.SimiloV2Module),
+                resolve: {
+                    gameResolver: LobbyGameResolver,
+                }
+            },
         ],
     },
 ];

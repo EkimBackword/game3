@@ -1,0 +1,170 @@
+<div
+    class="similo-state-wrapper"
+    *ngIf="client.game.state(); let state">
+
+    <div class="similo-game-wrapper">
+
+        <div
+            class="similo-game-header"
+            *ngIf="headerInfo(); let header">
+            <h1><strong [ngClass]="header.class">
+                {{header.text}}
+            </strong></h1>
+        </div>
+
+        <div class="similo-game-body">
+
+            <div class="similo-game-body-column">
+
+                <div
+                    class="similo-game-body-column"
+                    [class.similo-game-body-column--active]="turnStage() === SimiloV2TurnStage.USERS">
+                    <div class="similo-game-title">
+                        <h2>Персонажи</h2>
+                        <fa-icon
+                            class="active_icon spin-time"
+                            [icon]="icons.active"
+                            aria-label="Active icon"
+                        ></fa-icon>
+                    </div>
+                    <div
+                        class="similo-game-board-cards"
+                        *ngIf="boardSignal(); let board">
+                        <app-similo-v2-card
+                            *ngFor="let card of board; trackBy: trackById"
+                            [card]="card"
+                            [isMaster]="isMaster()"
+                            [isFinished]="isFinished()"
+                            [withHover]="true"
+                            [isBoard]="true"
+                            [ngClass]="card.isSearchable ? searchableCardClass() : defaultCardClass()"
+                            (click)="openCard(card)"
+                        ></app-similo-v2-card>
+                    </div>
+                </div>
+
+                <div
+                    class="similo-game-body-column similo-game-body-column--master"
+                    [class.similo-game-body-column--active]="turnStage() == SimiloV2TurnStage.MASTER">
+                    <div class="similo-game-title">
+                        <h2>Колода очевидца</h2>
+                        <fa-icon
+                            class="active_icon spin-time"
+                            [icon]="icons.active"
+                            aria-label="Active icon"
+                        ></fa-icon>
+                    </div>
+                    <div class="similo-master-cards">
+                        <div
+                            class="similo-master-cards-deck"
+                            *ngIf="deckSignal(); let deck">
+                            <app-similo-v2-card
+                                *ngFor="let card of deck; trackBy: trackById"
+                                [card]="card"
+                                [isMaster]="isMaster()"
+                                [withHover]="false"
+                                [isBoard]="false"
+                            ></app-similo-v2-card>
+                        </div>
+
+                        <div
+                            class="similo-master-cards-hand"
+                            *ngIf="handSignal(); let hand">
+                            <app-similo-v2-card
+                                *ngFor="let card of hand; trackBy: trackById"
+                                [card]="card"
+                                [isMaster]="isMaster()"
+                                [isFinished]="isFinished()"
+                                [withHover]="isMaster()"
+                                [isBoard]="false"
+                                (click)="openCard(card)"
+                            ></app-similo-v2-card>
+                        </div>
+                    </div>
+                    <div class="similo-game-header">
+                        <ng-container *ngIf="!isWatcher(); else isWatcherTemplate">
+                            <button
+                                class="btn btn-lg btn-danger"
+                                #finishGamePopover="ngbPopover"
+                                [ngbPopover]="finishGamePopoverContent"
+                                [popoverTitle]="finishGamePopoverTitle"
+                                popoverClass="finish-game-popover">
+                                Закончить игру
+                            </button>
+
+                            <ng-template #finishGamePopoverTitle>
+                                <h1>Вы уверены что хотите закончить игру?</h1>
+                            </ng-template>
+                            <ng-template #finishGamePopoverContent>
+                                <div class="d-flex flex-column">
+                                    <div
+                                        class="btn-group"
+                                        role="group"
+                                        aria-label="Popover actions">
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-primary"
+                                            (click)="finishGame()">
+                                            Да
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-danger"
+                                            (click)="finishGamePopover.close()">
+                                            Нет
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ng-container>
+
+                        <ng-template #isWatcherTemplate>
+                            <h1><strong> Вы наблюдатель! </strong> <a class="btn btn-link" routerLink="/">Вернуться в меню</a></h1>
+                        </ng-template>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="similo-game-body-column similo-game-body-column--similar">
+                <div class="similo-game-title">
+                    <h2>Похожий на</h2>
+                </div>
+                <div
+                    class="similo-similar-cards"
+                    *ngIf="similarSignal(); let similar">
+                    <app-similo-v2-card
+                        *ngFor="let card of similar; trackBy: trackById"
+                        [card]="card"
+                        [isMaster]="isMaster()"
+                        [withHover]="true"
+                        [isBoard]="false"
+                        (click)="openCard(card)"
+                    ></app-similo-v2-card>
+                </div>
+            </div>
+
+            <div class="similo-game-body-column similo-game-body-column--similar">
+                <div class="similo-game-title">
+                    <h2>Отличается от</h2>
+                </div>
+                <div
+                    class="similo-similar-cards"
+                    *ngIf="notSimilarSignal(); let notSimilar">
+                    <app-similo-v2-card
+                        *ngFor="let card of notSimilar; trackBy: trackById"
+                        [card]="card"
+                        [isMaster]="isMaster()"
+                        [withHover]="true"
+                        [isBoard]="false"
+                        (click)="openCard(card)"
+                    ></app-similo-v2-card>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

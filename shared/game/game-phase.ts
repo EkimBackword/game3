@@ -1,25 +1,46 @@
 import { GamePhaseName } from './game-constants';
-import { MoveMap } from './game-move';
+import { GameMove } from './game-move';
 import { GameOptions } from './game-options';
-import { GameState } from './game-state';
 import { TurnConfig } from './game-turn';
 
-export interface PhaseMap<GameType = any> {
-    [phaseName: GamePhaseName]: PhaseConfig<GameType>;
+export interface GamePhaseConfig<
+    GameType extends Record<string, any> = Record<string, any>,
+> extends GamePhaseCreatorConfig {
+    isStart?: boolean;
+    turn: TurnConfig<GameType>;
+    moves?: Record<string, GameMove<GameType>>;
+    next?: (options: GameOptions<GameType>) => GamePhaseName;
+    onBegin?: (options: GameOptions<GameType>) => GameType;
+    onEnd?: (options: GameOptions<GameType>) => GameType;
+    endIf?: (options: GameOptions<GameType>) => boolean | { next: GamePhaseName };
 }
 
-export interface PhaseConfig<GameType = any> {
-    start?: boolean;
-    next?: ((options: GameOptions<GameType>) => GamePhaseName | void) | GamePhaseName;
-    onBegin?: (options: GameOptions<GameType>) => void | GameType;
-    onEnd?: (options: GameOptions<GameType>) => void | GameType;
-    endIf?: (options: GameOptions<GameType>) => boolean | void | { next: GamePhaseName };
-    moves?: MoveMap<GameType>;
-    turn?: TurnConfig<GameType>;
-    wrapped?: {
-        endIf?: (state: GameState<GameType>) => boolean | void | { next: GamePhaseName };
-        onBegin?: (state: GameState<GameType>) => void | GameType;
-        onEnd?: (state: GameState<GameType>) => void | GameType;
-        next?: (state: GameState<GameType>) => GamePhaseName | void;
-    };
+export interface GamePhaseCreatorConfig {
+    id: string;
+    name: string;
+}
+
+export class GamePhaseCreator<
+    GameType extends Record<string, any> = Record<string, any>,
+> {
+
+    get id() {
+        return this.config.id;
+    }
+
+    constructor(
+        private config: GamePhaseCreatorConfig
+    ) {
+    }
+
+    create(config: Omit<GamePhaseConfig<GameType>, keyof GamePhaseCreatorConfig>) {
+        const result: GamePhaseConfig<GameType> = {
+            ...this.config,
+            ...config,
+        };
+        return {
+            [this.config.id]: result,
+        }
+    }
+
 }

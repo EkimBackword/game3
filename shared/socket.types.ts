@@ -4,12 +4,16 @@ import { GameState } from './game/game-state';
 import {
   Lobby,
   LobbyConfigShort,
+  LobbyStatusIdEnum,
 } from './lobby/lobby';
 import {
   LobbyChatMessage,
   LobbyChatMessagePayload,
 } from './lobby/lobby-chat';
-import { LobbyGame } from './lobby/lobby-game';
+import {
+  LobbyGame,
+  LobbyGameChangeOptions,
+} from './lobby/lobby-game';
 import { LobbyStatistic } from './lobby/lobby-statistics';
 import { SimiloGameInfoState } from './similo/similo-game.types';
 
@@ -64,21 +68,28 @@ export interface SimiloClientToServerEvents {
 }
 
 export interface LobbyServerToClientEvents {
+    connectToLobby: (lobby: Lobby) => void;
+    statusChanged: (statusId: LobbyStatusIdEnum) => void;
     usersChanged: (users: SocketUser[]) => void;
-    messageSended: (message: LobbyChatMessage) => void;
     statisticsChanged: (statistics: LobbyStatistic[]) => void;
+    messageSended: (message: LobbyChatMessage) => void;
     gameChanged: (game: LobbyGame) => void;
-    gameStateChanged: (state: GameState) => void;
     userKicked: (userId: string) => void;
     error: (message: string, type: SocketErrorTypeEnum) => void;
 }
 
 export interface LobbyClientToServerEvents {
-    sendMessage: (payload: LobbyChatMessagePayload) => void;
     addStatistics: (statistic: LobbyStatistic) => void;
-    changeGame: (game: LobbyGame) => void;
+    sendMessage: (payload: LobbyChatMessagePayload) => void;
+    startGame: (game: GameState) => void;
+    finishGame: () => void;
+    changeGame: (game: LobbyGameChangeOptions) => void;
+    changeSetupData: (setupData) => void;
+    joinToGame: () => void;
+    leaveFromGame: () => void;
     addState: (state: GameState) => void;
-    kickUser: (userId: string) => void;
+    undoState: (createdAt: string) => void;
+    kickUser: (userId: GamePlayerId) => void;
 }
 
 export interface InterServerEvents {

@@ -1,16 +1,22 @@
 import { GameId } from '../game/game-constants';
+import { GamePlayers } from '../game/game-players';
 import {
   GameLogEntry,
   GameState,
 } from '../game/game-state';
 
-export interface LobbyGame<
-    GameType = any,
-    SetupData = any,
+export interface LobbyGameChangeOptions<
+    SetupData extends Record<string, any> = any,
 > {
-    id: GameId;
+    id: GameId | null;
     setupData: SetupData;
-    state: GameState<GameType>;
-    log: Array<GameLogEntry>;
 }
 
+export interface LobbyGame<
+    GameType extends Record<string, any> = any,
+    SetupData extends Record<string, any> = any,
+> extends LobbyGameChangeOptions<SetupData> {
+    players: GamePlayers;
+    state: GameState<GameType> | null;
+    log: GameLogEntry[];
+}

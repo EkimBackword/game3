@@ -1,0 +1,107 @@
+<div class="col-sm-6 wrapper" *ngIf="client.game.setupData(); let _setupData">
+    <div class="card">
+        <div class="card-header">
+            Настройки
+        </div>
+        <div class="card-body">
+            <div class="mb-2 row">
+                <label for="masterPlayerId" class="form-label col-sm-4">Очевидец:</label>
+                <div class="col-sm-8">
+                    <select class="form-select form-select-sm"
+                        aria-label="Choose master player"
+                        id="masterPlayerId"
+                        [ngModel]="_setupData.masterPlayerId"
+                        (ngModelChange)="masterPlayerIdChanged($event)">
+                        <option
+                            *ngFor="let type of playersForSettings(); trackBy: trackByNameValue;"
+                            [value]="type.value">
+                            {{type.name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-2 row">
+                <label for="mainDlc" class="form-label col-sm-4">Колода персонажей:</label>
+                <div class="col-sm-8">
+                    <select class="form-select form-select-sm"
+                        aria-label="Choose main dlc"
+                        id="mainDlc"
+                        [ngModel]="_setupData.mainDlc"
+                        (ngModelChange)="mainDlcChanged($event)">
+                        <option
+                            *ngFor="let type of mainDecks"
+                            [value]="type.value">
+                            {{type.name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-2 row">
+                <label for="helpDlc" class="form-label col-sm-4">Колода подсказок:</label>
+                <div class="col-sm-8">
+                    <select class="form-select form-select-sm"
+                        aria-label="Choose help dlc"
+                        id="helpDlc"
+                        [ngModel]="_setupData.helpDlc"
+                        (ngModelChange)="helpDlcChanged($event)">
+                        <option
+                            *ngFor="let type of helpDecks"
+                            [value]="type.value">
+                            {{type.name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-6 wrapper">
+    <div class="card">
+        <div class="card-header">Список игроков</div>
+        <ul class="list-group list-group-flush">
+            <li
+                class="list-group-item"
+                *ngFor="let player of players(); trackBy: trackById; let i = index">
+                <div class="row w-100">
+                    <div class="col-sm-8 row align-items-center">
+                        <span class="w-100 text-ellipsis">{{player.name}}</span>
+                    </div>
+                    <div class="col-sm-4 row align-items-center">
+                        <ng-container *ngIf="currentPlayer(); let _currentPlayer">
+                            <button
+                                class="btn btn-sm btn-secondary"
+                                *ngIf="_currentPlayer.id === player.id"
+                                (click)="leaveFromGame()">
+                                Покинуть игру
+                            </button>
+                            <button
+                                class="btn btn-sm btn-secondary"
+                                *ngIf="_currentPlayer.id !== player.id"
+                                (click)="kickUser(player.id)">
+                                Выкинуть игрока
+                            </button>
+                        </ng-container>
+                    </div>
+                    <div class="col-sm-1 row align-items-center">
+                        <mat-icon
+                            class="flex-shrink-0 w-100"
+                            [color]="player.color">{{player.icon}}
+                        </mat-icon>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div
+            class="card-body"
+            *ngIf="currentPlayer() == null">
+            <button
+                class="btn btn-sm btn-primary col-sm-12"
+                (click)="joinToGame()">
+                Присоединиться
+            </button>
+        </div>
+    </div>
+
+
+
+</div>

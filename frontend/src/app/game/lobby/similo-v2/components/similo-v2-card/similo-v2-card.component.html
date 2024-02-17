@@ -1,0 +1,26 @@
+<div
+    *ngIf="card"
+    class="card_container"
+    [ngClass]="{
+        'card_container__searchable': isMaster && card.isSearchable && !isFinished,
+        'card_container__board': isBoard && card.isOpen,
+        'card_container__with_hover': withHover
+    }">
+    <div
+        class="flip_card"
+        [class.flip_card__on_board_close]="isBoard && !isOpen"
+        [class.flip_card__open]="isOpen">
+        <div class="flip_card_face">
+            <div class="flip_card_face flip_card_face__front">
+                <div class="card_face" [ngStyle]="style"></div>
+            </div>
+            <div class="flip_card_face flip_card_face__back">
+                <img class="card_back"
+                    [width]="cardWidth"
+                    [height]="cardHeight"
+                    [src]="card.url_back"
+                    [alt]="card.url_back">
+            </div>
+        </div>
+    </div>
+</div>

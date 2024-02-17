@@ -2,16 +2,20 @@ import {
   GamePhaseName,
   GamePlayerId,
 } from './game-constants';
-import { GameActivePlayers } from './game-players';
+import {
+  GameActivePlayers,
+  GamePlayerMovesCounter,
+} from './game-players';
 
 export interface GameContext {
     playerCount: number;
-    playerIdsOrder: Array<GamePlayerId>;
+    playerIdsOrder: GamePlayerId[];
     playerIdsOrderPosition: number;
-    activePlayers: null | GameActivePlayers;
+    allPlayers: GamePlayerMovesCounter | null;
+    activePlayers: GameActivePlayers | null;
+    _nextActivePlayersIndex: number | null;
     currentPlayerId: GamePlayerId;
-    numMoves: number;
     gameover: boolean;
     turn: number;
-    phase: GamePhaseName;
+    phase: GamePhaseName | null;
 }

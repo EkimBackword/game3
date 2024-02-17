@@ -1,0 +1,45 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    width: 100vw;
+    height: 100vh;
+}
+
+.lobby-wrap {
+    --lobby-wrap-margin: 0.8rem;
+    --lobby-header-height: 50px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    height: calc(100% - (2 * var(--lobby-wrap-margin)));
+    background-color: #fff;
+    margin: var(--lobby-wrap-margin);
+    border-radius: 0.8rem;
+}
+
+.lobby-wrap--body {
+    width: calc(80% - (2 * var(--lobby-wrap-margin)));
+}
+
+.lobby-wrap--users {
+    width: calc(20% - (2 * var(--lobby-wrap-margin)));
+}
+
+.lobby-header {
+    background-color: var(--bs-light);
+    height: var(--lobby-header-height);
+    padding: 0.4rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lobby-header-title {
+    font-size: 1.25rem;
+}
+

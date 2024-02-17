@@ -1,15 +1,13 @@
 <form [formGroup]="form" class="card login-form">
     <img
-        ngSrc="/assets/images/clank.jpg"
-        [height]="285"
-        [width]="600"
+        src="/assets/images/login-logo.jpg"
         class="card-img-top"
         alt="clank logo">
     <div class="card-body">
         <div class="row">
             <label for="login" class="col-sm-4 col-form-label">Имя пользователя</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control" id="login" placeholder="My name" formControlName="login">
+              <input type="text" class="form-control" id="login" placeholder="Имя или никнейм" formControlName="login">
             </div>
         </div>
     </div>

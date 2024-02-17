@@ -4,29 +4,42 @@ import {
   GameOptionsWithPlayerId,
 } from './game-options';
 import { ActivePlayersArg } from './game-players';
-import { StageMap } from './game-stage';
-import { GameState } from './game-state';
+import { StageConfig } from './game-stage';
 
-export interface TurnConfig<GameType = any> {
-    activePlayers?: ActivePlayersArg;
-    minMoves?: number;
-    maxMoves?: number;
-    onBegin?: (options: GameOptions<GameType>) => void | GameType;
-    onEnd?: (options: GameOptions<GameType>) => void | GameType;
-    endIf?: (options: GameOptions<GameType>) => boolean | void | { next: string };
-    onMove?: (options: GameOptionsWithPlayerId<GameType>) => void | GameType;
-    stages?: StageMap<GameType>;
+export interface TurnConfig<
+    GameType extends Record<string, any> = Record<string, any>,
+> {
+    activePlayers?: ActivePlayersArg[];
+    minMoves?: number; // TODO: проверить нужны ли тут ограничения?
+    maxMoves?: number; // TODO: проверить нужны ли тут ограничения?
+    stages: Record<string, StageConfig<GameType>>;
     order?: TurnOrderConfig<GameType>;
-    wrapped?: {
-        endIf?: (state: GameState<GameType>) => boolean | void | { next: string };
-        onBegin?: (state: GameState<GameType>) => void | GameType;
-        onEnd?: (state: GameState<GameType>) => void | GameType;
-        onMove?: (state: GameState<GameType> & { playerId: GamePlayerId }) => void | GameType;
-    };
+    onBegin?: (options: GameOptions<GameType>) => GameType;
+    onEnd?: (options: GameOptions<GameType>) => GameType;
+    endIf?: (options: GameOptions<GameType>) => boolean | { next: GamePlayerId };
+    onMove?: (options: GameOptionsWithPlayerId<GameType>) => GameType;
 }
 
-export interface TurnOrderConfig<GameType = any> {
+export interface TurnOrderConfig<
+	GameType extends Record<string, any> = Record<string, any>,
+> {
     first: (options: GameOptions<GameType>) => number;
-    next: (options: GameOptions<GameType>) => number | undefined;
-    playOrder?: (options: GameOptions<GameType>) => string[];
+    next: (options: GameOptions<GameType>) => number;
+    playerIdsOrder?: (options: GameOptions<GameType>) => string[];
 }
+
+const TurnOrderDefaultNext: TurnOrderConfig['next'] = ({ context }: GameOptions) => {
+	return (context.playerIdsOrderPosition + 1) % context.playerIdsOrder.length;
+};
+
+const TurnOrderDefaultFirst: TurnOrderConfig['first'] = (options: GameOptions) => {
+	const { context } = options;
+	return context.turn === 0
+		? context.playerIdsOrderPosition
+		: TurnOrderDefaultNext(options);
+};
+
+export const TurnOrderDefault: TurnOrderConfig = {
+	first: TurnOrderDefaultFirst,
+	next: TurnOrderDefaultNext,
+};

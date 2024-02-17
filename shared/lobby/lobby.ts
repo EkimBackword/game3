@@ -12,13 +12,16 @@ export interface LobbyConfig extends LobbyConfigShort {
     admin: SocketUser;
 }
 
-export interface Lobby extends LobbyConfigShort {
+export interface Lobby<
+    GameType extends Record<string, any> = Record<string, any>,
+    SetupData extends Record<string, any> = Record<string, any>,
+> extends LobbyConfigShort {
     adminId: string;
     statusId: LobbyStatusIdEnum;
     users: SocketUser[];
-    chat: LobbyChat;
     statistics: LobbyStatistic[];
-    game: LobbyGame;
+    chat: LobbyChat;
+    game: LobbyGame<GameType, SetupData>;
 }
 
 export enum LobbyStatusIdEnum {
