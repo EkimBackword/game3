@@ -148,16 +148,16 @@ export class LobbyService {
         this.socket?.emit('changeGame', data);
     }
 
-    changeSetupData(data) {
-        this.socket?.emit('changeSetupData', data);
+    changeSetupData(setupData) {
+        this.socket?.emit('changeSetupData', setupData);
     }
 
-    joinToGame() {
-        this.socket?.emit('joinToGame');
+    joinToGame(setupData?) {
+        this.socket?.emit('joinToGame', setupData);
     }
 
-    leaveFromGame() {
-        this.socket?.emit('leaveFromGame');
+    leaveFromGame(setupData?) {
+        this.socket?.emit('leaveFromGame', setupData);
     }
 
     addState(data: GameState) {
@@ -168,8 +168,8 @@ export class LobbyService {
         this.socket?.emit('undoState', getCurrentTime());
     }
 
-    kickUser(userId: GamePlayerId) {
-        this.socket?.emit('kickUser', userId);
+    kickUser(userId: GamePlayerId, setupData?) {
+        this.socket?.emit('kickUser', userId, setupData);
     }
 
 }

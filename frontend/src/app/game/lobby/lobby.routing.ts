@@ -42,6 +42,13 @@ export const LobbyRoutes: Routes = [
                     gameResolver: LobbyGameResolver,
                 }
             },
+            {
+                path: GameRouteEnum.EscapeFromAtlantis,
+                loadChildren: () => import('./escape-from-atlantis/escape-from-atlantis.module').then(p => p.EscapeFromAtlantisModule),
+                resolve: {
+                    gameResolver: LobbyGameResolver,
+                }
+            },
         ],
     },
 ];

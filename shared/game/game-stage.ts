@@ -22,7 +22,7 @@ export class GameStageCreator<
     }
 
     constructor(
-        private config: GameStageCreatorConfig,
+        public config: GameStageCreatorConfig,
     ) {
     }
 

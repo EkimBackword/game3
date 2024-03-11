@@ -1,0 +1,26 @@
+<div class="zoom-wrapper">
+    <div class="layer">
+        <app-escape-from-atlantis-tile
+            class="layer-tiles"
+            *ngFor="let tile of tiles(); trackBy: trackById"
+            [tile]="tile"
+        ></app-escape-from-atlantis-tile>
+        <app-escape-from-atlantis-cell
+            class="layer-cells"
+            *ngFor="let cell of cells(); trackBy: trackById"
+            [cell]="cell"
+            (click)="isActivePlayer() ? cell.placeMeeple() : null"
+        ></app-escape-from-atlantis-cell>
+        <app-escape-from-atlantis-game-meeple
+            class="layer-meeples"
+            *ngFor="let meeple of gameMeeples(); trackBy: trackById"
+            [meeple]="meeple"
+        ></app-escape-from-atlantis-game-meeple>
+        <app-escape-from-atlantis-player-meeple
+            class="layer-meeples"
+            *ngFor="let meeple of playerMeeples(); trackBy: trackById"
+            [meeple]="meeple"
+            (click)="isActivePlayer() ? meeple.takeMeeple() : null"
+        ></app-escape-from-atlantis-player-meeple>
+    </div>
+</div>

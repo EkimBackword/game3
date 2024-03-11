@@ -160,13 +160,13 @@ export class GameFlow<
         payload: GameMovePayload,
     }): Promise<GameStateChangeResult<GameType>> {
         if (payload.playerId == null) {
-            return this.WithError(state, 'playerId not found');
+            return this.WithError(state, 'playerId not found', { payload });
         }
 
         const move = this.getMove(state.context, payload.type, payload.playerId);
 
         if (move === null) {
-            return this.WithError(state, `disallowed move: ${payload.type}`);
+            return this.WithError(state, `disallowed move: ${payload.type}`, { payload });
         }
 
         const moveResult = await move.callback(
@@ -179,14 +179,10 @@ export class GameFlow<
         );
 
         if (!moveResult.success) {
-            const moveText = `invalid move: ${payload.type}`;
-            const argsText = `args: ${JSON.stringify(payload.args)}`;
-            const message = `message: ${moveResult.message}`;
-            return this.WithError(state, [
-                moveText,
-                argsText,
-                message,
-            ].join('; '));
+            return this.WithError(state, moveResult.message, {
+                payload,
+                moveResult
+            });
         }
 
         if (!moveResult.saveState) {
@@ -251,7 +247,7 @@ export class GameFlow<
         const { state, payload } = options;
         const { type, args, playerId } = payload;
         if (typeof this.eventHandlers[type] !== 'function') {
-            return this.WithError(state, `not found: ${type}`);
+            return this.WithError(state, `not found: ${type}`, { payload });
         }
         return this.eventHandlers[type](
             state,
@@ -373,11 +369,14 @@ export class GameFlow<
 
             if (['OnMove', 'UpdateStage', 'UpdateActivePlayers'].includes(name)) {
                 const shouldEndTurn = this.ShouldEndTurn(state);
+                debugger;
                 if (shouldEndTurn) {
                     events.push({
                         name: 'EndTurn',
                         args: {
-                            arg: shouldEndTurn,
+                            arg: {
+                                endTurn: shouldEndTurn
+                            },
                             turn: state.context.turn,
                             phase: state.context.phase,
                             automatic: true,
@@ -408,14 +407,15 @@ export class GameFlow<
 
     StartPhase(
         state: GameState<GameType>,
-        { next }: GameFlowEventOptions<any>,
+        options: GameFlowEventOptions<any>,
     ): GameStateChangeResult<GameType> {
+        const { next } = options;
         let { game, context } = state;
 
         const phaseConfig = this.GetPhase(context);
         if (phaseConfig == null) {
             return context.phase != null
-                ? this.WithError(state, `phase not found: ${context.phase}`)
+                ? this.WithError(state, `phase not found: ${context.phase}`, options)
                 : this.WithSave(state);
         }
 
@@ -435,14 +435,15 @@ export class GameFlow<
 
     StartTurn(
         state: GameState<GameType>,
-        { currentPlayerId }: GameFlowEventOptions<any>,
+        options: GameFlowEventOptions<any>,
     ): GameStateChangeResult<GameType> {
+        const { currentPlayerId } = options;
         let { context } = state;
 
         const phaseConfig = this.GetPhase(context);
         if (phaseConfig == null) {
             return context.phase != null
-                ? this.WithError(state, `phase not found: ${context.phase}`)
+                ? this.WithError(state, `phase not found: ${context.phase}`, options)
                 : this.WithSave(state);
         }
 
@@ -478,12 +479,13 @@ export class GameFlow<
 
     UpdatePhase(
         state: GameState<GameType>,
-        {
+        options: GameFlowEventOptions<GameFlowUpdatePhaseOptions>,
+    ): GameStateChangeResult<GameType> {
+        const {
             arg,
             next,
             phase,
-        }: GameFlowEventOptions<GameFlowUpdatePhaseOptions>,
-    ): GameStateChangeResult<GameType> {
+        } = options;
         if (phase == null) {
             return this.WithSave(state);
         }
@@ -491,7 +493,7 @@ export class GameFlow<
         const phaseConfig = this.GetPhase({ phase });
         if (phaseConfig == null) {
             return phase != null
-                ? this.WithError(state, `phase not found: ${phase}`)
+                ? this.WithError(state, `phase not found: ${phase}`, options)
                 : this.WithSave(state);
         }
 
@@ -500,7 +502,7 @@ export class GameFlow<
             if (this.config.phases != null && arg.next in this.config.phases) {
                 context = { ...context, phase: arg.next };
             } else {
-                return this.WithError(state, `invalid phase: ${arg.next}`);
+                return this.WithError(state, `invalid phase: ${arg.next}`, options);
             }
         } else if (phaseConfig.next) {
             context = {
@@ -524,17 +526,18 @@ export class GameFlow<
 
     UpdateTurn(
         state: GameState<GameType>,
-        {
+        options: GameFlowEventOptions<GameFlowUpdateTurnOptions>,
+    ): GameStateChangeResult<GameType> {
+        const {
             arg,
             currentPlayerId,
             next,
-        }: GameFlowEventOptions<GameFlowUpdateTurnOptions>,
-    ): GameStateChangeResult<GameType> {
+        } = options;
         let { game, context } = state;
         const phaseConfig = this.GetPhase(context);
         if (phaseConfig == null) {
             return context.phase != null
-                ? this.WithError(state, `phase not found: ${context.phase}`)
+                ? this.WithError(state, `phase not found: ${context.phase}`, options)
                 : this.WithSave(state);
         }
 
@@ -563,17 +566,18 @@ export class GameFlow<
 
     UpdateStage(
         state: GameState<GameType>,
-        {
+        options: GameFlowEventOptions<GameFlowUpdateStageOptions>,
+    ): GameStateChangeResult<GameType> {
+        const {
             arg,
             playerId,
-        }: GameFlowEventOptions<GameFlowUpdateStageOptions>,
-    ): GameStateChangeResult<GameType> {
+        } = options;
         if (!playerId) {
-            return this.WithError(state, 'playerId not found');
+            return this.WithError(state, 'playerId not found', options);
         }
 
         if (typeof arg !== 'object') {
-            return this.WithError(state, `invalid arg: ${JSON.stringify(arg)}`);
+            return this.WithError(state, `invalid arg`, options);
         }
 
         let { context } = state;
@@ -663,6 +667,7 @@ export class GameFlow<
 
         const { phase, turn } = state.context;
 
+        // TODO: Переход к следующей фазе
         next?.push({
             name: 'UpdatePhase',
             args: {
@@ -674,7 +679,7 @@ export class GameFlow<
         const phaseConfig = this.GetPhase(state.context);
         if (phaseConfig == null) {
             return state.context.phase != null
-                ? this.WithError(state, `phase not found: ${state.context.phase}`)
+                ? this.WithError(state, `phase not found: ${state.context.phase}`, options)
                 : this.WithSave(state);
         }
 
@@ -729,7 +734,7 @@ export class GameFlow<
         const phaseConfig = this.GetPhase(state.context);
         if (phaseConfig == null) {
             return state.context.phase != null
-                ? this.WithError(state, `phase not found: ${state.context.phase}`)
+                ? this.WithError(state, `phase not found: ${state.context.phase}`, options)
                 : this.WithSave(state);
         }
 
@@ -739,14 +744,14 @@ export class GameFlow<
                 currentPlayer.minMoves != null &&
                 currentPlayer.numMoves < currentPlayer.minMoves
             ) {
-                return this.WithError(state, `cannot end turn before making ${phaseConfig.turn.minMoves} moves`)
+                return this.WithError(state, `cannot end turn before making ${phaseConfig.turn.minMoves} moves`, options)
             }
 
             if (
                 phaseConfig.turn.minMoves != null &&
                 currentPlayer.numMoves < phaseConfig.turn.minMoves
             ) {
-                return this.WithError(state, `cannot end turn before making ${phaseConfig.turn.minMoves} moves`)
+                return this.WithError(state, `cannot end turn before making ${phaseConfig.turn.minMoves} moves`, options)
             }
         }
 
@@ -829,7 +834,7 @@ export class GameFlow<
         const phaseConfig = this.GetPhase(context);
         if (phaseConfig == null) {
             return context.phase != null
-                ? this.WithError(state, `phase not found: ${context.phase}`)
+                ? this.WithError(state, `phase not found: ${context.phase}`, options)
                 : this.WithSave(state);
         }
 
@@ -857,7 +862,7 @@ export class GameFlow<
         const currentPlayer = activePlayers[playerId];
         if (currentPlayer.minMoves != null &&
             currentPlayer.numMoves < currentPlayer.minMoves) {
-            return this.WithError(state, `cannot end stage before making ${currentPlayer.minMoves} moves`);
+            return this.WithError(state, `cannot end stage before making ${currentPlayer.minMoves} moves`, options);
         }
 
         activePlayers = {
@@ -1183,8 +1188,15 @@ export class GameFlow<
         return logEntry;
     }
 
-    private WithError(state: GameState<GameType> | null, error: string) {
-        gameLogger.error(error, { state });
+    private WithError(
+        state: GameState<GameType> | null,
+        error: string,
+        errorData?: any,
+    ) {
+        gameLogger.error(error, {
+            state,
+            errorData,
+        });
         const result: GameStateChangeWithError<GameType> = {
             success: false,
             state,

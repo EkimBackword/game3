@@ -1,0 +1,75 @@
+:host {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background-color: #fff;
+    z-index: 200;
+    padding: 5px;
+}
+
+::ng-deep {
+    .mat-mdc-tab-body-wrapper {
+        flex: 1 1 auto;
+    }
+
+    .game-popover {
+        max-width: var(--zoom-wrapper-width);
+    }
+}
+
+.players-container,
+.player-container {
+    width: 100%;
+    height: 100%;
+}
+
+.player-container {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.body {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: var(--bs-white);
+    position: relative;
+}
+
+.tiles {
+    position: relative;
+}
+.meeples {
+    position: relative;
+}
+
+.footer {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-shrink: 0;
+    overflow: auto;
+    border-top: 1px solid var(--bs-black);
+}
+
+.zoom-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+
+    width: var(--zoom-wrapper-width, 100%);
+    opacity: var(--zoom-wrapper-opacity, 0);
+    transition: opacity 100ms ease-in-out;
+
+    transform: scale(var(--zoom-wrapper-zoom, 1), var(--zoom-wrapper-zoom, 1));
+    transform-origin: left top;
+}

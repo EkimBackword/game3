@@ -8,6 +8,14 @@ export function assertNotNullOrUndefined<TValue>(value: TValue): asserts value i
     }
 }
 
+export function recordKeys<T extends Record<any, any>>(record: T): (keyof T)[] {
+    return Object.keys(record) as (keyof T)[];
+}
+
+export function isKeyInRecord<T extends Record<any, any>>(key: any, record: T): key is keyof T {
+    return key in record;
+}
+
 export interface NameValue<
     NameType = string,
     ValueType = string,

@@ -1,0 +1,118 @@
+<mat-tab-group
+    dynamicHeight
+    class="players-container"
+    [selectedIndex]="currentPlayerIndex">
+    <mat-tab *ngFor="let player of players(); trackBy: trackById;">
+        <ng-template mat-tab-label>
+            <fa-icon
+                class="player_icon"
+                [icon]="player.icon()"
+                [class.spin-time]="player.isActivePlayer()"
+                [style.color]="player.colorInfo().color"
+                aria-label="User icon"
+            ></fa-icon>
+            <span class="p-1" [style.color]="player.colorInfo().color">
+                {{player.info().name}}
+            </span>
+        </ng-template>
+        <div class="container-fluid player-container">
+            <div class="body p-1">
+                <div class="zoom-wrapper">
+                    <h1>{{player.stageName()}}</h1>
+                    <div class="tiles">
+                        <app-escape-from-atlantis-tile
+                            *ngFor="let tile of player.tiles(); trackBy: trackById"
+                            [tile]="tile"
+                        ></app-escape-from-atlantis-tile>
+                    </div>
+                    <div class="meeples">
+                        <app-escape-from-atlantis-game-meeple
+                            *ngFor="let meeple of player.gameMeeples(); trackBy: trackById"
+                            [meeple]="meeple"
+                            (click)="player.isActivePlayer() ? meeple.takeMeeple() : null"
+                        ></app-escape-from-atlantis-game-meeple>
+                        <app-escape-from-atlantis-player-meeple
+                            *ngFor="let meeple of player.playerMeeples(); trackBy: trackById"
+                            [meeple]="meeple"
+                            [showValue]="player.isCurrentPlayer()"
+                            (click)="player.isActivePlayer() ? meeple.takeMeeple() : null"
+                        ></app-escape-from-atlantis-player-meeple>
+                    </div>
+                </div>
+            </div>
+            <div class="footer p-1">
+                <ng-container *ngIf="!isWatcher(); else isWatcherTemplate">
+                    <button
+                        class="btn btn-secondary mb-1"
+                        #undoStatePopover="ngbPopover"
+                        [ngbPopover]="undoStatePopoverContent"
+                        [popoverTitle]="undoStatePopoverTitle"
+                        popoverClass="game-popover">
+                        Отменить ход
+                    </button>
+                    <ng-template #undoStatePopoverTitle>
+                        Вы уверены что хотите отменить ход?
+                    </ng-template>
+                    <ng-template #undoStatePopoverContent>
+                        <div class="d-flex flex-column">
+                            <div
+                                class="btn-group"
+                                role="group"
+                                aria-label="Popover actions">
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-primary"
+                                    (click)="undoState()">
+                                    Да
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-danger"
+                                    (click)="undoStatePopover.close()">
+                                    Нет
+                                </button>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <button
+                        class="btn btn-danger"
+                        #finishGamePopover="ngbPopover"
+                        [ngbPopover]="finishGamePopoverContent"
+                        [popoverTitle]="finishGamePopoverTitle"
+                        popoverClass="game-popover">
+                        Закончить игру
+                    </button>
+                    <ng-template #finishGamePopoverTitle>
+                        Вы уверены что хотите закончить игру?
+                    </ng-template>
+                    <ng-template #finishGamePopoverContent>
+                        <div class="d-flex flex-column">
+                            <div
+                                class="btn-group"
+                                role="group"
+                                aria-label="Popover actions">
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-primary"
+                                    (click)="finishGame()">
+                                    Да
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-danger"
+                                    (click)="finishGamePopover.close()">
+                                    Нет
+                                </button>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ng-container>
+
+                <ng-template #isWatcherTemplate>
+                    <h1><strong> Вы наблюдатель! </strong> <a class="btn btn-link" routerLink="/">Вернуться в меню</a></h1>
+                </ng-template>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

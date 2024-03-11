@@ -85,11 +85,11 @@ export interface LobbyClientToServerEvents {
     finishGame: () => void;
     changeGame: (game: LobbyGameChangeOptions) => void;
     changeSetupData: (setupData) => void;
-    joinToGame: () => void;
-    leaveFromGame: () => void;
+    joinToGame: (setupData?) => void;
+    leaveFromGame: (setupData?) => void;
     addState: (state: GameState) => void;
     undoState: (createdAt: string) => void;
-    kickUser: (userId: GamePlayerId) => void;
+    kickUser: (userId: GamePlayerId, setupData?) => void;
 }
 
 export interface InterServerEvents {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { DynamicComponentData } from 'src/app/shared/models/dynamic-component.models';
 
+import { EscapeFromAtlantisGameBuilder } from '../escape-from-atlantis/models/game-builder';
 import { GameFlow } from '../models/game-flow';
 import { LobbyGameBuilder } from '../models/lobby-games-store';
 import { LobbyGamesIdEnum } from '../models/lobby-games.enum';
@@ -14,6 +15,7 @@ export class LobbyGamesStoreService {
 
     constructor() {
         this.addGame(new SimiloV2GameBuilder());
+        this.addGame(new EscapeFromAtlantisGameBuilder());
     }
 
     getGameList() {

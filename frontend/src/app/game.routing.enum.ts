@@ -8,4 +8,5 @@ export enum GameRouteEnum {
     Settings = 'settings',
     Help = 'help',
     Similo = 'similo',
+    EscapeFromAtlantis = 'escape-from-atlantis',
 }

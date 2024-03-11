@@ -789,22 +789,30 @@ lobbyNamespaceOf.on('connection', (socket) => {
         io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
     });
 
-    socket.on('joinToGame', () => {
+    socket.on('joinToGame', (setupData) => {
         const lobby = getLobby();
         if (lobby == null) {
             return;
         }
         lobby.joinToGame(user);
+        if (setupData != null) {
+            lobby.changeSetupData(setupData);
+        }
         lobbyNamespace.emit('gameChanged', lobby.data.game);
+        io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
     });
 
-    socket.on('leaveFromGame', () => {
+    socket.on('leaveFromGame', (setupData) => {
         const lobby = getLobby();
         if (lobby == null) {
             return;
         }
         lobby.leaveFromGame(user.id);
+        if (setupData != null) {
+            lobby.changeSetupData(setupData);
+        }
         lobbyNamespace.emit('gameChanged', lobby.data.game);
+        io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
     });
 
     socket.on('addState', (newState) => {
@@ -828,13 +836,19 @@ lobbyNamespaceOf.on('connection', (socket) => {
         lobbyNamespace.emit('gameChanged', lobby.data.game);
     });
 
-    socket.on('kickUser', (userId: string) => {
+    socket.on('kickUser', (userId: string, setupData) => {
         const lobby = getLobby();
         if (lobby == null) {
             return;
         }
 
         lobby.leaveFromGame(user.id);
+        if (setupData != null) {
+            lobby.changeSetupData(setupData);
+        }
+        lobbyNamespace.emit('gameChanged', lobby.data.game);
+        io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
+
         const userSocket = [...socket.nsp.sockets.values()].find(p => p.handshake.auth.id === userId);
         if (userSocket == null) {
             return;

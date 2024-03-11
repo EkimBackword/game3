@@ -1,0 +1,21 @@
+:host {
+    position: absolute;
+}
+
+.meeple {
+    position: absolute;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #FFF8CA;
+
+    &.taked {
+        background-color: #B6D5B1;
+    }
+
+    &:hover {
+        background-color: #C3D6A9;
+    }
+}
