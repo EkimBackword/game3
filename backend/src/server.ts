@@ -275,6 +275,7 @@ class LobbyInfo {
             ...this.data.game,
             id: game.id,
             setupData: game.setupData,
+            players: {},
         };
     }
 

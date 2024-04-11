@@ -9,4 +9,5 @@ export enum GameRouteEnum {
     Help = 'help',
     Similo = 'similo',
     EscapeFromAtlantis = 'escape-from-atlantis',
+    RelicHunters = 'relic-hunters',
 }

@@ -49,6 +49,13 @@ export const LobbyRoutes: Routes = [
                     gameResolver: LobbyGameResolver,
                 }
             },
+            {
+                path: GameRouteEnum.RelicHunters,
+                loadChildren: () => import('./relic-hunters/relic-hunters.module').then(p => p.RelicHuntersModule),
+                resolve: {
+                    gameResolver: LobbyGameResolver,
+                }
+            },
         ],
     },
 ];

@@ -1,0 +1,15 @@
+<div
+    *ngIf="card"
+    class="flip_card"
+    [class.flip_card__open]="isOpen">
+    <div class="flip_card_face">
+        <div class="flip_card_face flip_card_face__front">
+            <div class="card_face" [ngStyle]="frontStyle">
+                <div [ngStyle]="colorStyle"></div>
+            </div>
+        </div>
+        <div class="flip_card_face flip_card_face__back">
+            <div class="card_back" [ngStyle]="backStyle"></div>
+        </div>
+    </div>
+</div>

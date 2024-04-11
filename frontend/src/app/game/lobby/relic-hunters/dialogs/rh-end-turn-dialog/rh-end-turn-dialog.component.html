@@ -1,0 +1,46 @@
+<h1 mat-dialog-title>
+    Конец хода
+</h1>
+<div mat-dialog-content>
+    <ng-container *ngIf="data.player.hand.length > 0">
+        <label>Карты в руке</label>
+        <div class="d-flex flex-row justify-content-start align-items-center flex-wrap">
+            <app-rh-card
+                class="m-1"
+                *ngFor="let card of data.player.hand"
+                [card]="card"
+                [isOpen]="true"
+            ></app-rh-card>
+        </div>
+    </ng-container>
+    <label>Карты на рынке</label>
+    <div class="d-flex flex-row justify-content-start align-items-center flex-wrap">
+        <app-rh-card
+            class="m-1 selectable"
+            [class.selected]="item.selected"
+            *ngFor="let item of marketCards"
+            [card]="item.card"
+            [isOpen]="true"
+            (click)="selectCard(item)"
+        ></app-rh-card>
+    </div>
+</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end">
+    <app-rh-benefit
+        [data]="allowedCoins"
+    ></app-rh-benefit>
+    <button
+        class="btn btn-primary m-1"
+        type="submit"
+        (click)="close(true)"
+        [disabled]="allowedCoins.value < 0">
+        Купить карты и вернутся в лагерь
+    </button>
+    <button
+        *ngIf="!data.force && data.player.hand.length > 0"
+        class="btn btn-primary m-1"
+        type="submit"
+        (click)="close(false)">
+        Остаться на месте
+    </button>
+</div>

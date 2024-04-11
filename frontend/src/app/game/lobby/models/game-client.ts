@@ -93,11 +93,15 @@ export class GameClient<
         return gameFlow.getInitGameState(setupData, players);
     }
 
-    async makeMove(payload: GameMovePayload): Promise<GameStateChangeResult<GameType>> {
+    async makeMove(
+        payload: GameMovePayload,
+        oldState?: GameState<GameType>,
+    ): Promise<GameStateChangeResult<GameType>> {
         const validity = this.validateAction({
             actionName: payload.type,
             actionType: GameActionsEnum.MAKE_MOVE,
             playerId: payload.playerId,
+            oldState,
         });
 
         if (!validity.success || !validity.saveState) {
@@ -113,11 +117,13 @@ export class GameClient<
 
     makeEvent<Ev extends EventNames<GameFlowEventsHandlers>>(
         payload: Parameters<typeof GameActionsEvent<Ev>>['0'],
+        oldState?: GameState<GameType>,
     ): GameStateChangeResult<GameType> {
         const validity = this.validateAction({
             actionName: payload.type,
             actionType: GameActionsEnum.GAME_EVENT,
             playerId: payload.playerId,
+            oldState,
         });
 
         if (!validity.success || !validity.saveState) {
@@ -134,14 +140,14 @@ export class GameClient<
     private validateAction({
         actionName,
         actionType,
-        playerId
+        playerId,
+        oldState = this.state()
     }: {
         actionName: string;
         actionType: GameActionsEnum;
         playerId?: GamePlayerId;
+        oldState?: GameState<GameType> | null
     }) {
-        const oldState = this.state();
-
         if (oldState == null) {
             return this.WithError(oldState, `state not found`);
         }

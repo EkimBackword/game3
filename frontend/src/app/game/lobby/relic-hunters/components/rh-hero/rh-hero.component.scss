@@ -1,0 +1,10 @@
+:host {
+    position: absolute;
+    transition: all 300ms;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(5px 5px 10px #222);
+    cursor: pointer;
+}

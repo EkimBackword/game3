@@ -1,11 +1,12 @@
 import { GameStageName } from './game-constants';
 import { GameMove } from './game-move';
+import { GameOptions } from './game-options';
 
 export interface StageConfig<
     GameType extends Record<string, any> = Record<string, any>,
 > extends GameStageCreatorConfig {
     moves?: Record<string, GameMove<GameType>>
-    next?: GameStageName;
+    next?: (options: GameOptions<GameType>) => GameStageName;
 }
 
 export interface GameStageCreatorConfig {

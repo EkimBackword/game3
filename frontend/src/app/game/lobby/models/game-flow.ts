@@ -369,7 +369,6 @@ export class GameFlow<
 
             if (['OnMove', 'UpdateStage', 'UpdateActivePlayers'].includes(name)) {
                 const shouldEndTurn = this.ShouldEndTurn(state);
-                debugger;
                 if (shouldEndTurn) {
                     events.push({
                         name: 'EndTurn',
@@ -716,12 +715,15 @@ export class GameFlow<
         options: GameFlowEventOptions<GameFlowUpdateTurnOptions>,
     ): GameStateChangeResult<GameType> {
         const {
-            arg,
             next,
             turn: initialTurn,
             automatic,
         } = options;
-        const force = arg?.force ?? false
+        const arg: GameFlowUpdateTurnOptions = {
+            ...options.arg,
+            endTurn: true,
+        };
+        const force = arg?.force ?? false;
 
         if (initialTurn !== state.context.turn) {
             return this.WithSave(state);
@@ -840,9 +842,10 @@ export class GameFlow<
 
         if (!arg && activePlayers != null && playerId in activePlayers) {
             const stage = phaseConfig.turn.stages?.[activePlayers[playerId].stage];
-            if (stage && stage.next) {
+            const nextStage = stage?.next?.(state) ?? null;
+            if (nextStage != null) {
                 arg = {
-                    stage: stage.next,
+                    stage: nextStage,
                 };
             }
         }

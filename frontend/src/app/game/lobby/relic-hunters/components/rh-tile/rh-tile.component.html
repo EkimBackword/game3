@@ -1,0 +1,45 @@
+<div
+    class="cell-tile"
+    [style]="tileStyle"
+></div>
+<!-- top -->
+<div
+    *ngIf="!cell.isOpen"
+    class="cell-research">
+    <div class="m-1" *ngFor="let dot of levelDots">●</div>
+</div>
+<div
+    *ngIf="cell.isOpen && research.value > 0"
+    class="cell-research">
+    <app-rh-benefit
+        [data]="research"
+    ></app-rh-benefit>
+</div>
+<!-- body -->
+<div
+    class="cell-benefit relic"
+    *ngIf="cell.relicType && cell.hasRelict && cell.isOpen">
+    <app-rh-relic [relicType]="cell.relicType"></app-rh-relic>
+</div>
+<div
+    *ngIf="cell.isOpen"
+    class="cell-benefit">
+    <app-rh-benefit
+        *ngFor="let benefit of benefits"
+        [data]="benefit"
+    ></app-rh-benefit>
+</div>
+
+<!-- bottom -->
+<div
+    *ngIf="move.value > 0"
+    class="cell-move-cost">
+    <app-rh-benefit
+        [data]="move"
+    ></app-rh-benefit>
+</div>
+<!-- border -->
+<div
+    [ngClass]="classNames"
+    (click)="click()"
+></div>

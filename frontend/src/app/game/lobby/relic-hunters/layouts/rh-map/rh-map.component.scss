@@ -1,0 +1,47 @@
+:host {
+    display: flex;
+    flex-flow: column nowrap;
+    align-content: flex-start;
+    align-items: flex-start;
+
+    position: relative;
+    z-index: 100;
+    background-color: hsl(204, 55%, 75%);
+    overflow-y: scroll;
+    overflow-x: auto;
+}
+
+.zoom-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+
+    padding: var(--map-padding, 100%);
+
+    width: var(--map-width, 100%);
+    height: var(--map-height, 100%);
+    opacity: var(--map-opacity, 0);
+    transition: opacity 100ms ease-in-out;
+
+    transform: scale(var(--map-zoom, 1), var(--map-zoom, 1));
+    transform-origin: left top;
+}
+
+.layer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.layer-tiles {
+    z-index: 100;
+}
+
+.layer-cells {
+    z-index: 200;
+}
+
+.layer-meeples {
+    z-index: 300;
+}

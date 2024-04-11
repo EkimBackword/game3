@@ -1,0 +1,19 @@
+<div class="zoom-wrapper">
+    <div class="layer">
+        <app-rh-tile
+            class="layer-cells"
+            *ngFor="let cell of cells(); trackBy: trackById"
+            [cell]="cell"
+            [usedCellIds]="usedCellIds()"
+            [activeCoords]="activeCoords()"
+            (onClick)="clickOnCell(cell)"
+        ></app-rh-tile>
+            <!-- (click)="isActivePlayer() ? cell.placeMeeple() : null" -->
+        <app-rh-hero
+            class="layer-meeples"
+            *ngFor="let player of players(); trackBy: trackById"
+            [data]="player"
+        ></app-rh-hero>
+            <!-- (click)="isActivePlayer() ? meeple.takeMeeple() : null" -->
+    </div>
+</div>

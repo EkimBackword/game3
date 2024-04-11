@@ -67,6 +67,10 @@ export class GameMoveCreator<
         return this.config.type;
     }
 
+    get name() {
+        return this.config.name;
+    }
+
     constructor(
         private config: GameMoveCreatorConfig,
     ) {

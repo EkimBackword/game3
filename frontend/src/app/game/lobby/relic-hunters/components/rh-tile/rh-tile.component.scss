@@ -1,0 +1,138 @@
+:host {
+    position: absolute;
+    transition: all 300ms;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &.isDisabled {
+        cursor: not-allowed;
+    }
+
+    &.isActive {
+        cursor: pointer;
+        &:not(.isCurrent):hover {
+            .cell-move-cost {
+                transform: scale(1.25, 1.25);
+                transform-origin: center bottom;
+                z-index: 2000;
+                pointer-events: none;
+                filter: grayscale(0%);
+            }
+        }
+    }
+
+    &.isCurrent {
+        &.isUsed {
+            cursor: not-allowed;
+        }
+
+        &:not(.isUsed):hover {
+            .cell-research {
+                transform: scale(1.25, 1.25);
+                transform-origin: center top;
+                z-index: 2000;
+                pointer-events: none;
+                filter: grayscale(0%);
+            }
+        }
+    }
+
+    &.isUsed {
+        .cell-research {
+            transform: scale(0.75, 0.75);
+            transform-origin: center top;
+            opacity: 0.5;
+        }
+    }
+
+}
+
+.cell-tile {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    z-index: 0;
+}
+
+.cell-research {
+    position: absolute;
+    top: 15px;
+    flex-shrink: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    font-weight: bold;
+    filter: grayscale(40%);
+    transition: all 300ms linear;
+}
+
+.cell-move-cost {
+    position: absolute;
+    bottom: 15px;
+    flex-shrink: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-weight: bold;
+    filter: grayscale(40%);
+    transition: all 300ms linear;
+}
+
+.cell-benefit {
+    flex-shrink: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-weight: bold;
+
+    &.relic {
+        filter: drop-shadow(5px 5px 5px #222);
+    }
+}
+
+.cell-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    z-index: 3;
+    background: url('/assets/relic-hunters/tiles/border-black.png');
+
+    &:hover {
+        background: url('/assets/relic-hunters/tiles/border-black-hover.png');
+    }
+
+    &.disabled {
+        background: url('/assets/relic-hunters/tiles/border-red.png');
+
+        &:hover {
+            background: url('/assets/relic-hunters/tiles/border-red-hover.png');
+        }
+    }
+
+    &.active {
+        background: url('/assets/relic-hunters/tiles/border-green.png');
+
+        &:hover {
+            background: url('/assets/relic-hunters/tiles/border-green-hover.png');
+        }
+    }
+}
+
