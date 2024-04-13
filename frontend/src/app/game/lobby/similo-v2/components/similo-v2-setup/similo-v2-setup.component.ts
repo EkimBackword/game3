@@ -73,7 +73,7 @@ export class SimiloV2SetupComponent {
 
         this.helpDecks = [
             {
-                name: 'Соответствует основной',
+                name: 'Соответствует колоде персонажей',
                 value: null,
             },
             ...this.mainDecks,
@@ -127,15 +127,16 @@ export class SimiloV2SetupComponent {
         this.lobbyService.changeSetupData(result)
     }
 
-    helpDlcChanged(helpDlc: SimiloDlcEnum) {
+    helpDlcChanged(value: SimiloDlcEnum) {
         const setupData = this.client.game.setupData();
         if (setupData == null) {
             return;
         }
 
+        const dlc = SimiloDlcDeckList.find(p => p.dlc_name === value);
         const result: SimiloV2SetupData = {
             ...setupData,
-            helpDlc,
+            helpDlc: dlc?.dlc_name ?? null,
         };
         this.lobbyService.changeSetupData(result)
     }

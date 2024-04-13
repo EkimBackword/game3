@@ -30,6 +30,12 @@
     &.card_container__board {
         &.card_container__searchable {
             outline: 5px solid var(--bs-info);
+
+            .flip_card_face__front {
+                filter:
+                    drop-shadow(10px 10px 10px var(--bs-info))
+                    drop-shadow(-10px -10px 10px var(--bs-info));
+            }
         }
     }
 }
