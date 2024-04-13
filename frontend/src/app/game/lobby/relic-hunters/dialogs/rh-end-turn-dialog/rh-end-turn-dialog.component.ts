@@ -38,6 +38,7 @@ export class RhEndTurnDialogComponent implements OnInit {
     marketCards: RelicHuntersCardSelectable[] = [];
     selectedCards: RelicHuntersCardInfo[] = [];
 
+    lowCost = 0;
     coins = 0;
     allowedCoins: RhBenefitComponent['data'] = {
         key: 'coins',
@@ -77,6 +78,7 @@ export class RhEndTurnDialogComponent implements OnInit {
             ...marketCards,
             ...reservCards,
         ];
+        this.lowCost = this.getLowCost();
         this.allowedCoins.value = this.data.player.benefit.coins ?? 0;
     }
 
@@ -99,6 +101,7 @@ export class RhEndTurnDialogComponent implements OnInit {
     selectCard(item: RelicHuntersCardSelectable) {
         item.selected = !item.selected;
         this.selectedCards = this.marketCards.filter(p => p.selected).map(p => p.card);
+        this.lowCost = this.getLowCost();
         this.coins = lodash.sumBy(this.selectedCards, (p) => p.price ?? 0);
         const allowedCoins = this.data.player.benefit.coins ?? 0;
         this.allowedCoins = {
@@ -106,6 +109,16 @@ export class RhEndTurnDialogComponent implements OnInit {
             value: allowedCoins - this.coins,
         };
         this.changeDetectorRef.markForCheck();
+    }
+
+    getLowCost() {
+        const priceList = this.marketCards
+            .filter(p => !p.selected && p.card.price != null && p.card.price > 0)
+            .map(p => p.card.price)
+            .filter((p): p is number => p != null && p > 0);
+        return priceList.length > 0
+            ? Math.min(...priceList)
+            : 0;
     }
 
     // Список карт в руке у пользователя и решение остаться

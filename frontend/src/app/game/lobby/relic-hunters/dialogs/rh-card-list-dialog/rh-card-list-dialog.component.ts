@@ -54,8 +54,7 @@ export class RhCardListDialogComponent implements OnInit {
             : null;
         const cards = this.data.cards.filter(p => {
             return p.type != RelicHuntersCardTypeEnum.assistant
-                && benefitType != null
-                && p.benefit[benefitType] == null;
+                && (benefitType == null || p.benefit[benefitType] == null);
         });
         this.cards = cards.map(card => {
             const result: RelicHuntersCardSelectable = {

@@ -777,9 +777,9 @@ export class RelicHuntersGameBuilder
 
     private trashCards(player: RelicHuntersPlayer, cards: RelicHuntersCardInfo[]) {
         const cardIds = cards.map(p => p.id);
-        player.hand = player.hand.filter(p => cardIds.includes(p.id));
-        player.board = player.board.filter(p => cardIds.includes(p.id));
-        player.discard = player.discard.filter(p => cardIds.includes(p.id));
+        player.hand = player.hand.filter(p => !cardIds.includes(p.id));
+        player.board = player.board.filter(p => !cardIds.includes(p.id));
+        player.discard = player.discard.filter(p => !cardIds.includes(p.id));
     }
 
     private async openRestCardsModal(player: RelicHuntersPlayer, count: number) {
@@ -802,8 +802,6 @@ export class RelicHuntersGameBuilder
 
     private restCards(player: RelicHuntersPlayer, cards: RelicHuntersCardInfo[]) {
         cards.forEach((card) => {
-            player.hand = player.hand.filter(p => p.id !== card.id);
-            player.board = player.board.filter(p => p.id !== card.id);
             player.discard = player.discard.filter(p => p.id !== card.id);
             player.deck.unshift(card);
         })

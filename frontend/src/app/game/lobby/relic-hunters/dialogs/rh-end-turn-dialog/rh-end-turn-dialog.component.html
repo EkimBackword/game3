@@ -1,9 +1,15 @@
-<h1 mat-dialog-title>
-    Конец хода
-</h1>
 <div mat-dialog-content>
     <ng-container *ngIf="data.player.hand.length > 0">
-        <label>Карты в руке</label>
+        <div class="sticky-top d-flex flex-row justify-content-between align-content-center align-items-center">
+            <h2>Карты в руке</h2>
+            <button
+                *ngIf="!data.force"
+                class="btn btn-primary m-1"
+                type="submit"
+                (click)="close(false)">
+                Остаться на месте
+            </button>
+        </div>
         <div class="d-flex flex-row justify-content-start align-items-center flex-wrap">
             <app-rh-card
                 class="m-1"
@@ -13,7 +19,57 @@
             ></app-rh-card>
         </div>
     </ng-container>
-    <label>Карты на рынке</label>
+    <div class="sticky-top sticky-top--shop d-flex flex-row justify-content-between align-content-center align-items-center">
+        <h2>Карты на рынке</h2>
+        <div class="d-flex flex-row justify-content-end align-content-center align-items-center">
+            <app-rh-benefit
+                [data]="allowedCoins"
+            ></app-rh-benefit>
+            <button
+                *ngIf="lowCost === 0 || allowedCoins.value < lowCost; else hasCardTemplate"
+                class="btn btn-primary m-1"
+                type="submit"
+                (click)="close(true)"
+                [disabled]="allowedCoins.value < 0">
+                Вернутся в лагерь {{ selectedCards.length > 0 ? '(купить выбранные карты)' : '(без покупки карт)'}}
+            </button>
+            <ng-template #hasCardTemplate>
+                <button
+                    class="btn btn-primary m-1"
+                    #hasCardPopover="ngbPopover"
+                    [ngbPopover]="hasCardPopoverContent"
+                    [popoverTitle]="hasCardPopoverTitle"
+                    container="body"
+                    popoverClass="game-popover">
+                    Вернутся в лагерь {{ selectedCards.length > 0 ? '(купить выбранные карты)' : '(без покупки карт)'}}
+                </button>
+                <ng-template #hasCardPopoverTitle>
+                    Вам хватает денег на покупку карт. Вы купили всё что хотели?
+                </ng-template>
+                <ng-template #hasCardPopoverContent>
+                    <div class="d-flex flex-column">
+                        <div
+                            class="btn-group"
+                            role="group"
+                            aria-label="Popover actions">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-primary"
+                                (click)="close(true)">
+                                Да
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-danger"
+                                (click)="hasCardPopover.close()">
+                                Нет
+                            </button>
+                        </div>
+                    </div>
+                </ng-template>
+            </ng-template>
+        </div>
+    </div>
     <div class="d-flex flex-row justify-content-start align-items-center flex-wrap">
         <app-rh-card
             class="m-1 selectable"
@@ -25,22 +81,4 @@
         ></app-rh-card>
     </div>
 </div>
-<div mat-dialog-actions class="d-flex flex-row justify-content-end">
-    <app-rh-benefit
-        [data]="allowedCoins"
-    ></app-rh-benefit>
-    <button
-        class="btn btn-primary m-1"
-        type="submit"
-        (click)="close(true)"
-        [disabled]="allowedCoins.value < 0">
-        Купить карты и вернутся в лагерь
-    </button>
-    <button
-        *ngIf="!data.force && data.player.hand.length > 0"
-        class="btn btn-primary m-1"
-        type="submit"
-        (click)="close(false)">
-        Остаться на месте
-    </button>
-</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end"></div>

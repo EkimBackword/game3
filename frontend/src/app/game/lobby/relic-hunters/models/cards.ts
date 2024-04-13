@@ -41,7 +41,7 @@ export const RelicHuntersCardSettings = {
     width: 178,
     height: 280,
     padding: 20,
-    cardStep: 120,
+    cardStep: 100,
     backUrl: '/assets/relic-hunters/cards/BACK.JPG',
     backgroundSize: '100% 100%',
 }

@@ -64,6 +64,7 @@ export class RhPlayersComponent implements AfterViewInit {
     @HostBinding('style.--zoom-wrapper-opacity') opacity = 0;
     @HostBinding('style.--zoom-wrapper-zoom') zoom = 0;
     @HostBinding('style.--zoom-wrapper-width.px') width = RelicHuntersCardSettings.padding
+        + RelicHuntersCardSettings.padding * 2
         + (RelicHuntersCardSettings.width + RelicHuntersCardSettings.padding) * 3;
 
     cardsWrapInfo = {
@@ -562,7 +563,7 @@ export class RhPlayersComponent implements AfterViewInit {
 
     private onResize() {
         const clientWidth = this.elementRef.nativeElement.clientWidth;
-        const zoomByWidth = clientWidth / (this.width + RelicHuntersCardSettings.padding * 2);
+        const zoomByWidth = clientWidth / (this.width);
         this.zoom = zoomByWidth;
         this.opacity = 1;
         this.changeDetectorRef.markForCheck();
