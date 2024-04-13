@@ -337,7 +337,10 @@ export class RelicHuntersGameBuilder
                             const game = lodash.cloneDeep(options.game);
                             const player = game.playerMap[options.context.currentPlayerId];
                             if (player.board.length > 0) {
-                                player.discard = player.board;
+                                player.discard = [
+                                    ...player.discard,
+                                    ...player.board,
+                                ];
                                 player.board = [];
                             }
                             return this.updateMarket(game);
@@ -657,6 +660,7 @@ export class RelicHuntersGameBuilder
                                                     ].filter((p): p is RelicHuntersCardInfo => p != null)
                                                     : [];
                                                 player.deck = simpleShuffle([
+                                                    ...player.deck,
                                                     ...player.hand,
                                                     ...player.board,
                                                     ...player.discard,
@@ -776,10 +780,12 @@ export class RelicHuntersGameBuilder
     }
 
     private trashCards(player: RelicHuntersPlayer, cards: RelicHuntersCardInfo[]) {
-        const cardIds = cards.map(p => p.id);
-        player.hand = player.hand.filter(p => !cardIds.includes(p.id));
-        player.board = player.board.filter(p => !cardIds.includes(p.id));
-        player.discard = player.discard.filter(p => !cardIds.includes(p.id));
+        cards.forEach((card) => {
+            player.hand = player.hand.filter(p => p.id !== card.id);
+            player.board = player.board.filter(p => p.id !== card.id);
+            player.discard = player.discard.filter(p => p.id !== card.id);
+            player.trash.push(card);
+        });
     }
 
     private async openRestCardsModal(player: RelicHuntersPlayer, count: number) {
