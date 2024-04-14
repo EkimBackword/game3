@@ -23,6 +23,7 @@ export interface RhCardListDialogWithSelect {
     submitNameWithSelected: string;
     submitNameWithoutSelected: string;
     benefitType: keyof RelicHuntersBenefit | null;
+    showNumber?: boolean
     limit: number | null;
 }
 
@@ -53,12 +54,14 @@ export class RhCardListDialogComponent implements OnInit {
             ? this.data.benefitType
             : null;
         const cards = this.data.cards.filter(p => {
-            return p.type != RelicHuntersCardTypeEnum.assistant
-                && (benefitType == null || p.benefit[benefitType] == null);
+            return benefitType != null
+                ? p.type != RelicHuntersCardTypeEnum.assistant && p.benefit[benefitType] == null
+                : true;
         });
         this.cards = cards.map(card => {
             const result: RelicHuntersCardSelectable = {
                 selected: false,
+                selectedIndex: -1,
                 card,
             };
             return result;
@@ -73,8 +76,18 @@ export class RhCardListDialogComponent implements OnInit {
         if (!this.data.canSelect) {
             return;
         }
-        item.selected = !item.selected;
-        this.selectedCards = this.cards.filter(p => p.selected).map(p => p.card);
+
+        if (!item.selected) {
+            this.selectedCards.push(item.card);
+        } else {
+            this.selectedCards = this.selectedCards.filter(p => p.id != item.card.id);
+        }
+
+        this.cards = this.cards.map((p) => {
+            p.selectedIndex = this.selectedCards.findIndex(card => p.card.id === card.id);
+            p.selected = p.selectedIndex != -1;
+            return p;
+        });
     }
 
 }

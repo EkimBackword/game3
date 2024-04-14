@@ -62,6 +62,7 @@ export class RhEndTurnDialogComponent implements OnInit {
             return cards.map((card) => {
                 const result: RelicHuntersCardSelectable = {
                     selected: false,
+                    selectedIndex: 0,
                     card,
                 };
                 return result;
@@ -70,6 +71,7 @@ export class RhEndTurnDialogComponent implements OnInit {
         const reservCards = this.data.game.reservCards.map(card => {
             const result: RelicHuntersCardSelectable = {
                 selected: false,
+                selectedIndex: 0,
                 card,
             };
             return result;
@@ -99,8 +101,18 @@ export class RhEndTurnDialogComponent implements OnInit {
     }
 
     selectCard(item: RelicHuntersCardSelectable) {
-        item.selected = !item.selected;
-        this.selectedCards = this.marketCards.filter(p => p.selected).map(p => p.card);
+        if (!item.selected) {
+            this.selectedCards.push(item.card);
+        } else {
+            this.selectedCards = this.selectedCards.filter(p => p.id != item.card.id);
+        }
+
+        this.marketCards = this.marketCards.map((p) => {
+            p.selectedIndex = this.selectedCards.findIndex(card => p.card.id === card.id);
+            p.selected = p.selectedIndex != -1;
+            return p;
+        });
+
         this.lowCost = this.getLowCost();
         this.coins = lodash.sumBy(this.selectedCards, (p) => p.price ?? 0);
         const allowedCoins = this.data.player.benefit.coins ?? 0;

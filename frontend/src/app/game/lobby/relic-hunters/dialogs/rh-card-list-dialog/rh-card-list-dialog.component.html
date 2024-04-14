@@ -1,20 +1,26 @@
 <h1 mat-dialog-title>
     {{data.title}}
-    <span *ngIf="this.data.canSelect && data.limit != null">
+    <span *ngIf="data.canSelect && data.limit != null">
         {{selectedCards.length}} / {{data.limit}}
     </span>
 </h1>
 <div mat-dialog-content>
     <div class="d-flex flex-row justify-content-start align-items-center flex-wrap">
-        <app-rh-card
-            class="m-1 selectable"
-            [class.selected]="item.selected"
-            [class.disabled]="item.disabled"
-            *ngFor="let item of cards"
-            [card]="item.card"
-            [isOpen]="true"
-            (click)="selectCard(item)"
-        ></app-rh-card>
+        <div class="position-relative" *ngFor="let item of cards">
+            <app-rh-card
+                class="m-1 selectable"
+                [class.selected]="item.selected"
+                [class.disabled]="item.disabled"
+                [card]="item.card"
+                [isOpen]="true"
+                (click)="selectCard(item)"
+            ></app-rh-card>
+            <div
+                class="card-index"
+                *ngIf="data.canSelect && item.selected && data.showNumber">
+                {{item.selectedIndex + 1}}
+            </div>
+        </div>
     </div>
 </div>
 <div mat-dialog-actions class="d-flex flex-row justify-content-end">

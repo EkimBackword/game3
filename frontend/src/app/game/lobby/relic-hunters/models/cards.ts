@@ -32,6 +32,7 @@ export interface RelicHuntersCardInfo extends RelicHuntersCardShortInfo {
 
 export interface RelicHuntersCardSelectable {
     selected: boolean;
+    selectedIndex: number;
     disabled?: boolean;
     card: RelicHuntersCardInfo;
 }

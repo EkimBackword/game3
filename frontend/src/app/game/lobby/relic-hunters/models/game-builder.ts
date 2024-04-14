@@ -796,6 +796,7 @@ export class RelicHuntersGameBuilder
             submitNameWithSelected: 'Восстановить',
             submitNameWithoutSelected: 'Продолжить без восстановления',
             benefitType: 'rest',
+            showNumber: true,
             limit: count,
         });
         if (cards == null) {
