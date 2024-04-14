@@ -86,7 +86,9 @@ export class RhTileComponent implements OnChanges {
             : null;
         this.isActive = activeCoordInfo != null;
         this.isCurrent = activeCoordInfo?.isCurrent ?? false;
-        this.isUsed = this.usedCellIds.includes(this.cell.id);
+        this.isUsed = this.cell.relicType == null || this.cell.hasRelict
+            ? this.usedCellIds.includes(this.cell.id)
+            : true;
         this.cellStyle = this.getCellStyle();
         this.tileStyle = this.getTileStyle();
         this.benefits = recordKeys(this.cell.benefit).map((key) => {

@@ -18,7 +18,8 @@
 <!-- body -->
 <div
     class="cell-benefit relic"
-    *ngIf="cell.relicType && cell.hasRelict && cell.isOpen">
+    [class.has-relic]="cell.hasRelict"
+    *ngIf="cell.relicType && cell.isOpen">
     <app-rh-relic [relicType]="cell.relicType"></app-rh-relic>
 </div>
 <div

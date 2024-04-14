@@ -101,7 +101,26 @@
     font-weight: bold;
 
     &.relic {
-        filter: drop-shadow(5px 5px 5px #222);
+        &:not(.has-relic) {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            filter: brightness(50%);
+
+            &::before {
+                position: absolute;
+                z-index: 1000;
+                content: '⊗';
+                font-size: 200px;
+                margin-top: -20px;
+                color: var(--bs-danger);
+            }
+        }
+
+        &.has-relic {
+            filter: drop-shadow(5px 5px 5px var(--bs-dark));
+        }
     }
 }
 
