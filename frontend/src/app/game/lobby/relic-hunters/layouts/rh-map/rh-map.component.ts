@@ -23,12 +23,15 @@ import {
     startWith,
 } from 'rxjs';
 import { SessionQuery } from 'src/app/session/session.query';
+import { recordKeys } from 'src/app/shared/models/shared.types';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 
 import { LobbyClient } from '../../../models/lobby-client';
 import { LobbyService } from '../../../services/lobby.service';
+import { RhBenefitComponent } from '../../components/rh-benefit/rh-benefit.component';
 import { RhHeroComponent } from '../../components/rh-hero/rh-hero.component';
 import { RhWinnerDialogComponent } from '../../dialogs/rh-winner-dialog/rh-winner-dialog.component';
 import {
@@ -39,7 +42,10 @@ import { RelicHuntersGameBuilder } from '../../models/game-builder';
 import { RelicHuntersSetupData } from '../../models/game-setup-data';
 import { RelicHuntersGameType } from '../../models/game-type';
 import { RelicHuntersMapTaxonomy } from '../../models/map';
-import { RelicHuntersTileSettings } from '../../models/tile';
+import {
+    RelicHuntersTileSettings,
+    RelicHuntersTileTypeTaxonomy,
+} from '../../models/tile';
 
 var tile_position_differences = [
     // odd rows
@@ -132,6 +138,34 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
             ...neighbors,
         ]
     });
+
+    icons = {
+        help: faQuestionCircle,
+    };
+
+    RelicHuntersTileTypeTaxonomy = recordKeys(RelicHuntersTileTypeTaxonomy)
+        .map((type) => {
+            const size = 60;
+            const value = RelicHuntersTileTypeTaxonomy[type];
+            const benefits = value.benefits.map(key => {
+                const benefit: RhBenefitComponent['data'] = {
+                    key,
+                    value: 0,
+                    size,
+                    inlineView: false,
+                    hideValue: true,
+                };
+                return benefit;
+            });
+            const result = {
+                type,
+                benefits,
+                width: size,
+                height: size,
+            };
+            return result;
+        })
+        .filter(p => p.benefits.length > 0);
 
     private winnerDialog: MatDialogRef<RhWinnerDialogComponent, any> | null = null;
 

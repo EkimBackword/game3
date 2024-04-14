@@ -16,6 +16,7 @@ import { RhEndTurnDialogComponent } from './dialogs/rh-end-turn-dialog/rh-end-tu
 import { RhCardListDialogComponent } from './dialogs/rh-card-list-dialog/rh-card-list-dialog.component';
 import { RhRelicComponent } from './components/rh-relic/rh-relic.component';
 import { RhWinnerDialogComponent } from './dialogs/rh-winner-dialog/rh-winner-dialog.component';
+import { RhTileComponent } from './components/rh-tile/rh-tile.component';
 
 @NgModule({
     declarations: [
@@ -31,6 +32,7 @@ import { RhWinnerDialogComponent } from './dialogs/rh-winner-dialog/rh-winner-di
         RhCardListDialogComponent,
         RhRelicComponent,
         RhWinnerDialogComponent,
+        RhTileComponent,
     ],
     imports: [
         SharedModule,

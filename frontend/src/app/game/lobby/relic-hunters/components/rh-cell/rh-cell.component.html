@@ -1,7 +1,10 @@
 <div
-    class="cell-tile"
-    [style]="tileStyle"
-></div>
+    class="cell-tile">
+    <app-rh-tile
+        [tileType]="cell.tileType"
+        [isOpen]="cell.isOpen"
+    ></app-rh-tile>
+</div>
 <!-- top -->
 <div
     *ngIf="!cell.isOpen"

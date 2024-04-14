@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 
 import { recordKeys } from '../../../../../shared/models/shared.types';
-
 import { RelicHuntersBenefitSettings } from '../../models/benefit';
 import {
     RelicHuntersActiveCellInfo,
@@ -19,7 +18,6 @@ import {
 import {
     RelicHuntersTileSettings,
     RelicHuntersTileTypes,
-    RelicHuntersTileTypeTaxonomy,
     RelicHuntersTileUtils,
 } from '../../models/tile';
 import { RhBenefitComponent } from '../rh-benefit/rh-benefit.component';
@@ -45,7 +43,6 @@ export class RhCellComponent implements OnChanges {
     @HostBinding('class.isActive') isActive = false;
     @HostBinding('class.isCurrent') isCurrent = false;
     @HostBinding('class.isUsed') isUsed = false;
-    tileStyle: Partial<CSSStyleDeclaration> = {};
     benefits: RhBenefitComponent['data'][] = [];
     research: RhBenefitComponent['data'] = {
         key: 'research',
@@ -90,7 +87,6 @@ export class RhCellComponent implements OnChanges {
             ? this.usedCellIds.includes(this.cell.id)
             : true;
         this.cellStyle = this.getCellStyle();
-        this.tileStyle = this.getTileStyle();
         this.benefits = recordKeys(this.cell.benefit).map((key) => {
             if (key == 'tileType') {
                 return null;
@@ -132,23 +128,6 @@ export class RhCellComponent implements OnChanges {
             opacity: this.cell.isVisible ? '1' : '0',
             left: `${left}px`,
             top: `${top}px`,
-        };
-        return result;
-    }
-
-    private getTileStyle() {
-        const tileType = RelicHuntersTileTypeTaxonomy[this.cell.tileType];
-        const positionX = tileType.column * this.width;
-        const rowIndex = this.cell.isOpen
-            ? RelicHuntersTileSettings.openRow
-            : RelicHuntersTileSettings.closeRow
-        const positionY = rowIndex * this.height;
-        const result: Partial<CSSStyleDeclaration> = {
-            width: `${this.width}px`,
-            height: `${this.height}px`,
-            backgroundImage: `url(${RelicHuntersTileSettings.url})`,
-            backgroundPosition: `-${positionX}px -${positionY}px`,
-            backgroundSize: RelicHuntersTileSettings.backgroundSize,
         };
         return result;
     }

@@ -32,6 +32,7 @@ export class RhBenefitComponent implements OnChanges {
         value: number;
         size: number;
         inlineView: boolean;
+        hideValue?: boolean
     };
 
     @HostBinding('style.--benefit-size.px') size = 0;
