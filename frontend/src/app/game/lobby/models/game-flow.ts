@@ -1,6 +1,9 @@
 import { getCurrentTime } from 'src/app/shared/models/game.types';
 
-import { GameActionsEvent } from '@shared/game/game-actions';
+import {
+    GameActionsEvent,
+    GameActionsMove,
+} from '@shared/game/game-actions';
 import { GameConfig } from '@shared/game/game-config';
 import {
     GamePhaseName,
@@ -189,9 +192,22 @@ export class GameFlow<
             return this.WithoutSave();
         }
 
+        const action = GameActionsMove(payload);
+        const logEntry: GameLogEntry = this.GetLogEntry({
+            action,
+            stateId: state.stateId,
+            turn: state.context.turn,
+            phase: state.context.phase,
+            automatic: false,
+        });
+
         state = {
             ...state,
             game: moveResult.game,
+            log: [
+                ...(state.log || []),
+                logEntry,
+            ],
         };
 
         const shouldCount = move == null || move.noLimit !== true;
