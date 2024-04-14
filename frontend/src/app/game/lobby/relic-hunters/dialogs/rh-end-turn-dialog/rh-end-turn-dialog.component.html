@@ -19,7 +19,9 @@
             ></app-rh-card>
         </div>
     </ng-container>
-    <div class="sticky-top sticky-top--shop d-flex flex-row justify-content-between align-content-center align-items-center">
+    <div
+        class="sticky-top  d-flex flex-row justify-content-between align-content-center align-items-center"
+        [class.sticky-top--shop]="data.player.hand.length > 0">
         <h2>Карты на рынке</h2>
         <div class="d-flex flex-row justify-content-end align-content-center align-items-center">
             <app-rh-benefit
