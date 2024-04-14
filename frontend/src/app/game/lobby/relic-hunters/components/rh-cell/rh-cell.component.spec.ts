@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RhTileComponent } from './rh-tile.component';
+import { RhCellComponent } from './rh-cell.component';
 
-describe('RhTileComponent', () => {
-  let component: RhTileComponent;
-  let fixture: ComponentFixture<RhTileComponent>;
+describe('RhCellComponent', () => {
+  let component: RhCellComponent;
+  let fixture: ComponentFixture<RhCellComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [RhTileComponent]
+      declarations: [RhCellComponent]
     });
-    fixture = TestBed.createComponent(RhTileComponent);
+    fixture = TestBed.createComponent(RhCellComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

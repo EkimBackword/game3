@@ -9,7 +9,7 @@ import {
     SimpleChanges,
 } from '@angular/core';
 
-import { recordKeys } from 'src/app/shared/models/shared.types';
+import { recordKeys } from '../../../../../shared/models/shared.types';
 
 import { RelicHuntersBenefitSettings } from '../../models/benefit';
 import {
@@ -25,12 +25,12 @@ import {
 import { RhBenefitComponent } from '../rh-benefit/rh-benefit.component';
 
 @Component({
-    selector: 'app-rh-tile',
-    templateUrl: './rh-tile.component.html',
-    styleUrls: ['./rh-tile.component.scss'],
+    selector: 'app-rh-cell',
+    templateUrl: './rh-cell.component.html',
+    styleUrls: ['./rh-cell.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RhTileComponent implements OnChanges {
+export class RhCellComponent implements OnChanges {
 
     @Input({ required: true }) cell!: RelicHuntersCellInfo;
     @Input({ required: true }) activeCoords: RelicHuntersActiveCellInfo[] = [];

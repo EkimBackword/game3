@@ -5,7 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 import { RhCardComponent } from './components/rh-card/rh-card.component';
 import { RhHeroComponent } from './components/rh-hero/rh-hero.component';
-import { RhTileComponent } from './components/rh-tile/rh-tile.component';
+import { RhCellComponent } from './components/rh-cell/rh-cell.component';
 import { RhPageComponent } from './layouts/rh-page/rh-page.component';
 import { RhMapComponent } from './layouts/rh-map/rh-map.component';
 import { RhPlayersComponent } from './layouts/rh-players/rh-players.component';
@@ -21,7 +21,7 @@ import { RhWinnerDialogComponent } from './dialogs/rh-winner-dialog/rh-winner-di
     declarations: [
         RhPageComponent,
         RhCardComponent,
-        RhTileComponent,
+        RhCellComponent,
         RhHeroComponent,
         RhSettingsComponent,
         RhMapComponent,
