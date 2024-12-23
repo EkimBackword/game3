@@ -47,6 +47,7 @@ export interface TrashCardsComponentResult {
     templateUrl: './trash-cards.component.html',
     styleUrls: ['./trash-cards.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class TrashCardsComponent implements OnInit {
 

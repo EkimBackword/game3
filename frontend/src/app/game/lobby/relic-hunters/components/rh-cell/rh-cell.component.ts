@@ -26,7 +26,8 @@ import { RhBenefitComponent } from '../rh-benefit/rh-benefit.component';
     selector: 'app-rh-cell',
     templateUrl: './rh-cell.component.html',
     styleUrls: ['./rh-cell.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhCellComponent implements OnChanges {
 

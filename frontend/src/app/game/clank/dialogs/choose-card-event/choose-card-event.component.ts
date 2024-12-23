@@ -30,6 +30,7 @@ interface ChooseCardEventItem extends ChooseCardEventComponentItem {
     templateUrl: './choose-card-event.component.html',
     styleUrls: ['./choose-card-event.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ChooseCardEventComponent implements OnInit {
 

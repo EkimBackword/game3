@@ -27,6 +27,7 @@ export interface UseSwordsOrHealthData {
     templateUrl: './use-swords-or-health.component.html',
     styleUrls: ['./use-swords-or-health.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class UseSwordsOrHealthComponent implements OnInit, OnDestroy {
 

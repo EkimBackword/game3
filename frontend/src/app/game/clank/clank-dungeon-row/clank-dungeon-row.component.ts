@@ -48,19 +48,14 @@ import { GameInfoService } from '../services/game-info.service';
     styleUrls: ['./clank-dungeon-row.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
-        trigger(
-            'inOutAnimation',
-            [
-                transition(
-                    ':leave',
-                    [
-                        style({ marginTop: 0, opacity: 1 }),
-                        animate('300ms ease-in', style({ marginTop: -100, opacity: 0 })),
-                    ],
-                ),
-            ],
-        ),
+        trigger('inOutAnimation', [
+            transition(':leave', [
+                style({ marginTop: 0, opacity: 1 }),
+                animate('300ms ease-in', style({ marginTop: -100, opacity: 0 })),
+            ]),
+        ]),
     ],
+    standalone: false
 })
 export class ClankDungeonRowComponent implements OnInit {
 

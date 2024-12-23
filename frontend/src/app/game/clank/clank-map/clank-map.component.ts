@@ -40,6 +40,7 @@ import { GameInfoService } from '../services/game-info.service';
     templateUrl: './clank-map.component.html',
     styleUrls: ['./clank-map.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
 

@@ -32,6 +32,7 @@ import {
     templateUrl: './new-game.component.html',
     styleUrls: ['./new-game.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class NewGameComponent implements OnInit, OnDestroy {
 

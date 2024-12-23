@@ -39,6 +39,7 @@ interface FindGameTableItem {
 @Component({
     templateUrl: './find-game.component.html',
     styleUrls: ['./find-game.component.scss'],
+    standalone: false
 })
 export class FindGameComponent implements OnInit, AfterViewInit, OnDestroy {
 

@@ -14,6 +14,7 @@ import { LobbyService } from '../services/lobby.service';
     templateUrl: './lobby-settings.component.html',
     styleUrls: ['./lobby-settings.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class LobbySettingsComponent {
 

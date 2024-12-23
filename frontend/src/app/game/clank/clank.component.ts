@@ -45,6 +45,7 @@ import { GameInfoStore } from './services/game-info.store';
         ClankHelpService,
         CardsService,
     ],
+    standalone: false
 })
 export class ClankComponent implements OnInit {
 

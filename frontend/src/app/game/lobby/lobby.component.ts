@@ -19,6 +19,7 @@ import { LobbyService } from './services/lobby.service';
     templateUrl: './lobby.component.html',
     styleUrls: ['./lobby.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class LobbyComponent implements OnDestroy {
 

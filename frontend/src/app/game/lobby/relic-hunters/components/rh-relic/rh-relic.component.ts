@@ -17,6 +17,7 @@ import {
     templateUrl: './rh-relic.component.html',
     styleUrls: ['./rh-relic.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhRelicComponent implements OnChanges {
 

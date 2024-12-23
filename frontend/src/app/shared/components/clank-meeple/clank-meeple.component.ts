@@ -19,6 +19,7 @@ import {
     templateUrl: './clank-meeple.component.html',
     styleUrls: ['./clank-meeple.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ClankMeepleComponent implements OnInit, OnChanges {
 

@@ -13,7 +13,8 @@ import { EscapeFromAtlantisCellDisplayInfo } from './escape-from-atlantis-cell';
     selector: 'app-escape-from-atlantis-cell',
     templateUrl: './escape-from-atlantis-cell.component.html',
     styleUrls: ['./escape-from-atlantis-cell.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class EscapeFromAtlantisCellComponent implements OnChanges {
 

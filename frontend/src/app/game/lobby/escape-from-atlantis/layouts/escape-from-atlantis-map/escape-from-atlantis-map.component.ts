@@ -34,7 +34,8 @@ import { EscapeFromAtlantisSetupData } from '../../models/setup-data';
     selector: 'app-escape-from-atlantis-map',
     templateUrl: './escape-from-atlantis-map.component.html',
     styleUrls: ['./escape-from-atlantis-map.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class EscapeFromAtlantisMapComponent implements AfterViewInit {
 

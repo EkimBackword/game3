@@ -54,7 +54,8 @@ const handHeaderTop = RelicHuntersCardSettings.header + RelicHuntersCardSettings
     selector: 'app-rh-players',
     templateUrl: './rh-players.component.html',
     styleUrls: ['./rh-players.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhPlayersComponent implements AfterViewInit {
 

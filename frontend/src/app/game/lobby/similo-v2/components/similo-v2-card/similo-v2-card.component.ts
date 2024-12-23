@@ -19,7 +19,8 @@ import { SimiloV2Settings } from '../../models/similo-settings';
     selector: 'app-similo-v2-card',
     templateUrl: './similo-v2-card.component.html',
     styleUrls: ['./similo-v2-card.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloV2CardComponent implements OnChanges {
 

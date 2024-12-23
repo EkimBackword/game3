@@ -22,6 +22,7 @@ import { RelicHuntersTileUtils } from '../../models/tile';
     templateUrl: './rh-hero.component.html',
     styleUrls: ['./rh-hero.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhHeroComponent implements OnChanges {
 

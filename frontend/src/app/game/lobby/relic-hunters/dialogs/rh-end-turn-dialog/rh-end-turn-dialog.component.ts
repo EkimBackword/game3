@@ -32,6 +32,7 @@ export interface RhEndTurnDialogResult {
     templateUrl: './rh-end-turn-dialog.component.html',
     styleUrls: ['./rh-end-turn-dialog.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhEndTurnDialogComponent implements OnInit {
 

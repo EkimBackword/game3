@@ -9,6 +9,7 @@ import {
 
 @Directive({
     selector: '[appScalable]',
+    standalone: false
 })
 export class ScalableDirective implements OnInit, OnDestroy {
 
@@ -34,6 +35,7 @@ export class ScalableDirective implements OnInit, OnDestroy {
 
 @Directive({
     selector: '[appScalableContainer]',
+    standalone: false
 })
 export class ScalableContainerDirective implements OnInit, OnDestroy {
 

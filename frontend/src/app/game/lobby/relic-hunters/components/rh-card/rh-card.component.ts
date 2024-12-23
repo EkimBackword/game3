@@ -22,6 +22,7 @@ import {
     templateUrl: './rh-card.component.html',
     styleUrls: ['./rh-card.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhCardComponent implements OnChanges {
 

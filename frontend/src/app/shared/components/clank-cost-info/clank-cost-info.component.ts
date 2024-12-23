@@ -22,6 +22,7 @@ import { ClankCostInfoDirection } from './clank-cost-info.types';
     selector: 'app-clank-cost-info',
     templateUrl: './clank-cost-info.component.html',
     styleUrls: ['./clank-cost-info.component.scss'],
+    standalone: false
 })
 export class ClankCostInfoComponent implements OnInit {
 

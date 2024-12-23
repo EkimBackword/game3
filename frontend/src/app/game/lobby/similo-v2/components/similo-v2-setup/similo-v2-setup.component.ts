@@ -22,7 +22,8 @@ import {
     selector: 'app-similo-v2-setup',
     templateUrl: './similo-v2-setup.component.html',
     styleUrls: ['./similo-v2-setup.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloV2SetupComponent {
 

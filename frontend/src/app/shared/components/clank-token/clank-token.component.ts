@@ -22,6 +22,7 @@ import { ClankElementTypeMap } from '../../models/clank-element-types';
     templateUrl: './clank-token.component.html',
     styleUrls: ['./clank-token.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ClankTokenComponent implements OnInit, OnChanges {
 

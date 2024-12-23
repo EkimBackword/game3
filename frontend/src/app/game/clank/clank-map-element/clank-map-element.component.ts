@@ -51,19 +51,14 @@ import { GameInfoService } from '../services/game-info.service';
     templateUrl: './clank-map-element.component.html',
     styleUrls: ['./clank-map-element.component.scss'],
     animations: [
-        trigger(
-            'inOutAnimation',
-            [
-                transition(
-                    ':leave',
-                    [
-                        style({ marginLeft: 0, opacity: 1 }),
-                        animate('1s ease-in', style({ marginLeft: 1000, opacity: 0 })),
-                    ],
-                ),
-            ],
-        ),
+        trigger('inOutAnimation', [
+            transition(':leave', [
+                style({ marginLeft: 0, opacity: 1 }),
+                animate('1s ease-in', style({ marginLeft: 1000, opacity: 0 })),
+            ]),
+        ]),
     ],
+    standalone: false
 })
 export class ClankMapElementComponent implements OnInit, OnDestroy {
 

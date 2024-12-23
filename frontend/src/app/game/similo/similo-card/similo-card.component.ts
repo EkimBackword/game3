@@ -21,7 +21,8 @@ import { SimiloCard } from '../models/similo-card';
     selector: 'app-similo-card',
     templateUrl: './similo-card.component.html',
     styleUrls: ['./similo-card.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloCardComponent implements OnChanges, OnDestroy {
 

@@ -43,6 +43,7 @@ import {
     templateUrl: './similo-v2.component.html',
     styleUrls: ['./similo-v2.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloV2Component implements AfterViewInit {
 

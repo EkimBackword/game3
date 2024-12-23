@@ -18,6 +18,7 @@ import {
     templateUrl: './rh-tile.component.html',
     styleUrls: ['./rh-tile.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhTileComponent implements OnChanges {
 

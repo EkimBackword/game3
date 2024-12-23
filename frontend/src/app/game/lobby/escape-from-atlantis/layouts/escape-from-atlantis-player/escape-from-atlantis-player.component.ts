@@ -31,7 +31,8 @@ import { EscapeFromAtlantisPlayerDisplayInfo } from './escape-from-atlantis-play
     selector: 'app-escape-from-atlantis-player',
     templateUrl: './escape-from-atlantis-player.component.html',
     styleUrls: ['./escape-from-atlantis-player.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class EscapeFromAtlantisPlayerComponent implements AfterViewInit {
 

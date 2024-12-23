@@ -52,6 +52,7 @@ import { SimiloStatisticsDialogComponent } from '../similo-statistics-dialog/sim
     templateUrl: './similo-table-info.component.html',
     styleUrls: ['./similo-table-info.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloTableInfoComponent implements AfterViewInit, OnDestroy {
 

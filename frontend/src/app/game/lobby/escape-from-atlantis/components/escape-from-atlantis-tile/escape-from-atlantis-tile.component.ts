@@ -13,7 +13,8 @@ import { EscapeFromAtlantisTileDisplayInfo } from './escape-from-atlantis-tile';
     selector: 'app-escape-from-atlantis-tile',
     templateUrl: './escape-from-atlantis-tile.component.html',
     styleUrls: ['./escape-from-atlantis-tile.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class EscapeFromAtlantisTileComponent implements OnChanges {
 

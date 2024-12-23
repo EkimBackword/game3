@@ -26,6 +26,7 @@ import { ISelectedPlayerCardInfo } from './clank-card.types';
     templateUrl: './clank-card.component.html',
     styleUrls: ['./clank-card.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ClankCardComponent implements OnInit, OnChanges, OnDestroy {
 

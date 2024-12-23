@@ -13,6 +13,7 @@ import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
     templateUrl: './clank-artifact.component.html',
     styleUrls: ['./clank-artifact.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ClankArtifactComponent implements OnInit {
 

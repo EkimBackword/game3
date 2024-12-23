@@ -18,10 +18,11 @@ import {
 } from './single-input-modal.model';
 
 @Component({
-  selector: 'app-single-input-modal',
-  templateUrl: './single-input-modal.component.html',
-  styleUrls: ['./single-input-modal.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-single-input-modal',
+    templateUrl: './single-input-modal.component.html',
+    styleUrls: ['./single-input-modal.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SingleInputModalComponent {
 

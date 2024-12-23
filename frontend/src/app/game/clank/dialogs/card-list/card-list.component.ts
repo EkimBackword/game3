@@ -29,6 +29,7 @@ export interface CardListComponentResult {
     templateUrl: './card-list.component.html',
     styleUrls: ['./card-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CardListComponent implements OnInit {
 

@@ -46,6 +46,7 @@ const columnsNames: Record<keyof SimiloStatisticsDialogItem, string> = {
     templateUrl: './similo-statistics-dialog.component.html',
     styleUrls: ['./similo-statistics-dialog.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloStatisticsDialogComponent {
 

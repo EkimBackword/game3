@@ -27,6 +27,7 @@ import {
     templateUrl: './rh-settings.component.html',
     styleUrls: ['./rh-settings.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhSettingsComponent {
 

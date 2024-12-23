@@ -61,6 +61,7 @@ var tile_position_differences = [
     templateUrl: './rh-map.component.html',
     styleUrls: ['./rh-map.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhMapComponent implements AfterViewInit, OnDestroy {
 

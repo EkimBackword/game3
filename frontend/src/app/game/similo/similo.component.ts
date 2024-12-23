@@ -56,6 +56,7 @@ import { SimiloCardDialogComponent } from './similo-card-dialog/similo-card-dial
         SimiloGameInfoStore,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
 

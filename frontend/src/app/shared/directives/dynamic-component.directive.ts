@@ -21,7 +21,8 @@ import { DynamicComponentData } from '../models/dynamic-component.models';
 import { assertNotNullOrUndefined } from '../models/shared.types';
 
 @Directive({
-    selector: '[dynamicComponent]'
+    selector: '[dynamicComponent]',
+    standalone: false
 })
 export class DynamicComponentDirective implements OnChanges, OnDestroy {
 
