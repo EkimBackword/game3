@@ -1,19 +1,19 @@
-<ng-container *ngIf="token">
+<ng-container *ngIf="token()">
     <ng-template #popTitle>
-        {{token.name}}
+        {{token().name}}
     </ng-template>
     <ng-template #popContent>
-        {{token.description}}
+        {{token().description}}
     </ng-template>
 
     <div class="clank_token"
         [ngbPopover]="popContent"
         [popoverTitle]="popTitle"
-        [disablePopover]="!isOpen"
+        [disablePopover]="!isOpen()"
         [openDelay]="500"
         container="body"
         triggers="mouseenter:mouseleave">
-        <div [ngStyle]="style"></div>
+        <div [ngStyle]="style()"></div>
     </div>
 </ng-container>
 

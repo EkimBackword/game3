@@ -1,16 +1,19 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    computed,
+    effect,
     EventEmitter,
     HostBinding,
-    Input,
-    OnChanges,
+    input,
     Output,
-    SimpleChanges,
 } from '@angular/core';
 
 import { recordKeys } from '../../../../../shared/models/shared.types';
-import { RelicHuntersBenefitSettings } from '../../models/benefit';
+import {
+    RelicHuntersBenefitSettings,
+    RhBenefitComponentData,
+} from '../../models/benefit';
 import {
     RelicHuntersActiveCellInfo,
     RelicHuntersCellInfo,
@@ -20,7 +23,6 @@ import {
     RelicHuntersTileTypes,
     RelicHuntersTileUtils,
 } from '../../models/tile';
-import { RhBenefitComponent } from '../rh-benefit/rh-benefit.component';
 
 @Component({
     selector: 'app-rh-cell',
@@ -29,122 +31,132 @@ import { RhBenefitComponent } from '../rh-benefit/rh-benefit.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false
 })
-export class RhCellComponent implements OnChanges {
+export class RhCellComponent {
 
-    @Input({ required: true }) cell!: RelicHuntersCellInfo;
-    @Input({ required: true }) activeCoords: RelicHuntersActiveCellInfo[] = [];
-    @Input({ required: true }) usedCellIds: RelicHuntersCellInfo['id'][] = [];
+    readonly cell = input.required<RelicHuntersCellInfo>();
+    readonly activeCoords = input.required<RelicHuntersActiveCellInfo[]>();
+    readonly usedCellIds = input.required<RelicHuntersCellInfo['id'][]>();
     @Output() onClick = new EventEmitter<void>();
 
-    @HostBinding('style') cellStyle: Partial<CSSStyleDeclaration> = {};
-    @HostBinding('style.width.px') width = RelicHuntersTileSettings.width;
-    @HostBinding('style.height.px') height = RelicHuntersTileSettings.height;
+    private activeCoordInfo = computed(() => {
+        const isDisabled = this.isDisabled();
+        const activeCoords = this.activeCoords();
+        const cell = this.cell();
 
-    @HostBinding('class.isDisabled') isDisabled = false;
-    @HostBinding('class.isActive') isActive = false;
-    @HostBinding('class.isCurrent') isCurrent = false;
-    @HostBinding('class.isUsed') isUsed = false;
-    benefits: RhBenefitComponent['data'][] = [];
-    research: RhBenefitComponent['data'] = {
-        key: 'research',
-        value: 0,
-        size: RelicHuntersBenefitSettings.size * 0.6,
-        inlineView: true,
-    };
-    move: RhBenefitComponent['data'] = {
-        key: 'move',
-        value: 0,
-        size: RelicHuntersBenefitSettings.size * 0.6,
-        inlineView: true,
-    };
-    levelDots: number[] = [];
-    classNames: string[] = [];
-
-    constructor(
-    ) {
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        this.updateStyles();
-    }
-
-    click() {
-        if (!this.isActive || (this.isCurrent && this.isUsed)) {
-            return;
-        }
-        this.onClick.emit()
-    }
-
-    private updateStyles() {
-        this.isDisabled = this.cell.tileType === RelicHuntersTileTypes.Vulcan;
-        const activeCoordInfo = !this.isDisabled
-            ? this.activeCoords.find(p => {
-                return p.row === this.cell.position.row && p.column === this.cell.position.column
+        return !isDisabled
+            ? activeCoords.find(p => {
+                return p.row === cell.position.row && p.column === cell.position.column
             }) ?? null
             : null;
-        this.isActive = activeCoordInfo != null;
-        this.isCurrent = activeCoordInfo?.isCurrent ?? false;
-        this.isUsed = this.cell.relicType == null || this.cell.hasRelict
-            ? this.usedCellIds.includes(this.cell.id)
+    })
+
+    style = computed<Partial<CSSStyleDeclaration>>(() => {
+        const cell = this.cell();
+        const left = RelicHuntersTileUtils.getLeft(cell);
+        const top = RelicHuntersTileUtils.getTop(cell);
+        const result: Partial<CSSStyleDeclaration> = {
+            opacity: cell.isVisible ? '1' : '0',
+            left: `${left}px`,
+            top: `${top}px`,
+            width: `${RelicHuntersTileSettings.width}px`,
+            height: `${RelicHuntersTileSettings.height}px`,
+        };
+        return result;
+    })
+    @HostBinding('style') cellStyle: Partial<CSSStyleDeclaration> = {};
+
+    isDisabled = computed(() => this.cell().tileType === RelicHuntersTileTypes.Vulcan);
+    @HostBinding('class.isDisabled') classIsDisabled = false;
+
+    isActive = computed(() => this.activeCoordInfo() != null);
+    @HostBinding('class.isActive') classIsActive = false;
+
+    isCurrent = computed(() => this.activeCoordInfo()?.isCurrent ?? false);
+    @HostBinding('class.isCurrent') classIsCurrent = false;
+
+    isUsed = computed(() => {
+        const cell = this.cell();
+        const usedCellIds = this.usedCellIds();
+        return cell.relicType == null || cell.hasRelict
+            ? usedCellIds.includes(cell.id)
             : true;
-        this.cellStyle = this.getCellStyle();
-        this.benefits = recordKeys(this.cell.benefit).map((key) => {
+    });
+    @HostBinding('class.isUsed') classIsUsed = false;
+
+    benefits = computed(() => {
+        const benefits = this.cell().benefit
+        return recordKeys(benefits).map((key) => {
             if (key == 'tileType') {
                 return null;
             }
-            const value = this.cell.benefit[key];
+            const value = benefits[key];
             if (value == null) {
                 return null;
             }
-            const result: RhBenefitComponent['data'] = {
+            const result: RhBenefitComponentData = {
                 key,
                 value,
                 size: RelicHuntersBenefitSettings.size,
                 inlineView: true,
             };
             return result;
-        }).filter((p): p is this['benefits'][number] => p != null);
-        this.research = {
+        }).filter((p): p is RhBenefitComponentData => p != null);
+    });
+
+    research = computed<RhBenefitComponentData>(() => {
+        const cell = this.cell();
+        return {
             key: 'research',
-            value: this.cell.researchCost,
+            value: cell.researchCost,
             size: RelicHuntersBenefitSettings.size * 0.6,
             inlineView: true,
         };
-        this.move = {
+    });
+
+    move = computed<RhBenefitComponentData>(() => {
+        const cellValue = this.cell();
+        return {
             key: 'move',
-            value: this.cell.isOpen
-                ? this.cell.moveCostOpen
-                : this.cell.moveCostClose,
+            value: cellValue.isOpen
+                ? cellValue.moveCostOpen
+                : cellValue.moveCostClose,
             size: RelicHuntersBenefitSettings.size * 0.6,
             inlineView: true,
         };
-        this.levelDots = Array(this.cell.level).fill(0);
-        this.classNames = this.getClassNames();
-    }
+    });
 
-    private getCellStyle() {
-        const left = RelicHuntersTileUtils.getLeft(this.cell);
-        const top = RelicHuntersTileUtils.getTop(this.cell);
-        const result: Partial<CSSStyleDeclaration> = {
-            opacity: this.cell.isVisible ? '1' : '0',
-            left: `${left}px`,
-            top: `${top}px`,
-        };
-        return result;
-    }
+    levelDots = computed<number[]>(() => Array(this.cell().level).fill(0));
 
-    private getClassNames() {
+    classNames = computed<string[]>(() => {
+        const isDisabled = this.isDisabled();
+        const isActive = this.isActive();
         const classNames = {
             default: 'cell-border',
             disabled: 'disabled',
             active: 'active',
         }
-        if (this.isDisabled) {
+        if (isDisabled) {
             return [ classNames.default, classNames.disabled ];
         }
-        return this.isActive
+        return isActive
             ? [classNames.default, classNames.active]
             : [classNames.default];
+    });
+
+    constructor(
+    ) {
+        effect(() => this.cellStyle = this.style());
+        effect(() => this.classIsDisabled = this.isDisabled());
+        effect(() => this.classIsActive = this.isActive());
+        effect(() => this.classIsCurrent = this.isCurrent());
+        effect(() => this.classIsUsed = this.isUsed());
+    }
+
+    click() {
+        if (!this.isActive() || (this.isCurrent() && this.isUsed())) {
+            return;
+        }
+        this.onClick.emit()
     }
 
 }

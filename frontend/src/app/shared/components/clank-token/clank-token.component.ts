@@ -1,11 +1,8 @@
 import {
     ChangeDetectionStrategy,
-    ChangeDetectorRef,
     Component,
-    Input,
-    OnChanges,
-    OnInit,
-    SimpleChanges,
+    computed,
+    input,
 } from '@angular/core';
 
 import { ClankElementByGame } from '@shared/clank/clank-info.types';
@@ -24,43 +21,39 @@ import { ClankElementTypeMap } from '../../models/clank-element-types';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false
 })
-export class ClankTokenComponent implements OnInit, OnChanges {
+export class ClankTokenComponent {
 
-    @Input() isOpen = false;
-    @Input() token!: ClankTokenConfig;
-    @Input() size = 150;
+    readonly isOpen = input(false);
+    readonly token = input.required<ClankTokenConfig>();
+    readonly size = input(150);
 
-    style: Partial<CSSStyleDeclaration> = {};
-
-    ClankTokenTypeEnum = ClankTokenTypeEnum;
-    ClankTokenSecretTypeEnum = ClankTokenSecretTypeEnum;
-
-    constructor(
-        private changeDetectorRef: ChangeDetectorRef,
-    ) { }
-
-    ngOnInit(): void {
-        this.style = this.getStyle();
-        this.changeDetectorRef.detectChanges();
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.token || changes.size) {
-            this.style = this.getStyle();
+    tokenSize = computed(() => {
+        const token = this.token();
+        if (token == null) {
+            return 0;
         }
-        this.changeDetectorRef.detectChanges();
-    }
+        switch (token.element_type) {
+            case ClankElementByGame.minor_secret: {
+                return this.size() * 0.8;
+            }
+            default: {
+                return this.size();
+            }
+        }
+    });
 
-    private getStyle() {
-        if (this.token == null) {
+    style = computed<Partial<CSSStyleDeclaration>>(() => {
+        const token = this.token();
+        const isOpen = this.isOpen();
+        const size = this.tokenSize();
+        if (token == null) {
             return {};
         }
-        const url = !this.isOpen && this.token.type === ClankTokenTypeEnum.secret
-            ? ClankElementTypeMap[this.token.element_type].url
-            : this.token.url;
-        const size = this.getSize();
+        const url = !isOpen && token.type === ClankTokenTypeEnum.secret
+            ? ClankElementTypeMap[token.element_type].url
+            : token.url;
         const style: Partial<CSSStyleDeclaration> = {
-            borderRadius: this.token.isSquare
+            borderRadius: token.isSquare
                 ? '10px'
                 : '50%',
             width: `${size}px`,
@@ -69,20 +62,9 @@ export class ClankTokenComponent implements OnInit, OnChanges {
             backgroundSize: `${size}px ${size}px`,
         };
         return style;
-    }
+    });
 
-    private getSize() {
-        if (this.token == null) {
-            return 0;
-        }
-        switch (this.token.element_type) {
-            case ClankElementByGame.minor_secret: {
-                return this.size * 0.8;
-            }
-            default: {
-                return this.size;
-            }
-        }
-    }
+    ClankTokenTypeEnum = ClankTokenTypeEnum;
+    ClankTokenSecretTypeEnum = ClankTokenSecretTypeEnum;
 
 }

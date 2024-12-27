@@ -293,8 +293,9 @@ export class SimiloV2Component implements AfterViewInit {
 
     ngAfterViewInit() {
         fromEvent(window, 'resize').pipe(
+            // TODO: заменить changeDetectorRef на signalApi
             startWith(null),
-            debounceTime(0),
+            debounceTime(100),
             takeUntilDestroyed(this.destroyRef),
         ).subscribe(() => this.onResize());
     }

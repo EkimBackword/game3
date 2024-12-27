@@ -1,7 +1,9 @@
 import {
     Component,
+    computed,
+    effect,
     HostBinding,
-    Input,
+    input,
     OnInit,
 } from '@angular/core';
 
@@ -26,26 +28,30 @@ import { ClankCostInfoDirection } from './clank-cost-info.types';
 })
 export class ClankCostInfoComponent implements OnInit {
 
-    @Input() data!: ClankCostInfo;
-    @Input() type = ClankCostInfoType.all;
-    @Input() @HostBinding('style.--cost-element-direction') direction = ClankCostInfoDirection.row;
-    @Input() @HostBinding('style.--cost-element-justify-content') justifyContent = 'flex-start';
-    @Input() set elementHeight(value: number) {
-        this.height = `${value ?? 50}px`;
-        this.size = value / 2;
-    }
+    readonly data = input.required<ClankCostInfo>();
+    readonly type = input(ClankCostInfoType.all);
+    readonly direction = input(ClankCostInfoDirection.row);
+    readonly justifyContent = input('flex-start');
+    readonly elementHeight = input(50);
 
     keysGroup: ClankElementType[][] = [];
 
-    size = 25;
+    size = computed(() => this.elementHeight() / 2);
+
+    @HostBinding('style.--cost-element-direction') styleDirection = ClankCostInfoDirection.row;
+    @HostBinding('style.--cost-element-justify-content') styleJustifyContent = 'flex-start';
     @HostBinding('style.--cost-element-height') height = '50px';
 
     ClankElementTypeMap = ClankElementTypeMap;
 
-    constructor() { }
+    constructor() {
+        effect(() => { this.styleDirection = this.direction(); });
+        effect(() => { this.styleJustifyContent = this.justifyContent(); });
+        effect(() => { this.height = `${this.elementHeight()}px`; });
+    }
 
     ngOnInit(): void {
-        this.keysGroup = ClankCostInfoKeysByType[this.type];
+        this.keysGroup = ClankCostInfoKeysByType[this.type()];
     }
 
 }

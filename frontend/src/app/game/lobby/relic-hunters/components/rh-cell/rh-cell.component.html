@@ -1,49 +1,51 @@
-<div
-    class="cell-tile">
-    <app-rh-tile
-        [tileType]="cell.tileType"
-        [isOpen]="cell.isOpen"
-    ></app-rh-tile>
-</div>
-<!-- top -->
-<div
-    *ngIf="!cell.isOpen"
-    class="cell-research">
-    <div class="m-1" *ngFor="let dot of levelDots">●</div>
-</div>
-<div
-    *ngIf="cell.isOpen && research.value > 0"
-    class="cell-research">
-    <app-rh-benefit
-        [data]="research"
-    ></app-rh-benefit>
-</div>
-<!-- body -->
-<div
-    class="cell-benefit relic"
-    [class.has-relic]="cell.hasRelict"
-    *ngIf="cell.relicType && cell.isOpen">
-    <app-rh-relic [relicType]="cell.relicType"></app-rh-relic>
-</div>
-<div
-    *ngIf="cell.isOpen"
-    class="cell-benefit">
-    <app-rh-benefit
-        *ngFor="let benefit of benefits"
-        [data]="benefit"
-    ></app-rh-benefit>
-</div>
+<ng-container *ngIf="cell(); let cellInfo">
+    <div
+        class="cell-tile">
+        <app-rh-tile
+            [tileType]="cellInfo.tileType"
+            [isOpen]="cellInfo.isOpen"
+        ></app-rh-tile>
+    </div>
+    <!-- top -->
+    <div
+        *ngIf="!cellInfo.isOpen"
+        class="cell-research">
+        <div class="m-1" *ngFor="let dot of levelDots()">●</div>
+    </div>
+    <div
+        *ngIf="cellInfo.isOpen && research().value > 0"
+        class="cell-research">
+        <app-rh-benefit
+            [data]="research()"
+        ></app-rh-benefit>
+    </div>
+    <!-- body -->
+    <div
+        class="cell-benefit relic"
+        [class.has-relic]="cellInfo.hasRelict"
+        *ngIf="cellInfo.relicType && cellInfo.isOpen">
+        <app-rh-relic [relicType]="cellInfo.relicType!"></app-rh-relic>
+    </div>
+    <div
+        *ngIf="cellInfo.isOpen"
+        class="cell-benefit">
+        <app-rh-benefit
+            *ngFor="let benefit of benefits()"
+            [data]="benefit"
+        ></app-rh-benefit>
+    </div>
 
-<!-- bottom -->
-<div
-    *ngIf="move.value > 0"
-    class="cell-move-cost">
-    <app-rh-benefit
-        [data]="move"
-    ></app-rh-benefit>
-</div>
-<!-- border -->
-<div
-    [ngClass]="classNames"
-    (click)="click()"
-></div>
+    <!-- bottom -->
+    <div
+        *ngIf="move().value > 0"
+        class="cell-move-cost">
+        <app-rh-benefit
+            [data]="move()"
+        ></app-rh-benefit>
+    </div>
+    <!-- border -->
+    <div
+        [ngClass]="classNames()"
+        (click)="click()"
+    ></div>
+</ng-container>

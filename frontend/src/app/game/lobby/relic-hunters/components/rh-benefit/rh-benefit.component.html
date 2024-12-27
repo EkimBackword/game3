@@ -1,10 +1,12 @@
-<div
-    class="benefit m-1"
-    [style]="style">
-    <span *ngIf="data.inlineView && !data.hideValue">{{data.value}}</span>
-</div>
-<span
-    *ngIf="!data.inlineView && !data.hideValue"
-    class="m-1">
-    {{data.value}}
-</span>
+<ng-container *ngIf="data(); let dataInfo">
+    <div
+        class="benefit m-1"
+        [style]="style()">
+        <span *ngIf="dataInfo.inlineView && !dataInfo.hideValue">{{dataInfo.value}}</span>
+    </div>
+    <span
+        *ngIf="!dataInfo.inlineView && !dataInfo.hideValue"
+        class="m-1">
+        {{dataInfo.value}}
+    </span>
+</ng-container>

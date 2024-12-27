@@ -1,10 +1,10 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    HostBinding,
-    Input,
-    OnChanges,
-    SimpleChanges,
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  OnChanges,
+  SimpleChanges,
+  input
 } from '@angular/core';
 
 import { EscapeFromAtlantisCellDisplayInfo } from './escape-from-atlantis-cell';
@@ -18,14 +18,14 @@ import { EscapeFromAtlantisCellDisplayInfo } from './escape-from-atlantis-cell';
 })
 export class EscapeFromAtlantisCellComponent implements OnChanges {
 
-    @Input({ required: true }) cell!: EscapeFromAtlantisCellDisplayInfo;
+    readonly cell = input.required<EscapeFromAtlantisCellDisplayInfo>();
 
     @HostBinding('style') style: Partial<CSSStyleDeclaration> = {};
     @HostBinding('class') className = 'default';
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.style = this.cell.style();
-        this.className = this.cell.className();
+        this.style = this.cell().style();
+        this.className = this.cell().className();
     }
 
 }

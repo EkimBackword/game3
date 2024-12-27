@@ -12,8 +12,10 @@ import {
 
 import * as lodash from 'lodash';
 
-import { RhBenefitComponent } from '../../components/rh-benefit/rh-benefit.component';
-import { RelicHuntersBenefitSettings } from '../../models/benefit';
+import {
+    RelicHuntersBenefitSettings,
+    RhBenefitComponentData,
+} from '../../models/benefit';
 import {
     RelicHuntersCardInfo,
     RelicHuntersCardSelectable,
@@ -41,7 +43,7 @@ export class RhEndTurnDialogComponent implements OnInit {
 
     lowCost = 0;
     coins = 0;
-    allowedCoins: RhBenefitComponent['data'] = {
+    allowedCoins: RhBenefitComponentData = {
         key: 'coins',
         value: 0,
         size: RelicHuntersBenefitSettings.size * 0.3,

@@ -35,8 +35,10 @@ import { GameMovePayload } from '@shared/game/game-move';
 
 import { LobbyClient } from '../../../models/lobby-client';
 import { LobbyService } from '../../../services/lobby.service';
-import { RhBenefitComponent } from '../../components/rh-benefit/rh-benefit.component';
-import { RelicHuntersBenefitTaxonomy } from '../../models/benefit';
+import {
+    RelicHuntersBenefitTaxonomy,
+    RhBenefitComponentData,
+} from '../../models/benefit';
 import {
     RelicHuntersCardSettings,
     RelicHuntersCardTypeEnum,
@@ -198,7 +200,7 @@ export class RhPlayersComponent implements AfterViewInit {
                             return [];
                         }
 
-                        const benefit: RhBenefitComponent['data'] = {
+                        const benefit: RhBenefitComponentData = {
                             key,
                             value: key !== 'tileType'
                                 ? card.benefit[key] ?? 0
@@ -343,7 +345,7 @@ export class RhPlayersComponent implements AfterViewInit {
                     if (key === 'tileType') {
                         const tiles = playerInfo.benefit[key];
                         const tileMap = tiles.reduce((acc, tileType) => {
-                            const item: RhBenefitComponent['data'] = acc.get(tileType) ?? {
+                            const item: RhBenefitComponentData = acc.get(tileType) ?? {
                                 key,
                                 value: 0,
                                 size: 50,
@@ -355,14 +357,14 @@ export class RhPlayersComponent implements AfterViewInit {
                                 value: item.value + 1,
                             });
                             return acc;
-                        }, new Map<RelicHuntersTileTypes, RhBenefitComponent['data']>);
+                        }, new Map<RelicHuntersTileTypes, RhBenefitComponentData>);
                         return [...tileMap.values()];
                     };
                     const benefitInfo = RelicHuntersBenefitTaxonomy[key];
                     if (benefitInfo.column == null || !benefitInfo.showOnPlayerArea) {
                         return [];
                     }
-                    const result: RhBenefitComponent['data'] = {
+                    const result: RhBenefitComponentData = {
                         key,
                         value: playerInfo.benefit[key],
                         size: 50,
@@ -551,8 +553,9 @@ export class RhPlayersComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         fromEvent(window, 'resize').pipe(
+            // TODO: заменить changeDetectorRef на signalApi
             startWith(null),
-            debounceTime(0),
+            debounceTime(100),
             takeUntilDestroyed(this.destroyRef),
         ).subscribe(() => this.onResize());
 

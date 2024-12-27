@@ -1,10 +1,10 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    HostBinding,
-    Input,
-    OnChanges,
-    SimpleChanges,
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  OnChanges,
+  SimpleChanges,
+  input
 } from '@angular/core';
 
 import { EscapeFromAtlantisTileDisplayInfo } from './escape-from-atlantis-tile';
@@ -18,12 +18,12 @@ import { EscapeFromAtlantisTileDisplayInfo } from './escape-from-atlantis-tile';
 })
 export class EscapeFromAtlantisTileComponent implements OnChanges {
 
-    @Input({ required: true }) tile!: EscapeFromAtlantisTileDisplayInfo;
+    readonly tile = input.required<EscapeFromAtlantisTileDisplayInfo>();
 
     @HostBinding('style') style: Partial<CSSStyleDeclaration> = {};
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.style = this.tile.style();
+        this.style = this.tile().style();
     }
 
 }

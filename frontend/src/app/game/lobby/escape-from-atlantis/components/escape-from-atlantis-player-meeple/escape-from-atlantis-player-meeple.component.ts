@@ -1,7 +1,7 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    Input,
+  ChangeDetectionStrategy,
+  Component,
+  input
 } from '@angular/core';
 
 import { EscapeFromAtlantisPlayerMeepleDisplayInfo } from './escape-from-atlantis-player-meeple';
@@ -15,7 +15,7 @@ import { EscapeFromAtlantisPlayerMeepleDisplayInfo } from './escape-from-atlanti
 })
 export class EscapeFromAtlantisPlayerMeepleComponent {
 
-    @Input({ required: true }) meeple!: EscapeFromAtlantisPlayerMeepleDisplayInfo;
-    @Input() showValue = false;
+    readonly meeple = input.required<EscapeFromAtlantisPlayerMeepleDisplayInfo>();
+    readonly showValue = input(false);
 
 }

@@ -1,39 +1,39 @@
 <ng-template #popTitle>
-    {{card?.name}}
+    {{card()?.name}}
 </ng-template>
 <ng-template #popContent>
-    {{card?.description}}
+    {{card()?.description}}
 </ng-template>
 
-<div class="card_container" *ngIf="data"
+<div class="card_container" *ngIf="data(); let dataInfo"
     (click)="useCard()"
-    [ngClass]="data.classes"
-    [class.card_container__by_hover]="openByHover"
+    [ngClass]="dataInfo.classes"
+    [class.card_container__by_hover]="openByHover()"
     [ngbPopover]="popContent"
     [popoverTitle]="popTitle"
-    [disablePopover]="data.disablePopover || !data.isOpen"
+    [disablePopover]="dataInfo.disablePopover || !dataInfo.isOpen"
     [openDelay]="500"
     container="body"
     triggers="mouseenter:mouseleave">
     <div class="flip_card"
-        [class.flip_card__open]="data.isOpen">
+        [class.flip_card__open]="dataInfo.isOpen">
         <div class="flip_card_face">
             <div class="flip_card_face flip_card_face__front">
-                <div class="clank_face" [ngStyle]="style"></div>
+                <div class="clank_face" [ngStyle]="style()"></div>
             </div>
             <div class="flip_card_face flip_card_face__back">
                 <img class="clank_back"
-                    [width]="width"
-                    [height]="height"
+                    [width]="width()"
+                    [height]="height()"
                     ngSrc="/assets/images/cards/card_back.jpg"
                     alt="/assets/images/cards/card_back.jpg">
             </div>
         </div>
     </div>
-    <div class="card_actions" *ngIf="canUse && data.action">
+    <div class="card_actions" *ngIf="canUse() && dataInfo.action">
         <button class="btn btn-sm"
-            [ngClass]="data.action.btnClass">
-            {{data.action.name}}
+            [ngClass]="dataInfo.action.btnClass">
+            {{dataInfo.action.name}}
         </button>
     </div>
 </div>

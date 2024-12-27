@@ -1,7 +1,8 @@
 <div
-    [style]="meeple.style()"
-    [className]="meeple.className()">
-    <div class="value" *ngIf="showValue && meeple.showValue()">
-        {{meeple.value()}}
+    *ngIf="meeple(); let meepleInfo"
+    [style]="meepleInfo.style()"
+    [className]="meepleInfo.className()">
+    <div class="value" *ngIf="showValue() && meepleInfo.showValue()">
+        {{meepleInfo.value()}}
     </div>
 </div>

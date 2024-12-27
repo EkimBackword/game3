@@ -1,9 +1,8 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    Input,
-    OnChanges,
-    SimpleChanges,
+    computed,
+    input,
 } from '@angular/core';
 
 import {
@@ -19,34 +18,28 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false
 })
-export class RhRelicComponent implements OnChanges {
+export class RhRelicComponent {
 
-    @Input({ required: true }) relicType!: RelicHuntersRelicTypeEnum;
-    @Input() size = RelicHuntersRelicSettings.size;
+    readonly relicType = input.required<RelicHuntersRelicTypeEnum>();
+    readonly size = input(RelicHuntersRelicSettings.size);
 
-    style: Partial<CSSStyleDeclaration> = {};
-
-    constructor(
-    ) {
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        this.style = this.getRelicStyle();
-    }
-
-    private getRelicStyle() {
-        const relicType = RelicHuntersRelicTypeTaxonomy[this.relicType];
-        const positionX = relicType.column * this.size;
+    style = computed<Partial<CSSStyleDeclaration>>(() => {
+        const relicType = RelicHuntersRelicTypeTaxonomy[this.relicType()];
+        const size = this.size();
+        const positionX = relicType.column * size;
         const rowIndex = 0;
-        const positionY = rowIndex * this.size;
-        const result: Partial<CSSStyleDeclaration> = {
-            width: `${this.size}px`,
-            height: `${this.size}px`,
+        const positionY = rowIndex * size;
+        return {
+            width: `${size}px`,
+            height: `${size}px`,
             backgroundImage: `url(${RelicHuntersRelicSettings.url})`,
             backgroundPosition: `-${positionX}px -${positionY}px`,
             backgroundSize: RelicHuntersRelicSettings.backgroundSize,
         };
-        return result;
+    });
+
+    constructor(
+    ) {
     }
 
 }

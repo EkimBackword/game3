@@ -16,6 +16,15 @@ export interface RelicHuntersBenefit {
     tileType: RelicHuntersTileTypes[];
 }
 
+export interface RhBenefitComponentData {
+    key: keyof RelicHuntersBenefit;
+    tileType?: RelicHuntersTileTypes;
+    value: number;
+    size: number;
+    inlineView: boolean;
+    hideValue?: boolean;
+}
+
 export interface RelicHuntersBenefitTaxonomyItem {
     name: string;
     description: string;

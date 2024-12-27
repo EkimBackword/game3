@@ -14,7 +14,9 @@ import {
     Subject,
 } from 'rxjs';
 import {
+    debounceTime,
     filter,
+    startWith,
     takeUntil,
     tap,
 } from 'rxjs/operators';
@@ -94,8 +96,14 @@ export class ClankMapComponent implements OnInit, AfterViewInit, OnDestroy {
         this.onResize();
 
         fromEvent(window, 'resize').pipe(
+            // TODO: заменить changeDetectorRef на signalApi
+            startWith(null),
+            debounceTime(100),
             takeUntil(this.ngUnsubscribe),
-        ).subscribe(() => this.onResize());
+        ).subscribe(() => {
+            this.onResize();
+            this.changeDetectorRef.detectChanges();
+        });
 
         fromEvent<WheelEvent>(this.elementRef.nativeElement, 'wheel').pipe(
             filter((event) => event.ctrlKey),
