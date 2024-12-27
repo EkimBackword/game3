@@ -518,9 +518,6 @@ export class RelicHuntersGameBuilder
                                             cellFrom.players = cellFrom.players.filter(id => id != args.player.id);
                                             cellTo.players.push(args.player.id);
 
-                                            if (tileTypeIndex !== -1) {
-                                                args.player.benefit.tileType.splice(tileTypeIndex, 1);
-                                            }
                                             const player = game.playerMap[args.player.id];
                                             if (tileTypeIndex !== -1) {
                                                 player.benefit.tileType.splice(tileTypeIndex, 1);
