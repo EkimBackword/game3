@@ -1,11 +1,9 @@
 import {
     ChangeDetectionStrategy,
-    ChangeDetectorRef,
     Component,
+    computed,
     HostBinding,
-    Input,
-    OnChanges,
-    SimpleChanges,
+    input,
 } from '@angular/core';
 
 import {
@@ -22,17 +20,18 @@ import {
     templateUrl: './rh-card.component.html',
     styleUrls: ['./rh-card.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
-export class RhCardComponent implements OnChanges {
+export class RhCardComponent {
 
-    @Input({ required: true }) card!: RelicHuntersCardInfo;
-    @Input() isOpen = false;
+    readonly card = input.required<RelicHuntersCardInfo>();
+    readonly isOpen = input(false);
 
     @HostBinding('style.width.px') width = RelicHuntersCardSettings.width;
     @HostBinding('style.height.px') height = RelicHuntersCardSettings.height;
 
-    frontStyle: Partial<CSSStyleDeclaration> = {};
-    colorStyle: Partial<CSSStyleDeclaration> = {};
+    frontStyle = computed<Partial<CSSStyleDeclaration>>(() => this.getFrontStyle());
+    colorStyle = computed<Partial<CSSStyleDeclaration>>(() => this.getColorStyle());
     backStyle: Partial<CSSStyleDeclaration> = {
         width: `${this.width}px`,
         height: `${this.height}px`,
@@ -41,43 +40,32 @@ export class RhCardComponent implements OnChanges {
     };
 
     constructor(
-        private changeDetectorRef: ChangeDetectorRef,
     ) { }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.card) {
-            this.updateStyle();
-        }
-        this.changeDetectorRef.markForCheck();
-    }
-
-    private updateStyle() {
-        this.frontStyle = this.getFrontStyle();
-        this.colorStyle = this.getColorStyle();
-    }
-
     private getFrontStyle() {
-        if (this.card == null) {
+        const card = this.card();
+        if (card == null) {
             return {};
         }
 
         const style: Partial<CSSStyleDeclaration> = {
             width: `${this.width}px`,
             height: `${this.height}px`,
-            backgroundImage: `url(${this.card.url})`,
+            backgroundImage: `url(${card.url})`,
             backgroundSize: '100% 100%',
         };
         return style;
     }
 
     private getColorStyle() {
-        if (this.card?.color == null) {
+        const card = this.card();
+        if (card?.color == null) {
             return {};
         }
 
         const width = RelicHuntersHeroSettings.sizeCard;
         const height = RelicHuntersHeroSettings.sizeCard;
-        const color = RelicHuntersHeroColorTaxonomy[this.card.color];
+        const color = RelicHuntersHeroColorTaxonomy[card.color];
         const positionX = color.column * width;
         const positionY = 2 * height;
         const style: Partial<CSSStyleDeclaration> = {

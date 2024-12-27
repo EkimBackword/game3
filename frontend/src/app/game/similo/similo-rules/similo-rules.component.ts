@@ -9,6 +9,7 @@ import { MatDialogRef } from '@angular/material/dialog';
     templateUrl: './similo-rules.component.html',
     styleUrls: ['./similo-rules.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloRulesComponent {
 

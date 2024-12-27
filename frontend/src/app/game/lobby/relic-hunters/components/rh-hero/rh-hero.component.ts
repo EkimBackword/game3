@@ -1,20 +1,17 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    computed,
+    effect,
     HostBinding,
-    Input,
-    OnChanges,
-    SimpleChanges,
+    input,
 } from '@angular/core';
 
-import { GamePlayerId } from '@shared/game/game-constants';
-
-import { RelicHuntersCellInfo } from '../../models/cell';
 import {
     RelicHuntersHeroColorTaxonomy,
     RelicHuntersHeroSettings,
+    RhHeroComponentData,
 } from '../../models/hero';
-import { RelicHuntersPlayer } from '../../models/player';
 import { RelicHuntersTileUtils } from '../../models/tile';
 
 @Component({
@@ -22,42 +19,35 @@ import { RelicHuntersTileUtils } from '../../models/tile';
     templateUrl: './rh-hero.component.html',
     styleUrls: ['./rh-hero.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
-export class RhHeroComponent implements OnChanges {
+export class RhHeroComponent {
 
-    @Input({ required: true }) data!: {
-        id: GamePlayerId;
-        player: RelicHuntersPlayer;
-        cell: RelicHuntersCellInfo;
-        index: number;
-        isActive: boolean;
-        isCurrent: boolean;
-    };
+    readonly data = input.required<RhHeroComponentData>();
 
-    @HostBinding('style') cellStyle: Partial<CSSStyleDeclaration> = {};
+    private positionByIndex = computed(() => {
+        const data = this.data();
+        const rowCount = 2;
+        const leftIndex = data.index % rowCount;
+        const topIndex = Math.floor(data.index / rowCount);
+        return {
+            left: 25 + leftIndex * 250,
+            top: 90 + topIndex * 110
+        }
+    })
 
-    constructor(
-    ) {
-    }
+    private style = computed<Partial<CSSStyleDeclaration>>(() => {
+        const data = this.data();
+        const position = this.positionByIndex();
 
-    ngOnChanges(changes: SimpleChanges): void {
-        this.updateStyles();
-    }
-
-    private updateStyles() {
-        this.cellStyle = this.getCellStyle();
-    }
-
-    private getCellStyle() {
-        const leftCell = RelicHuntersTileUtils.getLeft(this.data.cell);
-        const topCell = RelicHuntersTileUtils.getTop(this.data.cell);
-        const position = this.getPositionByIndex();
-        const colorId = this.data.player.color;
+        const leftCell = RelicHuntersTileUtils.getLeft(data.cell);
+        const topCell = RelicHuntersTileUtils.getTop(data.cell);
+        const colorId = data.player.color;
         const colorInfo = RelicHuntersHeroColorTaxonomy[colorId];
         const heroSize = RelicHuntersHeroSettings.sizeMeeple;
         const positionHeroX = colorInfo.column * heroSize;
         const positionHeroY = RelicHuntersHeroSettings.heroIndex * heroSize;
-        const result: Partial<CSSStyleDeclaration> = {
+        return {
             left: `${leftCell + position.left}px`,
             top: `${topCell + position.top}px`,
             width: `${heroSize}px`,
@@ -67,17 +57,12 @@ export class RhHeroComponent implements OnChanges {
             backgroundSize: RelicHuntersHeroSettings.backgroundSize,
             flexShrink: '0',
         };
-        return result;
-    }
+    });
+    @HostBinding('style') cellStyle: Partial<CSSStyleDeclaration> = {};
 
-    private getPositionByIndex() {
-        const rowCount = 2;
-        const leftIndex = this.data.index % rowCount;
-        const topIndex = Math.floor(this.data.index / rowCount);
-        return {
-            left: 25 + leftIndex * 250,
-            top: 90 + topIndex * 110
-        }
+    constructor(
+    ) {
+        effect(() => this.cellStyle = this.style());
     }
 
 }

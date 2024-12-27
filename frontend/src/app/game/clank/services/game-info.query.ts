@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import * as lodash from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Subject } from 'rxjs';
 import {
     distinctUntilChanged,

@@ -1,4 +1,4 @@
-@use '~@angular/material'as mat;
+@use '@angular/material'as mat;
 
 @include mat.core();
 
@@ -31,7 +31,7 @@ $my-accent: (
     )
 );
 
-$my-theme: mat.define-light-theme((color: (
+$my-theme: mat.m2-define-light-theme((color: (
     primary: $my-primary,
     accent: $my-accent,
 )));

@@ -10,7 +10,6 @@ import {
     MatDialogRef,
 } from '@angular/material/dialog';
 
-import { Subject } from 'rxjs';
 import {
     cardHeight,
     CardListItem,
@@ -29,6 +28,7 @@ export interface CardListComponentResult {
     templateUrl: './card-list.component.html',
     styleUrls: ['./card-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CardListComponent implements OnInit {
 
@@ -40,8 +40,6 @@ export class CardListComponent implements OnInit {
         cardWidth,
         cardHeight,
     };
-
-    onChangeSubject = new Subject<boolean>();
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -90,7 +88,6 @@ export class CardListComponent implements OnInit {
         item.value = !item.value;
         item.data.action = this.getAction(item);
         this.selectedCount += item.value ? 1 : -1;
-        this.onChangeSubject.next(true);
         this.changeDetectorRef.detectChanges();
     }
 

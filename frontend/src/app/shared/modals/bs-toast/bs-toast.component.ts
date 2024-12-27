@@ -17,6 +17,7 @@ import { ToastSeverityEnum } from '@shared/toast.types';
     templateUrl: './bs-toast.component.html',
     styleUrls: ['./bs-toast.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class BsToastComponent implements OnInit {
 

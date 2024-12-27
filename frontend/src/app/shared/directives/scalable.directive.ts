@@ -2,6 +2,7 @@ import {
     ContentChildren,
     Directive,
     ElementRef,
+    NgZone,
     OnDestroy,
     OnInit,
     QueryList,
@@ -9,6 +10,7 @@ import {
 
 @Directive({
     selector: '[appScalable]',
+    standalone: false
 })
 export class ScalableDirective implements OnInit, OnDestroy {
 
@@ -17,12 +19,13 @@ export class ScalableDirective implements OnInit, OnDestroy {
     constructor(
         public scalableContainerDirective: ScalableContainerDirective,
         public elementRef: ElementRef<HTMLElement>,
+        private ngZone: NgZone,
     ) {
     }
 
     ngOnInit(): void {
         this.elementRef.nativeElement.style.transformOrigin = `left top`;
-        this.observer = new ResizeObserver((entries) => this.scalableContainerDirective.onResize());
+        this.observer = new ResizeObserver((entries) => this.ngZone.run(() => { this.scalableContainerDirective.onResize() }));
         this.observer.observe(this.elementRef.nativeElement);
     }
 
@@ -34,6 +37,7 @@ export class ScalableDirective implements OnInit, OnDestroy {
 
 @Directive({
     selector: '[appScalableContainer]',
+    standalone: false
 })
 export class ScalableContainerDirective implements OnInit, OnDestroy {
 
@@ -43,11 +47,12 @@ export class ScalableContainerDirective implements OnInit, OnDestroy {
 
     constructor(
         public elementRef: ElementRef<HTMLElement>,
+        private ngZone: NgZone,
     ) {
     }
 
     ngOnInit(): void {
-        this.observer = new ResizeObserver((entries) => this.onResize());
+        this.observer = new ResizeObserver((entries) => this.ngZone.run(() => { this.onResize() }));
         this.observer.observe(this.elementRef.nativeElement);
     }
 

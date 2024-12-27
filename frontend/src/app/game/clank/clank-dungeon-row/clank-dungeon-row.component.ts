@@ -14,10 +14,7 @@ import {
 } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 
-import {
-    combineLatest,
-    Subject,
-} from 'rxjs';
+import { combineLatest } from 'rxjs';
 import {
     map,
     tap,
@@ -48,19 +45,14 @@ import { GameInfoService } from '../services/game-info.service';
     styleUrls: ['./clank-dungeon-row.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
-        trigger(
-            'inOutAnimation',
-            [
-                transition(
-                    ':leave',
-                    [
-                        style({ marginTop: 0, opacity: 1 }),
-                        animate('300ms ease-in', style({ marginTop: -100, opacity: 0 })),
-                    ],
-                ),
-            ],
-        ),
+        trigger('inOutAnimation', [
+            transition(':leave', [
+                style({ marginTop: 0, opacity: 1 }),
+                animate('300ms ease-in', style({ marginTop: -100, opacity: 0 })),
+            ]),
+        ]),
     ],
+    standalone: false
 })
 export class ClankDungeonRowComponent implements OnInit {
 
@@ -171,12 +163,10 @@ export class ClankDungeonRowComponent implements OnInit {
         }),
     );
 
-    onChangeSubject = new Subject<boolean>();
     onPlayersChangeSubject = this.data.gameInfoQuery.onPlayersChangeSubject.pipe(
         tap((players) => {
             this.activePlayer = this.data.gameInfoQuery.activePlayer;
             this.currentPlayer = this.data.gameInfoQuery.currentPlayer;
-            this.onChangeSubject.next(true);
         }),
     );
 

@@ -27,6 +27,7 @@ interface FindLobbyTableItem {
     templateUrl: './lobby-search.component.html',
     styleUrls: ['./lobby-search.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class LobbySearchComponent implements AfterViewInit {
 

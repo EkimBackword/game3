@@ -38,6 +38,7 @@ export interface RhCardListDialogWithoutSelect {
     templateUrl: './rh-card-list-dialog.component.html',
     styleUrls: ['./rh-card-list-dialog.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhCardListDialogComponent implements OnInit {
 

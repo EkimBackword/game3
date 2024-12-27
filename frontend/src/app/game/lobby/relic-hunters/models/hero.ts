@@ -1,3 +1,8 @@
+import { GamePlayerId } from '@shared/game/game-constants';
+
+import { RelicHuntersCellInfo } from './cell';
+import { RelicHuntersPlayer } from './player';
+
 export const RelicHuntersHeroSettings = {
     sizeMeeple: 100,
     sizeHero: 35,
@@ -15,6 +20,15 @@ export enum RelicHuntersHeroColorEnum {
     Yellow = 'Yellow',
     Red = 'Red',
     Green = 'Green',
+}
+
+export interface RhHeroComponentData {
+    id: GamePlayerId;
+    player: RelicHuntersPlayer;
+    cell: RelicHuntersCellInfo;
+    index: number;
+    isActive: boolean;
+    isCurrent: boolean;
 }
 
 export const RelicHuntersHeroColorIds = Object.keys(RelicHuntersHeroColorEnum) as RelicHuntersHeroColorEnum[];

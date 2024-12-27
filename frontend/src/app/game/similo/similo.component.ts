@@ -56,6 +56,7 @@ import { SimiloCardDialogComponent } from './similo-card-dialog/similo-card-dial
         SimiloGameInfoStore,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -107,7 +108,9 @@ export class SimiloComponent implements OnInit, AfterViewInit, OnDestroy {
         combineLatest([
             this.similoGameInfoQuery.onAnyChangeSubject,
             fromEvent(window, 'resize').pipe(
+                // TODO: заменить changeDetectorRef на signalApi
                 startWith(null),
+                debounceTime(100),
                 tap(() => this.onResize())
             ),
         ]).pipe(

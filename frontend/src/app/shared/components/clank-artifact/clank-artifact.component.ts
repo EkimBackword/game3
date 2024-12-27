@@ -1,9 +1,10 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    effect,
     HostBinding,
+    input,
     Input,
-    OnInit,
 } from '@angular/core';
 
 import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
@@ -13,20 +14,22 @@ import { ClankArtifactConfig } from '@shared/clank/clank-artifact.types';
     templateUrl: './clank-artifact.component.html',
     styleUrls: ['./clank-artifact.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
-export class ClankArtifactComponent implements OnInit {
+export class ClankArtifactComponent {
 
-    @Input() data!: ClankArtifactConfig;
+    readonly data = input.required<ClankArtifactConfig>();
     @Input() set height(value: number) {
         this.artifact_height = `${value}px`;
     }
     @HostBinding('style.--artifact_height') artifact_height = `200px`;
     @HostBinding('style.--artifact_background') background = '';
 
-    constructor() { }
-
-    ngOnInit(): void {
-        this.background = `url(${this.data.url}) no-repeat center center`;
+    constructor() {
+        effect(() => {
+            const url = this.data().url;
+            this.background = `url(${url}) no-repeat center center`;
+        })
     }
 
 }

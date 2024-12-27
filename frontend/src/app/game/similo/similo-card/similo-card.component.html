@@ -1,24 +1,24 @@
 <div class="card_container"
-    *ngIf="card"
-    (click)="onOpenCard()"
+    *ngIf="card(); let cardInfo"
+    (click)="openCard.emit()"
     [ngClass]="{
-        'card_container__searchable': isMaster && card.state.isSearchable,
-        'card_container__board': isBoard && card.state.isOpen,
-        'card_container__with_hover': withHover
+        'card_container__searchable': isMaster() && cardInfo.state.isSearchable,
+        'card_container__board': isBoard() && cardInfo.state.isOpen,
+        'card_container__with_hover': withHover()
     }">
     <div class="flip_card"
-        [class.flip_card__on_board_close]="isBoard && !isOpen"
-        [class.flip_card__open]="isOpen">
+        [class.flip_card__on_board_close]="isBoard() && !isOpen()"
+        [class.flip_card__open]="isOpen()">
         <div class="flip_card_face">
             <div class="flip_card_face flip_card_face__front">
-                <div class="clank_face" [ngStyle]="style"></div>
+                <div class="clank_face" [ngStyle]="style()"></div>
             </div>
             <div class="flip_card_face flip_card_face__back">
                 <img class="clank_back"
-                    [width]="cardWidth"
-                    [height]="cardHeight"
-                    [src]="card.state.url_back"
-                    [alt]="card.state.url_back">
+                    [width]="cardWidth()"
+                    [height]="cardHeight()"
+                    [src]="cardInfo.state.url_back"
+                    [alt]="cardInfo.state.url_back">
             </div>
         </div>
     </div>

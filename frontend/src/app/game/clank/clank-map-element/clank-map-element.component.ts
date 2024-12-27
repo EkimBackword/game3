@@ -8,7 +8,7 @@ import {
     ChangeDetectorRef,
     Component,
     HostBinding,
-    Input,
+    input,
     OnDestroy,
     OnInit,
 } from '@angular/core';
@@ -51,23 +51,18 @@ import { GameInfoService } from '../services/game-info.service';
     templateUrl: './clank-map-element.component.html',
     styleUrls: ['./clank-map-element.component.scss'],
     animations: [
-        trigger(
-            'inOutAnimation',
-            [
-                transition(
-                    ':leave',
-                    [
-                        style({ marginLeft: 0, opacity: 1 }),
-                        animate('1s ease-in', style({ marginLeft: 1000, opacity: 0 })),
-                    ],
-                ),
-            ],
-        ),
+        trigger('inOutAnimation', [
+            transition(':leave', [
+                style({ marginLeft: 0, opacity: 1 }),
+                animate('1s ease-in', style({ marginLeft: 1000, opacity: 0 })),
+            ]),
+        ]),
     ],
+    standalone: false
 })
 export class ClankMapElementComponent implements OnInit, OnDestroy {
 
-    @Input() mapElement: ClankMapElementConfig | undefined;
+    readonly mapElement = input<ClankMapElementConfig>();
     @HostBinding('style') style: Partial<CSSStyleDeclaration> = {};
     link: ClankMapElementLink | undefined;
     activePlayer: ClankPlayerConfig | undefined;
@@ -85,9 +80,9 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             const isIgnoreCrystalCave = (this.activePlayer?.benefitInfo.ignore_crystal_cave ?? 0) > 0;
             const hasTeleport = (this.activePlayer?.benefitInfo.teleport ?? 0) > 0;
             const link = isActivePlayer && (hasTeleport || isIgnoreCrystalCave || !isEnterCrystalCave)
-                ? activePlayerPosition?.links.find(p => p.element_id === this.mapElement?.id)
+                ? activePlayerPosition?.links.find(p => p.element_id === this.mapElement()?.id)
                 : void 0;
-            if (!link || (!activePlayer?.artifacts.length && this.mapElement?.isStart)) {
+            if (!link || (!activePlayer?.artifacts.length && this.mapElement()?.isStart)) {
                 this.link = void 0;
                 return;
             }
@@ -109,7 +104,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     artifact: ClankArtifactConfig | undefined;
     onArtifactsChangeSubject = this.gameInfoQuery.onArtifactsChangeSubject.pipe(
         map((artifacts) => {
-            const artifactsByValue = artifacts.filter(p => this.mapElement?.items?.artefact?.value === p.value);
+            const artifactsByValue = artifacts.filter(p => this.mapElement()?.items?.artefact?.value === p.value);
             const artifact = lodash.maxBy(artifactsByValue, (p) => p.quality.value);
             if (!lodash.isEqual(this.artifact, artifact)) {
                 this.artifact = void 0;
@@ -123,7 +118,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
 
     visibleTokens: ClankTokenConfig[] = [];
     onTokensChangeSubject = this.gameInfoQuery.onMapTokensChangeSubject.pipe(
-        map((tokens) => tokens.filter(token => token?.element_type != null && this.mapElement?.items?.[token.element_type])),
+        map((tokens) => tokens.filter(token => token?.element_type != null && this.mapElement()?.items?.[token.element_type])),
         tap((tokens) => {
             if (!tokens.length) {
                 this.visibleTokens = [];
@@ -131,7 +126,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             }
             const secrets = tokens.filter(token => ClankSecretTypes.includes(token.element_type));
             const nosecrets = tokens.filter(token => !ClankSecretTypes.includes(token.element_type)
-                && this.mapElement?.items?.[token.element_type]?.value === token.points?.value,
+                && this.mapElement()?.items?.[token.element_type]?.value === token.points?.value,
             );
             this.visibleTokens = secrets.length > 0
                 ? [
@@ -186,7 +181,8 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     }
 
     async onMove(link: ClankMapElementLink) {
-        if (this.mapElement == null || !this.canDoByPlayer(this.activePlayer)) {
+        const mapElement = this.mapElement();
+        if (mapElement == null || !this.canDoByPlayer(this.activePlayer)) {
             return;
         }
         const isIgnoreSymbolsOnTunnel = this.clankHelpService.hasBenefit(this.activePlayer, ClankElementTypeEnum.ignore_symbols_on_tunnel);
@@ -235,7 +231,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
                 benefit: {},
             };
         }
-        const isCrystalCave = this.mapElement.isCrystalCave ?? false;
+        const isCrystalCave = mapElement.isCrystalCave ?? false;
         const isIgnoreCrystalCave = (this.activePlayer?.benefitInfo.ignore_crystal_cave ?? 0) > 0;
 
         const success = this.clankHelpService.updateBenefitInfo({
@@ -243,7 +239,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
             cost: link.cost,
             benefit: {
                 ...link.benefit,
-                ...this.mapElement.benefit ?? {},
+                ...mapElement.benefit ?? {},
             },
             skipCheckCanUse: true,
         });
@@ -252,7 +248,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
         }
         this.gameInfoService.onMove({
             playerId: this.activePlayer.id,
-            mapElement: this.mapElement,
+            mapElement: mapElement,
             benefitInfo: {
                 ...this.activePlayer.benefitInfo,
                 boot: isCrystalCave && !isIgnoreCrystalCave
@@ -320,7 +316,7 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
 
     private canDoByPlayerPosition(player: ClankPlayerConfig | undefined): player is ClankPlayerConfig {
         return this.canDoByPlayer(player)
-            && this.activePlayer?.elementId === this.mapElement?.id;
+            && this.activePlayer?.elementId === this.mapElement()?.id;
     }
 
     private canTakeArtifact(player: ClankPlayerConfig) {
@@ -332,14 +328,15 @@ export class ClankMapElementComponent implements OnInit, OnDestroy {
     }
 
     private getStyle() {
-        if (this.mapElement == null) {
+        const mapElement = this.mapElement();
+        if (mapElement == null) {
             return {};
         }
         const styleInfo: Partial<CSSStyleDeclaration> = {
-            top: `${this.mapElement.position.y}px`,
-            left: `${this.mapElement.position.x}px`,
-            width: `${this.mapElement.position.width}px`,
-            height: `${this.mapElement.position.height}px`,
+            top: `${mapElement.position.y}px`,
+            left: `${mapElement.position.x}px`,
+            width: `${mapElement.position.width}px`,
+            height: `${mapElement.position.height}px`,
         };
         return styleInfo;
     }

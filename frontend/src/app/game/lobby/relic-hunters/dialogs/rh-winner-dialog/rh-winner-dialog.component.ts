@@ -21,10 +21,11 @@ import {
 import { RelicHuntersPlayer } from '../../models/player';
 
 @Component({
-  selector: 'app-rh-winner-dialog',
-  templateUrl: './rh-winner-dialog.component.html',
-  styleUrls: ['./rh-winner-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-rh-winner-dialog',
+    templateUrl: './rh-winner-dialog.component.html',
+    styleUrls: ['./rh-winner-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhWinnerDialogComponent implements OnInit {
 

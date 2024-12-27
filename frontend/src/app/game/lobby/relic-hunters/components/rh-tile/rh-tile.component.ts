@@ -1,10 +1,10 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    computed,
+    effect,
     HostBinding,
-    Input,
-    OnChanges,
-    SimpleChanges,
+    input,
 } from '@angular/core';
 
 import {
@@ -18,36 +18,43 @@ import {
     templateUrl: './rh-tile.component.html',
     styleUrls: ['./rh-tile.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
-export class RhTileComponent implements OnChanges {
+export class RhTileComponent {
 
-    @Input({ required: true }) tileType!: RelicHuntersTileTypes;
-    @Input({ required: true }) isOpen!: boolean;
-    @Input() @HostBinding('style.width.px') width = RelicHuntersTileSettings.width;
-    @Input() @HostBinding('style.height.px') height = RelicHuntersTileSettings.height;
+    readonly tileType = input.required<RelicHuntersTileTypes>();
+    readonly isOpen = input.required<boolean>();
+    readonly width = input(RelicHuntersTileSettings.width);
+    readonly height = input(RelicHuntersTileSettings.height);
 
-    tileStyle: Partial < CSSStyleDeclaration > = {};
+    @HostBinding('style.width.px')
+    widthPx = RelicHuntersTileSettings.width;
+    @HostBinding('style.height.px')
+    heightPx = RelicHuntersTileSettings.height;
 
-    constructor() {}
+    tileStyle = computed<Partial<CSSStyleDeclaration>>(() => {
+        const tileType = RelicHuntersTileTypeTaxonomy[this.tileType()];
+        const width = this.width();
+        const height = this.height();
+        const isOpen = this.isOpen();
 
-    ngOnChanges(changes: SimpleChanges): void {
-        this.tileStyle = this.getTileStyle();
-    }
-
-    private getTileStyle() {
-        const tileType = RelicHuntersTileTypeTaxonomy[this.tileType];
-        const positionX = tileType.column * this.width;
-        const rowIndex = this.isOpen
+        const positionX = tileType.column * width;
+        const rowIndex = isOpen
             ? RelicHuntersTileSettings.openRow
             : RelicHuntersTileSettings.closeRow
-        const positionY = rowIndex * this.height;
-        const result: Partial<CSSStyleDeclaration> = {
-            width: `${this.width}px`,
-            height: `${this.height}px`,
+        const positionY = rowIndex * height;
+        return {
+            width: `${width}px`,
+            height: `${height}px`,
             backgroundImage: `url(${RelicHuntersTileSettings.url})`,
             backgroundPosition: `-${positionX}px -${positionY}px`,
             backgroundSize: RelicHuntersTileSettings.backgroundSize,
         };
-        return result;
+    });
+
+    constructor() {
+        effect(() => { this.widthPx = this.width(); })
+        effect(() => { this.heightPx = this.height();})
     }
+
 }

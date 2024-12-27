@@ -14,7 +14,8 @@ import { SimiloCardConfig } from '@shared/similo/similo-dlc.types';
     selector: 'app-similo-v2-card-dialog',
     templateUrl: './similo-v2-card-dialog.component.html',
     styleUrls: ['./similo-v2-card-dialog.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloV2CardDialogComponent<T> {
 

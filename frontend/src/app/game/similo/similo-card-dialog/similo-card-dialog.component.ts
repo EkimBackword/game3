@@ -18,6 +18,7 @@ import {
     templateUrl: './similo-card-dialog.component.html',
     styleUrls: ['./similo-card-dialog.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SimiloCardDialogComponent {
 

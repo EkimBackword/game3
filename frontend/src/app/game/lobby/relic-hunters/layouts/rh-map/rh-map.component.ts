@@ -31,9 +31,8 @@ import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 
 import { LobbyClient } from '../../../models/lobby-client';
 import { LobbyService } from '../../../services/lobby.service';
-import { RhBenefitComponent } from '../../components/rh-benefit/rh-benefit.component';
-import { RhHeroComponent } from '../../components/rh-hero/rh-hero.component';
 import { RhWinnerDialogComponent } from '../../dialogs/rh-winner-dialog/rh-winner-dialog.component';
+import { RhBenefitComponentData } from '../../models/benefit';
 import {
     RelicHuntersActiveCellInfo,
     RelicHuntersCellInfo,
@@ -41,6 +40,7 @@ import {
 import { RelicHuntersGameBuilder } from '../../models/game-builder';
 import { RelicHuntersSetupData } from '../../models/game-setup-data';
 import { RelicHuntersGameType } from '../../models/game-type';
+import { RhHeroComponentData } from '../../models/hero';
 import { RelicHuntersMapTaxonomy } from '../../models/map';
 import {
     RelicHuntersTileSettings,
@@ -61,6 +61,7 @@ var tile_position_differences = [
     templateUrl: './rh-map.component.html',
     styleUrls: ['./rh-map.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RhMapComponent implements AfterViewInit, OnDestroy {
 
@@ -89,7 +90,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
                 const player = playerMap[playerId];
                 const isActive = player.id == state?.context.currentPlayerId;
                 const isCurrent = player.id === user.id;
-                const result: RhHeroComponent['data'] = {
+                const result: RhHeroComponentData = {
                     id: playerId,
                     player,
                     cell,
@@ -148,7 +149,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
             const size = 60;
             const value = RelicHuntersTileTypeTaxonomy[type];
             const benefits = value.benefits.map(key => {
-                const benefit: RhBenefitComponent['data'] = {
+                const benefit: RhBenefitComponentData = {
                     key,
                     value: 0,
                     size,
@@ -225,8 +226,9 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         fromEvent(window, 'resize').pipe(
+            // TODO: заменить changeDetectorRef на signalApi
             startWith(null),
-            debounceTime(0),
+            debounceTime(100),
             takeUntilDestroyed(this.destroyRef),
         ).subscribe(() => this.onResize());
     }

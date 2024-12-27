@@ -43,6 +43,7 @@ interface DragonInfoLogClankPlayer {
     templateUrl: './dragon-info-log.component.html',
     styleUrls: ['./dragon-info-log.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class DragonInfoLogComponent implements OnInit, OnDestroy {
 

@@ -2,7 +2,7 @@ import {
     CommonModule,
     NgOptimizedImage,
 } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import {
     FormsModule,
@@ -52,7 +52,6 @@ import { SharedComponent } from './shared.component';
 
 const exports = [
     CommonModule,
-    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,
@@ -103,6 +102,7 @@ const exportsComponents = [
     providers: [
         {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
         {provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS},
+        provideHttpClient(),
     ],
 })
 export class SharedModule { }

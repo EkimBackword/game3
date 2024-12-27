@@ -1,17 +1,13 @@
 import {
     ChangeDetectionStrategy,
-    ChangeDetectorRef,
     Component,
+    computed,
+    effect,
     EventEmitter,
     HostBinding,
-    Input,
-    OnChanges,
-    OnDestroy,
+    input,
     Output,
-    SimpleChanges,
 } from '@angular/core';
-
-import { Subject } from 'rxjs';
 
 import { SimiloCardPosition } from '@shared/similo/similo-dlc.types';
 
@@ -21,74 +17,57 @@ import { SimiloCard } from '../models/similo-card';
     selector: 'app-similo-card',
     templateUrl: './similo-card.component.html',
     styleUrls: ['./similo-card.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
-export class SimiloCardComponent implements OnChanges, OnDestroy {
+export class SimiloCardComponent {
 
-    @Input() card!: SimiloCard;
-    @Input() width: number | undefined;
-    @Input() height: number | undefined;
-    @Input() isMaster = false;
-    @Input() isBoard = false;
-    @Input() withHover = false;
-    @Input() needOpen = false;
+    readonly card = input.required<SimiloCard>();
+    readonly width = input<number>();
+    readonly height = input<number>();
+    readonly isMaster = input(false);
+    readonly isBoard = input(false);
+    readonly withHover = input(false);
+    readonly needOpen = input(false);
     @Output() openCard = new EventEmitter<void>();
-    style: Partial<CSSStyleDeclaration> = {};
-    isOpen = false;
-
-    cardWidth: number = 0;
-    @HostBinding('style.--card_width') card_width = `${this.cardWidth}px`;
-
-    cardHeight: number = 0;
-    @HostBinding('style.--card_height') card_height = `${this.cardHeight}px`;
-
-    private ngUnsubscribe = new Subject<void>();
-
-    constructor(
-        private changeDetectorRef: ChangeDetectorRef,
-    ) { }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.card || changes.width || changes.height) {
-            this.updateStyle();
+    style = computed<Partial<CSSStyleDeclaration>>(() => {
+        const card = this.card();
+        const cardWidth = this.cardWidth();
+        const cardHeight = this.cardHeight();
+        const cardWidthPx = this.cardWidthPx();
+        const cardHeightPx = this.cardHeightPx();
+        if (card == null) {
+            return {};
         }
-        this.changeDetectorRef.markForCheck();
-    }
-
-    ngOnDestroy(): void {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
-    }
-
-    onOpenCard() {
-        this.openCard.emit();
-    }
-
-    private updateStyle() {
-        this.cardWidth = this.width ?? this.card.size.width;
-        this.cardHeight = this.height ?? this.card.size.height;
-        this.card_width = `${this.cardWidth}px`;
-        this.card_height = `${this.cardHeight}px`;
-        this.style = this.getStyle();
-        this.isOpen = this.getOpenState();
-    }
-
-    private getOpenState() {
-        if (this.card == null) {
+        const positionX = card.state.column * cardWidth;
+        const positionY = card.state.row * cardHeight;
+        return {
+            width: cardWidthPx,
+            height: cardHeightPx,
+            backgroundImage: `url(${card.state.url})`,
+            backgroundPosition: `-${positionX}px -${positionY}px`,
+            backgroundSize: card.state.backgroundSize,
+            flexShrink: '0',
+        };
+    })
+    isOpen = computed(() => {
+        const card = this.card();
+        const needOpen = this.needOpen();
+        if (card == null) {
             return false;
         }
-        if (this.card.state.isSearchable || this.needOpen) {
+        if (card.state.isSearchable || needOpen) {
             return true;
         }
-        switch (this.card.state.position) {
+        switch (card.state.position) {
             case SimiloCardPosition.Board: {
-                return this.card.state.isOpen;
+                return card.state.isOpen;
             }
             case SimiloCardPosition.Deck: {
                 return false;
             }
             case SimiloCardPosition.Hand: {
-                return this.isMaster;
+                return this.isMaster();
             }
             case SimiloCardPosition.Similar: {
                 return true;
@@ -97,22 +76,28 @@ export class SimiloCardComponent implements OnChanges, OnDestroy {
                 return true;
             }
         }
-    }
+    })
 
-    private getStyle() {
-        if (this.card == null) {
-            return {};
-        }
-        const positionX = this.card.state.column * this.cardWidth;
-        const positionY = this.card.state.row * this.cardHeight;
-        return {
-            width: this.card_width,
-            height: this.card_height,
-            backgroundImage: `url(${this.card.state.url})`,
-            backgroundPosition: `-${positionX}px -${positionY}px`,
-            backgroundSize: this.card.state.backgroundSize,
-            flexShrink: '0',
-        };
+    cardWidth = computed(() => {
+        const width = this.width();
+        const card = this.card();
+        return width ?? card.size.width ?? 0;
+    });
+    cardWidthPx = computed(() => `${this.cardWidth()}px`);
+    @HostBinding('style.--card_width') card_width?: string;
+
+    cardHeight = computed(() => {
+        const height = this.height();
+        const card = this.card();
+        return height ?? card.size.height ?? 0;
+    });
+    cardHeightPx = computed(() => `${this.cardHeight()}px`);
+    @HostBinding('style.--card_height') card_height?: string;
+
+    constructor(
+    ) {
+        effect(() => this.card_width = this.cardWidthPx());
+        effect(() => this.card_height = this.cardHeightPx());
     }
 
 }

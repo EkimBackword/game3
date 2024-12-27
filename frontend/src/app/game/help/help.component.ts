@@ -19,6 +19,7 @@ interface RulebookInfo {
 @Component({
     templateUrl: './help.component.html',
     styleUrls: ['./help.component.scss'],
+    standalone: false
 })
 export class HelpComponent implements OnInit {
 

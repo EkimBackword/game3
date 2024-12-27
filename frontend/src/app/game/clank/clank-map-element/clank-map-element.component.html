@@ -4,10 +4,10 @@
     tokens: onTokensChangeSubject | async,
     takenToken: onTakeTokenSubject | async
 } as asyncData">
-    <ng-container *ngIf="mapElement != null">
+    <ng-container *ngIf="mapElement(); let mapElement">
         <div class="actions_layer"
             [class.crystal_cave]="mapElement.isCrystalCave">
-            <ng-container *ngIf="asyncData.artifacts">
+            <ng-container *ngIf="asyncData.artifacts && artifact">
                 <div class="clank-artifact"
                     (click)="takeArtifact(artifact)"
                     *ngIf="asyncData.artifacts.length > 0 && artifact"

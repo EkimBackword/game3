@@ -43,6 +43,7 @@ import { GameInfoService } from '../services/game-info.service';
     templateUrl: './clank-game-info.component.html',
     styleUrls: ['./clank-game-info.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ClankGameInfoComponent implements OnInit {
 

@@ -1,16 +1,12 @@
 import {
     ChangeDetectionStrategy,
-    ChangeDetectorRef,
     Component,
-    Input,
-    OnChanges,
-    OnInit,
-    SimpleChanges,
+    computed,
+    input,
 } from '@angular/core';
 
 import {
     ClankPlayerConfig,
-    GamePlayerColorInfo,
     GamePlayerColorList,
 } from '@shared/clank/clank-player.types';
 
@@ -19,59 +15,38 @@ import {
     templateUrl: './clank-meeple.component.html',
     styleUrls: ['./clank-meeple.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
-export class ClankMeepleComponent implements OnInit, OnChanges {
+export class ClankMeepleComponent {
 
-    @Input() player: ClankPlayerConfig | undefined;
-    @Input() size = 100;
+    readonly player = input<ClankPlayerConfig>();
+    readonly size = input(100);
 
     /** Информация о цвете игрока */
-    colorInfo: GamePlayerColorInfo | null = null;
-
-    /** Стиль отображение мипла */
-    meepleStyle: Partial<CSSStyleDeclaration> = {};
-
-    constructor(
-        private changeDetectorRef: ChangeDetectorRef,
-    ) { }
-
-    ngOnInit(): void {
-        this.colorInfo = this.getColorInfo();
-        this.meepleStyle = this.getMeepleStyle();
-        this.changeDetectorRef.detectChanges();
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.player) {
-            this.colorInfo = this.getColorInfo();
-        }
-        if (changes.player || changes.size) {
-            this.meepleStyle = this.getMeepleStyle();
-        }
-        this.changeDetectorRef.detectChanges();
-    }
-
-    private getColorInfo() {
-        if (this.player == null) {
+    colorInfo = computed(() => {
+        const player = this.player();
+        if (player == null) {
             return null;
         }
-        return GamePlayerColorList[this.player.colorId];
+        return GamePlayerColorList[player.colorId];
+    });
 
-    }
-
-    private getMeepleStyle() {
-        if (this.colorInfo == null) {
+    /** Стиль отображение мипла */
+    meepleStyle = computed<Partial<CSSStyleDeclaration>>(() => {
+        const colorInfo = this.colorInfo();
+        const size = this.size();
+        if (colorInfo == null) {
             return {};
         }
-        const positionX = this.colorInfo.column * this.size;
+        const positionX = colorInfo.column * size;
         const style: Partial<CSSStyleDeclaration> = {
-            width: `${this.size}px`,
-            height: `${this.size}px`,
+            width: `${size}px`,
+            height: `${size}px`,
             backgroundImage: `url(/assets/images/meeples.png)`,
             backgroundPosition: `-${positionX}px 0px`,
             backgroundSize: '600% 100%',
         };
         return style;
-    }
+    });
 
 }

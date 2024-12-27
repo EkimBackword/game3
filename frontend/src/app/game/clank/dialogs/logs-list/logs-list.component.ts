@@ -20,6 +20,7 @@ import { GameInfoActionLogTypeList } from '@shared/clank/clank-game.types';
     templateUrl: './logs-list.component.html',
     styleUrls: ['./logs-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class LogsListComponent implements OnInit {
 

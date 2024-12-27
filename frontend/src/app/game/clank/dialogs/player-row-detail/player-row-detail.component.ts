@@ -21,6 +21,7 @@ import { PlayerPointsResult } from 'src/app/shared/models/players/player.types';
     templateUrl: './player-row-detail.component.html',
     styleUrls: ['./player-row-detail.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class PlayerRowDetailComponent implements OnInit {
 
