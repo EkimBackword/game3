@@ -1,0 +1,16 @@
+.rh_log_cell {
+    cursor: pointer;
+    text-decoration: underline;
+    color: var(--bs-info);
+
+    display: flex;
+    flex-direction: row;
+}
+
+.zoom-wraper {
+    width: var(--logs-cell-size, 100%);
+    height: var(--logs-cell-size, 100%);
+
+    transform: scale(var(--logs-cell-zoom, 1), var(--logs-cell-zoom, 1));
+    transform-origin: left top;
+}

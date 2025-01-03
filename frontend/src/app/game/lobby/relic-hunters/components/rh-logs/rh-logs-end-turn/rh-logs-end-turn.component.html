@@ -1,0 +1,14 @@
+<ng-container *ngIf="result(); let info">
+    <span>Закончил ход</span>
+    <span *ngIf="info.returnToCamp">Вернулся в лагерь</span>
+    <ng-container *ngIf="info.selectedCards.length > 0">
+        <span>Купил карты:</span>
+        <ul>
+            <li *ngFor="let card of info.selectedCards">
+                <app-rh-logs-card [card]="card"></app-rh-logs-card>
+            </li>
+        </ul>
+    </ng-container>
+</ng-container>
+
+

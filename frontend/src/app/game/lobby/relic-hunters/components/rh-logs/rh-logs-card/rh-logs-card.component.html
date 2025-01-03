@@ -1,0 +1,19 @@
+<span
+    class="rh_log_card_name"
+    #helpTilePopover="ngbPopover"
+    [ngbPopover]="popoverContent"
+    [popoverTitle]="popoverTitle"
+    triggers="mouseenter:mouseleave"
+    placement="end"
+    container="body">
+    {{card().name}}
+</span>
+<ng-template #popoverTitle>
+    {{card().name}}
+</ng-template>
+<ng-template #popoverContent>
+    <app-rh-card
+        [card]="card()"
+        [isOpen]="true"
+    ></app-rh-card>
+</ng-template>

@@ -1,0 +1,5 @@
+<span *ngIf="args().card; let card">Используя карту <app-rh-logs-card [card]="card"></app-rh-logs-card></span>
+<div class="d-flex flex-row justify-content-start align-items-center flex-wrap">
+    <span>{{text()}}</span>
+    <app-rh-benefit [data]="benefit()"></app-rh-benefit>
+</div>

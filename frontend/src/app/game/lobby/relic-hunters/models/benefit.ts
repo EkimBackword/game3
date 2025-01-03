@@ -76,3 +76,43 @@ export const RelicHuntersBenefitTaxonomy: Record<keyof RelicHuntersBenefit, Reli
         showOnPlayerArea: false,
     },
 }
+
+export function getMappedValueByBenefitType(key: keyof RelicHuntersBenefit, value: number) {
+    switch (key) {
+        case 'move':
+        case 'research':
+            if (value >= 5) {
+                return `${value} очков`
+            }
+            if (value > 1) {
+                return `${value} очка`
+            }
+            return `${value} очко`
+        case 'coins':
+            if (value >= 5) {
+                return `${value} монет`
+            }
+            if (value > 1) {
+                return `${value} монеты`
+            }
+            return `${value} монета`
+        case 'draw':
+        case 'trash':
+        case 'rest':
+            if (value >= 5) {
+                return `${value} карт`
+            }
+            if (value > 1) {
+                return `${value} карты`
+            }
+            return `${value} карта`
+        default:
+            if (value >= 5) {
+                return `${value} единиц`
+            }
+            if (value > 1) {
+                return `${value} единицы`
+            }
+            return `${value} единица`
+    }
+}

@@ -13,8 +13,8 @@
             <fa-icon
                 class="pointer"
                 [style.width.px]="20"
-                [icon]="soundService.soundState.icon"
-                (click)="soundService.changeSoundState()"
+                [icon]="icons.settings"
+                (click)="dialogService.openSoundSettings()"
             ></fa-icon>
         </div>
         <h6 class="text-ellipsis" [title]="asyncData.name">{{asyncData.name}}</h6>

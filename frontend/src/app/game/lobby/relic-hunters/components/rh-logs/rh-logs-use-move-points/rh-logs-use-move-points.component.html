@@ -1,0 +1,16 @@
+<div class="d-flex flex-row justify-content-start align-items-center flex-wrap gap-1">
+    <span>{{text()}} из ячейки</span>
+    <app-rh-logs-cell [cell]="args().cellFrom"></app-rh-logs-cell>
+    <span>в ячейку</span>
+    <app-rh-logs-cell [cell]="args().cellTo"></app-rh-logs-cell>
+</div>
+<div
+    class="d-flex flex-row justify-content-start align-items-center flex-wrap"
+    *ngIf="benefit(); let list">
+    <span>Получил:</span>
+    <app-rh-benefit
+        class="m-1"
+        *ngFor="let benefit of list"
+        [data]="benefit"
+    ></app-rh-benefit>
+</div>

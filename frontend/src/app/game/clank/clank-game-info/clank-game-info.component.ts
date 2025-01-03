@@ -2,6 +2,9 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    effect,
+    Injector,
+    OnDestroy,
     OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
@@ -14,12 +17,16 @@ import {
 } from 'rxjs/operators';
 import { ClankCostInfoType } from 'src/app/shared/models/clank-element-types';
 import { GameInfoActionLogGroup } from 'src/app/shared/models/game.types';
+import { SoundTypeEnum } from 'src/app/shared/models/sound.types';
 import { DialogService } from 'src/app/shared/services/dialog.service';
 import { MapsService } from 'src/app/shared/services/maps.service';
 import { SoundService } from 'src/app/shared/services/sound.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
-import { faTasks } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCog,
+    faTasks,
+} from '@fortawesome/free-solid-svg-icons';
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 import {
     ClankMapConfig,
@@ -45,7 +52,7 @@ import { GameInfoService } from '../services/game-info.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false
 })
-export class ClankGameInfoComponent implements OnInit {
+export class ClankGameInfoComponent implements OnInit, OnDestroy {
 
     ClankCostInfoType = ClankCostInfoType;
     ClankTokenTypeEnum = ClankTokenTypeEnum;
@@ -53,6 +60,7 @@ export class ClankGameInfoComponent implements OnInit {
     isFinished = false;
     icons = {
         logs: faTasks,
+        settings: faCog,
     };
 
     statusSubject = this.gameInfoQuery.onStatusChangeSubject.pipe(
@@ -108,13 +116,35 @@ export class ClankGameInfoComponent implements OnInit {
         private gameInfoService: GameInfoService,
         private gameDialogsService: GameDialogsService,
         private mapsService: MapsService,
-        private dialogService: DialogService,
+        public dialogService: DialogService,
         private toastService: ToastService,
         public soundService: SoundService,
         private router: Router,
+        private injector: Injector,
     ) { }
 
     ngOnInit(): void {
+        effect(() => {
+            const soundValue = this.soundService.getSoundValue('background');
+            if (soundValue) {
+                this.soundService.play({
+                    id: 'MainThemeClank',
+                    type: SoundTypeEnum.background,
+                    soundUrl: [
+                        '/assets/sounds/MainThemeClank1.mp3',
+                        '/assets/sounds/MainThemeClank2.mp3',
+                        '/assets/sounds/MainThemeClank3.mp3',
+                        '/assets/sounds/MainThemeClank4.mp3',
+                    ]
+                });
+            }
+        }, {
+            injector: this.injector,
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.soundService.pause('MainThemeClank');
     }
 
     selectedMapChanged(selectedMapId: number) {

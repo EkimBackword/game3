@@ -20,6 +20,7 @@ export interface GameMoveSuccessResultWithSave<
     success: true;
     saveState: true;
     game: GameType;
+    result?: Record<string, any>;
 }
 
 export type GameMoveSuccessResult<

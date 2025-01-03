@@ -48,6 +48,8 @@ import {
 import { BsToastComponent } from './modals/bs-toast/bs-toast.component';
 import { ConfirmModalComponent } from './modals/confirm-modal/confirm-modal.component';
 import { SingleInputModalComponent } from './modals/single-input-modal/single-input-modal.component';
+import { SoundSettingsByTypeComponent } from './modals/sound-settings/sound-settings-by-type/sound-settings-by-type.component';
+import { SoundSettingsComponent } from './modals/sound-settings/sound-settings.component';
 import { SharedComponent } from './shared.component';
 
 const exports = [
@@ -85,6 +87,8 @@ const exportsComponents = [
     DynamicComponentDirective,
     ScalableDirective,
     ScalableContainerDirective,
+    SoundSettingsComponent,
+    SoundSettingsByTypeComponent,
 ];
 
 @NgModule({

@@ -16,6 +16,7 @@ export interface RelicHuntersActiveCellInfo extends RelicHuntersCellPosition {
 export interface RelicHuntersCellInfo extends RelicHuntersCellTaxonomyItem {
     id: number;
     position: RelicHuntersCellPosition;
+    visiblePosition: RelicHuntersCellPosition;
     isVisible: boolean;
     isCamp: boolean;
     isOpen: boolean;

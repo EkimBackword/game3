@@ -1,0 +1,24 @@
+<app-rh-benefit
+    #helpTilePopover="ngbPopover"
+    [ngbPopover]="popoverContent"
+    [popoverTitle]="popoverTitle"
+    triggers="mouseenter:mouseleave"
+    placement="end"
+    [data]="tileType()"
+></app-rh-benefit>
+
+<ng-template #popoverTitle>
+    строка: {{cell().visiblePosition.row}} | колонка: {{cell().visiblePosition.column}}
+</ng-template>
+<ng-template #popoverContent>
+    <div class="d-flex flex-row justify-content-center align-items-center">
+        <div class="zoom-wraper">
+            <app-rh-cell
+                [cell]="cell()"
+                [activeCoords]="[]"
+                [usedCellIds]="[]"
+                [forPopover]="true"
+            ></app-rh-cell>
+        </div>
+    </div>
+</ng-template>

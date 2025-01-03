@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>Настройки звука</h1>
+<div mat-dialog-content class="d-flex flex-column justify-content-start align-items-stretch gap-3">
+    <app-sound-settings-by-type
+        [key]="'total'"
+        [label]="'Уровень громкости'"
+    ></app-sound-settings-by-type>
+    <app-sound-settings-by-type
+        [key]="'effects'"
+        [label]="'Громкость эффектов'"
+    ></app-sound-settings-by-type>
+    <app-sound-settings-by-type
+        [key]="'background'"
+        [label]="'Громкость музыки'"
+    ></app-sound-settings-by-type>
+</div>
+<div mat-dialog-actions class="d-flex flex-row justify-content-end">
+    <button class="btn btn-primary m-1" (click)="dialogRef.close()">
+        Закрыть
+    </button>
+</div>

@@ -9,6 +9,15 @@
     color: var(--bs-body-color);
 }
 
+.benefit-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
 .benefit {
     flex-shrink: 0;
     z-index: 1;

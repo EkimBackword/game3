@@ -1,0 +1,54 @@
+::ng-deep {
+    .rh_game_logs_group_popover {
+        width: 50vw;
+        max-width: 50vw;
+
+        .popover-header {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .popover-body {
+            padding: 0;
+        }
+    }
+}
+
+.rh_game_logs_group_wrap {
+    height: calc(100vh - 200px);
+    width: 100%;
+    flex: 1 1 auto;
+    padding: 10px;
+    overflow: auto;
+}
+
+.rh_game_logs_group_wrap,
+.rh_game_logs_group_group {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.rh_game_logs_group_group_name {
+    font-size: 1rem;
+    font-weight: bold;
+    padding-left: 10px;
+}
+
+.rh_game_logs_group_group_item {
+    border: 2px solid;
+    border-left-width: 10px;
+    border-radius: 5px;
+    padding: 5px 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 5px;
+}

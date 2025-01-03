@@ -1,0 +1,72 @@
+<button
+    class="btn btn-dark"
+    #helpTilePopover="ngbPopover"
+    [ngbPopover]="popoverContent"
+    [popoverTitle]="popoverTitle"
+    [autoClose]="'outside'"
+    container="body"
+    popoverClass="rh_game_logs_group_popover">
+    <fa-icon class="m-1" [icon]="icons.logs"></fa-icon>
+</button>
+<ng-template #popoverTitle>
+    <span>Журнал событий</span>
+    <button
+        type="button"
+        class="btn btn-sm btn-danger"
+        (click)="helpTilePopover.close()">
+        <fa-icon class="m-1" [icon]="icons.close"></fa-icon>
+    </button>
+</ng-template>
+<ng-template #popoverContent>
+    <div class="rh_game_logs_group_wrap">
+        <ng-container *ngFor="let group of logGroups()">
+            <div class="rh_game_logs_group_group">
+                <div class="rh_game_logs_group_group_name">
+                    {{group.name}}
+                </div>
+                <div
+                    *ngFor="let log of group.list; trackBy: trackByLogIndex"
+                    class="rh_game_logs_group_group_item"
+                    [style.borderColor]="log.color">
+                    <span><b>Игрок:</b> {{log.player?.name ?? "-"}}</span>
+                    <ng-container [ngSwitch]="log.tagName">
+                        <app-rh-logs-end-turn
+                            *ngSwitchCase="'rh-logs-end-turn'"
+                            [args]="log.action.payload.args"
+                        ></app-rh-logs-end-turn>
+
+                        <app-rh-logs-get-points
+                            *ngSwitchCase="'rh-logs-get-points'"
+                            [type]="log.action.payload.type"
+                            [args]="log.action.payload.args"
+                            [builder]="builder()"
+                        ></app-rh-logs-get-points>
+
+                        <app-rh-logs-get-tile
+                            *ngSwitchCase="'rh-logs-get-tile'"
+                            [args]="log.action.payload.args"
+                            [builder]="builder()"
+                        ></app-rh-logs-get-tile>
+
+                        <app-rh-logs-use-move-points
+                            *ngSwitchCase="'rh-logs-use-move-points'"
+                            [args]="log.action.payload.args"
+                            [builder]="builder()"
+                        ></app-rh-logs-use-move-points>
+
+                        <app-rh-logs-use-research-points
+                            *ngSwitchCase="'rh-logs-use-research-points'"
+                            [args]="log.action.payload.args"
+                            [builder]="builder()"
+                        ></app-rh-logs-use-research-points>
+
+                        <span
+                            *ngSwitchCase="'undo'">
+                            Ход отменён
+                        </span>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</ng-template>

@@ -1,0 +1,26 @@
+<div class="d-flex flex-row justify-content-between align-items-center">
+    <label class="example-name-label">{{label()}}:</label>
+    <label class="example-volume-label">{{volume() * 100}}%</label>
+</div>
+<div class="d-flex flex-row justify-content-start align-items-center gap-3">
+    <fa-icon
+        class="pointer hover-opacity"
+        [style.width.px]="20"
+        [icon]="icon()"
+        (click)="changeSoundValue()"
+    ></fa-icon>
+    <mat-slider
+        class="flex-grow-1 flex-shrink-1"
+        [disabled]="false"
+        [max]="max"
+        [min]="min"
+        [step]="step"
+        [discrete]="false"
+        [showTickMarks]="true">
+      <input
+        matSliderThumb
+        [ngModel]="volume()"
+        (ngModelChange)="changeTotalVolume($event)"
+        #slider>
+    </mat-slider>
+</div>

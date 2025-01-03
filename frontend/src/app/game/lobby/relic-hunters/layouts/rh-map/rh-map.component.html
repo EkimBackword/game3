@@ -20,6 +20,14 @@
 <div class="actions">
     <button
         class="btn btn-dark"
+        (click)="dialogService.openSoundSettings()">
+        <fa-icon class="m-1" [icon]="icons.settings"></fa-icon>
+    </button>
+    <app-rh-logs
+        [game]="client.game"
+    ></app-rh-logs>
+    <button
+        class="btn btn-dark"
         #helpTilePopover="ngbPopover"
         [ngbPopover]="helpTilePopoverContent"
         [popoverTitle]="helpTilePopoverTitle"

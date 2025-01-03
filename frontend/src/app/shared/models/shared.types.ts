@@ -23,3 +23,10 @@ export interface NameValue<
     name: NameType;
     value: ValueType
 }
+
+export function mergeByDefault<T extends Record<any, any>>(data: any, defaultData: T): T {
+    return recordKeys(defaultData).reduce<T>((acc, key) => {
+        acc[key] = data?.[key] ?? defaultData[key];
+        return acc;
+    }, {} as T);
+};

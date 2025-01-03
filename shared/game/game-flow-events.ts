@@ -23,6 +23,7 @@ export interface GameFlowUpdateTurnOptions {
     remove?: boolean;
     endTurn?: boolean;
     force?: boolean;
+    options?: any;
 }
 
 export interface GameFlowUpdateStageOptions {

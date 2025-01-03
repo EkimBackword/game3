@@ -9,6 +9,7 @@ import {
 } from 'src/app/shared/models/clank-element-types';
 import { MomentDateFormat } from 'src/app/shared/models/game.types';
 import { updateBenefitInfo } from 'src/app/shared/models/players/player.types';
+import { SoundTypeEnum } from 'src/app/shared/models/sound.types';
 import {
     UseTokenInfoByType,
     UseTokenType,
@@ -182,7 +183,10 @@ export class ClankHelpService {
                 },
             });
         }
-        this.soundService.play('/assets/sounds/DrawCard.mp3');
+        this.soundService.play({
+            type: SoundTypeEnum.effects,
+            soundUrl: '/assets/sounds/DrawCard.mp3',
+        });
         while (count > 0) {
             this.checkDeckLength(player);
             const card = player.deck.pop();
@@ -214,7 +218,10 @@ export class ClankHelpService {
             cards: [card],
         });
         const result = await lastValueFrom(matDialogRef.afterClosed());
-        this.soundService.play('/assets/sounds/DrawCard.mp3');
+        this.soundService.play({
+            type: SoundTypeEnum.effects,
+            soundUrl: '/assets/sounds/DrawCard.mp3'
+        });
         if (result == null) {
             player.deck.unshift(card);
             return;

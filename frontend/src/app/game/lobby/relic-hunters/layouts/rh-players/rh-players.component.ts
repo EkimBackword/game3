@@ -44,6 +44,7 @@ import {
     RelicHuntersCardTypeEnum,
 } from '../../models/cards';
 import { RelicHuntersGameBuilder } from '../../models/game-builder';
+import { RhEventEndTurnArgs } from '../../models/game-move-args-types';
 import { RelicHuntersSetupData } from '../../models/game-setup-data';
 import { RelicHuntersGameType } from '../../models/game-type';
 import { RelicHuntersHeroColorTaxonomy } from '../../models/hero';
@@ -219,6 +220,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                     const payload = builder.moves.getMovePoints.getPayload(
                                         {
                                             card,
+                                            key,
                                             value: card.benefit[key] ?? 0,
                                         },
                                         user.id,
@@ -233,6 +235,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                     const payload = builder.moves.getResearchPoints.getPayload(
                                         {
                                             card,
+                                            key,
                                             value: card.benefit[key] ?? 0,
                                         },
                                         user.id,
@@ -247,6 +250,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                     const payload = builder.moves.getCoins.getPayload(
                                         {
                                             card,
+                                            key,
                                             value: card.benefit[key] ?? 0,
                                         },
                                         user.id,
@@ -261,6 +265,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                     const payload = builder.moves.drawCards.getPayload(
                                         {
                                             card,
+                                            key,
                                             value: card.benefit[key] ?? 0,
                                         },
                                         user.id,
@@ -275,6 +280,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                     const payload = builder.moves.trashCards.getPayload(
                                         {
                                             card,
+                                            key,
                                             value: card.benefit[key] ?? 0,
                                         },
                                         user.id,
@@ -289,6 +295,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                     const payload = builder.moves.restCards.getPayload(
                                         {
                                             card,
+                                            key,
                                             value: card.benefit[key] ?? 0,
                                         },
                                         user.id,
@@ -425,6 +432,7 @@ export class RhPlayersComponent implements AfterViewInit {
             const payload = builder.moves.getMovePoints.getPayload(
                 {
                     card: null,
+                    key: 'move',
                     value,
                 },
                 selectedPlayerId,
@@ -442,6 +450,7 @@ export class RhPlayersComponent implements AfterViewInit {
             const payload = builder.moves.getResearchPoints.getPayload(
                 {
                     card: null,
+                    key: 'research',
                     value,
                 },
                 selectedPlayerId,
@@ -513,12 +522,16 @@ export class RhPlayersComponent implements AfterViewInit {
             return
         }
 
+        const endTurnArgs: RhEventEndTurnArgs = {
+            force: true,
+            options: {
+                log: moveResult.state.log
+            }
+        };
         const eventResult = await this.client.game.makeEvent(
             {
                 type: 'endTurn',
-                args: {
-                    force: true,
-                }
+                args: endTurnArgs,
             },
             moveResult.state,
         );

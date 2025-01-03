@@ -3,17 +3,17 @@
         class="cell-tile">
         <app-rh-tile
             [tileType]="cellInfo.tileType"
-            [isOpen]="cellInfo.isOpen"
+            [isOpen]="isOpen()"
         ></app-rh-tile>
     </div>
     <!-- top -->
     <div
-        *ngIf="!cellInfo.isOpen"
+        *ngIf="!isOpen()"
         class="cell-research">
         <div class="m-1" *ngFor="let dot of levelDots()">●</div>
     </div>
     <div
-        *ngIf="cellInfo.isOpen && research().value > 0"
+        *ngIf="isOpen() && research().value > 0"
         class="cell-research">
         <app-rh-benefit
             [data]="research()"
@@ -23,11 +23,11 @@
     <div
         class="cell-benefit relic"
         [class.has-relic]="cellInfo.hasRelict"
-        *ngIf="cellInfo.relicType && cellInfo.isOpen">
+        *ngIf="cellInfo.relicType && isOpen()">
         <app-rh-relic [relicType]="cellInfo.relicType!"></app-rh-relic>
     </div>
     <div
-        *ngIf="cellInfo.isOpen"
+        *ngIf="isOpen()"
         class="cell-benefit">
         <app-rh-benefit
             *ngFor="let benefit of benefits()"

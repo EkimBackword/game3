@@ -24,9 +24,13 @@ import {
 } from 'rxjs';
 import { SessionQuery } from 'src/app/session/session.query';
 import { recordKeys } from 'src/app/shared/models/shared.types';
+import { DialogService } from 'src/app/shared/services/dialog.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCog,
+    faQuestionCircle,
+} from '@fortawesome/free-solid-svg-icons';
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 
 import { LobbyClient } from '../../../models/lobby-client';
@@ -142,6 +146,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
 
     icons = {
         help: faQuestionCircle,
+        settings: faCog,
     };
 
     RelicHuntersTileTypeTaxonomy = recordKeys(RelicHuntersTileTypeTaxonomy)
@@ -178,6 +183,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
         private sessionQuery: SessionQuery,
         private toastService: ToastService,
         private matDialog: MatDialog,
+        public dialogService: DialogService,
     ) {
         effect(() => {
             const state = this.client.game.state();

@@ -12,10 +12,11 @@ export enum GameActionsEnum {
     UNDO = 'UNDO',
 }
 
-export const GameActionsMove = (payload: GameMovePayload) => {
+export const GameActionsMove = (payload: GameMovePayload, result: Record<string, any> | null = null) => {
     return {
         type: GameActionsEnum.MAKE_MOVE as const,
         payload,
+        result,
     };
 }
 
@@ -27,6 +28,7 @@ export const GameActionsEvent = <Ev extends EventNames<GameFlowEventsHandlers>>(
     return {
         type: GameActionsEnum.GAME_EVENT as const,
         payload,
+        result: null,
     }
 }
 
@@ -40,5 +42,6 @@ export const GameActionsUndo = (
             args: null,
             playerId,
         },
+        result: null,
     }
 }

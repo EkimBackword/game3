@@ -1,0 +1,14 @@
+<div class="d-flex flex-row justify-content-start align-items-center flex-wrap gap-1">
+    <span>{{text()}}</span>
+    <app-rh-logs-cell [cell]="args().cell"></app-rh-logs-cell>
+</div>
+<div
+    class="d-flex flex-row justify-content-start align-items-center flex-wrap"
+    *ngIf="benefit(); let list">
+    <span>Получил:</span>
+    <app-rh-benefit
+        class="m-1"
+        *ngFor="let benefit of list"
+        [data]="benefit"
+    ></app-rh-benefit>
+</div>

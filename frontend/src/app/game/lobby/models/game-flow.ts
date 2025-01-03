@@ -192,7 +192,7 @@ export class GameFlow<
             return this.WithoutSave();
         }
 
-        const action = GameActionsMove(payload);
+        const action = GameActionsMove(payload, moveResult.result);
         const logEntry: GameLogEntry = this.GetLogEntry({
             action,
             stateId: state.stateId,
@@ -811,6 +811,7 @@ export class GameFlow<
         const action = GameActionsEvent({
             type: 'endTurn',
             args: arg,
+            playerId,
         });
         const logEntry: GameLogEntry = this.GetLogEntry({
             action,
@@ -900,6 +901,7 @@ export class GameFlow<
         const action = GameActionsEvent({
             type: 'endStage',
             args: arg,
+            playerId,
         });
         const logEntry: GameLogEntry = this.GetLogEntry({
             action,

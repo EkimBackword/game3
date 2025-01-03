@@ -36,6 +36,7 @@ export class RhCellComponent {
     readonly cell = input.required<RelicHuntersCellInfo>();
     readonly activeCoords = input.required<RelicHuntersActiveCellInfo[]>();
     readonly usedCellIds = input.required<RelicHuntersCellInfo['id'][]>();
+    readonly forPopover = input(false);
     @Output() onClick = new EventEmitter<void>();
 
     private activeCoordInfo = computed(() => {
@@ -52,6 +53,16 @@ export class RhCellComponent {
 
     style = computed<Partial<CSSStyleDeclaration>>(() => {
         const cell = this.cell();
+        const forPopover = this.forPopover();
+        if (forPopover) {
+            return {
+                opacity: '1',
+                left: `0px`,
+                top: `0px`,
+                width: `${RelicHuntersTileSettings.width}px`,
+                height: `${RelicHuntersTileSettings.height}px`
+            }
+        }
         const left = RelicHuntersTileUtils.getLeft(cell);
         const top = RelicHuntersTileUtils.getTop(cell);
         const result: Partial<CSSStyleDeclaration> = {
@@ -142,6 +153,8 @@ export class RhCellComponent {
             ? [classNames.default, classNames.active]
             : [classNames.default];
     });
+
+    isOpen = computed(() => this.cell().isOpen || this.forPopover());
 
     constructor(
     ) {

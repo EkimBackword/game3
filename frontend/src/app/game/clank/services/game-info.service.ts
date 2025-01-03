@@ -12,6 +12,7 @@ import {
 import { CardsService } from 'src/app/game/clank/services/cards.service';
 import { SessionQuery } from 'src/app/session/session.query';
 import { ClankOneTurnInfo } from 'src/app/shared/models/clank-element-types';
+import { SoundTypeEnum } from 'src/app/shared/models/sound.types';
 import { UseTokenType } from 'src/app/shared/models/tokens/token.types';
 import { ArtifactsService } from 'src/app/shared/services/artifacts.service';
 import {
@@ -216,7 +217,10 @@ export class GameInfoService implements OnDestroy {
                     hideToast: true,
                 },
             });
-            this.soundService.play('/assets/sounds/Move.mp3');
+            this.soundService.play({
+                type: SoundTypeEnum.effects,
+                soundUrl: '/assets/sounds/Move.mp3'
+            });
             return state;
         });
         if (skipSocketUpdate) {

@@ -20,6 +20,7 @@ import {
     MomentDateGroupFormat,
 } from 'src/app/shared/models/game.types';
 import { notEmpty } from 'src/app/shared/models/shared.types';
+import { SoundTypeEnum } from 'src/app/shared/models/sound.types';
 import { ToastOptions } from 'src/app/shared/models/toast.types';
 import { MapsService } from 'src/app/shared/services/maps.service';
 import { SoundService } from 'src/app/shared/services/sound.service';
@@ -347,12 +348,18 @@ export class GameInfoQuery extends Query<GameInfoState> {
         }
         switch (log.type) {
             case GameInfoActionLogType.Dragon: {
-                this.soundService.play(log.data.soundUrl);
+                this.soundService.play({
+                    type: SoundTypeEnum.effects,
+                    soundUrl: log.data.soundUrl
+                });
                 return;
             }
             default: {
                 if (this.currentPlayer?.colorId === log.data.colorId) {
-                    this.soundService.play(log.data.soundUrl);
+                    this.soundService.play({
+                        type: SoundTypeEnum.effects,
+                        soundUrl: log.data.soundUrl
+                    });
                 }
                 return;
             }

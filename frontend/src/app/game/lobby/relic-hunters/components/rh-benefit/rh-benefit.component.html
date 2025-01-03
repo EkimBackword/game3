@@ -1,4 +1,9 @@
-<ng-container *ngIf="data(); let dataInfo">
+<div
+    *ngIf="data(); let dataInfo"
+    class="benefit-wrap"
+    placement="top"
+    [ngbTooltip]="tooltipText()"
+    [disableTooltip]="!!dataInfo.hideValue">
     <div
         class="benefit m-1"
         [style]="style()">
@@ -9,4 +14,4 @@
         class="m-1">
         {{dataInfo.value}}
     </span>
-</ng-container>
+</div>

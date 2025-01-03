@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 
 import {
+    getMappedValueByBenefitType,
     RelicHuntersBenefitSettings,
     RelicHuntersBenefitTaxonomy,
     RhBenefitComponentData,
@@ -29,6 +30,11 @@ export class RhBenefitComponent {
     readonly data = input.required<RhBenefitComponentData>();
     private size = computed(() => this.data().size ?? RelicHuntersBenefitSettings.size);
     @HostBinding('style.--benefit-size.px') sizePx = 0;
+
+    readonly tooltipText = computed(() => {
+        const data = this.data();
+        return getMappedValueByBenefitType(data.key, data.value);
+    });
 
     readonly style = computed(() => {
         const data = this.data();

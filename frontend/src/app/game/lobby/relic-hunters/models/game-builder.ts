@@ -37,6 +37,16 @@ import {
     RelicHuntersCellPosition,
     RelicHuntersCellTaxonomy,
 } from './cell';
+import {
+    RhEndTurnResultOptions,
+    RhGetPointsByCardArgs,
+    RhGetPointsByMoveArgs,
+    RhGetTileTypeArgs,
+    RhMoveEndTurnArgs,
+    RhMoveTypes,
+    RhUseMovePointsArgs,
+    RhUseResearchPointsArgs,
+} from './game-move-args-types';
 import { RelicHuntersSetupData } from './game-setup-data';
 import { RelicHuntersGameType } from './game-type';
 import {
@@ -44,10 +54,7 @@ import {
     RelicHuntersMapTaxonomy,
 } from './map';
 import { RelicHuntersPlayer } from './player';
-import {
-    RelicHuntersTileTypeList,
-    RelicHuntersTileTypes,
-} from './tile';
+import { RelicHuntersTileTypeList } from './tile';
 
 export enum RelicHuntersGameStagesIds {
     usingCards = 'usingCards',
@@ -69,74 +76,44 @@ export class RelicHuntersGameBuilder
     setupDataSettings = RhSettingsComponent;
 
     moves = {
-        getMovePoints: new GameMoveCreator<RelicHuntersGameType, {
-            card: RelicHuntersCardInfo | null;
-            value: number;
-        }>({
-            type: 'getMovePoints',
+        getMovePoints: new GameMoveCreator<RelicHuntersGameType, RhGetPointsByMoveArgs>({
+            type: RhMoveTypes.getMovePoints,
             name: 'Получить очки перемещения',
         }),
-        getResearchPoints: new GameMoveCreator<RelicHuntersGameType, {
-            card: RelicHuntersCardInfo | null;
-            value: number;
-        }>({
-            type: 'getResearchPoints',
+        getResearchPoints: new GameMoveCreator<RelicHuntersGameType, RhGetPointsByMoveArgs>({
+            type: RhMoveTypes.getResearchPoints,
             name: 'Получить очки раскопки',
         }),
-        getCoins: new GameMoveCreator<RelicHuntersGameType, {
-            card: RelicHuntersCardInfo;
-            value: number;
-        }>({
-            type: 'getCoins',
+        getCoins: new GameMoveCreator<RelicHuntersGameType, RhGetPointsByCardArgs>({
+            type: RhMoveTypes.getCoins,
             name: 'Получить монеты',
         }),
-        drawCards: new GameMoveCreator<RelicHuntersGameType, {
-            card: RelicHuntersCardInfo;
-            value: number;
-        }>({
-            type: 'drawCards',
+        drawCards: new GameMoveCreator<RelicHuntersGameType, RhGetPointsByCardArgs>({
+            type: RhMoveTypes.drawCards,
             name: 'Добрать карты',
         }),
-        trashCards: new GameMoveCreator<RelicHuntersGameType, {
-            card: RelicHuntersCardInfo;
-            value: number;
-        }>({
-            type: 'trashCards',
+        trashCards: new GameMoveCreator<RelicHuntersGameType, RhGetPointsByCardArgs>({
+            type: RhMoveTypes.trashCards,
             name: 'Удалить карты',
         }),
-        restCards: new GameMoveCreator<RelicHuntersGameType, {
-            card: RelicHuntersCardInfo;
-            value: number;
-        }>({
-            type: 'restCards',
+        restCards: new GameMoveCreator<RelicHuntersGameType, RhGetPointsByCardArgs>({
+            type: RhMoveTypes.restCards,
             name: 'Замешать карты',
         }),
-        getTileType: new GameMoveCreator<RelicHuntersGameType, {
-            card: RelicHuntersCardInfo;
-            tileTypes: RelicHuntersTileTypes[];
-        }>({
-            type: 'getTileType',
+        getTileType: new GameMoveCreator<RelicHuntersGameType, RhGetTileTypeArgs>({
+            type: RhMoveTypes.getTileType,
             name: 'Получить очки местности',
         }),
-        useMovePoints: new GameMoveCreator<RelicHuntersGameType, {
-            cellFrom: RelicHuntersCellInfo;
-            cellTo: RelicHuntersCellInfo;
-            player: RelicHuntersPlayer;
-        }>({
-            type: 'useMovePoints',
+        useMovePoints: new GameMoveCreator<RelicHuntersGameType, RhUseMovePointsArgs>({
+            type: RhMoveTypes.useMovePoints,
             name: 'Перемещение',
         }),
-        useResearchPoints: new GameMoveCreator<RelicHuntersGameType, {
-            cell: RelicHuntersCellInfo;
-            player: RelicHuntersPlayer;
-        }>({
-            type: 'useResearchPoints',
+        useResearchPoints: new GameMoveCreator<RelicHuntersGameType, RhUseResearchPointsArgs>({
+            type: RhMoveTypes.useResearchPoints,
             name: 'Раскопки',
         }),
-        endTurn: new GameMoveCreator<RelicHuntersGameType, {
-            force: boolean;
-        }>({
-            type: 'endTurn',
+        endTurn: new GameMoveCreator<RelicHuntersGameType, RhMoveEndTurnArgs>({
+            type: RhMoveTypes.endTurn,
             name: 'Закончить ход',
         }),
     }
@@ -258,6 +235,10 @@ export class RelicHuntersGameBuilder
                                 && map.campPosition.column === position.column;
                             const isVisible = rowData.visibleCells.start <= columnIndex
                                 && rowData.visibleCells.end >= columnIndex;
+                            const visiblePosition: RelicHuntersCellPosition = {
+                                row: rowIndex + 1,
+                                column: (columnIndex - rowData.visibleCells.start) + 1,
+                            };
                             const hasVulcan = rowData.vulcanColumns.includes(columnIndex);
                             const tile = isVisible && !hasVulcan
                                 ? (
@@ -275,6 +256,7 @@ export class RelicHuntersGameBuilder
                                     isOpen: isCamp,
                                     hasRelict: tile.relicType != null,
                                     position,
+                                    visiblePosition,
                                     level,
                                     players: isCamp
                                         ? Object.keys(setupData.playerMap)
@@ -290,6 +272,7 @@ export class RelicHuntersGameBuilder
                                 isOpen: true,
                                 hasRelict: false,
                                 position,
+                                visiblePosition,
                                 level,
                                 players: [],
                             };
@@ -686,10 +669,15 @@ export class RelicHuntersGameBuilder
                                             player.benefit.research = 0;
                                             player.benefit.tileType = [];
                                             player.usedCellIds = [];
+                                            const resultOptions: RhEndTurnResultOptions = {
+                                                returnToCamp: result.value || args.force,
+                                                selectedCards: result.selectedCards,
+                                            }
                                             return {
                                                 success: true,
                                                 saveState: true,
                                                 game,
+                                                result: resultOptions,
                                             }
                                         }
                                     })
