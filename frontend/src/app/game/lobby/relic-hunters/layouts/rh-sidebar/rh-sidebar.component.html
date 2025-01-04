@@ -1,6 +1,7 @@
 <ng-container *ngIf="!isWatcher()">
     <button
         class="btn btn-danger"
+        title="Закончить игру"
         #finishGamePopover="ngbPopover"
         [ngbPopover]="finishGamePopoverContent"
         [popoverTitle]="finishGamePopoverTitle"
@@ -37,12 +38,14 @@
 
 <button
     class="btn btn-dark"
+    title="Настройки звука"
     (click)="dialogService.openSoundSettings()">
     <fa-icon class="m-1" [icon]="icons.settings"></fa-icon>
 </button>
 
 <button
     class="btn btn-dark"
+    title="Награды на биомах"
     #helpTilePopover="ngbPopover"
     [ngbPopover]="helpTilePopoverContent"
     [popoverTitle]="helpTilePopoverTitle"
@@ -80,3 +83,20 @@
         </button>
     </div>
 </ng-template>
+
+<button
+    class="btn btn-secondary"
+    title="Уменьшение масштаба карты"
+    [disabled]="disableZoomOut()"
+    (click)="zoomOut()">
+    <fa-icon class="m-1" [icon]="icons.zoomOut"></fa-icon>
+</button>
+
+<button
+    class="btn btn-secondary"
+    title="Увеличение масштаба карты"
+    [disabled]="disableZoomIn()"
+    (click)="zoomIn()">
+    <fa-icon class="m-1" [icon]="icons.zoomIn"></fa-icon>
+</button>
+

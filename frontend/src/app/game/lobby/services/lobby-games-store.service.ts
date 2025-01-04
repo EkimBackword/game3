@@ -24,7 +24,7 @@ export class LobbyGamesStoreService {
     }
 
     getGameBuilder(id: LobbyGamesIdEnum) {
-        return this.games.get(id);
+        return this.games.get(id) ?? null;
     }
 
     getSetupDataSettings(id: LobbyGamesIdEnum) {

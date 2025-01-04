@@ -9,10 +9,12 @@ import { SocketUser } from '@shared/socket.types';
 
 import { ChatClient } from './chat-client';
 import { GameClient } from './game-client';
+import { LobbyGameBuilder } from './lobby-games-store';
 
 export class LobbyClient<
     GameType extends Record<string, any> = any,
     SetupData extends Record<string, any> = any,
+    LobbyGameBuilderType extends LobbyGameBuilder<GameType, SetupData> = any,
 > {
 
     id = signal<string>('');
@@ -22,7 +24,7 @@ export class LobbyClient<
     users = signal<SocketUser[]>([]);
     statistics = signal<LobbyStatistic[]>([]);
     chat = new ChatClient();
-    game = new GameClient<GameType, SetupData>();
+    game = new GameClient<GameType, SetupData, LobbyGameBuilderType>();
 
     constructor(
     ) {
@@ -36,7 +38,7 @@ export class LobbyClient<
         this.users.set(data.users);
         this.statistics.set(data.statistics);
         this.chat.init(data.chat);
-        this.game.gameChanged(data.game);
+        this.game.gameChanged(data.game, 1);
     }
 
     statusChanged(statusId: LobbyStatusIdEnum) {

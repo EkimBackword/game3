@@ -3,7 +3,6 @@ import {
     Component,
     computed,
     inject,
-    Signal,
 } from '@angular/core';
 
 import { SessionQuery } from 'src/app/session/session.query';
@@ -13,15 +12,14 @@ import { DialogService } from 'src/app/shared/services/dialog.service';
 import {
     faCog,
     faDoorOpen,
+    faMagnifyingGlassMinus,
+    faMagnifyingGlassPlus,
     faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
-import { LobbyClient } from '../../../models/lobby-client';
 import { LobbyService } from '../../../services/lobby.service';
 import { RhBenefitComponentData } from '../../models/benefit';
-import { RelicHuntersGameBuilder } from '../../models/game-builder';
-import { RelicHuntersSetupData } from '../../models/game-setup-data';
-import { RelicHuntersGameType } from '../../models/game-type';
+import { RhLobbyClient } from '../../models/game-lobby-types';
 import { RelicHuntersTileTypeTaxonomy } from '../../models/tile';
 
 @Component({
@@ -37,13 +35,15 @@ export class RhSidebarComponent {
     private lobbyService = inject(LobbyService);
     dialogService = inject(DialogService);
 
-    client: LobbyClient<RelicHuntersGameType, RelicHuntersSetupData> = this.lobbyService.client;
-    builder = this.client.game.builder as Signal<RelicHuntersGameBuilder | null>;
+    client: RhLobbyClient = this.lobbyService.client;
+    builder = this.client.game.builder;
 
     icons = {
         help: faQuestionCircle,
         settings: faCog,
         exit: faDoorOpen,
+        zoomIn: faMagnifyingGlassPlus,
+        zoomOut: faMagnifyingGlassMinus,
     };
 
     RelicHuntersTileTypeTaxonomy = recordKeys(RelicHuntersTileTypeTaxonomy)
@@ -76,8 +76,22 @@ export class RhSidebarComponent {
         return !players?.has(user.id);
     });
 
+    disableZoomOut = computed(() => this.client.game.zoom() <= 0.7);
+
+    disableZoomIn = computed(() => this.client.game.zoom() >= 1);
+
     finishGame() {
         this.lobbyService.finishGame();
+    }
+
+    /** Уменьшение масштаба карты */
+    zoomOut() {
+        this.client.game.zoom.update((value) => value - 0.1);
+    }
+
+    /** Увеличение масштаба карты */
+    zoomIn() {
+        this.client.game.zoom.update((value) => value + 0.1);
     }
 
 }

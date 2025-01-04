@@ -26,11 +26,13 @@ import { LobbyGame } from '@shared/lobby/lobby-game';
 
 import { LobbyGamesStoreService } from '../services/lobby-games-store.service';
 import { gameLogger } from './game-logger';
+import { LobbyGameBuilder } from './lobby-games-store';
 import { LobbyGamesIdEnum } from './lobby-games.enum';
 
 export class GameClient<
     GameType extends Record<string, any> = Record<string, any>,
     SetupData extends Record<string, any> = Record<string, any>,
+    LobbyGameBuilderType extends LobbyGameBuilder<GameType, SetupData> = LobbyGameBuilder<GameType, SetupData>,
 > {
 
     private lobbyGamesStoreService = inject(LobbyGamesStoreService);
@@ -40,11 +42,12 @@ export class GameClient<
     players = signal<Map<GamePlayerId, GamePlayer>>(new Map());
     state = signal<GameState<GameType> | null>(null);
     log = signal<GameLogEntry[]>([]);
+    zoom = signal<number>(1);
 
     builder = computed(() => {
         const id = this.id();
         return id != null
-            ? this.lobbyGamesStoreService.getGameBuilder(id)
+            ? this.lobbyGamesStoreService.getGameBuilder(id) as (LobbyGameBuilderType | null)
             : null;
     });
 
@@ -66,12 +69,13 @@ export class GameClient<
     ) {
     }
 
-    gameChanged(game: LobbyGame<GameType, SetupData>) {
+    gameChanged(game: LobbyGame<GameType, SetupData>, zoom = this.zoom()) {
         this.id.set(game.id);
         this.setupData.set(game.setupData);
         this.players.set(new Map(Object.entries(game.players)));
         this.state.set(game.state);
         this.log.set(game.log);
+        this.zoom.set(zoom);
     }
 
     getPath() {

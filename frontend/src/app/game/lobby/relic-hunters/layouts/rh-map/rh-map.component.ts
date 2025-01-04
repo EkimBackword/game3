@@ -9,7 +9,6 @@ import {
     ElementRef,
     HostBinding,
     OnDestroy,
-    Signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -28,16 +27,13 @@ import { ToastService } from 'src/app/shared/services/toast.service';
 
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 
-import { LobbyClient } from '../../../models/lobby-client';
 import { LobbyService } from '../../../services/lobby.service';
 import { RhWinnerDialogComponent } from '../../dialogs/rh-winner-dialog/rh-winner-dialog.component';
 import {
     RelicHuntersActiveCellInfo,
     RelicHuntersCellInfo,
 } from '../../models/cell';
-import { RelicHuntersGameBuilder } from '../../models/game-builder';
-import { RelicHuntersSetupData } from '../../models/game-setup-data';
-import { RelicHuntersGameType } from '../../models/game-type';
+import { RhLobbyClient } from '../../models/game-lobby-types';
 import { RhHeroComponentData } from '../../models/hero';
 import { RelicHuntersMapTaxonomy } from '../../models/map';
 import { RelicHuntersTileSettings } from '../../models/tile';
@@ -60,8 +56,8 @@ var tile_position_differences = [
 })
 export class RhMapComponent implements AfterViewInit, OnDestroy {
 
-    client: LobbyClient<RelicHuntersGameType, RelicHuntersSetupData> = this.lobbyService.client;
-    builder = this.client.game.builder as Signal<RelicHuntersGameBuilder | null>;
+    client: RhLobbyClient = this.lobbyService.client;
+    builder = this.client.game.builder;
 
     @HostBinding('style.--map-opacity') opacity = 0;
     @HostBinding('style.--map-zoom') zoom = 0;
@@ -169,6 +165,12 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
                     this.winnerDialog = null;
                 });
             }
+        });
+
+        effect(() => {
+            const state = this.client.game.state();
+            const zoom = this.client.game.zoom();
+
             if (state?.game.mapId == null) {
                 this.height = 0;
                 return;
@@ -188,7 +190,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
             this.height = rowsCount * RelicHuntersTileSettings.rowStep
                 + RelicHuntersTileSettings.padding * 2;
 
-            this.onResize();
+            this.onResize(zoom);
         })
     }
 
@@ -198,7 +200,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
             startWith(null),
             debounceTime(100),
             takeUntilDestroyed(this.destroyRef),
-        ).subscribe(() => this.onResize());
+        ).subscribe(() => this.onResize(this.client.game.zoom()));
     }
 
     ngOnDestroy(): void {
@@ -297,10 +299,10 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
         return cell.id;
     }
 
-    private onResize() {
+    private onResize(gameZoom: number) {
         const clientWidth = this.elementRef.nativeElement.clientWidth;
         const zoomByWidth = clientWidth / (this.width + 25);
-        this.zoom = zoomByWidth;
+        this.zoom = zoomByWidth * gameZoom;
         this.opacity = 1;
         this.changeDetectorRef.markForCheck();
     }

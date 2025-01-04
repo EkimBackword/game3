@@ -8,7 +8,6 @@ import {
     ElementRef,
     HostBinding,
     signal,
-    Signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -32,7 +31,6 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { GamePlayerId } from '@shared/game/game-constants';
 import { GameMovePayload } from '@shared/game/game-move';
 
-import { LobbyClient } from '../../../models/lobby-client';
 import { LobbyService } from '../../../services/lobby.service';
 import {
     RelicHuntersBenefitTaxonomy,
@@ -42,10 +40,8 @@ import {
     RelicHuntersCardSettings,
     RelicHuntersCardTypeEnum,
 } from '../../models/cards';
-import { RelicHuntersGameBuilder } from '../../models/game-builder';
+import { RhLobbyClient } from '../../models/game-lobby-types';
 import { RhEventEndTurnArgs } from '../../models/game-move-args-types';
-import { RelicHuntersSetupData } from '../../models/game-setup-data';
-import { RelicHuntersGameType } from '../../models/game-type';
 import { RelicHuntersHeroColorTaxonomy } from '../../models/hero';
 import { RelicHuntersPlayerCardInfo } from '../../models/player';
 import { RelicHuntersTileTypes } from '../../models/tile';
@@ -64,8 +60,8 @@ const handHeaderTop = RelicHuntersCardSettings.header + RelicHuntersCardSettings
 })
 export class RhPlayersComponent implements AfterViewInit {
 
-    client: LobbyClient<RelicHuntersGameType, RelicHuntersSetupData> = this.lobbyService.client;
-    builder = this.client.game.builder as Signal<RelicHuntersGameBuilder | null>;
+    client: RhLobbyClient = this.lobbyService.client;
+    builder = this.client.game.builder;
 
     @HostBinding('style.--zoom-wrapper-opacity') opacity = 0;
     @HostBinding('style.--zoom-wrapper-zoom') zoom = 0;

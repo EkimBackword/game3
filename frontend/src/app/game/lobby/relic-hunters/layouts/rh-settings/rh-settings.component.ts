@@ -7,10 +7,9 @@ import {
 import * as lodash from 'lodash';
 import { SessionQuery } from 'src/app/session/session.query';
 
-import { LobbyClient } from '../../../models/lobby-client';
 import { LobbyService } from '../../../services/lobby.service';
+import { RhLobbyClient } from '../../models/game-lobby-types';
 import { RelicHuntersSetupData } from '../../models/game-setup-data';
-import { RelicHuntersGameType } from '../../models/game-type';
 import {
     RelicHuntersHeroColorEnum,
     RelicHuntersHeroColorIds,
@@ -31,7 +30,7 @@ import {
 })
 export class RhSettingsComponent {
 
-    client: LobbyClient<RelicHuntersGameType, RelicHuntersSetupData> = this.lobbyService.client;
+    client: RhLobbyClient = this.lobbyService.client;
 
     colorIds = RelicHuntersHeroColorIds;
     colorTaxanomy = RelicHuntersHeroColorTaxonomy;
