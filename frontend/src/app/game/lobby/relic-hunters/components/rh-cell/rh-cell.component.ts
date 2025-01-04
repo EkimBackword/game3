@@ -9,6 +9,8 @@ import {
     Output,
 } from '@angular/core';
 
+import { GamePlayerId } from '@shared/game/game-constants';
+
 import { recordKeys } from '../../../../../shared/models/shared.types';
 import {
     RelicHuntersBenefitSettings,
@@ -36,6 +38,7 @@ export class RhCellComponent {
     readonly cell = input.required<RelicHuntersCellInfo>();
     readonly activeCoords = input.required<RelicHuntersActiveCellInfo[]>();
     readonly usedCellIds = input.required<RelicHuntersCellInfo['id'][]>();
+    readonly selectedPlayerId = input<GamePlayerId | null>(null);
     readonly forPopover = input(false);
     @Output() onClick = new EventEmitter<void>();
 
@@ -84,6 +87,21 @@ export class RhCellComponent {
 
     isCurrent = computed(() => this.activeCoordInfo()?.isCurrent ?? false);
     @HostBinding('class.isCurrent') classIsCurrent = false;
+
+    hasPlayer = computed(() => {
+        const forPopover = this.forPopover();
+        const players = this.cell().players;
+        return forPopover || players.length > 0;
+    });
+    @HostBinding('class.hasPlayer') classHasPlayer = false;
+
+    hasSelectedPlayer = computed(() => {
+        const forPopover = this.forPopover();
+        const players = this.cell().players;
+        const selectedPlayerId = this.selectedPlayerId();
+        return !forPopover && selectedPlayerId != null && players.includes(selectedPlayerId);
+    })
+    @HostBinding('class.hasSelectedPlayer') classHasSelectedPlayer = false;
 
     isUsed = computed(() => {
         const cell = this.cell();
@@ -162,6 +180,8 @@ export class RhCellComponent {
         effect(() => this.classIsDisabled = this.isDisabled());
         effect(() => this.classIsActive = this.isActive());
         effect(() => this.classIsCurrent = this.isCurrent());
+        effect(() => this.classHasPlayer = this.hasPlayer());
+        effect(() => this.classHasSelectedPlayer = this.hasSelectedPlayer());
         effect(() => this.classIsUsed = this.isUsed());
     }
 

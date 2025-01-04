@@ -23,7 +23,7 @@ import {
 export class RhTileComponent {
 
     readonly tileType = input.required<RelicHuntersTileTypes>();
-    readonly isOpen = input.required<boolean>();
+    readonly hasPlayer = input.required<boolean>();
     readonly width = input(RelicHuntersTileSettings.width);
     readonly height = input(RelicHuntersTileSettings.height);
 
@@ -36,10 +36,10 @@ export class RhTileComponent {
         const tileType = RelicHuntersTileTypeTaxonomy[this.tileType()];
         const width = this.width();
         const height = this.height();
-        const isOpen = this.isOpen();
+        const hasPlayer = this.hasPlayer();
 
         const positionX = tileType.column * width;
-        const rowIndex = isOpen
+        const rowIndex = hasPlayer
             ? RelicHuntersTileSettings.openRow
             : RelicHuntersTileSettings.closeRow
         const positionY = rowIndex * height;

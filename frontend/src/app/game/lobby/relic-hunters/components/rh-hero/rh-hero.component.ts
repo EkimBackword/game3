@@ -44,7 +44,9 @@ export class RhHeroComponent {
         const topCell = RelicHuntersTileUtils.getTop(data.cell);
         const colorId = data.player.color;
         const colorInfo = RelicHuntersHeroColorTaxonomy[colorId];
-        const heroSize = RelicHuntersHeroSettings.sizeMeeple;
+        const heroSize = data.isSelected
+            ? RelicHuntersHeroSettings.sizeMeeple * 1.1
+            : RelicHuntersHeroSettings.sizeMeeple * 0.9;
         const positionHeroX = colorInfo.column * heroSize;
         const positionHeroY = RelicHuntersHeroSettings.heroIndex * heroSize;
         return {

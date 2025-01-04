@@ -42,7 +42,10 @@ export class GameClient<
     players = signal<Map<GamePlayerId, GamePlayer>>(new Map());
     state = signal<GameState<GameType> | null>(null);
     log = signal<GameLogEntry[]>([]);
+
     zoom = signal<number>(1);
+
+    selectedPlayerId = signal<GamePlayerId | null>(null);
 
     builder = computed(() => {
         const id = this.id();
@@ -69,13 +72,12 @@ export class GameClient<
     ) {
     }
 
-    gameChanged(game: LobbyGame<GameType, SetupData>, zoom = this.zoom()) {
+    gameChanged(game: LobbyGame<GameType, SetupData>) {
         this.id.set(game.id);
         this.setupData.set(game.setupData);
         this.players.set(new Map(Object.entries(game.players)));
         this.state.set(game.state);
         this.log.set(game.log);
-        this.zoom.set(zoom);
     }
 
     getPath() {

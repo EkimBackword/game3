@@ -7,7 +7,6 @@ import {
     DestroyRef,
     ElementRef,
     HostBinding,
-    signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -84,12 +83,10 @@ export class RhPlayersComponent implements AfterViewInit {
         tokenSize: 50,
     };
 
-    selectedPlayerId = signal<GamePlayerId | null>(null)
-
     players = computed(() => {
         const state = this.client.game.state();
         const players = this.client.game.players();
-        const selectedPlayerId = this.selectedPlayerId();
+        const selectedPlayerId = this.client.game.selectedPlayerId();
         const user = this.sessionQuery.getValue();
         const builder = this.builder();
 
@@ -420,7 +417,7 @@ export class RhPlayersComponent implements AfterViewInit {
     ) {
         window['getMovePoints'] = async (value: number) => {
             const builder = this.builder();
-            const selectedPlayerId = this.selectedPlayerId();
+            const selectedPlayerId = this.client.game.selectedPlayerId();
 
             if (builder == null || selectedPlayerId == null) {
                 return;
@@ -438,7 +435,7 @@ export class RhPlayersComponent implements AfterViewInit {
         };
         window['getResearchPoints'] = async (value: number) => {
             const builder = this.builder();
-            const selectedPlayerId = this.selectedPlayerId();
+            const selectedPlayerId = this.client.game.selectedPlayerId();
 
             if (builder == null || selectedPlayerId == null) {
                 return;
@@ -554,7 +551,7 @@ export class RhPlayersComponent implements AfterViewInit {
     }
 
     onSelectPlayer(id: GamePlayerId) {
-        this.selectedPlayerId.set(id);
+        this.client.game.selectedPlayerId.set(id);
     }
 
     ngAfterViewInit() {
@@ -567,7 +564,7 @@ export class RhPlayersComponent implements AfterViewInit {
 
 
         const selectedPlayerId = this.currentPlayer()?.id ?? this.players()[0].id;
-        this.selectedPlayerId.set(selectedPlayerId);
+        this.client.game.selectedPlayerId.set(selectedPlayerId);
         this.changeDetectorRef.markForCheck();
     }
 

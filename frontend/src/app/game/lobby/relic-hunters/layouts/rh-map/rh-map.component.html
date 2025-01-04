@@ -6,6 +6,7 @@
             [cell]="cell"
             [usedCellIds]="usedCellIds()"
             [activeCoords]="activeCoords()"
+            [selectedPlayerId]="client.game.selectedPlayerId()"
             (onClick)="clickOnCell(cell)"
         ></app-rh-cell>
             <!-- (click)="isActivePlayer() ? cell.placeMeeple() : null" -->

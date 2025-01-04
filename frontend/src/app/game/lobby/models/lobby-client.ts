@@ -38,7 +38,7 @@ export class LobbyClient<
         this.users.set(data.users);
         this.statistics.set(data.statistics);
         this.chat.init(data.chat);
-        this.game.gameChanged(data.game, 1);
+        this.game.gameChanged(data.game);
     }
 
     statusChanged(statusId: LobbyStatusIdEnum) {

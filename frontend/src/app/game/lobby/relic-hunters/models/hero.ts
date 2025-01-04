@@ -29,6 +29,7 @@ export interface RhHeroComponentData {
     index: number;
     isActive: boolean;
     isCurrent: boolean;
+    isSelected: boolean;
 }
 
 export const RelicHuntersHeroColorIds = Object.keys(RelicHuntersHeroColorEnum) as RelicHuntersHeroColorEnum[];

@@ -72,6 +72,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
 
     players = computed(() => {
         const state = this.client.game.state();
+        const selectedPlayerId = this.client.game.selectedPlayerId();
         const cells = this.cells();
         const user = this.sessionQuery.getValue();
         const playerMap = state?.game.playerMap ?? {};
@@ -81,6 +82,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
                 const player = playerMap[playerId];
                 const isActive = player.id == state?.context.currentPlayerId;
                 const isCurrent = player.id === user.id;
+                const isSelected = player.id === selectedPlayerId;
                 const result: RhHeroComponentData = {
                     id: playerId,
                     player,
@@ -88,6 +90,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
                     index,
                     isActive,
                     isCurrent,
+                    isSelected,
                 };
                 return result;
             })
@@ -100,6 +103,11 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
     });
 
     usedCellIds = computed(() => {
+        const activePlayer = this.activePlayer();
+        return activePlayer?.player.usedCellIds ?? [];
+    });
+
+    hasSelectedPlayer = computed(() => {
         const activePlayer = this.activePlayer();
         return activePlayer?.player.usedCellIds ?? [];
     });

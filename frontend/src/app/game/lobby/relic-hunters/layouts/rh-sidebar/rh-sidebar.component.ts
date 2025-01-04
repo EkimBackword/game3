@@ -1,4 +1,5 @@
 import {
+    AfterViewInit,
     ChangeDetectionStrategy,
     Component,
     computed,
@@ -29,7 +30,7 @@ import { RelicHuntersTileTypeTaxonomy } from '../../models/tile';
     styleUrl: './rh-sidebar.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RhSidebarComponent {
+export class RhSidebarComponent implements AfterViewInit {
 
     private sessionQuery = inject(SessionQuery);
     private lobbyService = inject(LobbyService);
@@ -79,6 +80,10 @@ export class RhSidebarComponent {
     disableZoomOut = computed(() => this.client.game.zoom() <= 0.7);
 
     disableZoomIn = computed(() => this.client.game.zoom() >= 1);
+
+    ngAfterViewInit(): void {
+        this.client.game.zoom.set(1);
+    }
 
     finishGame() {
         this.lobbyService.finishGame();
