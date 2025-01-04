@@ -1,15 +1,18 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    computed,
     inject,
     Signal,
 } from '@angular/core';
 
+import { SessionQuery } from 'src/app/session/session.query';
 import { recordKeys } from 'src/app/shared/models/shared.types';
 import { DialogService } from 'src/app/shared/services/dialog.service';
 
 import {
     faCog,
+    faDoorOpen,
     faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -30,6 +33,7 @@ import { RelicHuntersTileTypeTaxonomy } from '../../models/tile';
 })
 export class RhSidebarComponent {
 
+    private sessionQuery = inject(SessionQuery);
     private lobbyService = inject(LobbyService);
     dialogService = inject(DialogService);
 
@@ -39,6 +43,7 @@ export class RhSidebarComponent {
     icons = {
         help: faQuestionCircle,
         settings: faCog,
+        exit: faDoorOpen,
     };
 
     RelicHuntersTileTypeTaxonomy = recordKeys(RelicHuntersTileTypeTaxonomy)
@@ -64,5 +69,15 @@ export class RhSidebarComponent {
             return result;
         })
         .filter(p => p.benefits.length > 0);
+
+    isWatcher = computed(() => {
+        const players = this.client.game.players();
+        const user = this.sessionQuery.getValue();
+        return !players?.has(user.id);
+    });
+
+    finishGame() {
+        this.lobbyService.finishGame();
+    }
 
 }

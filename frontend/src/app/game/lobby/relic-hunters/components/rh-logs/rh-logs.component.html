@@ -1,12 +1,14 @@
 <button
-    class="btn btn-dark"
+    class="btn btn-dark btn-in-group btn-by-hover"
     #helpTilePopover="ngbPopover"
     [ngbPopover]="popoverContent"
     [popoverTitle]="popoverTitle"
     [autoClose]="'outside'"
     container="body"
+    placement="top"
     popoverClass="rh_game_logs_group_popover">
-    <fa-icon class="m-1" [icon]="icons.logs"></fa-icon>
+    <div class="m-1" [class.btn-title]="!isWatcher()">Журнал событий</div>
+    <fa-icon class="m-1" [class.btn-icon]="!isWatcher()" [icon]="icons.logs"></fa-icon>
 </button>
 <ng-template #popoverTitle>
     <span>Журнал событий</span>

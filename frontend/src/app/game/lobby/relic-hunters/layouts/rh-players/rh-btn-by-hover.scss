@@ -1,0 +1,32 @@
+.btn-by-hover {
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    position: relative;
+
+    .btn-title {
+        position: absolute;
+        transform: scale(0, 0);
+        transform-origin: center center;
+        transition: all 300ms ease-in-out;
+    }
+
+    .btn-icon {
+        transform: scale(1, 1);
+        transform-origin: center center;
+        transition: all 100ms ease-in-out;
+    }
+
+    &:hover {
+        .btn-title {
+            transform: scale(1, 1);
+        }
+
+        .btn-icon {
+            transform: scale(0, 0);
+        }
+    }
+}

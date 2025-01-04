@@ -23,7 +23,6 @@ import { ToastService } from 'src/app/shared/services/toast.service';
 
 import {
     faBan,
-    faDoorOpen,
     faForwardStep,
     faHourglassStart,
     faStore,
@@ -56,7 +55,10 @@ const handHeaderTop = RelicHuntersCardSettings.header + RelicHuntersCardSettings
 @Component({
     selector: 'app-rh-players',
     templateUrl: './rh-players.component.html',
-    styleUrls: ['./rh-players.component.scss'],
+    styleUrls: [
+        './rh-btn-by-hover.scss',
+        './rh-players.component.scss',
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false
 })
@@ -408,7 +410,6 @@ export class RhPlayersComponent implements AfterViewInit {
         user: faUser,
         active: faHourglassStart,
         endTurn: faForwardStep,
-        exit: faDoorOpen,
         cancel: faBan,
         store: faStore,
     }
@@ -546,10 +547,6 @@ export class RhPlayersComponent implements AfterViewInit {
         }
 
         this.lobbyService.addState(eventResult.state);
-    }
-
-    finishGame() {
-        this.lobbyService.finishGame();
     }
 
     undoState() {

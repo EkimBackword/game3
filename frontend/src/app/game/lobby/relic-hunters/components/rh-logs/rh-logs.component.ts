@@ -47,11 +47,16 @@ import { RelicHuntersPlayer } from '../../models/player';
 @Component({
     selector: 'app-rh-logs',
     templateUrl: './rh-logs.component.html',
-    styleUrl: './rh-logs.component.scss',
+    styleUrls: [
+        '../../layouts/rh-players/rh-btn-by-hover.scss',
+        './rh-logs.component.scss',
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false,
 })
 export class RhLogsComponent implements OnInit, OnDestroy {
+
+    isWatcher = input.required<boolean>();
 
     game = input.required<GameClient<RelicHuntersGameType, RelicHuntersSetupData>>();
 

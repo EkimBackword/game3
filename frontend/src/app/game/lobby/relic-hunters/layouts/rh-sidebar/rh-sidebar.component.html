@@ -1,17 +1,54 @@
+<ng-container *ngIf="!isWatcher()">
+    <button
+        class="btn btn-danger"
+        #finishGamePopover="ngbPopover"
+        [ngbPopover]="finishGamePopoverContent"
+        [popoverTitle]="finishGamePopoverTitle"
+        container="body"
+        placement="start"
+        popoverClass="game-popover">
+        <fa-icon class="m-1" [icon]="icons.exit"></fa-icon>
+    </button>
+    <ng-template #finishGamePopoverTitle>
+        Закончить игру?
+    </ng-template>
+    <ng-template #finishGamePopoverContent>
+        <div class="d-flex flex-column">
+            <div
+                class="btn-group"
+                role="group"
+                aria-label="Popover actions">
+                <button
+                    type="button"
+                    class="btn btn-sm btn-primary"
+                    (click)="finishGame()">
+                    Да
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-sm btn-danger"
+                    (click)="finishGamePopover.close()">
+                    Нет
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</ng-container>
+
 <button
     class="btn btn-dark"
     (click)="dialogService.openSoundSettings()">
     <fa-icon class="m-1" [icon]="icons.settings"></fa-icon>
 </button>
-<app-rh-logs
-    [game]="client.game"
-></app-rh-logs>
+
 <button
     class="btn btn-dark"
     #helpTilePopover="ngbPopover"
     [ngbPopover]="helpTilePopoverContent"
     [popoverTitle]="helpTilePopoverTitle"
+    [autoClose]="'outside'"
     container="body"
+    placement="start"
     popoverClass="game-popover">
     <fa-icon class="m-1" [icon]="icons.help"></fa-icon>
 </button>
