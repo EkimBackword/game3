@@ -218,12 +218,14 @@ export class RhLogsComponent implements OnInit, OnDestroy {
                 switch (type) {
                     case 'startGame':
                     case 'endTurn': {
-                        this.showToast({
-                            name,
-                            color,
-                            message: type === 'endTurn'
-                                ? 'Закончил ход'
-                                : 'Игра началась',
+                        this.notify({
+                            toast: {
+                                name,
+                                color,
+                                message: type === 'endTurn'
+                                    ? 'Закончил ход'
+                                    : 'Игра началась',
+                            },
                             soundUrl: '/assets/sounds/StartTurn.mp3',
                         });
                         return;
@@ -234,19 +236,19 @@ export class RhLogsComponent implements OnInit, OnDestroy {
                 }
             }
             case GameActionsEnum.UNDO: {
-                this.showToast({
-                    name,
-                    color,
-                    message: 'Отменил ход',
+                this.notify({
+                    toast: {
+                        name,
+                        color,
+                        message: 'Отменил ход',
+                    },
                     soundUrl: '/assets/sounds/Cancel.mp3',
                 });
                 return;
             }
             default: {
-                this.showToast({
-                    name,
-                    color,
-                    message: `Выполнил действие "${log.action.payload.name}"`,
+                this.notify({
+                    toast: null,
                     soundUrl: this.getSoundUrl(log.action),
                 });
                 return;
@@ -288,10 +290,12 @@ export class RhLogsComponent implements OnInit, OnDestroy {
         return '/assets/sounds/GetPoints.mp3';
     }
 
-    private showToast(options: {
-        name: string;
-        color: string;
-        message: string;
+    private notify(options: {
+        toast: {
+            name: string;
+            color: string;
+            message: string;
+        } | null;
         soundUrl: string | null;
     }) {
         if (options.soundUrl != null) {
@@ -300,20 +304,21 @@ export class RhLogsComponent implements OnInit, OnDestroy {
                 soundUrl: options.soundUrl,
             });
         }
-        this.toastService.show(
-            ToastSeverityEnum.secondary,
-            `Игрок: ${options.name}`,
-            {
-                bodyText: options.message,
-                iconStyle: {
-                    color: options.color,
-                },
-                bodyStyle: {
-                    backgroundColor: options.color,
-                },
-                duration: 2000,
-            }
-        );
+        if (options.toast != null) {
+            this.toastService.show(
+                ToastSeverityEnum.secondary,
+                `Игрок: ${options.toast.name}`,
+                {
+                    bodyText: options.toast.message,
+                    iconStyle: {
+                        color: options.toast.color,
+                    },
+                    bodyStyle: {
+                        backgroundColor: options.toast.color,
+                    },
+                }
+            );
+        }
     }
 
 }
