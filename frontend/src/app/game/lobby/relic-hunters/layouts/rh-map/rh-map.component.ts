@@ -23,20 +23,14 @@ import {
     startWith,
 } from 'rxjs';
 import { SessionQuery } from 'src/app/session/session.query';
-import { recordKeys } from 'src/app/shared/models/shared.types';
 import { DialogService } from 'src/app/shared/services/dialog.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
-import {
-    faCog,
-    faQuestionCircle,
-} from '@fortawesome/free-solid-svg-icons';
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
 
 import { LobbyClient } from '../../../models/lobby-client';
 import { LobbyService } from '../../../services/lobby.service';
 import { RhWinnerDialogComponent } from '../../dialogs/rh-winner-dialog/rh-winner-dialog.component';
-import { RhBenefitComponentData } from '../../models/benefit';
 import {
     RelicHuntersActiveCellInfo,
     RelicHuntersCellInfo,
@@ -46,10 +40,7 @@ import { RelicHuntersSetupData } from '../../models/game-setup-data';
 import { RelicHuntersGameType } from '../../models/game-type';
 import { RhHeroComponentData } from '../../models/hero';
 import { RelicHuntersMapTaxonomy } from '../../models/map';
-import {
-    RelicHuntersTileSettings,
-    RelicHuntersTileTypeTaxonomy,
-} from '../../models/tile';
+import { RelicHuntersTileSettings } from '../../models/tile';
 
 var tile_position_differences = [
     // odd rows
@@ -143,35 +134,6 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
             ...neighbors,
         ]
     });
-
-    icons = {
-        help: faQuestionCircle,
-        settings: faCog,
-    };
-
-    RelicHuntersTileTypeTaxonomy = recordKeys(RelicHuntersTileTypeTaxonomy)
-        .map((type) => {
-            const size = 60;
-            const value = RelicHuntersTileTypeTaxonomy[type];
-            const benefits = value.benefits.map(key => {
-                const benefit: RhBenefitComponentData = {
-                    key,
-                    value: 0,
-                    size,
-                    inlineView: false,
-                    hideValue: true,
-                };
-                return benefit;
-            });
-            const result = {
-                type,
-                benefits,
-                width: size,
-                height: size,
-            };
-            return result;
-        })
-        .filter(p => p.benefits.length > 0);
 
     private winnerDialog: MatDialogRef<RhWinnerDialogComponent, any> | null = null;
 
@@ -337,7 +299,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
 
     private onResize() {
         const clientWidth = this.elementRef.nativeElement.clientWidth;
-        const zoomByWidth = clientWidth / (this.width + 50);
+        const zoomByWidth = clientWidth / (this.width + 25);
         this.zoom = zoomByWidth;
         this.opacity = 1;
         this.changeDetectorRef.markForCheck();

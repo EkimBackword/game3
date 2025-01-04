@@ -1,0 +1,11 @@
+:host {
+    background-color: #f0f0f0;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    padding: 10px 0;
+    gap: 10px;
+    z-index: 1000;
+}

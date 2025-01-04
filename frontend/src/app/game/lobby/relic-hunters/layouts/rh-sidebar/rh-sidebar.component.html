@@ -1,0 +1,45 @@
+<button
+    class="btn btn-dark"
+    (click)="dialogService.openSoundSettings()">
+    <fa-icon class="m-1" [icon]="icons.settings"></fa-icon>
+</button>
+<app-rh-logs
+    [game]="client.game"
+></app-rh-logs>
+<button
+    class="btn btn-dark"
+    #helpTilePopover="ngbPopover"
+    [ngbPopover]="helpTilePopoverContent"
+    [popoverTitle]="helpTilePopoverTitle"
+    container="body"
+    popoverClass="game-popover">
+    <fa-icon class="m-1" [icon]="icons.help"></fa-icon>
+</button>
+<ng-template #helpTilePopoverTitle>
+    Награды на биомах
+</ng-template>
+<ng-template #helpTilePopoverContent>
+    <div class="d-flex flex-column">
+        <div
+            class="d-flex flex-row justify-content-start align-items-center m-1"
+            *ngFor="let tile of RelicHuntersTileTypeTaxonomy">
+            <app-rh-tile
+                [tileType]="tile.type"
+                [isOpen]="true"
+                [width]="tile.width"
+                [height]="tile.height"
+            ></app-rh-tile>
+            <div class="tile-arrow">→</div>
+            <app-rh-benefit
+                *ngFor="let benefit of tile.benefits"
+                [data]="benefit"
+            ></app-rh-benefit>
+        </div>
+        <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            (click)="helpTilePopover.close()">
+            Закрыть
+        </button>
+    </div>
+</ng-template>

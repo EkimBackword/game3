@@ -11,18 +11,6 @@
     overflow-x: auto;
 }
 
-.actions {
-    position: fixed;
-    top: 10px;
-    right: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 10px;
-    z-index: 1000;
-}
-
 .tile-arrow {
     font-size: 18px;
 }
