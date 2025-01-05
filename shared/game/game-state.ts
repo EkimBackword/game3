@@ -1,4 +1,5 @@
 import {
+  GameActionResultEvent,
   GameActionsEvent,
   GameActionsMove,
   GameActionsUndo,
@@ -50,6 +51,7 @@ export interface GameLogEntry {
     action:
         | ReturnType<typeof GameActionsMove>
         | ReturnType<typeof GameActionsEvent>
+        | ReturnType<typeof GameActionResultEvent>
         | ReturnType<typeof GameActionsUndo>;
     turn: number;
     phase: GamePhaseName | null;

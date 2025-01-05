@@ -8,7 +8,6 @@ import {
 import { recordKeys } from 'src/app/shared/models/shared.types';
 
 import { RhBenefitComponentData } from '../../../models/benefit';
-import { RelicHuntersGameBuilder } from '../../../models/game-builder';
 import { RhUseResearchPointsArgs } from '../../../models/game-move-args-types';
 
 @Component({
@@ -22,17 +21,11 @@ import { RhUseResearchPointsArgs } from '../../../models/game-move-args-types';
 export class RhLogsUseResearchPointsComponent {
 
     args = input.required<RhUseResearchPointsArgs>();
-    builder = input.required<RelicHuntersGameBuilder | null>();
+    name = input.required<string>();
 
     text = computed(() => {
-        const builder = this.builder();
-
-        if (builder == null) {
-            return '';
-        }
-
-        const move = builder.moves.useResearchPoints;
-        return `Выполнил действие "${move.name}" на ячейке`;
+        const name = this.name();
+        return `Выполнил действие "${name}" на ячейке`;
     });
 
     benefit = computed(() => {

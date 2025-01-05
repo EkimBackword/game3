@@ -1,3 +1,4 @@
+import { GameActionResult } from './game-actions';
 import { GameId } from './game-constants';
 import { GameContext } from './game-context';
 import { GameMove } from './game-move';
@@ -13,11 +14,11 @@ export interface GameConfig<
   disableUndo?: boolean;
   moves?: Record<string, GameMove<GameType>>;
   phases: Record<string, GamePhaseConfig<GameType>>;
-  setup: (context: GameContext, setupData: SetupData) => GameType;
+  setup: (context: GameContext, setupData: SetupData) => GameActionResult<GameType>;
   validateSetupData?: (setupData: SetupData, numPlayers: number) => string | undefined;
-  onMove?: (options: GameOptions<GameType>) => GameType;
+  onMove?: (options: GameOptions<GameType>) => GameActionResult<GameType>;
   endIf?: (options: GameOptions<GameType>) => boolean;
-  onEnd?: (options: GameOptions<GameType>) => GameType;
+  onEnd?: (options: GameOptions<GameType>) => GameActionResult<GameType>;
 }
 
 export interface GameConfigCreatorConfig {

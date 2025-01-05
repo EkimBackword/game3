@@ -259,7 +259,7 @@ class LobbyInfo {
         this.data.game = {
             ...this.data.game,
             state: state,
-            log: [],
+            log: state.log ?? [],
         };
         this.history.clear();
         this.history.set(state.stateId, state);

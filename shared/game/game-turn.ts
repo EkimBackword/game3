@@ -1,3 +1,4 @@
+import { GameActionResult } from './game-actions';
 import { GamePlayerId } from './game-constants';
 import {
   GameOptions,
@@ -14,10 +15,10 @@ export interface TurnConfig<
     maxMoves?: number; // TODO: проверить нужны ли тут ограничения?
     stages: Record<string, StageConfig<GameType>>;
     order?: TurnOrderConfig<GameType>;
-    onBegin?: (options: GameOptions<GameType>) => GameType;
-    onEnd?: (options: GameOptions<GameType>) => GameType;
+    onBegin?: (options: GameOptions<GameType>) => GameActionResult<GameType>;
+    onEnd?: (options: GameOptions<GameType>) => GameActionResult<GameType>;
     endIf?: (options: GameOptions<GameType>) => boolean | { next: GamePlayerId };
-    onMove?: (options: GameOptionsWithPlayerId<GameType>) => GameType;
+    onMove?: (options: GameOptionsWithPlayerId<GameType>) => GameActionResult<GameType>;
 }
 
 export interface TurnOrderConfig<

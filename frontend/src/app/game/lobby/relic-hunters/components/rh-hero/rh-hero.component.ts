@@ -27,6 +27,12 @@ export class RhHeroComponent {
 
     private positionByIndex = computed(() => {
         const data = this.data();
+        if (data.forLog) {
+            return {
+                left: 0,
+                top: 0,
+            }
+        }
         const rowCount = 2;
         const leftIndex = data.index % rowCount;
         const topIndex = Math.floor(data.index / rowCount);
@@ -40,13 +46,19 @@ export class RhHeroComponent {
         const data = this.data();
         const position = this.positionByIndex();
 
-        const leftCell = RelicHuntersTileUtils.getLeft(data.cell);
-        const topCell = RelicHuntersTileUtils.getTop(data.cell);
+        const leftCell = data.cell != null
+            ? RelicHuntersTileUtils.getLeft(data.cell)
+            : 0;
+        const topCell = data.cell != null
+            ? RelicHuntersTileUtils.getTop(data.cell)
+            : 0;
         const colorId = data.player.color;
         const colorInfo = RelicHuntersHeroColorTaxonomy[colorId];
-        const heroSize = data.isSelected
-            ? RelicHuntersHeroSettings.sizeMeeple * 1.1
-            : RelicHuntersHeroSettings.sizeMeeple * 0.9;
+        const heroSize = !data.forLog
+            ? data.isSelected
+                ? RelicHuntersHeroSettings.sizeMeeple * 1.1
+                : RelicHuntersHeroSettings.sizeMeeple * 0.9
+            : 40;
         const positionHeroX = colorInfo.column * heroSize;
         const positionHeroY = RelicHuntersHeroSettings.heroIndex * heroSize;
         return {
@@ -58,6 +70,7 @@ export class RhHeroComponent {
             backgroundPosition: `-${positionHeroX}px -${positionHeroY}px`,
             backgroundSize: RelicHuntersHeroSettings.backgroundSize,
             flexShrink: '0',
+            position: data.forLog ? 'relative' : 'absolute'
         };
     });
     @HostBinding('style') cellStyle: Partial<CSSStyleDeclaration> = {};

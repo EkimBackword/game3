@@ -502,6 +502,7 @@ export class RhPlayersComponent implements AfterViewInit {
         const payload = builder.moves.endTurn.getPayload(
             {
                 force: false,
+                relicType: null,
             },
             user.id,
         );

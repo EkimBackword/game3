@@ -137,7 +137,7 @@ export const RelicHuntersCardTaxonomy: RelicHuntersCardShortInfo[] = [
     // Ассистент
     {
         url: '/assets/relic-hunters/cards/reserv/01.JPG',
-        name: 'Счастливый Слонон',
+        name: 'Счастливый Слон',
         type: RelicHuntersCardTypeEnum.assistant,
         benefit: {
         },
@@ -146,7 +146,7 @@ export const RelicHuntersCardTaxonomy: RelicHuntersCardShortInfo[] = [
     // Резерв
     {
         url: '/assets/relic-hunters/cards/reserv/02.JPG',
-        name: 'Сестричек-проныр',
+        name: 'Сестрички-проныры',
         type: RelicHuntersCardTypeEnum.reserv,
         price: 3,
         benefit: {

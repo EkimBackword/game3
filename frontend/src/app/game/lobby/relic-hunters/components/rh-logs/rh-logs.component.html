@@ -30,43 +30,58 @@
                     *ngFor="let log of group.list; trackBy: trackByLogIndex"
                     class="rh_game_logs_group_group_item"
                     [style.borderColor]="log.color">
-                    <span><b>Игрок:</b> {{log.player?.name ?? "-"}}</span>
-                    <ng-container [ngSwitch]="log.tagName">
-                        <app-rh-logs-end-turn
-                            *ngSwitchCase="'rh-logs-end-turn'"
-                            [args]="log.action.payload.args"
-                        ></app-rh-logs-end-turn>
+                    @if (log.player != null) {
+                        <span><b>Игрок:</b> {{log.player.name}}</span>
+                    } @else {
+                        <span><b>Автоматическое событие</b></span>
+                    }
 
-                        <app-rh-logs-get-points
-                            *ngSwitchCase="'rh-logs-get-points'"
-                            [type]="log.action.payload.type"
-                            [args]="log.action.payload.args"
-                            [builder]="builder()"
-                        ></app-rh-logs-get-points>
-
-                        <app-rh-logs-get-tile
-                            *ngSwitchCase="'rh-logs-get-tile'"
-                            [args]="log.action.payload.args"
-                            [builder]="builder()"
-                        ></app-rh-logs-get-tile>
-
-                        <app-rh-logs-use-move-points
-                            *ngSwitchCase="'rh-logs-use-move-points'"
-                            [args]="log.action.payload.args"
-                            [builder]="builder()"
-                        ></app-rh-logs-use-move-points>
-
-                        <app-rh-logs-use-research-points
-                            *ngSwitchCase="'rh-logs-use-research-points'"
-                            [args]="log.action.payload.args"
-                            [builder]="builder()"
-                        ></app-rh-logs-use-research-points>
-
-                        <span
-                            *ngSwitchCase="'undo'">
-                            Ход отменён
-                        </span>
-                    </ng-container>
+                    @switch (log.action.type) {
+                        @case (GameActionsEnum.GAME_EVENT) {
+                            <app-rh-logs-end-turn
+                                [payload]="log.action.payload"
+                            ></app-rh-logs-end-turn>
+                        }
+                        @case (GameActionsEnum.ACTION_RESULT) {
+                            <app-rh-logs-action-result
+                                [payload]="log.action.payload"
+                            ></app-rh-logs-action-result>
+                        }
+                        @case (GameActionsEnum.UNDO) {
+                            <span
+                                *ngSwitchCase="'undo'">
+                                Ход отменён
+                            </span>
+                        }
+                        @default {
+                            @switch (log.action.payload.type) {
+                                @case (RhMoveTypes.getTileType) {
+                                    <app-rh-logs-get-tile
+                                        [args]="log.action.payload.args"
+                                        [name]="log.action.payload.name"
+                                    ></app-rh-logs-get-tile>
+                                }
+                                @case (RhMoveTypes.useMovePoints) {
+                                    <app-rh-logs-use-move-points
+                                        [args]="log.action.payload.args"
+                                        [name]="log.action.payload.name"
+                                    ></app-rh-logs-use-move-points>
+                                }
+                                @case (RhMoveTypes.useResearchPoints) {
+                                    <app-rh-logs-use-research-points
+                                        [args]="log.action.payload.args"
+                                        [name]="log.action.payload.name"
+                                    ></app-rh-logs-use-research-points>
+                                }
+                                @default {
+                                    <app-rh-logs-get-points
+                                        [args]="log.action.payload.args"
+                                        [name]="log.action.payload.name"
+                                    ></app-rh-logs-get-points>
+                                }
+                            }
+                        }
+                    }
                 </div>
             </div>
         </ng-container>

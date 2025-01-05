@@ -1,3 +1,4 @@
+import { GameActionResult } from './game-actions';
 import { GamePhaseName } from './game-constants';
 import { GameMove } from './game-move';
 import { GameOptions } from './game-options';
@@ -10,8 +11,8 @@ export interface GamePhaseConfig<
     turn: TurnConfig<GameType>;
     moves?: Record<string, GameMove<GameType>>;
     next?: (options: GameOptions<GameType>) => GamePhaseName;
-    onBegin?: (options: GameOptions<GameType>) => GameType;
-    onEnd?: (options: GameOptions<GameType>) => GameType;
+    onBegin?: (options: GameOptions<GameType>) => GameActionResult<GameType>;
+    onEnd?: (options: GameOptions<GameType>) => GameActionResult<GameType>;
     endIf?: (options: GameOptions<GameType>) => boolean | { next: GamePhaseName };
 }
 

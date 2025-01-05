@@ -1,0 +1,46 @@
+@let data = payload();
+@switch (data.type) {
+    @case (RhGameActionType.OnPhasesBegin) {
+        <span>Список игроков:</span>
+        <div class="d-flex flex-column justify-content-start align-items-stretch flex-wrap gap-2">
+            @for (player of data.args.players; track player.id; let idx = $index) {
+                <div class="d-flex flex-row justify-content-start align-items-center flex-wrap gap-2">
+                    <span>№{{idx}}: <b>{{player.name}}</b></span>
+                    <app-rh-hero
+                        [data]="{
+                            forLog: true,
+                            id: player.id,
+                            player: player,
+                            cell: null,
+                            index: 0,
+                            isActive: false,
+                            isCurrent: false,
+                            isSelected: false,
+                        }"
+                    ></app-rh-hero>
+                    <span>начальный запас:</span>
+                    <app-rh-benefit [data]="{
+                        key: 'coins',
+                        value: player.benefit.coins,
+                        size: 40,
+                        inlineView: true,
+                    }"></app-rh-benefit>
+                </div>
+              }
+        </div>
+    }
+    @case (RhGameActionType.OnTurnEnd) {
+        @if (data.args.cards.length > 0) {
+            <span>Новые карты на рынке:</span>
+            <ul>
+                @for (card of data.args.cards; track card.id;) {
+                    <li>
+                        <app-rh-logs-card [card]="card"></app-rh-logs-card>
+                    </li>
+                  }
+            </ul>
+        } @else {
+            <span>Новых карт на рынке не появилось</span>
+        }
+    }
+}

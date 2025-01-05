@@ -22,7 +22,19 @@ export enum RelicHuntersHeroColorEnum {
     Green = 'Green',
 }
 
-export interface RhHeroComponentData {
+export interface RhHeroComponentDataForLog {
+    forLog: true;
+    id: GamePlayerId;
+    player: RelicHuntersPlayer;
+    cell: null;
+    index: number;
+    isActive: boolean;
+    isCurrent: boolean;
+    isSelected: boolean;
+}
+
+export interface RhHeroComponentDataForCell {
+    forLog: false;
     id: GamePlayerId;
     player: RelicHuntersPlayer;
     cell: RelicHuntersCellInfo;
@@ -31,6 +43,10 @@ export interface RhHeroComponentData {
     isCurrent: boolean;
     isSelected: boolean;
 }
+
+export type RhHeroComponentData =
+    | RhHeroComponentDataForLog
+    | RhHeroComponentDataForCell;
 
 export const RelicHuntersHeroColorIds = Object.keys(RelicHuntersHeroColorEnum) as RelicHuntersHeroColorEnum[];
 

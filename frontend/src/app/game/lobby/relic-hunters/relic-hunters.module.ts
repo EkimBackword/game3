@@ -7,6 +7,7 @@ import { RhBenefitComponent } from './components/rh-benefit/rh-benefit.component
 import { RhCardComponent } from './components/rh-card/rh-card.component';
 import { RhCellComponent } from './components/rh-cell/rh-cell.component';
 import { RhHeroComponent } from './components/rh-hero/rh-hero.component';
+import { RhLogsActionResultComponent } from './components/rh-logs/rh-logs-action-result/rh-logs-action-result.component';
 import { RhLogsCardComponent } from './components/rh-logs/rh-logs-card/rh-logs-card.component';
 import { RhLogsCellComponent } from './components/rh-logs/rh-logs-cell/rh-logs-cell.component';
 import { RhLogsEndTurnComponent } from './components/rh-logs/rh-logs-end-turn/rh-logs-end-turn.component';
@@ -51,6 +52,7 @@ import { RelicHuntersRoutes } from './utils/relic-hunters.routing';
         RhLogsCardComponent,
         RhLogsCellComponent,
         RhSidebarComponent,
+        RhLogsActionResultComponent,
     ],
     imports: [
         SharedModule,

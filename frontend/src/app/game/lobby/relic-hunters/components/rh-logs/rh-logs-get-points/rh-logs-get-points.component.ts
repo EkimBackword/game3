@@ -5,11 +5,7 @@ import {
     input,
 } from '@angular/core';
 
-import { GameLog } from 'src/app/shared/models/game.types';
-import { isKeyInRecord } from 'src/app/shared/models/shared.types';
-
 import { RhBenefitComponentData } from '../../../models/benefit';
-import { RelicHuntersGameBuilder } from '../../../models/game-builder';
 import {
     RhGetPointsByCardArgs,
     RhGetPointsByMoveArgs,
@@ -24,20 +20,12 @@ import {
 })
 export class RhLogsGetPointsComponent {
 
-    type = input.required<GameLog['action']['payload']['type']>();
     args = input.required<RhGetPointsByMoveArgs | RhGetPointsByCardArgs>();
-    builder = input.required<RelicHuntersGameBuilder | null>();
+    name = input.required<string>();
 
     text = computed(() => {
-        const type = this.type();
-        const builder = this.builder();
-
-        if (builder == null || !isKeyInRecord(type, builder.moves)) {
-            return '';
-        }
-
-        const move = builder.moves[type];
-        return `Выполнил действие "${move.name}" и получил:`;
+        const name = this.name();
+        return `Выполнил действие "${name}" и получил:`;
     });
 
     benefit = computed<RhBenefitComponentData>(() => {

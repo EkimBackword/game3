@@ -1,14 +1,30 @@
-<ng-container *ngIf="result(); let info">
+@let info = result();
+
+@if (info != null) {
+    @if (info.relicType != null) {
+        <div class="d-flex flex-row justify-content-start align-items-center flex-wrap">
+            <span>Забрал реликвию:</span>
+            <app-rh-relic
+                class="m-1"
+                [relicType]="info.relicType"
+                [size]="50"
+            ></app-rh-relic>
+        </div>
+    }
+
     <span>Закончил ход</span>
-    <span *ngIf="info.returnToCamp">Вернулся в лагерь</span>
-    <ng-container *ngIf="info.selectedCards.length > 0">
+
+    @if (info.returnToCamp) {
+        <span>Вернулся в лагерь</span>
+    }
+
+    @if (info.selectedCards.length > 0) {
         <span>Купил карты:</span>
         <ul>
             <li *ngFor="let card of info.selectedCards">
                 <app-rh-logs-card [card]="card"></app-rh-logs-card>
             </li>
         </ul>
-    </ng-container>
-</ng-container>
-
+    }
+}
 

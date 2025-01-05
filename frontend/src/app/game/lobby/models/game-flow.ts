@@ -1,6 +1,8 @@
 import { getCurrentTime } from 'src/app/shared/models/game.types';
 
 import {
+    GameActionPayload,
+    GameActionResultEvent,
     GameActionsEvent,
     GameActionsMove,
 } from '@shared/game/game-actions';
@@ -134,13 +136,17 @@ export class GameFlow<
         players: GamePlayer[],
     ): GameState<GameType> {
         const context = this.getInitContext(players);
-        const game = this.config.setup(context, setupData);
+        const setupResult = this.config.setup(context, setupData);
         const state: GameState<GameType> = {
             stateId: 0,
-            game,
+            game: setupResult.game,
             context,
             log: [],
         };
+        state.log = this.MappingGameActionPayloads({
+            state,
+            payloads: setupResult.payloads,
+        });
         const result = this.eventHandlers.startGame(state);
         if (!result.success || !result.saveState) {
             return state;
@@ -243,11 +249,24 @@ export class GameFlow<
 
         const phaseConfig = this.GetPhase(state.context);
         if (phaseConfig != null) {
-            const game = phaseConfig.turn.onMove?.({
+            const onMoveResult = phaseConfig.turn.onMove?.({
                 ...state,
                 playerId: payload.playerId,
-            }) ?? state.game;
-            state = { ...state, game };
+            }) ?? {
+                game: state.game,
+                payloads: []
+            };
+            state = {
+                ...state,
+                game: onMoveResult.game,
+                log: [
+                    ...(state.log ?? []),
+                    ...this.MappingGameActionPayloads({
+                        state,
+                        payloads: onMoveResult.payloads,
+                    }),
+                ],
+            };
         }
 
         return this.Process(state, [{
@@ -306,9 +325,20 @@ export class GameFlow<
         state: GameState<GameType>,
         options: GameFlowEventOptions<any>,
     ) {
+        const onMoveResult = this.config.onMove?.(state) ?? {
+            game: state.game,
+            payloads: [],
+        };
         return this.WithSave({
             ...state,
-            game: this.config.onMove?.(state) ?? state.game,
+            game: onMoveResult.game,
+            log: [
+                ...(state.log ?? []),
+                ...this.MappingGameActionPayloads({
+                    state,
+                    payloads: onMoveResult.payloads,
+                }),
+            ]
         });
     }
 
@@ -425,7 +455,7 @@ export class GameFlow<
         options: GameFlowEventOptions<any>,
     ): GameStateChangeResult<GameType> {
         const { next } = options;
-        let { game, context } = state;
+        const { game, context } = state;
 
         const phaseConfig = this.GetPhase(context);
         if (phaseConfig == null) {
@@ -434,7 +464,10 @@ export class GameFlow<
                 : this.WithSave(state);
         }
 
-        game = phaseConfig.onBegin?.(state) ?? state.game;
+        const onBeginResult = phaseConfig.onBegin?.(state) ?? {
+            game,
+            payloads: [],
+        };
 
         next?.push({
             name: 'StartTurn',
@@ -443,8 +476,15 @@ export class GameFlow<
 
         return this.WithSave({
             ...state,
-            game,
-            context
+            game: onBeginResult.game,
+            context,
+            log: [
+                ...(state.log ?? []),
+                ...this.MappingGameActionPayloads({
+                    state,
+                    payloads: onBeginResult.payloads
+                }),
+            ]
         });
     }
 
@@ -478,13 +518,25 @@ export class GameFlow<
             turn,
         };
 
+        const onBeginResult = phaseConfig?.turn.onBegin?.({
+            ...state,
+            context,
+        }) ?? {
+            game: state.game,
+            payloads: [],
+        };
+
         return this.WithSave({
             ...state,
-            game: phaseConfig?.turn.onBegin?.({
-                ...state,
-                context,
-            }) ?? state.game,
-            context
+            game: onBeginResult.game,
+            context,
+            log: [
+                ...(state.log ?? []),
+                ...this.MappingGameActionPayloads({
+                    state,
+                    payloads: onBeginResult.payloads,
+                }),
+            ]
         });
     }
 
@@ -641,17 +693,28 @@ export class GameFlow<
             },
         );
 
-
-        return result.success && result.saveState
-            ? this.WithSave({
+        if (result.success && result.saveState) {
+            const onEndResult = this.config.onEnd?.(result.state) ?? {
+                game: result.state.game,
+                payloads: [],
+            };
+            return this.WithSave({
                 ...result.state,
-                game: this.config.onEnd?.(result.state) ?? result.state.game,
+                game: onEndResult.game,
                 context: {
                     ...result.state.context,
                     gameover: true
                 },
+                log: [
+                    ...(state.log ?? []),
+                    ...this.MappingGameActionPayloads({
+                        state,
+                        payloads: onEndResult.payloads,
+                    }),
+                ],
             })
-            : result;
+        }
+        return result;
     }
 
     EndPhase(
@@ -698,7 +761,10 @@ export class GameFlow<
                 : this.WithSave(state);
         }
 
-        const game = phaseConfig.onEnd?.(state) ?? state.game;
+        const onEndResult = phaseConfig.onEnd?.(state) ?? {
+            game: state.game,
+            payloads: [],
+        };
 
         const action = GameActionsEvent({
             type: 'endPhase',
@@ -714,13 +780,17 @@ export class GameFlow<
 
         return this.WithSave({
             ...state,
-            game,
+            game: onEndResult.game,
             context: {
                 ...state.context,
                 phase: null,
             },
             log: [
                 ...(state.log || []),
+                ...this.MappingGameActionPayloads({
+                    state,
+                    payloads: onEndResult.payloads
+                }),
                 logEntry,
             ]
         });
@@ -773,7 +843,10 @@ export class GameFlow<
             }
         }
 
-        const game = phaseConfig.turn.onEnd?.(state) ?? state.game;
+        const onEndResult = phaseConfig.turn.onEnd?.(state) ?? {
+            game: state.game,
+            payloads: [],
+        };
 
         if (next) {
             next.push({
@@ -823,10 +896,14 @@ export class GameFlow<
 
         return this.WithSave({
             ...state,
-            game,
+            game: onEndResult.game,
             context,
             log: [
                 ...(state.log || []),
+                ...this.MappingGameActionPayloads({
+                    state,
+                    payloads: onEndResult.payloads,
+                }),
                 logEntry,
             ],
         })
@@ -1199,6 +1276,25 @@ export class GameFlow<
             _nextActivePlayersIndex,
         };
         return result;
+    }
+
+    private MappingGameActionPayloads({
+        state,
+        payloads,
+    }: {
+        state: GameState<GameType>;
+        payloads: GameActionPayload[];
+    }) {
+        return payloads.map(payload => {
+            const action = GameActionResultEvent(payload);
+            return this.GetLogEntry({
+                action,
+                stateId: state.stateId,
+                turn: state.context.turn,
+                phase: state.context.phase,
+                automatic: true,
+            });
+        })
     }
 
     private GetLogEntry(data: Omit<GameLogEntry, 'createdAt'>) {

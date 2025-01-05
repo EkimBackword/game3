@@ -23,10 +23,14 @@ export class RhRelicComponent {
     readonly relicType = input.required<RelicHuntersRelicTypeEnum>();
     readonly size = input(RelicHuntersRelicSettings.size);
 
+    relicInfo = computed(() => {
+        return RelicHuntersRelicTypeTaxonomy[this.relicType()];
+    });
+
     style = computed<Partial<CSSStyleDeclaration>>(() => {
-        const relicType = RelicHuntersRelicTypeTaxonomy[this.relicType()];
+        const relicInfo = this.relicInfo();
         const size = this.size();
-        const positionX = relicType.column * size;
+        const positionX = relicInfo.column * size;
         const rowIndex = 0;
         const positionY = rowIndex * size;
         return {

@@ -83,7 +83,6 @@ export class RhLogsComponent implements OnInit, OnDestroy {
                 : '#666';
             const data: GameLog<RelicHuntersPlayer> =  {
                 ...log,
-                tagName: this.getTagName(log),
                 index: index++,
                 player,
                 color,
@@ -127,6 +126,9 @@ export class RhLogsComponent implements OnInit, OnDestroy {
         close: faXmark,
     };
 
+    GameActionsEnum = GameActionsEnum;
+    RhMoveTypes = RhMoveTypes;
+
     constructor(
         private toastService: ToastService,
         private soundService: SoundService,
@@ -169,41 +171,6 @@ export class RhLogsComponent implements OnInit, OnDestroy {
         return log.index;
     }
 
-    private getTagName(log: GameLogEntry) {
-        switch (log.action.type) {
-            case GameActionsEnum.GAME_EVENT: {
-                switch (log.action.payload.type) {
-                    case 'endTurn':
-                        return 'rh-logs-end-turn';
-                    default:
-                        return 'empty';
-                }
-            }
-            case GameActionsEnum.UNDO: {
-                return 'undo';
-            }
-            default: {
-                switch (log.action.payload.type) {
-                    case RhMoveTypes.getMovePoints:
-                    case RhMoveTypes.getResearchPoints:
-                    case RhMoveTypes.getCoins:
-                    case RhMoveTypes.drawCards:
-                    case RhMoveTypes.trashCards:
-                    case RhMoveTypes.restCards:
-                        return 'rh-logs-get-points';
-                    case RhMoveTypes.getTileType:
-                        return 'rh-logs-get-tile';
-                    case RhMoveTypes.useMovePoints:
-                        return 'rh-logs-use-move-points';
-                    case RhMoveTypes.useResearchPoints:
-                        return 'rh-logs-use-research-points';
-                    default:
-                        return 'empty'
-                }
-            }
-        }
-    }
-
     private notifyByLog(log: GameLogEntry, playerMap: Record<string, RelicHuntersPlayer>): void {
         const player = log.action.payload.playerId
             ? playerMap[log.action.payload.playerId]
@@ -244,6 +211,10 @@ export class RhLogsComponent implements OnInit, OnDestroy {
                     },
                     soundUrl: '/assets/sounds/Cancel.mp3',
                 });
+                return;
+            }
+            case GameActionsEnum.ACTION_RESULT: {
+                // Можно подумать об уведомлении о таких событиях
                 return;
             }
             default: {

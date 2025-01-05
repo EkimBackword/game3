@@ -263,7 +263,10 @@ export class EscapeFromAtlantisGameBuilder
                         ...columnCells,
                     ];
                 }, []);
-                return game;
+                return {
+                    game,
+                    payloads: [],
+                };
             },
             endIf: (options) => {
                 if (options.game.statusId != GameInfoStatusIdEnum.Started) {
@@ -318,7 +321,10 @@ export class EscapeFromAtlantisGameBuilder
                         : [],
                     playersResult: sortedPlayers,
                 };
-                return result;
+                return {
+                    game: result,
+                    payloads: [],
+                };
             },
             phases: {
                 ...this.phases.prepare.create({
@@ -423,7 +429,10 @@ export class EscapeFromAtlantisGameBuilder
                         // TODO: Переход к следующей фазе
                         const game = lodash.cloneDeep(options.game);
                         game.statusId = GameInfoStatusIdEnum.Started;
-                        return game;
+                        return {
+                            game,
+                            payloads: [],
+                        };
                     }
                 }),
                 ...this.phases.survive.create({

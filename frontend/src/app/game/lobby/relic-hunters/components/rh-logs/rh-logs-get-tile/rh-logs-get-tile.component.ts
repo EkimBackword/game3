@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 
 import { RhBenefitComponentData } from '../../../models/benefit';
-import { RelicHuntersGameBuilder } from '../../../models/game-builder';
 import { RhGetTileTypeArgs } from '../../../models/game-move-args-types';
 
 @Component({
@@ -20,17 +19,11 @@ import { RhGetTileTypeArgs } from '../../../models/game-move-args-types';
 export class RhLogsGetTileComponent {
 
     args = input.required<RhGetTileTypeArgs>();
-    builder = input.required<RelicHuntersGameBuilder | null>();
+    name = input.required<string>();
 
     text = computed(() => {
-        const builder = this.builder();
-
-        if (builder == null) {
-            return '';
-        }
-
-        const move = builder.moves.getTileType;
-        return `Выполнил действие "${move.name}" и получил:`;
+        const name = this.name();
+        return `Выполнил действие "${name}" и получил:`;
     });
 
     benefit = computed<RhBenefitComponentData>(() => {

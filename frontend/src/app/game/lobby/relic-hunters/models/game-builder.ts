@@ -8,6 +8,7 @@ import { simpleShuffle } from 'src/app/game/similo/models/similo-dlc';
 import { recordKeys } from 'src/app/shared/models/shared.types';
 
 import { GameInfoStatusIdEnum } from '@shared/clank/clank-game.types';
+import { GameActionResult } from '@shared/game/game-actions';
 import {
     GameConfigCreator,
     GameConfigCreatorConfig,
@@ -37,6 +38,10 @@ import {
     RelicHuntersCellPosition,
     RelicHuntersCellTaxonomy,
 } from './cell';
+import {
+    RhGameActionPayload,
+    RhGameActionType,
+} from './game-actions';
 import {
     RhEndTurnResultOptions,
     RhGetPointsByCardArgs,
@@ -295,21 +300,40 @@ export class RelicHuntersGameBuilder
                     statusId: GameInfoStatusIdEnum.Finished,
                     winner: winner,
                 };
-                return result;
+                return {
+                    game: result,
+                    payloads: [],
+                };
             },
             phases: {
                 ...this.phases.main.create({
                     isStart: true,
                     onBegin: (options) => {
                         const game = lodash.cloneDeep(options.game);
-                        const coins = [0, 1, 2, 4];
+                        const coinsList = [0, 1, 2, 4];
                         const firstPlayerIndex = options.context.playerIdsOrder.length - options.game.firstPlayerIndex;
-                        options.context.playerIdsOrder
-                            .forEach((playerId, index) => {
-                                const orderIndex = (firstPlayerIndex + index) % options.context.playerIdsOrder.length;
-                                game.playerMap[playerId].benefit.coins = coins[orderIndex] ?? 0;
-                            });
-                        return game;
+                        const payload: RhGameActionPayload = {
+                            type: RhGameActionType.OnPhasesBegin,
+                            args: {
+                                players: options.context.playerIdsOrder
+                                    .map((playerId, index) => {
+                                        const orderIndex = (firstPlayerIndex + index) % options.context.playerIdsOrder.length;
+                                        const coins = coinsList[orderIndex] ?? 0;
+                                        const player = game.playerMap[playerId];
+                                        player.benefit.coins = coins;
+                                        return {
+                                            player,
+                                            orderIndex,
+                                        };
+                                    })
+                                    .sort((a, b) => a.orderIndex - b.orderIndex)
+                                    .map(p => p.player),
+                            },
+                        };
+                        return {
+                            game,
+                            payloads: [payload],
+                        };
                     },
                     turn: {
                         endIf: (options) => {
@@ -325,7 +349,7 @@ export class RelicHuntersGameBuilder
                                     ...player.board,
                                 ];
                                 player.board = [];
-                            }
+                            };
                             return this.updateMarket(game);
                         },
                         activePlayers: [{
@@ -613,7 +637,14 @@ export class RelicHuntersGameBuilder
                                                 };
                                             }
 
-                                            if (result.value || args.force) {
+                                            const returnToCamp = result.value || args.force;
+                                            const resultOptions: RhEndTurnResultOptions = {
+                                                relicType: args.relicType,
+                                                returnToCamp,
+                                                selectedCards: [],
+                                            };
+
+                                            if (returnToCamp) {
                                                 const cellFrom = game.cells.find(p => p.players.includes(player.id));
                                                 if (cellFrom == null) {
                                                     return {
@@ -639,6 +670,10 @@ export class RelicHuntersGameBuilder
                                                         game.assistantCards.pop(),
                                                     ].filter((p): p is RelicHuntersCardInfo => p != null)
                                                     : [];
+                                                resultOptions.selectedCards = [
+                                                    ...result.selectedCards,
+                                                    ...assistantCards,
+                                                ];
                                                 player.deck = simpleShuffle([
                                                     ...player.deck,
                                                     ...player.hand,
@@ -669,10 +704,7 @@ export class RelicHuntersGameBuilder
                                             player.benefit.research = 0;
                                             player.benefit.tileType = [];
                                             player.usedCellIds = [];
-                                            const resultOptions: RhEndTurnResultOptions = {
-                                                returnToCamp: result.value || args.force,
-                                                selectedCards: result.selectedCards,
-                                            }
+
                                             return {
                                                 success: true,
                                                 saveState: true,
@@ -693,6 +725,12 @@ export class RelicHuntersGameBuilder
 
     private updateMarket(game: RelicHuntersGameType) {
         const newGame = lodash.cloneDeep(game);
+        const payload: RhGameActionPayload = {
+            type: RhGameActionType.OnTurnEnd,
+            args: {
+                cards: [],
+            },
+        };
         while (Object.keys(newGame.marketCards).length < 4) {
             const card = newGame.deckCards.pop();
             if (card == null) {
@@ -702,8 +740,13 @@ export class RelicHuntersGameBuilder
                 ...newGame.marketCards[card.index] ?? [],
                 card,
             ];
+            payload.args.cards.push(card);
         }
-        return newGame;
+        const result: GameActionResult<RelicHuntersGameType> = {
+            game: newGame,
+            payloads: [payload],
+        }
+        return result;
     }
 
     private drawCards(player: RelicHuntersPlayer, count: number) {

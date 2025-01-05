@@ -7,7 +7,7 @@ import {
 
 import {
     RhEndTurnResultOptions,
-    RhEventEndTurnArgs,
+    RhGameActionsEventPayload,
     RhMoveTypes,
 } from '../../../models/game-move-args-types';
 
@@ -21,16 +21,19 @@ import {
 })
 export class RhLogsEndTurnComponent {
 
-    args = input.required<RhEventEndTurnArgs>();
+    payload = input.required<RhGameActionsEventPayload>();
 
     result = computed(() => {
-        const args = this.args();
-        const log = args.options?.log ?? [];
+        const payload = this.payload();
+        if (payload.type !== 'endTurn') {
+            return null;
+        }
+        const log = payload.args.options?.log ?? [];
         const endTurnLog = log.find(p => p.action.payload.type === RhMoveTypes.endTurn);
-        return (endTurnLog?.action.result as RhEndTurnResultOptions) ?? {
-            returnToCamp: false,
-            selectedCards: [],
-        };
+        if (endTurnLog == null) {
+            return null;
+        }
+        return endTurnLog.action.result as RhEndTurnResultOptions;
     })
 
 }

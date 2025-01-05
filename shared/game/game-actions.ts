@@ -9,6 +9,7 @@ import { GameMovePayload } from './game-move';
 export enum GameActionsEnum {
     MAKE_MOVE = 'MAKE_MOVE',
     GAME_EVENT = 'GAME_EVENT',
+    ACTION_RESULT = 'ACTION_RESULT',
     UNDO = 'UNDO',
 }
 
@@ -45,3 +46,24 @@ export const GameActionsUndo = (
         result: null,
     }
 }
+
+export interface GameActionPayload {
+    type: any,
+    args: any,
+    playerId?: GamePlayerId,
+}
+
+export const GameActionResultEvent = (payload: GameActionPayload) => {
+    return {
+        type: GameActionsEnum.ACTION_RESULT as const,
+        payload,
+        result: null,
+    }
+}
+
+export type GameActionResult<
+    GameType extends Record<string, any> = Record<string, any>,
+> = {
+    game: GameType;
+    payloads: GameActionPayload[];
+};

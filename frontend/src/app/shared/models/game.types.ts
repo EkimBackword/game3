@@ -29,7 +29,6 @@ export function preloadImage(urls: string[]) {
 }
 
 export type GameLog<PlayerType = any> = GameLogEntry & {
-    tagName: string;
     index: number;
     player: PlayerType | null;
     color: string;

@@ -275,7 +275,10 @@ export class SimiloV2GameBuilder implements LobbyGameBuilder<SimiloV2GameType, S
                     isWin: false,
                     statistics: [],
                 };
-                return game;
+                return {
+                    game,
+                    payloads: [],
+                };
             },
             endIf: (options) => {
                 const searchableCard = options.game.mainDeck.find(p => p.isSearchable);
@@ -288,7 +291,10 @@ export class SimiloV2GameBuilder implements LobbyGameBuilder<SimiloV2GameType, S
                     isWin: searchableCard?.isOpen ?? false,
                     statusId: GameInfoStatusIdEnum.Finished,
                 };
-                return result;
+                return {
+                    game: result,
+                    payloads: [],
+                };
             },
         });
     }

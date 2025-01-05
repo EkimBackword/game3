@@ -34,6 +34,7 @@ import {
     RelicHuntersCellInfo,
 } from '../../models/cell';
 import { RhLobbyClient } from '../../models/game-lobby-types';
+import { RhEventEndTurnArgs } from '../../models/game-move-args-types';
 import { RhHeroComponentData } from '../../models/hero';
 import { RelicHuntersMapTaxonomy } from '../../models/map';
 import { RelicHuntersTileSettings } from '../../models/tile';
@@ -84,6 +85,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
                 const isCurrent = player.id === user.id;
                 const isSelected = player.id === selectedPlayerId;
                 const result: RhHeroComponentData = {
+                    forLog: false,
                     id: playerId,
                     player,
                     cell,
@@ -115,22 +117,22 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
     activeCoords = computed(() => {
         const activePlayer = this.activePlayer();
 
-
-        if (activePlayer == null || !activePlayer.isCurrent) {
+        if (activePlayer == null || activePlayer.cell == null || !activePlayer.isCurrent) {
             return [];
         }
 
-        var index = activePlayer.cell.position.row % 2;
+        const cell = activePlayer.cell;
+        var index = cell.position.row % 2;
         const neighbors = tile_position_differences[index].map((diff) => {
             const result: RelicHuntersActiveCellInfo = {
-                column: activePlayer.cell.position.column + diff[0],
-                row: activePlayer.cell.position.row + diff[1],
+                column: cell.position.column + diff[0],
+                row: cell.position.row + diff[1],
                 isCurrent: false,
             }
             return result;
         });
         const currentCell: RelicHuntersActiveCellInfo = {
-            ...activePlayer.cell.position,
+            ...cell.position,
             isCurrent: true,
         };
         return [
@@ -221,7 +223,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
         const players = this.players();
         const activePlayer = players.find(p => p.isActive);
 
-        if (builder == null || activePlayer == null || !activePlayer.isCurrent) {
+        if (builder == null || activePlayer == null || activePlayer.cell == null || !activePlayer.isCurrent) {
             return;
         }
 
@@ -262,7 +264,8 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
 
         const endTurnPayload = builder.moves.endTurn.getPayload(
             {
-                force: true
+                force: true,
+                relicType: cell.relicType,
             },
             user.id,
         );
@@ -280,12 +283,16 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
             return
         }
 
+        const endTurnArgs: RhEventEndTurnArgs = {
+            force: true,
+            options: {
+                log: endTurnResult.state.log
+            }
+        };
         const eventResult = await this.client.game.makeEvent(
             {
                 type: 'endTurn',
-                args: {
-                    force: true,
-                }
+                args: endTurnArgs,
             },
             endTurnResult.state,
         );
