@@ -18,7 +18,6 @@ import {
 } from 'src/app/shared/models/game.types';
 import { SoundTypeEnum } from 'src/app/shared/models/sound.types';
 import { SoundService } from 'src/app/shared/services/sound.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
 
 import {
     faTasks,
@@ -29,7 +28,6 @@ import {
     GameActionsMove,
 } from '@shared/game/game-actions';
 import { GameLogEntry } from '@shared/game/game-state';
-import { ToastSeverityEnum } from '@shared/toast.types';
 
 import { GameClient } from '../../../models/game-client';
 import { RelicHuntersBenefit } from '../../models/benefit';
@@ -130,7 +128,6 @@ export class RhLogsComponent implements OnInit, OnDestroy {
     RhMoveTypes = RhMoveTypes;
 
     constructor(
-        private toastService: ToastService,
         private soundService: SoundService,
         private injector: Injector,
     ) {
@@ -186,13 +183,6 @@ export class RhLogsComponent implements OnInit, OnDestroy {
                     case 'startGame':
                     case 'endTurn': {
                         this.notify({
-                            toast: {
-                                name,
-                                color,
-                                message: type === 'endTurn'
-                                    ? 'Закончил ход'
-                                    : 'Игра началась',
-                            },
                             soundUrl: '/assets/sounds/StartTurn.mp3',
                         });
                         return;
@@ -204,11 +194,6 @@ export class RhLogsComponent implements OnInit, OnDestroy {
             }
             case GameActionsEnum.UNDO: {
                 this.notify({
-                    toast: {
-                        name,
-                        color,
-                        message: 'Отменил ход',
-                    },
                     soundUrl: '/assets/sounds/Cancel.mp3',
                 });
                 return;
@@ -219,7 +204,6 @@ export class RhLogsComponent implements OnInit, OnDestroy {
             }
             default: {
                 this.notify({
-                    toast: null,
                     soundUrl: this.getSoundUrl(log.action),
                 });
                 return;
@@ -262,11 +246,6 @@ export class RhLogsComponent implements OnInit, OnDestroy {
     }
 
     private notify(options: {
-        toast: {
-            name: string;
-            color: string;
-            message: string;
-        } | null;
         soundUrl: string | null;
     }) {
         if (options.soundUrl != null) {
@@ -274,21 +253,6 @@ export class RhLogsComponent implements OnInit, OnDestroy {
                 type: SoundTypeEnum.effects,
                 soundUrl: options.soundUrl,
             });
-        }
-        if (options.toast != null) {
-            this.toastService.show(
-                ToastSeverityEnum.secondary,
-                `Игрок: ${options.toast.name}`,
-                {
-                    bodyText: options.toast.message,
-                    iconStyle: {
-                        color: options.toast.color,
-                    },
-                    bodyStyle: {
-                        backgroundColor: options.toast.color,
-                    },
-                }
-            );
         }
     }
 
