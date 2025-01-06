@@ -42,12 +42,13 @@
                                 (click)="leaveFromGame()">
                                 Покинуть игру
                             </button>
-                            <button
+                            <!-- TODO: Пока что это не нужно и работает не правильно -->
+                            <!-- <button
                                 class="btn btn-sm btn-secondary w-100"
                                 *ngIf="_currentPlayer.id !== player.id"
                                 (click)="kickUser(player.id)">
                                 Выкинуть игрока
-                            </button>
+                            </button> -->
                         </ng-container>
                     </div>
                     <div class="col-sm-1 d-flex align-items-center justify-content-center">
