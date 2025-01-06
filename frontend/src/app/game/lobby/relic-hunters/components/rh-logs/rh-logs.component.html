@@ -48,10 +48,7 @@
                             ></app-rh-logs-action-result>
                         }
                         @case (GameActionsEnum.UNDO) {
-                            <span
-                                *ngSwitchCase="'undo'">
-                                Ход отменён
-                            </span>
+                            <span>Ход отменён</span>
                         }
                         @default {
                             @switch (log.action.payload.type) {
