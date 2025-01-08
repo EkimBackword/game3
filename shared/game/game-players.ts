@@ -1,11 +1,16 @@
-import { SocketUser } from '../socket.types';
 import {
   GamePlayerId,
   GameStageName,
 } from './game-constants';
 import { GameContext } from './game-context';
 
-export interface GamePlayer extends SocketUser {
+export interface GamePlayerBase {
+    id: GamePlayerId;
+    sessionId: GamePlayerId;
+    name: string;
+}
+
+export interface GamePlayer extends GamePlayerBase {
     online: boolean;
 }
 

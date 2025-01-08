@@ -13,7 +13,10 @@ import { GamePlayerId } from '@shared/game/game-constants';
 import { GameState } from '@shared/game/game-state';
 import { LobbyStatusIdEnum } from '@shared/lobby/lobby';
 import { LobbyChatMessagePayload } from '@shared/lobby/lobby-chat';
-import { LobbyGameChangeOptions } from '@shared/lobby/lobby-game';
+import {
+    LobbyGameChangeOptions,
+    LobbyJoinToGameOptions,
+} from '@shared/lobby/lobby-game';
 import { LobbyStatistic } from '@shared/lobby/lobby-statistics';
 import { SocketErrorTypeEnum } from '@shared/socket.types';
 
@@ -152,12 +155,12 @@ export class LobbyService {
         this.socket?.emit('changeSetupData', setupData);
     }
 
-    joinToGame(setupData?) {
-        this.socket?.emit('joinToGame', setupData);
+    joinToGame(data: LobbyJoinToGameOptions) {
+        this.socket?.emit('joinToGame', data);
     }
 
-    leaveFromGame(setupData?) {
-        this.socket?.emit('leaveFromGame', setupData);
+    leaveFromGame(data: LobbyJoinToGameOptions) {
+        this.socket?.emit('leaveFromGame', data);
     }
 
     addState(data: GameState) {
@@ -168,8 +171,8 @@ export class LobbyService {
         this.socket?.emit('undoState', getCurrentTime());
     }
 
-    kickUser(userId: GamePlayerId, setupData?) {
-        this.socket?.emit('kickUser', userId, setupData);
+    kickUser(userId: GamePlayerId, data: LobbyJoinToGameOptions) {
+        this.socket?.emit('kickUser', userId, data);
     }
 
 }

@@ -1,3 +1,5 @@
+@let _sessionPlayer = sessionQuery.getValue();
+
 <div class="col-sm-6 wrapper" *ngIf="client.game.setupData(); let _setupData">
     <div class="card">
         <div class="card-header">
@@ -57,20 +59,20 @@
                         <label class="col-form-label w-100 text-ellipsis">{{player.name}}</label>
                     </div>
                     <div class="col-sm-3 d-flex align-items-center">
-                        <ng-container *ngIf="currentPlayer(); let _currentPlayer">
+                        @if (_sessionPlayer.id === player.sessionId) {
                             <button
                                 class="btn btn-sm btn-secondary w-100"
-                                *ngIf="_currentPlayer.id === player.id"
-                                (click)="leaveFromGame()">
+                                (click)="leaveFromGame(player.id)">
                                 Покинуть игру
                             </button>
-                            <button
+                        } @else {
+                            <!-- TODO: Пока что это не нужно и работает не правильно -->
+                            <!-- <button
                                 class="btn btn-sm btn-secondary w-100"
-                                *ngIf="_currentPlayer.id !== player.id"
                                 (click)="kickUser(player.id)">
                                 Выкинуть игрока
-                            </button>
-                        </ng-container>
+                            </button> -->
+                        }
                     </div>
                     <div class="col-sm-1 d-flex align-items-center justify-content-center">
                         <mat-icon

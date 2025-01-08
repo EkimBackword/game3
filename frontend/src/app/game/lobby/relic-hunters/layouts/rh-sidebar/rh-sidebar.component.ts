@@ -74,7 +74,7 @@ export class RhSidebarComponent implements AfterViewInit {
     isWatcher = computed(() => {
         const players = this.client.game.players();
         const user = this.sessionQuery.getValue();
-        return !players?.has(user.id);
+        return players == null || [...players.values()].every(p => p.sessionId !== user.id);
     });
 
     disableZoomOut = computed(() => this.client.game.zoom() <= 0.7);

@@ -96,8 +96,9 @@ export class RhPlayersComponent implements AfterViewInit {
         return [...players.values()].map((player) => {
             const playerInfo = state.game.playerMap[player.id];
             const isActive = player.id == state?.context.currentPlayerId;
-            const isCurrent = player.id === user.id;
+            const isCurrent = player.sessionId === user.id;
             const isSelected = player.id === selectedPlayerId;
+            const canUseActions = isActive && isCurrent && isSelected;
 
             let deck = playerInfo.deck.map((card, index) => {
                 const result: RelicHuntersPlayerCardInfo = {
@@ -218,7 +219,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                             key,
                                             value: card.benefit[key] ?? 0,
                                         },
-                                        user.id,
+                                        player.id,
                                     );
                                     this.makeMove(payload);
                                 },
@@ -233,7 +234,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                             key,
                                             value: card.benefit[key] ?? 0,
                                         },
-                                        user.id,
+                                        player.id,
                                     );
                                     this.makeMove(payload);
                                 },
@@ -248,7 +249,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                             key,
                                             value: card.benefit[key] ?? 0,
                                         },
-                                        user.id,
+                                        player.id,
                                     );
                                     this.makeMove(payload);
                                 },
@@ -263,7 +264,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                             key,
                                             value: card.benefit[key] ?? 0,
                                         },
-                                        user.id,
+                                        player.id,
                                     );
                                     this.makeMove(payload);
                                 },
@@ -278,7 +279,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                             key,
                                             value: card.benefit[key] ?? 0,
                                         },
-                                        user.id,
+                                        player.id,
                                     );
                                     this.makeMove(payload);
                                 },
@@ -293,7 +294,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                             key,
                                             value: card.benefit[key] ?? 0,
                                         },
-                                        user.id,
+                                        player.id,
                                     );
                                     this.makeMove(payload);
                                 },
@@ -307,7 +308,7 @@ export class RhPlayersComponent implements AfterViewInit {
                                             card,
                                             tileTypes: card.benefit[key] ?? [],
                                         },
-                                        user.id,
+                                        player.id,
                                     );
                                     this.makeMove(payload);
                                 },
@@ -334,6 +335,7 @@ export class RhPlayersComponent implements AfterViewInit {
                 isActive,
                 isCurrent,
                 isSelected,
+                canUseActions,
                 icon: isActive ? this.icons.active : this.icons.user,
                 colorInfo: RelicHuntersHeroColorTaxonomy[playerInfo.color],
                 playerArea,
@@ -396,7 +398,7 @@ export class RhPlayersComponent implements AfterViewInit {
     isWatcher = computed(() => {
         const players = this.client.game.players();
         const user = this.sessionQuery.getValue();
-        return !players?.has(user.id);
+        return players == null || [...players.values()].every(p => p.sessionId !== user.id);
     });
 
     icons = {
@@ -455,7 +457,7 @@ export class RhPlayersComponent implements AfterViewInit {
 
     async clickOnCard(popover: NgbPopover, card: RelicHuntersPlayerCardInfo) {
         const canUse = card.useOnlyActivePlayer
-            ? this.selectedPlayer()?.isCurrent && this.selectedPlayer()?.isActive
+            ? this.selectedPlayer()?.canUseActions
             : true
         if (!card.actions.length || !canUse) {
             return;
@@ -492,10 +494,10 @@ export class RhPlayersComponent implements AfterViewInit {
     }
 
     async endTurn() {
-        const user = this.sessionQuery.getValue();
         const builder = this.builder();
+        const selectedPlayer = this.selectedPlayer()
 
-        if (builder == null) {
+        if (builder == null || selectedPlayer == null || !selectedPlayer.canUseActions) {
             return;
         }
 
@@ -504,7 +506,7 @@ export class RhPlayersComponent implements AfterViewInit {
                 force: false,
                 relicType: null,
             },
-            user.id,
+            selectedPlayer.id,
         );
 
         const moveResult = await this.client.game.makeMove(payload);

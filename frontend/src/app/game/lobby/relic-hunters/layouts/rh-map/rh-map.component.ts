@@ -82,17 +82,19 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
             return cell.players.map((playerId, index) => {
                 const player = playerMap[playerId];
                 const isActive = player.id == state?.context.currentPlayerId;
-                const isCurrent = player.id === user.id;
+                const isCurrent = player.sessionId === user.id;
                 const isSelected = player.id === selectedPlayerId;
+                const canUseActions = isActive && isCurrent;
                 const result: RhHeroComponentData = {
                     forLog: false,
-                    id: playerId,
+                    id: player.id,
                     player,
                     cell,
                     index,
                     isActive,
                     isCurrent,
                     isSelected,
+                    canUseActions,
                 };
                 return result;
             })
@@ -109,19 +111,19 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
         return activePlayer?.player.usedCellIds ?? [];
     });
 
-    hasSelectedPlayer = computed(() => {
-        const activePlayer = this.activePlayer();
-        return activePlayer?.player.usedCellIds ?? [];
+    selectedPlayer = computed(() => {
+        const players = this.players();
+        return players.find(p => p.isSelected);
     });
 
     activeCoords = computed(() => {
-        const activePlayer = this.activePlayer();
+        const selectedPlayer = this.selectedPlayer();
 
-        if (activePlayer == null || activePlayer.cell == null || !activePlayer.isCurrent) {
+        if (selectedPlayer == null || selectedPlayer.cell == null || !selectedPlayer.canUseActions) {
             return [];
         }
 
-        const cell = activePlayer.cell;
+        const cell = selectedPlayer.cell;
         var index = cell.position.row % 2;
         const neighbors = tile_position_differences[index].map((diff) => {
             const result: RelicHuntersActiveCellInfo = {
@@ -219,31 +221,29 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
 
     async clickOnCell(cell: RelicHuntersCellInfo) {
         const builder = this.builder();
-        const user = this.sessionQuery.getValue();
-        const players = this.players();
-        const activePlayer = players.find(p => p.isActive);
+        const selectedPlayer = this.selectedPlayer();
 
-        if (builder == null || activePlayer == null || activePlayer.cell == null || !activePlayer.isCurrent) {
+        if (builder == null || selectedPlayer == null || selectedPlayer.cell == null || !selectedPlayer.canUseActions) {
             return;
         }
 
-        const payload = cell.id === activePlayer.cell.id
+        const payload = cell.id === selectedPlayer.cell.id
             ? builder.moves.useResearchPoints.getPayload(
                 {
                     cell,
-                    player: activePlayer.player,
+                    player: selectedPlayer.player,
                 },
-                user.id,
+                selectedPlayer.id,
             )
             : builder.moves.useMovePoints.getPayload(
                 {
-                    cellFrom: activePlayer.cell,
+                    cellFrom: selectedPlayer.cell,
                     cellTo: cell,
-                    player: activePlayer.player,
+                    player: selectedPlayer.player,
                 },
-                user.id,
+                selectedPlayer.id,
             );
-        const needEndTurn = cell.id === activePlayer.cell.id
+        const needEndTurn = cell.id === selectedPlayer.cell.id
             ? cell.relicType != null
             : false;
 
@@ -267,7 +267,7 @@ export class RhMapComponent implements AfterViewInit, OnDestroy {
                 force: true,
                 relicType: cell.relicType,
             },
-            user.id,
+            selectedPlayer.id,
         );
 
         const endTurnResult = await this.client.game.makeMove(

@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {
+    MatDialog,
+    MatDialogConfig,
+} from '@angular/material/dialog';
 
 import { ConfirmModalComponent } from '../modals/confirm-modal/confirm-modal.component';
 import { SingleInputModalComponent } from '../modals/single-input-modal/single-input-modal.component';
@@ -28,7 +31,7 @@ export class DialogService {
         );
     }
 
-    openSingleInput(data: SingleInputModalComponent['data']) {
+    openSingleInput(data: SingleInputModalComponent['data'], options?: Omit<MatDialogConfig, 'data'>) {
         return this.matDialog.open<
             SingleInputModalComponent,
             SingleInputModalComponent['data'],
@@ -38,6 +41,7 @@ export class DialogService {
             {
                 data,
                 width: '400px',
+                ...options,
             },
         );
     }

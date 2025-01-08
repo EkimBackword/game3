@@ -7,11 +7,14 @@ import {
 import * as lodash from 'lodash';
 import { SessionQuery } from 'src/app/session/session.query';
 
+import { guid } from '@datorama/akita';
 import {
     GamePlayerColorIdEnum,
     GamePlayerColorIds,
     GamePlayerColorList,
 } from '@shared/clank/clank-player.types';
+import { GamePlayerId } from '@shared/game/game-constants';
+import { GamePlayerBase } from '@shared/game/game-players';
 
 import { LobbyClient } from '../../../models/lobby-client';
 import { LobbyService } from '../../../services/lobby.service';
@@ -80,7 +83,7 @@ export class EscapeFromAtlantisSettingsComponent {
 
     constructor(
         private lobbyService: LobbyService,
-        private sessionQuery: SessionQuery,
+        public sessionQuery: SessionQuery,
     ) {
     }
 
@@ -101,48 +104,60 @@ export class EscapeFromAtlantisSettingsComponent {
             return;
         }
 
+        const player: GamePlayerBase = {
+            id: `${userState.id}-${guid()}`,
+            sessionId: userState.id,
+            name: userState.name,
+        };
         const result: EscapeFromAtlantisSetupData = {
             ...setupData,
             playerMap: {
                 ...setupData.playerMap,
                 [userState.id]: {
-                    id: userState.id,
-                    name: userState.name,
+                    ...player,
                     color,
                     meeples: [],
                     tiles: [],
                 },
             }
         };
-        this.lobbyService.joinToGame(result);
+        this.lobbyService.joinToGame({
+            player,
+            setupData: result,
+        });
     }
 
-    leaveFromGame() {
+    leaveFromGame(playerId: GamePlayerId) {
         const setupData = this.client.game.setupData();
-        const userState = this.sessionQuery.getValue();
-        if (setupData == null || userState == null) {
+        const players = this.client.game.players();
+        const player = players.get(playerId);
+        if (setupData == null || player == null) {
             return;
         }
 
         const result = lodash.cloneDeep(setupData);
-        if (result.playerMap[userState.id] != null) {
-            delete result.playerMap[userState.id];
+        if (result.playerMap[player.id] != null) {
+            delete result.playerMap[player.id];
         }
-        this.lobbyService.leaveFromGame(result);
+        this.lobbyService.leaveFromGame({
+            player,
+            setupData: result,
+        });
     }
 
-    kickUser(userId: string) {
-        const setupData = this.client.game.setupData();
-        if (setupData == null) {
-            return;
-        }
+    // Пока что это не нужно и работает не правильно
+    // kickUser(userId: string) {
+    //     const setupData = this.client.game.setupData();
+    //     if (setupData == null) {
+    //         return;
+    //     }
 
-        const result = lodash.cloneDeep(setupData);
-        if (result.playerMap[userId] != null) {
-            delete result.playerMap[userId];
-        }
-        this.lobbyService.kickUser(userId, result);
-    }
+    //     const result = lodash.cloneDeep(setupData);
+    //     if (result.playerMap[userId] != null) {
+    //         delete result.playerMap[userId];
+    //     }
+    //     this.lobbyService.kickUser(userId, result);
+    // }
 
     changeColor(color: GamePlayerColorIdEnum) {
         const setupData = this.client.game.setupData();

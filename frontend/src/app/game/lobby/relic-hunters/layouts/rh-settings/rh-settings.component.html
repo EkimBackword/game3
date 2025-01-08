@@ -1,4 +1,6 @@
-<div class="col-sm-6 wrapper" *ngIf="client.game.setupData(); let _setupData">
+@let _sessionPlayer = sessionQuery.getValue();
+@let _setupData = client.game.setupData();
+<div class="col-sm-6 wrapper" *ngIf="_setupData != null">
     <div class="card">
         <div class="card-header">
             Настройки
@@ -27,70 +29,58 @@
     <div class="card">
         <div class="card-header">Список игроков</div>
         <ul class="list-group list-group-flush">
-            <li
-                class="list-group-item w-100 d-flex flex-column"
-                *ngFor="let player of players(); trackBy: trackById; let i = index">
-                <div class="d-flex flex-row col-sm-12 mb-2">
-                    <div class="col-sm-8 d-flex align-items-center">
-                        <label class="col-form-label w-100 text-ellipsis">{{player.name}}</label>
+            @for (hero of heroes(); track hero.color.id; let i = $index) {
+                <li class="list-group-item w-100 d-flex flex-column gap-1">
+                    <div class="d-flex flex-row col-sm-12">
+                        <div class="col-sm-2 d-flex align-items-center">
+                            <label for="playerColorId" class="col-form-label">Цвет:</label>
+                        </div>
+                        <div class="col-sm-9 d-flex align-items-center">
+                            <span>{{hero.color.name}} ({{hero.color.colorName}})</span>
+                        </div>
+                        <div class="col-sm-1 d-flex align-items-center justify-content-center">
+                            <div [style]="hero.color.heroStyle"></div>
+                        </div>
                     </div>
-                    <div class="col-sm-3 d-flex align-items-center">
-                        <ng-container *ngIf="currentPlayer(); let _currentPlayer">
+                    <div class="d-flex flex-row col-sm-12 mb-2">
+                        @if (hero.player != null) {
+                            <div class="col-sm-8 d-flex align-items-center">
+                                <label class="col-form-label w-100 text-ellipsis">{{hero.player.name}}</label>
+                            </div>
+                            <div class="col-sm-3 d-flex align-items-center">
+                                @if (_sessionPlayer.id === hero.player.sessionId) {
+                                    <button
+                                        class="btn btn-sm btn-secondary w-100"
+                                        (click)="leaveFromGame(hero.player.id)">
+                                        Покинуть игру
+                                    </button>
+                                } @else {
+                                    <!-- TODO: Пока что это не нужно и работает не правильно -->
+                                    <!-- <button
+                                        class="btn btn-sm btn-secondary w-100"
+                                        *ngIf="_currentPlayer.id !== player.id"
+                                        (click)="kickUser(player.id)">
+                                        Выкинуть игрока
+                                    </button> -->
+                                }
+                            </div>
+                            <div class="col-sm-1 d-flex align-items-center justify-content-center">
+                                <mat-icon
+                                    class="flex-shrink-0"
+                                    [color]="hero.icon.color">{{hero.icon.name}}
+                                </mat-icon>
+                            </div>
+                        } @else {
                             <button
-                                class="btn btn-sm btn-secondary w-100"
-                                *ngIf="_currentPlayer.id === player.id"
-                                (click)="leaveFromGame()">
-                                Покинуть игру
+                                class="btn btn-sm btn-primary col-sm-12"
+                                (click)="joinToGame(hero.color)">
+                                {{joinBtnName()}}
                             </button>
-                            <!-- TODO: Пока что это не нужно и работает не правильно -->
-                            <!-- <button
-                                class="btn btn-sm btn-secondary w-100"
-                                *ngIf="_currentPlayer.id !== player.id"
-                                (click)="kickUser(player.id)">
-                                Выкинуть игрока
-                            </button> -->
-                        </ng-container>
+                        }
                     </div>
-                    <div class="col-sm-1 d-flex align-items-center justify-content-center">
-                        <mat-icon
-                            class="flex-shrink-0"
-                            [color]="player.icon.color">{{player.icon.name}}
-                        </mat-icon>
-                    </div>
-                </div>
-                <div class="d-flex flex-row col-sm-12">
-                    <div class="col-sm-2 d-flex align-items-center">
-                        <label for="playerColorId" class="col-form-label">Цвет:</label>
-                    </div>
-                    <div class="col-sm-9 d-flex align-items-center">
-                        <select class="form-select form-select-sm"
-                            aria-label="Choose player color"
-                            id="playerColorId"
-                            [ngModel]="player.color.id"
-                            (ngModelChange)="changeColor($event)"
-                            [disabled]="currentPlayer()?.id != player.id">
-                            <option
-                                *ngFor="let colorId of colorIds"
-                                [value]="colorId">
-                                {{colorTaxanomy[colorId].name}} ({{colorTaxanomy[colorId].colorName}})
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-sm-1 d-flex align-items-center justify-content-center">
-                        <div [style]="player.color.heroStyle"></div>
-                    </div>
-                </div>
-            </li>
+                </li>
+            }
         </ul>
-        <div
-            class="card-body"
-            *ngIf="currentPlayer() == null">
-            <button
-                class="btn btn-sm btn-primary col-sm-12"
-                (click)="joinToGame()">
-                Присоединиться
-            </button>
-        </div>
     </div>
 
 </div>

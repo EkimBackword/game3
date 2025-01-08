@@ -1,4 +1,4 @@
-import { SocketUser } from '@shared/socket.types';
+import { GamePlayerBase } from '@shared/game/game-players';
 
 import { RelicHuntersBenefit } from './benefit';
 import { RelicHuntersCardInfo } from './cards';
@@ -6,7 +6,7 @@ import { RelicHuntersCellInfo } from './cell';
 import { RelicHuntersHeroColorEnum } from './hero';
 import { RelicHuntersRelicTypeEnum } from './relic';
 
-export interface RelicHuntersPlayerSetupData extends SocketUser {
+export interface RelicHuntersPlayerSetupData extends GamePlayerBase {
     color: RelicHuntersHeroColorEnum;
 }
 

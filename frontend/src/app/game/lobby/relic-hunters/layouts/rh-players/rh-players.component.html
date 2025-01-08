@@ -36,12 +36,14 @@
                         }
                     </div>
                 </div>
-                <div
-                    class="player_current"
-                    *ngIf="player.isCurrent"
-                    [style.background-color]="player.colorInfo.color"
-                ></div>
-                <mat-progress-bar *ngIf="player.isActive" mode="buffer"></mat-progress-bar>
+                @if (player.isActive) {
+                    <mat-progress-bar *ngIf="player.isActive" mode="buffer"></mat-progress-bar>
+                } @else {
+                    <div
+                        class="player_current"
+                        [style.background-color]="player.colorInfo.color"
+                    ></div>
+                }
             </li>
         </ul>
     </div>
@@ -197,7 +199,7 @@
                 <ng-container *ngIf="!isWatcher()">
                     <button
                         class="btn btn-sm btn-secondary btn-by-hover"
-                        [disabled]="!_selectedPlayer.isActive || !_selectedPlayer.isCurrent"
+                        [disabled]="!_selectedPlayer.canUseActions"
                         [ngbPopover]="undoStatePopoverContent"
                         [popoverTitle]="undoStatePopoverTitle"
                         container="body"
@@ -235,7 +237,7 @@
                 <ng-container *ngIf="!isWatcher()">
                     <button
                         class="btn btn-sm btn-danger btn-by-hover"
-                        [disabled]="!_selectedPlayer.isActive || !_selectedPlayer.isCurrent"
+                        [disabled]="!_selectedPlayer.canUseActions"
                         #endTurnPopover="ngbPopover"
                         [ngbPopover]="endTurnPopoverContent"
                         [popoverTitle]="endTurnPopoverTitle"

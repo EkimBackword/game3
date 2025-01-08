@@ -42,6 +42,7 @@ export interface RhHeroComponentDataForCell {
     isActive: boolean;
     isCurrent: boolean;
     isSelected: boolean;
+    canUseActions: boolean;
 }
 
 export type RhHeroComponentData =
@@ -55,6 +56,11 @@ export interface RelicHuntersHeroColorInfo {
     name: string;
     colorName: string;
     color: string;
+}
+
+export interface RelicHuntersHeroColorInfoForSetup extends RelicHuntersHeroColorInfo {
+    id: RelicHuntersHeroColorEnum;
+    heroStyle: Partial<CSSStyleDeclaration>;
 }
 
 export const RelicHuntersHeroColorTaxonomy: Record<RelicHuntersHeroColorEnum, RelicHuntersHeroColorInfo> = {

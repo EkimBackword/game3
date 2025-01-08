@@ -5,14 +5,25 @@ import {
 } from '@angular/core';
 
 import * as lodash from 'lodash';
+import { lastValueFrom } from 'rxjs';
 import { SessionQuery } from 'src/app/session/session.query';
+import { SingleInputModalComponentResult } from 'src/app/shared/modals/single-input-modal/single-input-modal.model';
+import { recordKeys } from 'src/app/shared/models/shared.types';
+import { DialogService } from 'src/app/shared/services/dialog.service';
+
+import { guid } from '@datorama/akita';
+import { GamePlayerId } from '@shared/game/game-constants';
+import {
+    GamePlayer,
+    GamePlayerBase,
+} from '@shared/game/game-players';
 
 import { LobbyService } from '../../../services/lobby.service';
 import { RhLobbyClient } from '../../models/game-lobby-types';
 import { RelicHuntersSetupData } from '../../models/game-setup-data';
 import {
     RelicHuntersHeroColorEnum,
-    RelicHuntersHeroColorIds,
+    RelicHuntersHeroColorInfoForSetup,
     RelicHuntersHeroColorTaxonomy,
     RelicHuntersHeroSettings,
 } from '../../models/hero';
@@ -32,55 +43,65 @@ export class RhSettingsComponent {
 
     client: RhLobbyClient = this.lobbyService.client;
 
-    colorIds = RelicHuntersHeroColorIds;
-    colorTaxanomy = RelicHuntersHeroColorTaxonomy;
-
-    players = computed(() => {
+    private playerMapByColor = computed(() => {
         const players = this.client.game.players();
-        const playerMap = this.client.game.setupData()?.playerMap ?? {};
-        return [...players.values()].map((player) => {
-            const colorId = playerMap[player.id].color;
+        const setupData = this.client.game.setupData();
+        const playerMap = new Map<RelicHuntersHeroColorEnum, GamePlayer>();
+        for (const data of Object.values(setupData?.playerMap ?? {})) {
+            const player = players.get(data.id);
+            if (player != null) {
+                playerMap.set(data.color, {
+                    ...player,
+                    name: data.name,
+                });
+            }
+        }
+        return playerMap;
+    });
+
+    private countCurrentUser = computed(() => {
+        const setupData = this.client.game.setupData();
+        const userState = this.sessionQuery.getValue();
+        const list = Object.values(setupData?.playerMap ?? {}).filter(p => p.sessionId === userState.id);
+        return list.length;
+    });
+
+    joinBtnName = computed(() => {
+        return this.countCurrentUser() > 0
+            ? 'Добавить игрока'
+            : 'Присоединиться';
+    })
+
+    heroes = computed(() => {
+        const playerMap = this.playerMapByColor();
+        return recordKeys(RelicHuntersHeroColorTaxonomy).map((colorId) => {
+            const player = playerMap.get(colorId);
             const colorInfo = RelicHuntersHeroColorTaxonomy[colorId];
             const heroSize = RelicHuntersHeroSettings.sizeHero;
             const positionHeroX = colorInfo.column * heroSize;
             const positionHeroY = RelicHuntersHeroSettings.heroIndex * heroSize;
-            const heroStyle: Partial<CSSStyleDeclaration> = {
-                width: `${heroSize}px`,
-                height: `${heroSize}px`,
-                backgroundImage: `url(${RelicHuntersHeroSettings.url})`,
-                backgroundPosition: `-${positionHeroX}px -${positionHeroY}px`,
-                backgroundSize: RelicHuntersHeroSettings.backgroundSize,
-                flexShrink: '0',
+            const color: RelicHuntersHeroColorInfoForSetup = {
+                ...colorInfo,
+                id: colorId,
+                heroStyle: {
+                    width: `${heroSize}px`,
+                    height: `${heroSize}px`,
+                    backgroundImage: `url(${RelicHuntersHeroSettings.url})`,
+                    backgroundPosition: `-${positionHeroX}px -${positionHeroY}px`,
+                    backgroundSize: RelicHuntersHeroSettings.backgroundSize,
+                    flexShrink: '0',
+                },
             };
             const result = {
-                ...player,
-                color: {
-                    ...colorInfo,
-                    id: colorId,
-                    heroStyle,
-                },
+                player,
+                color,
                 icon: {
-                    color: player.online ? 'primary' : 'warn',
-                    name: player.online ? 'wifi' : 'wifi_off',
+                    color: player?.online ? 'primary' : 'warn',
+                    name: player?.online ? 'wifi' : 'wifi_off',
                 },
             };
             return result;
         });
-    });
-
-    currentPlayer = computed(() => {
-        const players = this.client.game.players();
-        const userState = this.sessionQuery.getValue();
-        return players.get(userState.id);
-    });
-
-    freeColors = computed(() => {
-        const playerMap = this.client.game.setupData()?.playerMap ?? null;
-        if (playerMap == null) {
-            return this.colorIds;
-        }
-        const ids = Object.values(playerMap).map(p => p.color);
-        return this.colorIds.filter(id => !ids.includes(id));
     });
 
     mapIds = RelicHuntersMapIds;
@@ -88,87 +109,95 @@ export class RhSettingsComponent {
 
     constructor(
         private lobbyService: LobbyService,
-        private sessionQuery: SessionQuery,
+        private dialogService: DialogService,
+        public sessionQuery: SessionQuery,
     ) {
     }
 
-    trackById(index: number, item: { id: any }) {
-        return item.id;
-    }
-
-    joinToGame() {
+    async joinToGame(color: RelicHuntersHeroColorInfoForSetup) {
         const setupData = this.client.game.setupData();
         const userState = this.sessionQuery.getValue();
         if (setupData == null || userState == null) {
             return;
         }
 
-        const freeColors = this.freeColors();
-        const color = freeColors.pop();
-        if (color == null) {
+        const playerName = await this.getPlayerName(userState.name, color);
+        if (!playerName) {
             return;
         }
 
+        const player: GamePlayerBase = {
+            id: `${userState.id}-${guid()}`,
+            sessionId: userState.id,
+            name: playerName.value,
+        };
         const result: RelicHuntersSetupData = {
             ...setupData,
             playerMap: {
                 ...setupData.playerMap,
-                [userState.id]: {
-                    id: userState.id,
-                    name: userState.name,
-                    color,
+                [player.id]: {
+                    ...player,
+                    color: color.id,
                 },
             }
         };
-        this.lobbyService.joinToGame(result);
+        this.lobbyService.joinToGame({
+            player,
+            setupData: result,
+        });
     }
 
-    leaveFromGame() {
+    private async getPlayerName(name: string, color: RelicHuntersHeroColorInfoForSetup) {
+        const countCurrentUser = this.countCurrentUser();
+        if (!countCurrentUser) {
+            const result: SingleInputModalComponentResult ={
+                value: name,
+            };
+            return result;
+        }
+
+        const matDialogRef = this.dialogService.openSingleInput({
+            title: `${color.name} (${color.colorName})`,
+            label: 'Имя игрока:',
+            value: `${name} (Копия ${countCurrentUser})`,
+            applyText: 'Добавить игрока'
+        }, {
+            width: '500px',
+        });
+        return await lastValueFrom(matDialogRef.afterClosed());
+    }
+
+    leaveFromGame(playerId: GamePlayerId) {
         const setupData = this.client.game.setupData();
-        const userState = this.sessionQuery.getValue();
-        if (setupData == null || userState == null) {
+        const players = this.client.game.players();
+        const player = players.get(playerId);
+        if (setupData == null || player == null) {
             return;
         }
 
         const result = lodash.cloneDeep(setupData);
-        if (result.playerMap[userState.id] != null) {
-            delete result.playerMap[userState.id];
+        if (result.playerMap[player.id] != null) {
+            delete result.playerMap[player.id];
         }
-        this.lobbyService.leaveFromGame(result);
+        this.lobbyService.leaveFromGame({
+            player,
+            setupData: result,
+        });
     }
 
-    kickUser(userId: string) {
-        const setupData = this.client.game.setupData();
-        if (setupData == null) {
-            return;
-        }
+    // Пока что это не нужно и работает не правильно
+    // kickUser(userId: string) {
+    //     const setupData = this.client.game.setupData();
+    //     if (setupData == null) {
+    //         return;
+    //     }
 
-        const result = lodash.cloneDeep(setupData);
-        if (result.playerMap[userId] != null) {
-            delete result.playerMap[userId];
-        }
-        this.lobbyService.kickUser(userId, result);
-    }
-
-    changeColor(color: RelicHuntersHeroColorEnum) {
-        const setupData = this.client.game.setupData();
-        const userState = this.sessionQuery.getValue();
-        if (setupData == null || userState == null) {
-            return;
-        }
-
-        const result: RelicHuntersSetupData = {
-            ...setupData,
-            playerMap: {
-                ...setupData.playerMap,
-                [userState.id]: {
-                    ...setupData.playerMap[userState.id],
-                    color,
-                },
-            }
-        };
-        this.lobbyService.changeSetupData(result);
-    }
+    //     const result = lodash.cloneDeep(setupData);
+    //     if (result.playerMap[userId] != null) {
+    //         delete result.playerMap[userId];
+    //     }
+    //     this.lobbyService.kickUser(userId, result);
+    // }
 
     changeSetupData<K extends keyof RelicHuntersSetupData>(
         key: K,

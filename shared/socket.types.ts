@@ -13,6 +13,7 @@ import {
 import {
   LobbyGame,
   LobbyGameChangeOptions,
+  LobbyJoinToGameOptions,
 } from './lobby/lobby-game';
 import { LobbyStatistic } from './lobby/lobby-statistics';
 import { SimiloGameInfoState } from './similo/similo-game.types';
@@ -85,11 +86,11 @@ export interface LobbyClientToServerEvents {
     finishGame: () => void;
     changeGame: (game: LobbyGameChangeOptions) => void;
     changeSetupData: (setupData) => void;
-    joinToGame: (setupData?) => void;
-    leaveFromGame: (setupData?) => void;
+    joinToGame: (data: LobbyJoinToGameOptions) => void;
+    leaveFromGame: (data: LobbyJoinToGameOptions) => void;
     addState: (state: GameState) => void;
     undoState: (createdAt: string) => void;
-    kickUser: (userId: GamePlayerId, setupData?) => void;
+    kickUser: (userId: GamePlayerId, data: LobbyJoinToGameOptions) => void;
 }
 
 export interface InterServerEvents {

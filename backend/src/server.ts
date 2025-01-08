@@ -33,7 +33,10 @@ import {
     LobbyChatMessage,
     LobbyChatMessagePayload,
 } from '../../shared/lobby/lobby-chat';
-import { LobbyGameChangeOptions } from '../../shared/lobby/lobby-game';
+import {
+    LobbyGameChangeOptions,
+    LobbyJoinToGameOptions,
+} from '../../shared/lobby/lobby-game';
 import { LobbyStatistic } from '../../shared/lobby/lobby-statistics';
 import {
     SimiloGameInfoState,
@@ -207,36 +210,32 @@ class LobbyInfo {
 
         this.data.users.push(user);
         console.log(`Add user ${user.name}`);
-        if (this.data.game.players[user.id] == null) {
-            return {
-                gameChanged: false,
-            };
-        }
 
-        this.data.game.players[user.id] = {
-            ...this.data.game.players[user.id],
-            online: true,
-        };
+        let gameChanged = false;
+        for (const player of Object.values(this.data.game.players)) {
+            if (player.sessionId !== user.id) {
+                continue;
+            }
+            player.online = true;
+            gameChanged = true;
+        }
         return {
-            gameChanged: true,
+            gameChanged,
         };
     }
 
     onDisconnect(user: SocketUser) {
         this.data.users = this.data.users.filter(p => p.id !== user.id);
-        if (this.data.game.players[user.id] == null) {
-            return {
-                gameChanged: false,
-            };
+        let gameChanged = false;
+        for (const player of Object.values(this.data.game.players)) {
+            if (player.sessionId !== user.id) {
+                continue;
+            }
+            player.online = false;
+            gameChanged = true;
         }
-
-        this.data.game.players[user.id] = {
-            ...this.data.game.players[user.id],
-            online: false,
-        };
-
         return {
-            gameChanged: true,
+            gameChanged,
         };
     }
 
@@ -286,22 +285,28 @@ class LobbyInfo {
         };
     }
 
-    joinToGame(user: SocketUser) {
+    joinToGame(data: LobbyJoinToGameOptions) {
         this.data.game = {
             ...this.data.game,
             players: {
                 ...this.data.game.players,
-                [user.id]: {
-                    ...user,
+                [data.player.id]: {
+                    ...data.player,
                     online: true,
                 }
             }
         };
+        if (data.setupData != null) {
+            this.changeSetupData(data.setupData);
+        }
     }
 
-    leaveFromGame(userId: string) {
-        if (this.data.game.players[userId] != null) {
-            delete this.data.game.players[userId];
+    leaveFromGame(data: LobbyJoinToGameOptions) {
+        if (this.data.game.players[data.player.id] != null) {
+            delete this.data.game.players[data.player.id];
+        }
+        if (data.setupData != null) {
+            this.changeSetupData(data.setupData);
         }
     }
 
@@ -790,28 +795,22 @@ lobbyNamespaceOf.on('connection', (socket) => {
         io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
     });
 
-    socket.on('joinToGame', (setupData) => {
+    socket.on('joinToGame', (data) => {
         const lobby = getLobby();
         if (lobby == null) {
             return;
         }
-        lobby.joinToGame(user);
-        if (setupData != null) {
-            lobby.changeSetupData(setupData);
-        }
+        lobby.joinToGame(data);
         lobbyNamespace.emit('gameChanged', lobby.data.game);
         io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
     });
 
-    socket.on('leaveFromGame', (setupData) => {
+    socket.on('leaveFromGame', (data) => {
         const lobby = getLobby();
         if (lobby == null) {
             return;
         }
-        lobby.leaveFromGame(user.id);
-        if (setupData != null) {
-            lobby.changeSetupData(setupData);
-        }
+        lobby.leaveFromGame(data);
         lobbyNamespace.emit('gameChanged', lobby.data.game);
         io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
     });
@@ -837,16 +836,13 @@ lobbyNamespaceOf.on('connection', (socket) => {
         lobbyNamespace.emit('gameChanged', lobby.data.game);
     });
 
-    socket.on('kickUser', (userId: string, setupData) => {
+    socket.on('kickUser', (userId: string, data) => {
         const lobby = getLobby();
         if (lobby == null) {
             return;
         }
 
-        lobby.leaveFromGame(user.id);
-        if (setupData != null) {
-            lobby.changeSetupData(setupData);
-        }
+        lobby.leaveFromGame(data);
         lobbyNamespace.emit('gameChanged', lobby.data.game);
         io.emit('lobbyStoreChanged', lobbyStore.getLobbyList());
 

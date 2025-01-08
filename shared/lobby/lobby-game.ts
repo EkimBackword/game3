@@ -1,5 +1,8 @@
 import { GameId } from '../game/game-constants';
-import { GamePlayers } from '../game/game-players';
+import {
+  GamePlayerBase,
+  GamePlayers,
+} from '../game/game-players';
 import {
   GameLogEntry,
   GameState,
@@ -10,6 +13,13 @@ export interface LobbyGameChangeOptions<
 > {
     id: GameId | null;
     setupData: SetupData;
+}
+
+export interface LobbyJoinToGameOptions<
+    SetupData extends Record<string, any> = any,
+> {
+    player: GamePlayerBase;
+    setupData?: SetupData;
 }
 
 export interface LobbyGame<

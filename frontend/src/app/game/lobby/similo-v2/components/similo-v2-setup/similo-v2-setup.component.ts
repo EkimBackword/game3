@@ -9,6 +9,8 @@ import { SimiloDlcDeckList } from 'src/app/game/similo/models/similo-dlc';
 import { SessionQuery } from 'src/app/session/session.query';
 import { NameValue } from 'src/app/shared/models/shared.types';
 
+import { GamePlayerId } from '@shared/game/game-constants';
+import { GamePlayerBase } from '@shared/game/game-players';
 import { SimiloDlcEnum } from '@shared/similo/similo-dlc.types';
 
 import { LobbyClient } from '../../../models/lobby-client';
@@ -90,16 +92,36 @@ export class SimiloV2SetupComponent {
     }
 
     joinToGame() {
-        this.lobbyService.joinToGame();
+        const userState = this.sessionQuery.getValue();
+        if (userState == null) {
+            return;
+        }
+
+        const player: GamePlayerBase = {
+            id: userState.id,
+            sessionId: userState.id,
+            name: userState.name,
+        };
+        this.lobbyService.joinToGame({
+            player
+        });
     }
 
-    leaveFromGame() {
-        this.lobbyService.leaveFromGame();
+    leaveFromGame(playerId: GamePlayerId) {
+        const players = this.client.game.players();
+        const player = players.get(playerId);
+        if (player == null) {
+            return;
+        }
+        this.lobbyService.leaveFromGame({
+            player
+        });
     }
 
-    kickUser(userId: string) {
-        this.lobbyService.kickUser(userId);
-    }
+    // Пока что это не нужно и работает не правильно
+    // kickUser(userId: string) {
+    //     this.lobbyService.kickUser(userId);
+    // }
 
     masterPlayerIdChanged(masterPlayerId: string) {
         const setupData = this.client.game.setupData();
